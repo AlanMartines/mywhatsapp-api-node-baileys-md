@@ -93,10 +93,10 @@ apk add --update nodejs nodejs-npm
 cd ~
 
 # Clone este repositório
-git clone https://github.com/AlanMartines/mywhatsapp-api-node-baileys.git ApiBaileys
+git clone https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md.git ApiBaileysMd
 
 # Acesse a pasta do projeto no terminal/cmd
-cd ApiBaileys
+cd ApiBaileysMd
 
 # Instale as dependências
 npm install --allow-root --unsafe-perm=true
@@ -305,16 +305,16 @@ CREATE TABLE IF NOT EXISTS `tokens` (
 cd ~
 
 # Clone este repositório
-git clone https://github.com/AlanMartines/mywhatsapp-api-node-baileys.git
+git clone https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md.git
 
 # Acesse a pasta do projeto no terminal/cmd
-$ cd nodejs-mywhatsapp-api-node-baileys
+$ cd nodejs-mywhatsapp-api-node-baileys-md
 
 # Processando o arquivo Dockerfile
-$ docker build -t alanmartines/nodejs-mywhatsapp-api-node-baileys:1.0
+$ docker build -t alanmartines/nodejs-mywhatsapp-api-node-baileys-md:1.0
 
 # Criar um contêiner
-docker container run --name mywhatsapp-api-node-baileys -p 9002:9002 -d alanmartines/nodejs-mywhatsapp-api-node-baileys:1.0
+docker container run --name mywhatsapp-api-node-baileys-md -p 9002:9002 -d alanmartines/nodejs-mywhatsapp-api-node-baileys-md:1.0
 ```
 
 ## Para instalar o certbot e criar o certificado SSL para domínios https
