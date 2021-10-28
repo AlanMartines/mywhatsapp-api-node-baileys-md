@@ -9,17 +9,14 @@ const {
   forEach
 } = require('p-iteration');
 const axios = require('axios');
-const {
-  WAConnection,
-  MessageType,
-  Presence,
-  MessageOptions,
-  Mimetype,
-  WALocationMessage,
-  WA_MESSAGE_STUB_TYPES,
-  ReconnectMode,
-  ProxyAgent,
-  waChatKey,
+const WAConnection, {
+  WASocket,
+  AuthenticationState,
+  DisconnectReason,
+  AnyMessageContent,
+  BufferJSON,
+  initInMemoryKeyStore,
+  delay
 } = require('@adiwajshing/baileys-md');
 const io = require("socket.io-client"),
   ioClient = io.connect("http://" + config.HOST + ":" + config.PORT);
@@ -365,33 +362,26 @@ module.exports = class Sessions {
     client.autoReconnect = ReconnectMode.onConnectionLost;
     client.logUnhandledMessages = false;
     client.connectOptions = {
-      regenerateQRIntervalMs: 15000,
-      /** fails the connection if no data is received for X seconds */
-      maxIdleTimeMs: 60000,
-      /** maximum attempts to connect */
-      maxRetries: Infinity,
-      /** max time for the phone to respond to a connectivity test */
-      /** should the chats be waited for;
-       * should generally keep this as true, unless you only care about sending & receiving new messages
-       * & don't care about chat history
-       * */
-      waitForChats: true,
-      /** if set to true, the connect only waits for the last message of the chat
-       * setting to false, generally yields a faster connect
-       */
-      waitOnlyForLastMessage: false,
-      /** max time for the phone to respond to a connectivity test */
-      phoneResponseTime: 15000,
-      /** minimum time between new connections */
-      connectCooldownMs: 4000,
-      /** agent used for WS connections (could be a proxy agent) */
-      agent: undefined,
+      /** provide an auth state object to maintain the auth state */
+      auth: AuthenticationState,
+      /** the WS url to connect to WA */
+      waWebSocketUrl: 15000,
+      /** Fails the connection if the connection times out in this time interval or no data is received */
+      connectTimeoutMs: 60000,
+      /** ping-pong interval for WS connection */
+      keepAliveIntervalMs: 60000,
+      /** proxy agent */
+      agent: Agent,
+      /** pino logger */
+      logger: Logger,
+      /** version to connect with */
+      version: WAVersion,
+      /** override browser config */
+      browser: WABrowserDescription,
       /** agent used for fetch requests -- uploading/downloading media */
-      fetchAgent: undefined,
-      /** always uses takeover for connecting */
-      alwaysUseTakeover: true,
-      /** log QR to terminal */
-      logQR: parseInt(config.VIEW_QRCODE_TERMINAL)
+      fetchAgent: Agent,
+      /** should the QR be printed in the terminal */
+      printQRInTerminal: parseInt(config.VIEW_QRCODE_TERMINAL)
     };
     client.browserDescription = ['My WhatsApp', 'Chrome', '87']
     fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`) && client.loadAuthInfo(`${session.tokenPatch}/${SessionName}.data.json`);
