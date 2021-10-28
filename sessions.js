@@ -20,7 +20,7 @@ const {
   ReconnectMode,
   ProxyAgent,
   waChatKey,
-} = require('@adiwajshing/baileys');
+} = require('@adiwajshing/baileys-md');
 const io = require("socket.io-client"),
   ioClient = io.connect("http://" + config.HOST + ":" + config.PORT);
 const {

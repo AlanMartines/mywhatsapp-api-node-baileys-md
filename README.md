@@ -101,6 +101,10 @@ cd ApiBaileys
 # Instale as dependências
 npm install --allow-root --unsafe-perm=true
 
+npm install github:adiwajshing/baileys
+
+npm install github:adiwajshing/baileys#multi-device
+
 # Configuração inicial
 cp .env-example .env
 
