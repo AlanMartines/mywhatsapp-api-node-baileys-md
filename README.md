@@ -2,9 +2,9 @@
   <img src="./public/imagens/whatsapp-bot.png" width="150" alt="My Whats">
 </p>
 
-# API My WhatsApp
+# API My WhatsApp Multi-Device Support
 
-Este projeto usa como base a [Baileys](https://github.com/adiwajshing/Baileys "Baileys"), um navegador virtual sem interface gráfica que abre o whatsapp web e executa todos os comandos via código possibilitando assim a automação de todas as funções.
+Este projeto usa como base a [Baileys MD](https://github.com/adiwajshing/baileys/tree/multi-device "Baileys MD"), um navegador virtual sem interface gráfica que abre o whatsapp web e executa todos os comandos via código possibilitando assim a automação de todas as funções.
 
 ## Nota
 
