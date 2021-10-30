@@ -9,7 +9,8 @@ const {
   forEach
 } = require('p-iteration');
 const axios = require('axios');
-const makeWASocket, {
+const {
+  makeWASocket,
   WASocket,
   AuthenticationState,
   DisconnectReason,
