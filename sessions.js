@@ -18,6 +18,18 @@ const makeWASocket, {
   initInMemoryKeyStore,
   delay
 } = require('@adiwajshing/baileys-md');
+const {
+  WAConnection,
+  MessageType,
+  Presence,
+  MessageOptions,
+  Mimetype,
+  WALocationMessage,
+  WA_MESSAGE_STUB_TYPES,
+  ReconnectMode,
+  ProxyAgent,
+  waChatKey,
+} = require('@adiwajshing/baileys-md');
 const io = require("socket.io-client"),
   ioClient = io.connect("http://" + config.HOST + ":" + config.PORT);
 const {
@@ -370,6 +382,79 @@ module.exports = class Sessions {
       // we deserialize it here
       keys: initInMemoryKeyStore(authJSON.keys)
     };
+    //
+    let sock = WASocket | undefined == undefined;
+    // load authentication state from a file
+    const loadState = () => {
+      let state = AuthenticationState | undefined == undefined;
+      try {
+        const value = JSON.parse(
+          readFileSync('./auth_info_multi.json', {
+            encoding: 'utf-8'
+          }),
+          BufferJSON.reviver
+        )
+        state = {
+          creds: value.creds,
+          // stores pre-keys, session & other keys in a JSON object
+          // we deserialize it here
+          keys: initInMemoryKeyStore(value.keys)
+        }
+      } catch {}
+      return state
+    }
+    // save the authentication state to a file
+    const saveState = (state) => {
+      console.log('saving pre-keys')
+      state = state || sock.authState
+      writeFileSync(
+        './auth_info_multi.json',
+        // BufferJSON replacer utility saves buffers nicely
+        JSON.stringify(state, BufferJSON.replacer, 2)
+      )
+    }
+    // start a connection
+    const startSock = () => {
+      const sock = makeWASocket({
+        logger: P({
+          level: 'trace'
+        }),
+        printQRInTerminal: true,
+        auth: loadState()
+      })
+      sock.ev.on('messages.upsert', async m => {
+        console.log(JSON.stringify(m, undefined, 2))
+
+        const msg = m.messages[0]
+        if (!msg.key.fromMe && m.type === 'notify') {
+          console.log('replying to', m.messages[0].key.remoteJid)
+          await sock.sendReadReceipt(msg.key.remoteJid, msg.key.participant, [msg.key.id])
+          await sendMessageWTyping({
+            text: 'Hello there!'
+          }, msg.key.remoteJid)
+        }
+
+      })
+      sock.ev.on('messages.update', m => console.log(m))
+      sock.ev.on('presence.update', m => console.log(m))
+      sock.ev.on('chats.update', m => console.log(m))
+      sock.ev.on('contacts.update', m => console.log(m))
+      return sock
+    }
+
+    const sendMessageWTyping = async (msg, jid) => {
+
+      await sock.presenceSubscribe(jid)
+      await delay(500)
+
+      await sock.sendPresenceUpdate('composing', jid)
+      await delay(2000)
+
+      await sock.sendPresenceUpdate('paused', jid)
+
+      await sock.sendMessage(jid, msg)
+    }
+
     //
     const client = new makeWASocket({
       // can provide additional config here
