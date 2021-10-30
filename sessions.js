@@ -358,11 +358,7 @@ module.exports = class Sessions {
     console.log('- Folder Token:', session.tokenPatch);
     //
     //-------------------------------------------------------------------------------------------------------------------------------------//
-    const client = new makeWASocket();
-    //client.autoReconnect = true; // auto reconnect on disconnect
-    client.autoReconnect = ReconnectMode.onConnectionLost;
-    client.logUnhandledMessages = false;
-    client.connectOptions = {
+    const client = makeWASocket({
       /** provide an auth state object to maintain the auth state */
       auth: AuthenticationState,
       /** the WS url to connect to WA */
@@ -383,7 +379,10 @@ module.exports = class Sessions {
       fetchAgent: Agent,
       /** should the QR be printed in the terminal */
       printQRInTerminal: parseInt(config.VIEW_QRCODE_TERMINAL)
-    };
+    });
+    //client.autoReconnect = true; // auto reconnect on disconnect
+    client.autoReconnect = ReconnectMode.onConnectionLost;
+    client.logUnhandledMessages = false;
     client.browserDescription = ['My WhatsApp', 'Chrome', '87']
     fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`) && client.loadAuthInfo(`${session.tokenPatch}/${SessionName}.data.json`);
     client.autoReconnect = ReconnectMode.onConnectionLost; // only automatically reconnect when the connection breaks
