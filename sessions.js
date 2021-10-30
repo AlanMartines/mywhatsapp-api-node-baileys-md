@@ -9,7 +9,7 @@ const {
   forEach
 } = require('p-iteration');
 const axios = require('axios');
-const WAConnection, {
+const makeWASocket, {
   WASocket,
   AuthenticationState,
   DisconnectReason,
@@ -357,7 +357,7 @@ module.exports = class Sessions {
     console.log('- Folder Token:', session.tokenPatch);
     //
     //-------------------------------------------------------------------------------------------------------------------------------------//
-    const client = new WAConnection();
+    const client = new makeWASocket();
     //client.autoReconnect = true; // auto reconnect on disconnect
     client.autoReconnect = ReconnectMode.onConnectionLost;
     client.logUnhandledMessages = false;
