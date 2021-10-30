@@ -358,7 +358,7 @@ module.exports = class Sessions {
     console.log('- Folder Token:', session.tokenPatch);
     //
     //-------------------------------------------------------------------------------------------------------------------------------------//
-    const client = new makeWASocket();
+    const client = makeWASocket();
     //client.autoReconnect = true; // auto reconnect on disconnect
     client.autoReconnect = ReconnectMode.onConnectionLost;
     client.logUnhandledMessages = false;
