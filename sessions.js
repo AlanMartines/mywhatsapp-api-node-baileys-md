@@ -368,15 +368,15 @@ module.exports = class Sessions {
       /** ping-pong interval for WS connection */
       keepAliveIntervalMs: 60000,
       /** proxy agent */
-      agent: Agent,
+      //agent: '',
       /** pino logger */
-      logger: Logger,
+      //logger: 'debug',
       /** version to connect with */
-      version: WAVersion,
+      //version: WAVersion,
       /** override browser config */
-      browser: WABrowserDescription,
+      //browser: WABrowserDescription,
       /** agent used for fetch requests -- uploading/downloading media */
-      fetchAgent: Agent,
+      //fetchAgent: Agent,
       /** should the QR be printed in the terminal */
       printQRInTerminal: parseInt(config.VIEW_QRCODE_TERMINAL)
     });
