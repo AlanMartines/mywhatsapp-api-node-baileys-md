@@ -9,15 +9,6 @@ const {
   forEach
 } = require('p-iteration');
 const axios = require('axios');
-const makeWASocket, {
-  WASocket,
-  AuthenticationState,
-  DisconnectReason,
-  AnyMessageContent,
-  BufferJSON,
-  initInMemoryKeyStore,
-  delay
-} = require('@adiwajshing/baileys-md');
 const {
   WAConnection,
   MessageType,
@@ -369,97 +360,195 @@ module.exports = class Sessions {
     console.log('- Folder Token:', session.tokenPatch);
     //
     //-------------------------------------------------------------------------------------------------------------------------------------//
-    const authJSON = JSON.parse(
-      fs.readFileSync(`${session.tokenPatch}/${SessionName}.data.json`, {
-        encoding: 'utf-8'
-      }),
-      BufferJSON.reviver
-    );
-    //
-    const auth = {
-      creds: authJSON.creds,
-      // stores pre-keys, session & other keys in a JSON object
-      // we deserialize it here
-      keys: initInMemoryKeyStore(authJSON.keys)
+    const client = new WAConnection();
+    //client.autoReconnect = true; // auto reconnect on disconnect
+    client.autoReconnect = ReconnectMode.onConnectionLost;
+    client.logUnhandledMessages = false;
+    client.connectOptions = {
+      /** provide an auth state object to maintain the auth state */
+      auth: AuthenticationState,
+      /** the WS url to connect to WA */
+      waWebSocketUrl: 15000,
+      /** Fails the connection if the connection times out in this time interval or no data is received */
+      connectTimeoutMs: 60000,
+      /** ping-pong interval for WS connection */
+      keepAliveIntervalMs: 60000,
+      /** proxy agent */
+      agent: Agent,
+      /** pino logger */
+      logger: Logger,
+      /** version to connect with */
+      version: WAVersion,
+      /** override browser config */
+      browser: WABrowserDescription,
+      /** agent used for fetch requests -- uploading/downloading media */
+      fetchAgent: Agent,
+      /** should the QR be printed in the terminal */
+      printQRInTerminal: parseInt(config.VIEW_QRCODE_TERMINAL)
     };
+    client.browserDescription = ['My WhatsApp', 'Chrome', '87']
+    fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`) && client.loadAuthInfo(`${session.tokenPatch}/${SessionName}.data.json`);
+    client.autoReconnect = ReconnectMode.onConnectionLost; // only automatically reconnect when the connection breaks
+    //client.logger.level = 'debug'; // set to 'debug' to see what kind of stuff you can implement
+    // attempt to reconnect at most 10 times in a row
+    client.connectOptions.maxRetries = 10;
+    client.chatOrderingKey = waChatKey(true); // order chats such that pinned chats are on top
     //
-    let sock = WASocket | undefined == undefined;
-    // load authentication state from a file
-    const loadState = () => {
-      let state = AuthenticationState | undefined == undefined;
-      try {
-        const value = JSON.parse(
-          readFileSync('./auth_info_multi.json', {
-            encoding: 'utf-8'
-          }),
-          BufferJSON.reviver
-        )
-        state = {
-          creds: value.creds,
-          // stores pre-keys, session & other keys in a JSON object
-          // we deserialize it here
-          keys: initInMemoryKeyStore(value.keys)
-        }
-      } catch {}
-      return state
-    }
-    // save the authentication state to a file
-    const saveState = (state) => {
-      console.log('saving pre-keys')
-      state = state || sock.authState
-      writeFileSync(
-        './auth_info_multi.json',
-        // BufferJSON replacer utility saves buffers nicely
-        JSON.stringify(state, BufferJSON.replacer, 2)
-      )
-    }
-    // start a connection
-    const startSock = () => {
-      const sock = makeWASocket({
-        logger: P({
-          level: 'trace'
-        }),
-        printQRInTerminal: true,
-        auth: loadState()
-      })
-      sock.ev.on('messages.upsert', async m => {
-        console.log(JSON.stringify(m, undefined, 2))
-
-        const msg = m.messages[0]
-        if (!msg.key.fromMe && m.type === 'notify') {
-          console.log('replying to', m.messages[0].key.remoteJid)
-          await sock.sendReadReceipt(msg.key.remoteJid, msg.key.participant, [msg.key.id])
-          await sendMessageWTyping({
-            text: 'Hello there!'
-          }, msg.key.remoteJid)
-        }
-
-      })
-      sock.ev.on('messages.update', m => console.log(m))
-      sock.ev.on('presence.update', m => console.log(m))
-      sock.ev.on('chats.update', m => console.log(m))
-      sock.ev.on('contacts.update', m => console.log(m))
-      return sock
-    }
-
-    const sendMessageWTyping = async (msg, jid) => {
-
-      await sock.presenceSubscribe(jid)
-      await delay(500)
-
-      await sock.sendPresenceUpdate('composing', jid)
-      await delay(2000)
-
-      await sock.sendPresenceUpdate('paused', jid)
-
-      await sock.sendMessage(jid, msg)
-    }
-
+    let lastqr = null;
+    let attempts = 0;
     //
-    const client = new makeWASocket({
-      // can provide additional config here
-      printQRInTerminal: true
+    client.on("qr", async (qr_data) => {
+      //let qr_img_buffer = qr.imageSync(qr_data);
+      //let base64data = qr_img_buffer.toString('base64');
+      //
+      let qr_svg = qr.imageSync(qr_data, {
+        type: 'png'
+      });
+      //
+      let base64data = qr_svg.toString('base64');
+      let qr_str = "data:image/png;base64," + qr_svg.toString('base64');
+      //
+      ioClient.emit('qrCode', {
+        session: SessionName,
+        base64data: base64data,
+        data: qr_str
+      });
+      //
+      lastqr = qr;
+      attempts++;
+      //
+      console.log("- State:", client.state);
+      //
+      console.log('- Número de tentativas de ler o qr-code:', attempts);
+      session.attempts = attempts;
+      //
+      console.log("- Captura do QR-Code");
+      //console.log(base64data);
+      session.qrcode = qr_str;
+      session.qrcodedata = base64data;
+      //
+      session.state = "QRCODE";
+      session.status = "qrRead";
+      session.message = 'Sistema iniciando e indisponivel para uso';
+      //
+      await updateStateDb(session.state, session.status, SessionName);
+      //
     });
+    //
+    // this will be called as soon as the credentials are updated
+    client.on('open', async () => {
+      // save credentials whenever updated
+      console.log(`- Credentials updated init!`)
+      const authInfo = client.base64EncodedAuthInfo(); // get all the auth info we need to restore this session
+      session.browserSessionToken = JSON.stringify(authInfo, null, '\t');
+      await fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(authInfo, null, '\t')); // save this info to a file
+      //
+      session.state = "CONNECTED";
+      session.status = 'isLogged';
+      session.qrcodedata = null;
+      session.message = 'Sistema iniciando e disponivel para uso';
+      //
+      await updateStateDb(session.state, session.status, SessionName);
+      //
+    });
+    //
+    client.on('credentials-updated', async () => {
+      console.log('- Credentials updated!')
+      const authInfo = client.base64EncodedAuthInfo(); // get all the auth info we need to restore this session
+      session.browserSessionToken = JSON.stringify(authInfo, null, '\t');
+      await fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(authInfo, null, '\t')); // save this info to a file
+      //
+    });
+    //
+    client.on("close", async ({
+      reason,
+      isReconnecting
+    }) => {
+      console.log("- Close because " + reason + ", reconnecting: " + isReconnecting);
+      if (!isReconnecting && reason == "invalid_session") {
+        if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) {
+          fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`);
+        }
+        //
+        session.state = "CLOSED";
+        session.status = 'CLOSED';
+        session.client = false;
+        session.qrcodedata = null;
+        session.message = "Sessão fechada";
+        //
+        client.clearAuthInfo();
+        //
+        await Sessions.Start(SessionName.trim());
+        //
+      }
+      //
+    });
+    //
+    //
+    let error;
+    await client.connect().then(async ([user, chats, contacts, unread]) => {
+      //
+      contacts.forEach(contact => {
+        const name = contact.name || contact.notify
+        console.log('- Hi I am your contact ' + name + ', my id is ' + contact.jid)
+      });
+      //
+      session.state = "CONNECTED";
+      session.status = 'isLogged';
+      session.message = 'Sistema iniciado e disponivel para uso';
+      //
+      await updateStateDb(session.state, session.status, SessionName);
+      //
+    }).catch(async (err) => {
+      //
+      error = err;
+      //
+      session.state = 'NOTFOUND';
+      session.status = 'notLogged';
+      session.qrcodedata = null;
+      session.message = 'Sistema Off-line';
+      //
+      await updateStateDb(session.state, session.status, SessionName);
+      //
+      return false;
+    });
+    //
+    if (!client) {
+      console.error("- Connect error:", error);
+    }
+    //
+    console.log("- State:", client.state);
+    //
+    if (client.state == "open") {
+      //
+      session.state = "CONNECTED";
+      session.status = 'isLogged';
+      session.qrcodedata = null;
+      session.message = 'Sistema iniciando e disponivel para uso';
+      //
+    } else if (client.state == "connecting") {
+      //
+      session.state = "STARTING";
+      session.status = 'notLogged';
+      session.qrcodedata = null;
+      session.message = 'Sistema iniciando e indisponivel para uso';
+      //
+    } else if (client.state == "close") {
+      //
+      session.state = "CLOSED";
+      session.status = 'CLOSED';
+      session.client = false;
+      session.qrcodedata = null;
+      session.message = "Sessão fechada";
+      //
+    } else {
+      //
+      session.state = "STARTING";
+      session.status = 'notLogged';
+      session.qrcodedata = null;
+      session.message = 'Sistema iniciando e indisponivel para uso';
+      //
+    }
     //
     return client;
   } //initSession
