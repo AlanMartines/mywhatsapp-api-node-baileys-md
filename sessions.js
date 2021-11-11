@@ -9,17 +9,17 @@ const {
   forEach
 } = require('p-iteration');
 const axios = require('axios');
-const {
-  WAConnection,
-  MessageType,
-  Presence,
-  MessageOptions,
-  Mimetype,
-  WALocationMessage,
-  WA_MESSAGE_STUB_TYPES,
-  ReconnectMode,
-  ProxyAgent,
-  waChatKey,
+const makeWASocket, {
+  AuthenticationState,
+  BufferJSON,
+  DisconnectReason,
+  initInMemoryKeyStore,
+  WASocket,
+  delay,
+  AnyMessageContent,
+  MiscMessageGenerationOptions,
+  downloadContentFromMessage,
+  proto,
 } = require('@adiwajshing/baileys-md');
 const io = require("socket.io-client"),
   ioClient = io.connect("http://" + config.HOST + ":" + config.PORT);
@@ -386,7 +386,7 @@ module.exports = class Sessions {
       /** should the QR be printed in the terminal */
       printQRInTerminal: parseInt(config.VIEW_QRCODE_TERMINAL)
     };
-    client.browserDescription = ['My WhatsApp', 'Chrome', '87']
+    client.browserDescription = ['My WhatsApp', 'Chrome', '87'];
     fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`) && client.loadAuthInfo(`${session.tokenPatch}/${SessionName}.data.json`);
     client.autoReconnect = ReconnectMode.onConnectionLost; // only automatically reconnect when the connection breaks
     //client.logger.level = 'debug'; // set to 'debug' to see what kind of stuff you can implement
