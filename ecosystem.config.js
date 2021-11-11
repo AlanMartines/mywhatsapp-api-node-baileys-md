@@ -1,7 +1,5 @@
 //ecosystem.config.js
 //
-const path = require('path');
-const os = require('os');
 require('dotenv/config');
 //
 const HOST = process.env.NODE_ENV;
@@ -20,7 +18,7 @@ const DATABASE_MYSQL = process.env.DATABASE_MYSQL;
 //
 module.exports = {
   apps: [{
-    name: "ApiVenom",
+    name: "ApiBaileysMd",
     script: "./server.js",
     instances: 1,
     exec_mode: "cluster",
