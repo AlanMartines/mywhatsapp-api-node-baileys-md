@@ -384,7 +384,7 @@ module.exports = class Sessions {
       /** agent used for fetch requests -- uploading/downloading media */
       fetchAgent: Agent,
       /** should the QR be printed in the terminal */
-      printQRInTerminal: parseInt(config.VIEW_QRCODE_TERMINAL);
+      printQRInTerminal: parseInt(config.VIEW_QRCODE_TERMINAL)
     };
     client.browserDescription = ['My WhatsApp', 'Chrome', '87'];
     fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`) && client.loadAuthInfo(`${session.tokenPatch}/${SessionName}.data.json`);
