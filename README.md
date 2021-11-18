@@ -13,15 +13,122 @@ Esta Api, segue os mesmos termos de serviço do WhatsApp. É importante que voc�
 #### Dependências Debian (e.g. Ubuntu) 64bits
 
 ```bash
-sudo apt update \
-sudo apt install -y ffmpeg imagemagick ghostscript
+  sudo apt-get update && \
+	apt-get upgrade -y && \
+	apt-get install -y \
+	git \
+	curl \
+	yarn \
+	gcc \
+	g++ \
+	make \
+	libgbm-dev \
+	wget \
+	unzip \
+	fontconfig \
+	locales \
+	gconf-service \
+	libasound2 \
+	libatk1.0-0 \
+	libc6 \
+	libcairo2 \
+	libcups2 \
+	libdbus-1-3 \
+	libexpat1 \
+	libfontconfig1 \
+	libgconf-2-4 \
+	libgdk-pixbuf2.0-0 \
+	libglib2.0-0 \
+	libgtk-3-0 \
+	libnspr4 \
+	libpango-1.0-0 \
+	libpangocairo-1.0-0 \
+	libstdc++6 \
+	libx11-6 \
+	libx11-xcb1 \
+	libxcb1 \
+	libxcomposite1 \
+	libxcursor1 \
+	libxdamage1 \
+	libxext6 \
+	libxfixes3 \
+	libxi6 \
+	libxrandr2 \
+	libxrender1 \
+	libxss1 \
+	libxtst6 \
+	ca-certificates \
+	fonts-liberation \
+	libnss3 \
+	lsb-release \
+	xdg-utils \
+	ca-certificates \
+	fonts-liberation \
+	libasound2 \
+	libatk-bridge2.0-0 \
+	libatk1.0-0 \
+	libc6 \
+	libcairo2 \
+	libcups2 \
+	libdbus-1-3 \
+	libexpat1 \
+	libfontconfig1 \
+	libgbm1 \
+	libgcc1 \
+	libglib2.0-0 \
+	libgtk-3-0 \
+	libnspr4 \
+	libnss3 \
+	libpango-1.0-0 \
+	libpangocairo-1.0-0 \
+	libstdc++6 \
+	libx11-6 \
+	libx11-xcb1 \
+	libxcb1 \
+	libxcomposite1 \
+	libxcursor1 \
+	libxdamage1 \
+	libxext6 \
+	libxfixes3 \
+	libxi6 \
+	libxrandr2 \
+	libxrender1 \
+	libxss1 \
+	libxtst6 \
+	lsb-release \
+	libu2f-udev \
+	wget \
+	xdg-utils \
+	ffmpeg imagemagick \
+	ghostscript
 ```
 
 #### Dependências CentOS 7/8 64bits (Validar)
 
 ```bash
-sudo yum install -y epel-release \
-sudo yum localinstall --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm \
+sudo yum install -y \
+alsa-lib.x86_64 \
+atk.x86_64 \
+cups-libs.x86_64 \
+gtk3.x86_64 \
+ipa-gothic-fonts \
+libXcomposite.x86_64 \
+libXcursor.x86_64 \
+libXdamage.x86_64 \
+libXext.x86_64 \
+libXi.x86_64 \
+libXrandr.x86_64 \
+libXScrnSaver.x86_64 \
+libXtst.x86_64 \
+pango.x86_64 \
+xorg-x11-fonts-100dpi \
+xorg-x11-fonts-75dpi \
+xorg-x11-fonts-cyrillic \
+xorg-x11-fonts-misc \
+xorg-x11-fonts-Type1 \
+xorg-x11-utils \
+epel-release && \
+sudo yum localinstall --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm && \
 sudo yum install -y ffmpeg ffmpeg-devel imagemagick ghostscript
 ```
 
