@@ -148,13 +148,10 @@ apk add --no-cache ffmpeg imagemagick ghostscript
 cd ~
 
 # Recuperar o script de instalação para sua versão de preferência
-curl -sL https://deb.nodesource.com/setup_14.x -o nodesource_setup.sh
-
-# Execute o script
-sudo bash nodesource_setup.sh
+curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -
 
 # Instalar o pacote Node.js
-sudo apt install -y git nodejs yarn gcc g++ make
+sudo apt install -y git nodejs yarn gcc g++ tar make vim curl npm python python3
 
 # Remover pacotes que não são mais necessários
 sudo apt autoremove -y
@@ -169,13 +166,10 @@ sudo apt autoremove -y
 cd ~
 
 # Recuperar o script de instalação para sua versão de preferência
-curl -sL https://rpm.nodesource.com/setup_14.x | sudo bash -
-
-# Execute o script
-sudo yum install nodejs
+curl -sL https://rpm.nodesource.com/setup_16.x | sudo bash -
 
 # Instalar o pacote Node.js
-sudo yum install -y git nodejs yarn gcc g++ make
+sudo yum install -y git nodejs yarn gcc g++ tar make vim curl npm python python3
 
 # Remover pacotes que não são mais necessários
 sudo yum autoremove -y
