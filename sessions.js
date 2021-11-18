@@ -26,8 +26,6 @@ const {
   downloadContentFromMessage,
   proto,
 } = require('@adiwajshing/baileys-md');
-const io = require("client.io-client"),
-  ioClient = io.connect("http://" + config.HOST + ":" + config.PORT);
 const con = require("./config/dbConnection");
 //
 // ------------------------------------------------------------------------------------------------------- //
