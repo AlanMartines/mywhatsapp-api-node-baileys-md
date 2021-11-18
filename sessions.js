@@ -451,6 +451,14 @@ module.exports = class Sessions {
       auth: loadState()
     });
     //
+    client.ev.on('auth-state.update', () => {
+      // save credentials whenever updated
+      console.log(`credentials updated!`)
+      const authInfo = client.authState // get all the auth info we need to restore this session
+      // save this info to a file
+      fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(authInfo, BufferJSON.replacer, 2));
+    });
+    //
     client.ev.on('connection.update', (update) => {
       const {
         connection,
