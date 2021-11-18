@@ -34,6 +34,7 @@
     "@hapi/boom": "^9.1.4",
     "async-foreach": "^0.1.3",
     "axios": "^0.24.0",
+    "await-sleep": "^0.0.1",
     "base64-buffer-thumbnail": "^1.0.0",
     "consign": "^0.1.6",
     "dotenv": "^10.0.0",
