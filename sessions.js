@@ -13,19 +13,14 @@ const {
 const {
   forEach
 } = require('p-iteration');
-const {
-  WAConnection,
-  MessageType,
-  Presence,
-  MessageOptions,
-  Mimetype,
-  WALocationMessage,
-  WA_MESSAGE_STUB_TYPES,
-  ReconnectMode,
-  ProxyAgent,
-  waChatKey,
-  GroupSettingChange
-} = require('@adiwajshing/baileys');
+const makeWASocket, {
+  AuthenticationState,
+  DisconnectReason,
+  AnyMessageContent,
+  BufferJSON,
+  initInMemoryKeyStore,
+  delay
+} = require('@adiwajshing/baileys-md');
 const io = require("socket.io-client"),
   ioClient = io.connect("http://" + config.HOST + ":" + config.PORT);
 const con = require("./config/dbConnection");
