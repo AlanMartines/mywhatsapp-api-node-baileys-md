@@ -457,6 +457,37 @@ module.exports = class Sessions {
       auth: loadState()
     });
     //
+    //
+    client.ev.on("qr", async (qr_data) => {
+      let qr_svg = qr.imageSync(qr_data, {
+        type: 'png'
+      });
+      //
+      let base64data = qr_svg.toString('base64');
+      let qr_str = "data:image/png;base64," + base64data;
+      //
+      lastqr = qr;
+      attempts++;
+      //
+      console.log("- State:", client.state);
+      //
+      console.log('- Número de tentativas de ler o qr-code:', attempts);
+      session.attempts = attempts;
+      //
+      console.log("- Captura do QR-Code");
+      //
+      session.qrcode = qr_str;
+      session.qrcodedata = base64data;
+      //
+      session.state = "QRCODE";
+      session.status = "qrRead";
+      session.message = 'Sistema iniciando e indisponivel para uso';
+      //
+      await updateStateDb(session.state, session.status, session.AuthorizationToken);
+      //
+    });
+    //
+    //
     client.ev.on('chats.delete', async e => {
       console.log(e)
     });

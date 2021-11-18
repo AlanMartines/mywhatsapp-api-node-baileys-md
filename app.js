@@ -194,17 +194,17 @@ const getGroupAdmins = (participantes) => {
       //var authInfo = client.authState
       //fs.writeFileSync('./session.json', JSON.stringify(authInfo, baileys.BufferJSON.replacer, 2))
       try {
-        console.log(update)
+        console.log(update);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
     });
 
     client.ev.on('chats.update', async (update) => {
-      var authInfo = client.authState
-      fs.writeFileSync('./session.json', JSON.stringify(authInfo, baileys.BufferJSON.replacer, 2))
-      console.log(update)
-    })
+      var authInfo = client.authState;
+      fs.writeFileSync('./session.json', JSON.stringify(authInfo, baileys.BufferJSON.replacer, 2));
+      console.log(update);
+    });
     return client
   }
 
