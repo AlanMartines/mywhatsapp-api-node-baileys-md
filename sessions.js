@@ -451,7 +451,7 @@ module.exports = class Sessions {
       auth: loadState()
     });
     //
-    sock.ev.on('connection.update', (update) => {
+    client.ev.on('connection.update', (update) => {
       const {
         connection,
         lastDisconnect
