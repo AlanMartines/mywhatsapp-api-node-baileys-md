@@ -1,38 +1,34 @@
 //
 // Configuração dos módulos
 const config = require('./config.global');
-const os = require("os");
 const fs = require("fs-extra");
 const qr = require("qr-image");
 const moment = require("moment");
+const Base64BufferThumbnail = require('base64-buffer-thumbnail');
+const {
+  fromPath,
+  fromBuffer,
+  fromBase64
+} = require('pdf2pic');
 const {
   forEach
 } = require('p-iteration');
-const axios = require('axios');
-const makeWASocket, {
-  AuthenticationState,
-  BufferJSON,
-  DisconnectReason,
-  initInMemoryKeyStore,
-  WASocket,
-  delay,
-  AnyMessageContent,
-  MiscMessageGenerationOptions,
-  downloadContentFromMessage,
-  proto,
-} = require('@adiwajshing/baileys-md');
+const {
+  WAConnection,
+  MessageType,
+  Presence,
+  MessageOptions,
+  Mimetype,
+  WALocationMessage,
+  WA_MESSAGE_STUB_TYPES,
+  ReconnectMode,
+  ProxyAgent,
+  waChatKey,
+  GroupSettingChange
+} = require('@adiwajshing/baileys');
 const io = require("socket.io-client"),
   ioClient = io.connect("http://" + config.HOST + ":" + config.PORT);
-const {
-  cache
-} = require('sharp');
 const con = require("./config/dbConnection");
-//require('dotenv/config');
-/*
-require("dotenv").config({
-  path: "./.env"
-});
-*/
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
@@ -118,14 +114,14 @@ async function osplatform() {
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
-async function updateStateDb(state, status, session_venom) {
+async function updateStateDb(state, status, AuthorizationToken) {
   //
   const date_now = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
   console.log("- Date:", date_now);
   //
   //
   const sql = "UPDATE tokens SET state=?, status=?, lastactivit=? WHERE token=?";
-  const values = [state, status, date_now, session_venom];
+  const values = [state, status, date_now, AuthorizationToken];
   //
   if (parseInt(config.VALIDATE_MYSQL) == true) {
     const conn = require('./config/dbConnection').promise();
@@ -152,6 +148,87 @@ async function deletaToken(filePath) {
   }
 }
 //
+// ------------------------------------------------------------------------------------------------------- //
+//
+async function gerateThumbnail(fileBuffer, mimetype, saveFilename) {
+  //
+  /*
+  var folderName = fs.mkdtempSync(path.join(os.tmpdir(), 'baileys-'));
+  var filePath = path.join(folderName, saveFilename);
+  fs.writeFileSync(filePath, Buffer.toString('base64'), 'base64');
+  console.log("- File", filePath);
+	*/
+  //
+  switch (mimetype) {
+    case 'image/gif':
+    case 'video/gif':
+    case 'image/jpeg':
+    case 'image/png':
+    case 'image/webp':
+      //
+      //
+      let options = {
+        width: 250,
+        height: 250,
+        responseType: 'base64',
+        jpegOptions: {
+          force: true,
+          quality: 90
+        }
+      }
+      //
+      try {
+        var thumbnail = await Base64BufferThumbnail(fileBuffer, options);
+        //console.log("Base64BufferThumbnail", thumbnail);
+      } catch (err) {
+        console.error(err);
+        var thumbnail = '';
+      }
+      //
+      break;
+    case 'video/mp4':
+      //
+      var thumbnail = '';
+      //
+      break;
+    case 'audio/mp4':
+    case 'audio/ogg; codecs=opus':
+      //
+      var thumbnail = '';
+      //
+      break;
+    case 'application/pdf':
+      //
+      const pdf2picOptions = {
+        format: "jpeg",
+        width: 250,
+        height: 250,
+        density: 100
+      }
+      try {
+        //
+        const pageNumber = 1;
+        const convert = fromBase64(fileBuffer.toString('base64'), pdf2picOptions);
+        //const convert = fromBuffer(fileBuffer, pdf2picOptions);
+        const pageOutput = await convert(pageNumber, true);
+        var thumbnail = Buffer.from(pageOutput.base64, 'base64');
+      } catch (err) {
+        console.error(err);
+        var thumbnail = '';
+      }
+      //
+      break;
+    default:
+      //
+      var thumbnail = '';
+      //
+  }
+  //
+  return thumbnail;
+}
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
 module.exports = class Sessions {
   //
   static async getStatusApi(sessionName, options = []) {
@@ -173,7 +250,6 @@ module.exports = class Sessions {
           SessionName: SessionName,
           state: session.state,
           status: session.status,
-          qrcode: session.qrcodedata,
           message: "Sistema iniciado e disponivel para uso"
         };
       } else if (session.state == "STARTING") {
@@ -182,7 +258,6 @@ module.exports = class Sessions {
           SessionName: SessionName,
           state: session.state,
           status: session.status,
-          qrcode: session.qrcodedata,
           message: "Sistema iniciando e indisponivel para uso"
         };
       } else if (session.state == "QRCODE") {
@@ -191,7 +266,6 @@ module.exports = class Sessions {
           SessionName: SessionName,
           state: session.state,
           status: session.status,
-          qrcode: session.qrcodedata,
           message: "Sistema aguardando leitura do QR-Code"
         };
       } else if (session.state == "CLOSED") {
@@ -200,7 +274,6 @@ module.exports = class Sessions {
           SessionName: SessionName,
           state: session.state,
           status: session.status,
-          qrcode: session.qrcodedata,
           message: "Sessão fechada"
         };
       } else {
@@ -209,7 +282,6 @@ module.exports = class Sessions {
           SessionName: SessionName,
           state: session.state,
           status: session.status,
-          qrcode: session.qrcodedata,
           message: "Sistema iniciado e indisponivel para uso"
         };
       }
@@ -219,7 +291,6 @@ module.exports = class Sessions {
         SessionName: SessionName,
         state: 'NOTFOUND',
         status: 'notLogged',
-        qrcode: null,
         message: 'Sistema Off-line'
       };
     }
@@ -227,23 +298,16 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------------- //
   //
-  static async Start(SessionName, options = []) {
-    Sessions.options = Sessions.options || options; //start object
+  static async Start(SessionName, AuthorizationToken) {
     Sessions.sessions = Sessions.sessions || []; //start array
 
-    var session = Sessions.getSession(SessionName);
+    var session = Sessions.getSession(SessionName, AuthorizationToken);
 
     if (session == false) {
       //create new session
       //
-      /*
-      console.log('- Nome da sessão:', session.name);
-      console.log('- State do sistema:', session.state);
-      console.log('- Status da sessão:', session.status);
-			*/
-      //
-      session = await Sessions.addSesssion(SessionName);
-    } else if (["CLOSED"].includes(session.state)) {
+      session = await Sessions.addSesssion(SessionName, AuthorizationToken);
+    } else if (["CLOSED"].includes(session.state) || ["DISCONNECTED"].includes(session.state)) {
       //restart session
       console.log("- State: CLOSED");
       session.state = "CLOSED";
@@ -260,24 +324,25 @@ module.exports = class Sessions {
       console.log('- State do sistema:', session.state);
       console.log('- Status da sessão:', session.status);
       //
-      session.client = Sessions.initSession(SessionName);
-      Sessions.setup(SessionName);
+      session.client = Sessions.initSession(SessionName, AuthorizationToken);
+      Sessions.setup(SessionName, AuthorizationToken);
     } else {
       console.log('- Nome da sessão:', session.name);
       console.log('- State do sistema:', session.state);
       console.log('- Status da sessão:', session.status);
     }
     //
-    await updateStateDb(session.state, session.status, SessionName);
+    await updateStateDb(session.state, session.status, session.AuthorizationToken);
     //
     return session;
   } //start
   //
   // ------------------------------------------------------------------------------------------------------- //
   //
-  static async addSesssion(SessionName) {
+  static async addSesssion(SessionName, AuthorizationToken) {
     console.log("- Adicionando sessão");
     var newSession = {
+      AuthorizationToken: AuthorizationToken,
       name: SessionName,
       processid: null,
       qrcode: null,
@@ -333,10 +398,10 @@ module.exports = class Sessions {
     session.browserSessionToken = null;
     //
     /*
-      ╔═╗┌─┐┌┬┐┬┌─┐┌┐┌┌─┐┬    ╔═╗┬─┐┌─┐┌─┐┌┬┐┌─┐  ╔═╗┌─┐┬─┐┌─┐┌┬┐┌─┐┌┬┐┌─┐┬─┐┌─┐
-      ║ ║├─┘ │ ││ ││││├─┤│    ║  ├┬┘├┤ ├─┤ │ ├┤   ╠═╝├─┤├┬┘├─┤│││├┤  │ ├┤ ├┬┘└─┐
-      ╚═╝┴   ┴ ┴└─┘┘└┘┴ ┴┴─┘  ╚═╝┴└─└─┘┴ ┴ ┴ └─┘  ╩  ┴ ┴┴└─┴ ┴┴ ┴└─┘ ┴ └─┘┴└─└─┘
-   */
+        ╔═╗┌─┐┌┬┐┬┌─┐┌┐┌┌─┐┬    ╔═╗┬─┐┌─┐┌─┐┌┬┐┌─┐  ╔═╗┌─┐┬─┐┌─┐┌┬┐┌─┐┌┬┐┌─┐┬─┐┌─┐
+        ║ ║├─┘ │ ││ ││││├─┤│    ║  ├┬┘├┤ ├─┤ │ ├┤   ╠═╝├─┤├┬┘├─┤│││├┤  │ ├┤ ├┬┘└─┐
+        ╚═╝┴   ┴ ┴└─┘┘└┘┴ ┴┴─┘  ╚═╝┴└─└─┘┴ ┴ ┴ └─┘  ╩  ┴ ┴┴└─┴ ┴┴ ┴└─┘ ┴ └─┘┴└─└─┘
+     */
     //
     const osnow = await osplatform();
     //
@@ -359,37 +424,48 @@ module.exports = class Sessions {
     //
     console.log('- Folder Token:', session.tokenPatch);
     //
+    console.log("- AuthorizationToken:", session.AuthorizationToken);
+    //
     //-------------------------------------------------------------------------------------------------------------------------------------//
     const client = new WAConnection();
-    //client.autoReconnect = true; // auto reconnect on disconnect
+    //client.autoReconnect = true;
+    //client.user = "My WhatsApp";
+    client.version = [3, 3234, 9]; // https://github.com/adiwajshing/Baileys/issues/782
     client.autoReconnect = ReconnectMode.onConnectionLost;
     client.logUnhandledMessages = false;
     client.connectOptions = {
-      /** provide an auth state object to maintain the auth state */
-      auth: AuthenticationState,
-      /** the WS url to connect to WA */
-      waWebSocketUrl: 15000,
-      /** Fails the connection if the connection times out in this time interval or no data is received */
-      connectTimeoutMs: 60000,
-      /** ping-pong interval for WS connection */
-      keepAliveIntervalMs: 60000,
-      /** proxy agent */
-      agent: Agent,
-      /** pino logger */
-      logger: Logger,
-      /** version to connect with */
-      version: WAVersion,
-      /** override browser config */
-      browser: WABrowserDescription,
+      regenerateQRIntervalMs: 15000,
+      /** fails the connection if no data is received for X seconds */
+      maxIdleTimeMs: 60000,
+      /** maximum attempts to connect */
+      maxRetries: Infinity,
+      /** max time for the phone to respond to a connectivity test */
+      /** should the chats be waited for;
+       * should generally keep this as true, unless you only care about sending & receiving new messages
+       * & don't care about chat history
+       * */
+      waitForChats: true,
+      /** if set to true, the connect only waits for the last message of the chat
+       * setting to false, generally yields a faster connect
+       */
+      waitOnlyForLastMessage: false,
+      /** max time for the phone to respond to a connectivity test */
+      phoneResponseTime: 15000,
+      /** minimum time between new connections */
+      connectCooldownMs: 4000,
+      /** agent used for WS connections (could be a proxy agent) */
+      agent: undefined,
       /** agent used for fetch requests -- uploading/downloading media */
-      fetchAgent: Agent,
-      /** should the QR be printed in the terminal */
-      printQRInTerminal: parseInt(config.VIEW_QRCODE_TERMINAL)
+      fetchAgent: undefined,
+      /** always uses takeover for connecting */
+      alwaysUseTakeover: true,
+      /** log QR to terminal */
+      logQR: parseInt(config.VIEW_QRCODE_TERMINAL)
     };
     client.browserDescription = ['My WhatsApp', 'Chrome', '87'];
-    fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`) && client.loadAuthInfo(`${session.tokenPatch}/${SessionName}.data.json`);
+    await fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`) && await client.loadAuthInfo(`${session.tokenPatch}/${SessionName}.data.json`);
     client.autoReconnect = ReconnectMode.onConnectionLost; // only automatically reconnect when the connection breaks
-    //client.logger.level = 'debug'; // set to 'debug' to see what kind of stuff you can implement
+    client.logger.level = 'info'; // set to 'debug' or  'info' to see what kind of stuff you can implement
     // attempt to reconnect at most 10 times in a row
     client.connectOptions.maxRetries = 10;
     client.chatOrderingKey = waChatKey(true); // order chats such that pinned chats are on top
@@ -398,21 +474,12 @@ module.exports = class Sessions {
     let attempts = 0;
     //
     client.on("qr", async (qr_data) => {
-      //let qr_img_buffer = qr.imageSync(qr_data);
-      //let base64data = qr_img_buffer.toString('base64');
-      //
       let qr_svg = qr.imageSync(qr_data, {
         type: 'png'
       });
       //
       let base64data = qr_svg.toString('base64');
-      let qr_str = "data:image/png;base64," + qr_svg.toString('base64');
-      //
-      ioClient.emit('qrCode', {
-        session: SessionName,
-        base64data: base64data,
-        data: qr_str
-      });
+      let qr_str = "data:image/png;base64," + base64data;
       //
       lastqr = qr;
       attempts++;
@@ -423,7 +490,7 @@ module.exports = class Sessions {
       session.attempts = attempts;
       //
       console.log("- Captura do QR-Code");
-      //console.log(base64data);
+      //
       session.qrcode = qr_str;
       session.qrcodedata = base64data;
       //
@@ -431,7 +498,7 @@ module.exports = class Sessions {
       session.status = "qrRead";
       session.message = 'Sistema iniciando e indisponivel para uso';
       //
-      await updateStateDb(session.state, session.status, SessionName);
+      await updateStateDb(session.state, session.status, session.AuthorizationToken);
       //
     });
     //
@@ -439,7 +506,7 @@ module.exports = class Sessions {
     client.on('open', async () => {
       // save credentials whenever updated
       console.log(`- Credentials updated init!`)
-      const authInfo = client.base64EncodedAuthInfo(); // get all the auth info we need to restore this session
+      const authInfo = await client.base64EncodedAuthInfo(); // get all the auth info we need to restore this session
       session.browserSessionToken = JSON.stringify(authInfo, null, '\t');
       await fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(authInfo, null, '\t')); // save this info to a file
       //
@@ -448,15 +515,20 @@ module.exports = class Sessions {
       session.qrcodedata = null;
       session.message = 'Sistema iniciando e disponivel para uso';
       //
-      await updateStateDb(session.state, session.status, SessionName);
+      await updateStateDb(session.state, session.status, session.AuthorizationToken);
       //
     });
     //
     client.on('credentials-updated', async () => {
       console.log('- Credentials updated!')
-      const authInfo = client.base64EncodedAuthInfo(); // get all the auth info we need to restore this session
+      const authInfo = await client.base64EncodedAuthInfo(); // get all the auth info we need to restore this session
       session.browserSessionToken = JSON.stringify(authInfo, null, '\t');
       await fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(authInfo, null, '\t')); // save this info to a file
+      //
+      session.state = "CONNECTED";
+      session.status = 'isLogged';
+      session.qrcodedata = null;
+      session.message = 'Sistema iniciando e disponivel para uso';
       //
     });
     //
@@ -497,7 +569,7 @@ module.exports = class Sessions {
       session.status = 'isLogged';
       session.message = 'Sistema iniciado e disponivel para uso';
       //
-      await updateStateDb(session.state, session.status, SessionName);
+      await updateStateDb(session.state, session.status, session.AuthorizationToken);
       //
     }).catch(async (err) => {
       //
@@ -508,7 +580,7 @@ module.exports = class Sessions {
       session.qrcodedata = null;
       session.message = 'Sistema Off-line';
       //
-      await updateStateDb(session.state, session.status, SessionName);
+      await updateStateDb(session.state, session.status, session.AuthorizationToken);
       //
       return false;
     });
@@ -561,7 +633,7 @@ module.exports = class Sessions {
     ╚═╝└─┘ ┴  ┴ ┴┘└┘└─┘  └─┘ ┴ ┴ ┴┴└─ ┴ └─┘─┴┘
   */
   //
-  static async setup(SessionName) {
+  static async setup(SessionName, AuthorizationToken) {
     console.log("- Sinstema iniciando");
     var session = Sessions.getSession(SessionName);
     await session.client.then(async (client) => {
@@ -575,7 +647,7 @@ module.exports = class Sessions {
         session.qrcodedata = null;
         session.message = 'Sistema iniciando e disponivel para uso';
         //
-        await updateStateDb(session.state, session.status, SessionName);
+        await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
       } else if (client.state == "connecting") {
         //
@@ -584,7 +656,7 @@ module.exports = class Sessions {
         session.qrcodedata = null;
         session.message = 'Sistema iniciando e indisponivel para uso';
         //
-        await updateStateDb(session.state, session.status, SessionName);
+        await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
       } else if (client.state == "close") {
         //
@@ -594,7 +666,7 @@ module.exports = class Sessions {
         session.qrcodedata = null;
         session.message = "Sessão fechada";
         //
-        await updateStateDb(session.state, session.status, SessionName);
+        await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
       }
       // this will be called as soon as the credentials are updated
@@ -610,7 +682,7 @@ module.exports = class Sessions {
         session.qrcodedata = null;
         session.message = 'Sistema iniciando e disponivel para uso';
         //
-        await updateStateDb(session.state, session.status, SessionName);
+        await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
       });
       //
@@ -672,14 +744,10 @@ module.exports = class Sessions {
           //
         }
         //
-        await deletaToken(session.tokenPatch + "/" + SessionName + ".data.json");
+        //await deletaToken(session.tokenPatch + "/" + SessionName + ".data.json");
         //
-        await updateStateDb(session.state, session.status, SessionName);
+        await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
-      });
-      //
-      client.on('contacts-received', () => {
-        console.log('- You have ' + Object.keys(client.contacts).length + ' contacts');
       });
       //
       /** when the connection to the phone changes */
@@ -705,12 +773,6 @@ module.exports = class Sessions {
         console.log(`- You have ${client.chats.length} chats, new chats available: ${hasNewChats}`);
         const unread = await client.loadAllUnreadMessages()
         console.log("- You have " + unread.length + " unread messages")
-      });
-      //
-      client.on('chats-received', ({
-        hasNewChats
-      }) => {
-        console.log(`- You have ${client.chats.length} chats, new chats available: ${hasNewChats}`);
       });
       //
       client.on('contacts-received', () => {
@@ -760,53 +822,68 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
+  static async State(SessionName) {
+    console.log("- State");
+    var session = Sessions.getSession(SessionName);
+    var getState = await session.client.then(async client => {
+      try {
+        return client.state;
+      } catch (error) {
+        //console.log("- Erro ao fechar sessão:", error.message);
+        //
+        return {
+          result: "error",
+          state: session.state,
+          status: session.status,
+          message: "Erro ao obter state"
+        };
+        //
+      }
+    });
+    return getState;;
+  };
+  //
+  // ------------------------------------------------------------------------------------------------//
+  //
   static async closeSession(SessionName) {
     console.log("- Fechando sessão");
     var session = Sessions.getSession(SessionName);
     var closeSession = await session.client.then(async client => {
       try {
         await client.close();
+        //console.log("Result: ", result); //return object success
         //
         session.state = "CLOSED";
         session.status = 'CLOSED';
-        session.client = false;
-        session.qrcode = null;
-        session.qrcodedata = null;
         console.log("- Sessão fechada");
         //
         var returnClosed = {
           result: "success",
           state: session.state,
           status: session.status,
-          qrcode: session.qrcode,
-          qrcodedata: session.qrcodedata,
-          message: "Erro ao fechar sessão"
+          message: "Sessão fechada com sucesso"
         };
         //
-        await deletaToken(session.tokenPatch + "/" + SessionName + ".data.json");
-        //
-        await updateStateDb(session.state, session.status, SessionName);
+        await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
         return returnClosed;
         //
       } catch (error) {
-        console.log("- Erro ao fechar sessão:", error.message);
+        //console.log("- Erro ao fechar sessão:", error);
         //
         return {
           result: "error",
           state: session.state,
           status: session.status,
-          qrcode: session.qrcode,
-          qrcodedata: session.qrcodedata,
           message: "Erro ao fechar sessão"
         };
         //
-      }
+      };
     });
     //
-    await deletaToken(session.tokenPatch + "/" + SessionName + ".data.json");
+    //await deletaToken(session.tokenPatch + "/" + SessionName + ".data.json");
     //
-    await updateStateDb(session.state, session.status, SessionName);
+    await updateStateDb(session.state, session.status, session.AuthorizationToken);
     //
     return closeSession;
   } //closeSession
@@ -820,30 +897,28 @@ module.exports = class Sessions {
       try {
         await client.logout();
         //
-        const strClosed = await client.close();
+        //await client.clearAuthInfo();
+        //await client.close();
         //
         session.state = "DISCONNECTED";
         session.status = 'CLOSED';
-        session.client = false;
-        session.qrcode = null;
         console.log("- Sessão desconetada");
         //
         var returnLogout = {
           result: "success",
           state: session.state,
           status: session.status,
-          qrcode: session.qrcode,
           message: "Sessão desconetada"
         };
         //
-        await deletaToken(session.tokenPatch + "/" + SessionName + ".data.json");
+        await deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
         //
-        await updateStateDb(session.state, session.status, SessionName);
+        await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
         return returnLogout;
         //
       } catch (error) {
-        console.log("- Erro ao desconetar sessão:", error.message);
+        //console.log("- Erro ao desconetar sessão:", error);
         //
         return {
           result: "error",
@@ -852,13 +927,14 @@ module.exports = class Sessions {
           message: "Erro ao desconetar sessão"
         };
         //
-      }
+      };
     });
     //
-    await updateStateDb(session.state, session.status, SessionName);
+    await updateStateDb(session.state, session.status, session.AuthorizationToken);
     //
     return LogoutSession;
   } //LogoutSession
+  //
   //
   // ------------------------------------------------------------------------------------------------------- //
   //
@@ -872,10 +948,7 @@ module.exports = class Sessions {
   //
   // Enviar Contato
   static async sendContactVcard(
-    SessionName,
-    number,
-    contact,
-    namecontact
+    SessionName, number, contact, namecontact
   ) {
     console.log("- Enviando contato.");
     //
@@ -902,9 +975,6 @@ module.exports = class Sessions {
         return {
           "erro": false,
           "status": 200,
-          "number": number,
-          "canReceiveMessage": true,
-          "text": "success",
           "message": "Contato enviado com sucesso."
         };
         //
@@ -914,9 +984,6 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "number": number,
-          "canReceiveMessage": false,
-          "text": erro.text,
           "message": "Erro ao enviar contato"
         };
         //
@@ -930,9 +997,7 @@ module.exports = class Sessions {
   //
   //Enviar Texto
   static async sendText(
-    SessionName,
-    number,
-    msg
+    SessionName, number, msg
   ) {
     console.log("- Enviando menssagem de texto.");
     var session = Sessions.getSession(SessionName);
@@ -945,7 +1010,6 @@ module.exports = class Sessions {
           "erro": false,
           "status": 200,
           "group": number,
-          "canReceiveMessage": true,
           "message": "Menssagem enviada com sucesso."
         };
         //
@@ -955,7 +1019,6 @@ module.exports = class Sessions {
           "erro": true,
           "status": 404,
           "group": number,
-          "canReceiveMessage": false,
           "message": "Erro ao enviar menssagem"
         };
         //
@@ -972,24 +1035,26 @@ module.exports = class Sessions {
     number,
     lat,
     long,
-    local
+    caption
   ) {
     console.log("- Enviando localização.");
     var session = Sessions.getSession(SessionName);
     var sendResult = await session.client.then(async client => {
-      // Send basic text
+      //
+      var options = {
+        caption: caption,
+        detectLinks: true
+      };
+      //
       return await client.sendMessage(number, {
         degreesLatitude: lat,
         degreesLongitude: long
-      }, MessageType.location).then((result) => {
+      }, MessageType.location, options).then((result) => {
         //console.log("Result: ", result); //return object success
         //
         return {
           "erro": false,
           "status": 200,
-          "number": number,
-          "canReceiveMessage": true,
-          "text": "success",
           "message": "Localização enviada com sucesso."
         };
         //
@@ -1001,9 +1066,6 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "number": number,
-          "canReceiveMessage": false,
-          "text": erro.text,
           "message": "Erro ao enviar localização."
         };
         //
@@ -1016,16 +1078,13 @@ module.exports = class Sessions {
   //
   //Enviar links com preview
   static async sendLinkPreview(
-    SessionName,
-    number,
-    link,
-    caption
+    SessionName, number, link, caption
   ) {
     console.log("- Enviando link.");
     var session = Sessions.getSession(SessionName);
     var sendResult = await session.client.then(async client => {
       //
-      const options = {
+      var options = {
         caption: caption,
         detectLinks: true
       };
@@ -1036,9 +1095,6 @@ module.exports = class Sessions {
         return {
           "erro": false,
           "status": 200,
-          "number": number,
-          "canReceiveMessage": true,
-          "text": "success",
           "message": "Link enviada com sucesso."
         };
         //
@@ -1050,9 +1106,6 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "number": number,
-          "canReceiveMessage": false,
-          "text": erro.text,
           "message": "Erro ao enviar link."
         };
         //
@@ -1065,18 +1118,13 @@ module.exports = class Sessions {
   //
   //Enviar Imagem
   static async sendImage(
-    SessionName,
-    number,
-    buffer,
-    mimetype,
-    filename,
-    caption
+    SessionName, number, buffer, mimetype, filename, caption
   ) {
     console.log("- Enviando menssagem com imagem.");
     var session = Sessions.getSession(SessionName);
     var resultsendImage = await session.client.then(async (client) => {
       //
-      const options = {
+      var options = {
         mimetype: mimetype,
         caption: caption,
         filename: filename
@@ -1088,9 +1136,6 @@ module.exports = class Sessions {
         return {
           "erro": false,
           "status": 200,
-          "number": number,
-          "canReceiveMessage": true,
-          "text": "success",
           "message": "Menssagem enviada com sucesso."
         };
         //
@@ -1101,8 +1146,7 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "number": number,
-          "canReceiveMessage": false,
+
           "text": "error",
           "message": "Erro ao enviar menssagem"
         };
@@ -1120,7 +1164,7 @@ module.exports = class Sessions {
     number,
     buffer,
     mimetype,
-    filename,
+    originalname,
     fileExtension,
     caption
   ) {
@@ -1128,10 +1172,15 @@ module.exports = class Sessions {
     var session = Sessions.getSession(SessionName);
     var resultsendImage = await session.client.then(async (client) => {
       //
-      const options = {
+      let jpegBase64 = await gerateThumbnail(buffer, mimetype, originalname);
+      //
+      var options = {
+        caption: caption,
+        thumbnail: jpegBase64,
         mimetype: mimetype,
-        filename: filename,
-        caption: caption
+        filename: originalname,
+        detectLinks: true,
+        PreviewType: 1
       };
       //
       return await client.sendMessage(number, buffer, MessageType.document, options).then((result) => {
@@ -1141,9 +1190,6 @@ module.exports = class Sessions {
         return {
           "erro": false,
           "status": 200,
-          "number": number,
-          "canReceiveMessage": true,
-          "text": "success",
           "message": "Arquivo enviado com sucesso."
         };
         //
@@ -1154,9 +1200,6 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "number": number,
-          "canReceiveMessage": false,
-          "text": erro.text,
           "message": "Erro ao enviar arquivo"
         };
         //
@@ -1201,14 +1244,7 @@ module.exports = class Sessions {
           //if (resultAllContacts.isMyContact === true || resultAllContacts.isMyContact === false && resultAllContacts.isUser === true) {
           //
           getChatGroupNewMsg.push({
-            "user": resultAllContacts.jid,
-            "name": resultAllContacts.name,
-            "shortName": resultAllContacts.short,
-            "pushname": resultAllContacts.notify,
-            "formattedName": resultAllContacts.vname,
-            "isMyContact": resultAllContacts.verify,
-            "isWAContact": '',
-            "isBusiness": ''
+            "user": resultAllContacts.jid,            "name": resultAllContacts.name,            "shortName": resultAllContacts.short,            "pushname": resultAllContacts.notify,            "formattedName": resultAllContacts.vname,            "isMyContact": resultAllContacts.verify,            "isWAContact": '',            "isBusiness": ''
           });
           //}
           //
@@ -1223,8 +1259,6 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "canReceiveMessage": false,
-          "text": "Error",
           "message": "Erro ao recuperar contatos"
         };
         //
@@ -1238,77 +1272,66 @@ module.exports = class Sessions {
   // ------------------------------------------------------------------------------------------------//
   //
   /*
-  // Recuperar chats
-  static async getAllChats(
-    SessionName
-  ) {
-    console.log("- Obtendo todos os chats");
-    //
-    var session = Sessions.getSession(SessionName);
-    var resultgetAllChats = await session.client.then(async client => {
-      let chatArray = []
-      try {
-        const Chats = await client.loadChats();
-        let allChats = Chats.chats
-        for (let i = 0; i < allChats.length; i++) {
-          let count = 1;
-          let id = count + i;
-          let newDate = moment.unix(allChats[i].t).format('DD/MM/YYYY HH:MM:ss');
-          let messagesBody = allChats[i].messages;
-          let LastMessage = JSON.parse(JSON.stringify(messagesBody));
-          let LengthMessages = LastMessage.length - 1;
-          let MessagePresence = null;
-          let Name = null;
-          let phonePP = allChats[i].jid.replace('@s.whatsapp.net', '');
-          if (allChats[i].name) Name = allChats[i].name;
-          else Name = allChats[i].jid.replace('@s.whatsapp.net', '');
+    // Recuperar chats
+    static async getAllChats(
+      SessionName
+    ) {
+      console.log("- Obtendo todos os chats");
+      //
+      var session = Sessions.getSession(SessionName);
+      var resultgetAllChats = await session.client.then(async client => {
+        let chatArray = []
+        try {
+          const Chats = await client.loadChats();
+          let allChats = Chats.chats
+          for (let i = 0; i < allChats.length; i++) {
+            let count = 1;
+            let id = count + i;
+            let newDate = moment.unix(allChats[i].t).format('DD/MM/YYYY HH:MM:ss');
+            let messagesBody = allChats[i].messages;
+            let LastMessage = JSON.parse(JSON.stringify(messagesBody));
+            let LengthMessages = LastMessage.length - 1;
+            let MessagePresence = null;
+            let Name = null;
+            let phonePP = allChats[i].jid.replace('@s.whatsapp.net', '');
+            if (allChats[i].name) Name = allChats[i].name;
+            else Name = allChats[i].jid.replace('@s.whatsapp.net', '');
 
-          if (LastMessage[LengthMessages].message) MessagePresence = LastMessage[LengthMessages].message.conversation;
-          else MessagePresence = 'Não foi possível carregar as mensagens anteriores';
-          let PPIMAGE = null;
-          try {
-            PPIMAGE = await client.getProfilePicture(`${phonePP}@c.us`);
-          } catch (e) {
-            PPIMAGE = 'https://upload.wikimedia.org/wikipedia/en/e/ee/Unknown-person.gif';
+            if (LastMessage[LengthMessages].message) MessagePresence = LastMessage[LengthMessages].message.conversation;
+            else MessagePresence = 'Não foi possível carregar as mensagens anteriores';
+            let PPIMAGE = null;
+            try {
+              PPIMAGE = await client.getProfilePicture(`${phonePP}@c.us`);
+            } catch (e) {
+              PPIMAGE = 'https://upload.wikimedia.org/wikipedia/en/e/ee/Unknown-person.gif';
+            }
+            
+            chatArray = [...chatArray, {
+              chatId: id,              time: newDate,              phone: allChats[i].jid.replace('@s.whatsapp.net', ''),              title: Name,              image: PPIMAGE,              lastchat: MessagePresence
+            }]
+  					
+            //
+            chatArray.push({
+              "user": allChats[i].jid.replace('@s.whatsapp.net', ''),              "name": Name,              "formattedName": Name
+            });
+            //
           }
-          
-          chatArray = [...chatArray, {
-            chatId: id,
-            time: newDate,
-            phone: allChats[i].jid.replace('@s.whatsapp.net', ''),
-            title: Name,
-            image: PPIMAGE,
-            lastchat: MessagePresence
-          }]
-					
+          return chatArray;
           //
-          chatArray.push({
-            "user": allChats[i].jid.replace('@s.whatsapp.net', ''),
-            "name": Name,
-            "formattedName": Name
-          });
+        } catch (erro) {
+          //console.error('Error when sending: ', erro); //return object error
           //
-        }
-        return chatArray;
-        //
-      } catch (erro) {
-        //console.error('Error when sending: ', erro); //return object error
-        //
-        return {
-          "erro": true,
-          "status": 404,
-          "canReceiveMessage": false,
-          "text": "Error",
-          "message": "Erro ao recuperar grupos"
+          return {
+            "erro": true,            "status": 404,            "message": "Erro ao recuperar grupos"
+          };
+          //
         };
         //
-      };
+      });
       //
-    });
-    //
-    return resultgetAllChats;
-  } //getAllChats
-	*/
+      return resultgetAllChats;
+    } //getAllChats
+  	*/
   //
   // ------------------------------------------------------------------------------------------------//
   //
@@ -1351,15 +1374,8 @@ module.exports = class Sessions {
           if (allChats[i].jid.includes('@g.us')) {
             /*
             chatArray = [
-              ...chatArray,
-              {
-                chatId: id,
-                time: newDate,
-                phone: allChats[i].jid.replace('@s.whatsapp.net', ''),
-                title: Name,
-                image: PPIMAGE,
-              },
-            ]
+              ...chatArray,              {
+                chatId: id,                time: newDate,                phone: allChats[i].jid.replace('@s.whatsapp.net', ''),                title: Name,                image: PPIMAGE,              },            ]
 						*/
             //
             chatArray.push({
@@ -1378,8 +1394,6 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "canReceiveMessage": false,
-          "text": "Error",
           "message": "Erro ao recuperar grupos"
         };
         //
@@ -1409,8 +1423,6 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "canReceiveMessage": false,
-          "text": "Error",
           "message": "Erro ao recuperar token browser"
         };
         //
@@ -1436,8 +1448,6 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "canReceiveMessage": false,
-          "text": "Error",
           "message": "Erro ao recuperar lista de contatos bloqueados"
         };
         //
@@ -1450,8 +1460,7 @@ module.exports = class Sessions {
   //
   // Recuperar status de contato
   static async getStatus(
-    SessionName,
-    number
+    SessionName, number
   ) {
     console.log("- Obtendo status!");
     var session = Sessions.getSession(SessionName);
@@ -1465,8 +1474,6 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "canReceiveMessage": false,
-          "text": "Error",
           "message": "Erro ao recuperar status de contato"
         };
         //
@@ -1479,8 +1486,7 @@ module.exports = class Sessions {
   //
   // Recuperar status de contato
   static async getNumberProfile(
-    SessionName,
-    number
+    SessionName, number
   ) {
     console.log("- Obtendo status!");
     var session = Sessions.getSession(SessionName);
@@ -1494,8 +1500,6 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "canReceiveMessage": false,
-          "text": "Error",
           "message": "Erro ao recuperar profile"
         };
         //
@@ -1508,8 +1512,7 @@ module.exports = class Sessions {
   //
   // Obter a foto do perfil do servidor
   static async getProfilePicFromServer(
-    SessionName,
-    number
+    SessionName, number
   ) {
     console.log("- Obtendo a foto do perfil do servidor!");
     var session = Sessions.getSession(SessionName);
@@ -1525,8 +1528,6 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "canReceiveMessage": false,
-          "text": "Error",
           "message": "Erro ao obtendo a foto do perfil no servidor"
         };
         //
@@ -1539,8 +1540,7 @@ module.exports = class Sessions {
   //
   // Verificar o status do número
   static async checkNumberStatus(
-    SessionName,
-    number
+    SessionName, number
   ) {
     console.log("- canReceiveMessage");
     var session = Sessions.getSession(SessionName);
@@ -1554,17 +1554,15 @@ module.exports = class Sessions {
           return {
             "erro": false,
             "status": 200,
-            "canReceiveMessage": true,
-            "number": result.jid.replace('@s.whatsapp.net', ''),
+            "number": result.jid,
             "message": "O número informado pode receber mensagens via whatsapp"
           };
           //
-        } else if (!result) {
+        } else if (!result.exists) {
           //
           return {
             "erro": true,
             "status": 404,
-            "canReceiveMessage": false,
             "number": result.jid,
             "message": "O número informado não pode receber mensagens via whatsapp"
           };
@@ -1574,8 +1572,6 @@ module.exports = class Sessions {
           return {
             "erro": true,
             "status": 404,
-            "canReceiveMessage": null,
-            "number": number,
             "message": "Erro ao verificar número informado"
           };
           //
@@ -1586,8 +1582,6 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "canReceiveMessage": null,
-          "number": number,
           "message": "Erro ao verificar número informado"
         };
         //
@@ -1606,8 +1600,7 @@ module.exports = class Sessions {
   //
   // Deixar o grupo
   static async leaveGroup(
-    SessionName,
-    groupId
+    SessionName, groupId
   ) {
     console.log("- leaveGroup");
     var session = Sessions.getSession(SessionName);
@@ -1619,7 +1612,6 @@ module.exports = class Sessions {
           return {
             "erro": false,
             "status": 200,
-            "canReceiveMessage": true,
             "groupId": groupId,
             "message": "Grupo deixado com sucesso"
           };
@@ -1628,7 +1620,6 @@ module.exports = class Sessions {
           return {
             "erro": true,
             "status": 404,
-            "canReceiveMessage": false,
             "groupId": groupId,
             "message": "Erro ao deixar o grupo"
           };
@@ -1641,7 +1632,6 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "canReceiveMessage": false,
           "groupId": groupId,
           "message": "Erro ao deixar o grupo"
         };
@@ -1655,8 +1645,7 @@ module.exports = class Sessions {
   //
   // Obtenha membros do grupo
   static async getGroupMembers(
-    SessionName,
-    groupId
+    SessionName, groupId
   ) {
     console.log("- getGroupMembers");
     var session = Sessions.getSession(SessionName);
@@ -1690,7 +1679,6 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "canReceiveMessage": false,
           "groupId": groupId,
           "message": "Erro ao obter membros do grupo"
         };
@@ -1704,8 +1692,7 @@ module.exports = class Sessions {
   //
   // Obter IDs de membros do grupo
   static async getGroupMembersIds(
-    SessionName,
-    groupId
+    SessionName, groupId
   ) {
     console.log("- getGroupMembersIds");
     var session = Sessions.getSession(SessionName);
@@ -1737,7 +1724,6 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "canReceiveMessage": false,
           "groupId": groupId,
           "message": "Erro ao obter membros do grupo"
         };
@@ -1751,8 +1737,7 @@ module.exports = class Sessions {
   //
   // Gerar link de url de convite de grupo
   static async getGroupInviteLink(
-    SessionName,
-    groupId
+    SessionName, groupId
   ) {
     console.log("- getGroupInviteLink");
     var session = Sessions.getSession(SessionName);
@@ -1777,7 +1762,6 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "canReceiveMessage": false,
           "groupId": groupId,
           "message": "Erro ao obter link de convite de grupo"
         };
@@ -1791,21 +1775,20 @@ module.exports = class Sessions {
   //
   // Criar grupo (título, participantes a adicionar)
   static async createGroup(
-    SessionName,
-    title,
-    contactlistValid,
-    contactlistInvalid
+    SessionName, title, contactlistValid, contactlistInvalid
   ) {
     console.log("- createGroup");
     var session = Sessions.getSession(SessionName);
     var resultgetGroupInviteLink = await session.client.then(async client => {
-      return await client.groupCreate(title, contactlistValid).then((result) => {
+      return await client.groupCreate(title, contactlistValid).then(async (result) => {
         //console.log('Result: ', result); //return object success
         //
         if (result.status == 200 || result.status == 207) {
+          // await client.groupUpdateDescription(result.gid, title);
           return {
             "erro": false,
             "status": 200,
+            "title": title,
             "gid": result.gid.replace('@g.us', ''),
             "contactlistValid": contactlistValid,
             "contactlistInvalid": contactlistInvalid,
@@ -1816,6 +1799,7 @@ module.exports = class Sessions {
           return {
             "erro": true,
             "status": 404,
+            "title": title,
             "gid": null,
             "contactlistValid": contactlistValid,
             "contactlistInvalid": contactlistInvalid,
@@ -1830,6 +1814,7 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
+          "title": title,
           "gid": null,
           "contactlistValid": contactlistValid,
           "contactlistInvalid": contactlistInvalid,
@@ -1843,11 +1828,52 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
+  // Criar grupo (título, participantes a adicionar)
+  static async deleteChat(
+    SessionName,
+    Id
+  ) {
+    console.log("- deleteChat");
+    var session = Sessions.getSession(SessionName);
+    var resultdeleteChat = await session.client.then(async client => {
+      return await client.deleteChat(Id).then((result) => {
+        //console.log('Result: ', result); //return object success
+        //
+        if (result.status == 200 || result.status == 207) {
+          return {
+            "erro": false,
+            "status": 200,
+            "message": "Grupo apagado com sucesso"
+          };
+        } else {
+          //
+          return {
+            "erro": true,
+            "status": 404,
+            "message": "Erro ao apagar grupo"
+          };
+          //
+        }
+        //
+      }).catch((erro) => {
+        //console.error('Error when sending: ', erro); //return object error
+        //
+        return {
+          "erro": true,
+          "status": 404,
+          "message": "Erro ao apagar grupo"
+        };
+        //
+      });
+    });
+    return resultdeleteChat;
+  } //deleteChat
+  //
+  // ------------------------------------------------------------------------------------------------//
+  //
   // Remove participante
   static async removeParticipant(
-    SessionName,
-    groupId,
-    phonefull
+    SessionName, groupId, phonefull
   ) {
     console.log("- removeParticipant");
     var session = Sessions.getSession(SessionName);
@@ -1892,9 +1918,7 @@ module.exports = class Sessions {
   //
   // Adicionar participante
   static async addParticipant(
-    SessionName,
-    groupId,
-    phonefull
+    SessionName, groupId, phonefull
   ) {
     console.log("- addParticipant");
     var session = Sessions.getSession(SessionName);
@@ -1939,9 +1963,7 @@ module.exports = class Sessions {
   //
   // Promote participant (Give admin privileges)
   static async promoteParticipant(
-    SessionName,
-    groupId,
-    contactlistValid
+    SessionName, groupId, contactlistValid
   ) {
     console.log("- promoteParticipant");
     var session = Sessions.getSession(SessionName);
@@ -1986,9 +2008,7 @@ module.exports = class Sessions {
   //
   // Depromote participant (Give admin privileges)
   static async demoteParticipant(
-    SessionName,
-    groupId,
-    phonefull
+    SessionName, groupId, phonefull
   ) {
     console.log("- demoteParticipant");
     var session = Sessions.getSession(SessionName);
@@ -2033,8 +2053,7 @@ module.exports = class Sessions {
   //
   // Retorna o status do grupo, jid, descrição do link de convite
   static async getGroupInfoFromInviteLink(
-    SessionName,
-    InviteCode
+    SessionName, InviteCode
   ) {
     console.log("- Obtendo chats!");
     var session = Sessions.getSession(SessionName);
@@ -2059,8 +2078,7 @@ module.exports = class Sessions {
   //
   // Junte-se a um grupo usando o código de convite do grupo
   static async joinGroup(
-    SessionName,
-    InviteCode
+    SessionName, InviteCode
   ) {
     console.log("- joinGroup");
     var session = Sessions.getSession(SessionName);
@@ -2100,6 +2118,101 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
+  // Junte-se a um grupo usando o código de convite do grupo
+  static async onlyAdminsMessagesGroup(
+    SessionName,
+    groupId
+  ) {
+    console.log("- onlyAdminsMessagesGroup");
+    var session = Sessions.getSession(SessionName);
+    var onlyAdminsMessagesGroup = await session.client.then(async client => {
+      return await client.groupSettingChange(groupId, GroupSettingChange.messageSend, true).then((result) => {
+        //console.log('- Result: ', result); //return object success
+        //
+        if (result.status == 200 || result.status == 207) {
+          return {
+            "erro": false,
+            "status": 200,
+            "message": "Apenas mensagens de admins"
+          };
+        } else {
+          //
+          return {
+            "erro": true,
+            "status": 404,
+            "message": "Erro ao habilitar apenas mensagens de admins"
+          };
+          //
+        }
+        //
+      }).catch((erro) => {
+        //console.error('Error when sending: ', erro); //return object error
+        //
+        return {
+          "erro": true,
+          "status": 404,
+          "message": "Erro ao habilitar apenas mensagens de admins"
+        };
+        //
+      });
+    });
+    return onlyAdminsMessagesGroup;
+  } //onlyAdminsMessagesGroup
+  //
+  // ------------------------------------------------------------------------------------------------//
+  //
+  // Junte-se a um grupo usando o código de convite do grupo
+  static async everyoneModifySettingsGroup(
+    SessionName,
+    groupId,
+    change
+  ) {
+    console.log("- everyoneModifySettingsGroup");
+    var session = Sessions.getSession(SessionName);
+    var everyoneModifySettingsGroup = await session.client.then(async client => {
+      return await client.groupSettingChange(groupId, GroupSettingChange.settingsChange, change).then((result) => {
+        //console.log('- Result: ', result); //return object success
+        //
+        if (result.status == 200 || result.status == 207) {
+          if (change) {
+            return {
+              "erro": false,
+              "status": 200,
+              "message": "Todos modificam as configurações do grupo"
+            };
+          } else {
+            return {
+              "erro": false,
+              "status": 200,
+              "message": "Somente admins podem modificar as configurações do grupo"
+            };
+          }
+        } else {
+          //
+          return {
+            "erro": true,
+            "status": 404,
+            "message": "Erro ao habilitar as configurações do grupo"
+          };
+          //
+        }
+        //
+      }).catch((erro) => {
+        //console.error('Error when sending: ', erro); //return object error
+        //
+        return {
+          "erro": true,
+          "status": 404,
+          "message": "Erro ao habilitar as configurações do grupo"
+        };
+        //
+      });
+    });
+    return everyoneModifySettingsGroup;
+  } //everyoneModifySettingsGroup
+  //
+  // ------------------------------------------------------------------------------------------------//
+  //
   /*
   ╔═╗┬─┐┌─┐┌─┐┬┬  ┌─┐  ╔═╗┬ ┬┌┐┌┌─┐┌┬┐┬┌─┐┌┐┌┌─┐           
   ╠═╝├┬┘│ │├┤ ││  ├┤   ╠╣ │ │││││   │ ││ ││││└─┐           
@@ -2108,8 +2221,7 @@ module.exports = class Sessions {
   //
   // Set client status
   static async setProfileStatus(
-    SessionName,
-    ProfileStatus
+    SessionName, ProfileStatus
   ) {
     console.log("- setProfileStatus");
     var session = Sessions.getSession(SessionName);
@@ -2141,8 +2253,7 @@ module.exports = class Sessions {
   //
   // Set client profile name
   static async setProfileName(
-    SessionName,
-    ProfileName
+    SessionName, ProfileName
   ) {
     console.log("- setProfileName");
     var session = Sessions.getSession(SessionName);
@@ -2174,8 +2285,7 @@ module.exports = class Sessions {
   //
   // Set client profile photo
   static async setProfilePic(
-    SessionName,
-    path
+    SessionName, path
   ) {
     console.log("- setProfilePic");
     var session = Sessions.getSession(SessionName);
@@ -2517,17 +2627,24 @@ module.exports = class Sessions {
     //console.log('Result: ', result); //return object success
     //
     var result = {
-      '556792664545@s.whatsapp.net': {
-        jid: '556792664545@s.whatsapp.net',
-        name: 'Rafa Hotel Porta',
-        short: 'Rafa Hotel Porta'
+      "556792373218@s.whatsapp.net": {
+        "jid": "556792373218@s.whatsapp.net",
+        "notify": "Juciane Medeiros",
+        "name": "Juci/Maianne",
+        "short": "Juci/Maianne"
       },
-      '556484338175@s.whatsapp.net': {
-        jid: '556484338175@s.whatsapp.net',
-        vname: 'Wender Teixeira',
-        verify: '0'
+      "556791400941@s.whatsapp.net": {
+        "jid": "556791400941@s.whatsapp.net",
+        "name": "Paulinho / Garagem Flávio",
+        "short": "Paulinho /"
+      },
+      "554396030588@s.whatsapp.net": {
+        "jid": "554396030588@s.whatsapp.net",
+        "notify": "Gabriel Milhorini"
       }
     };
+    //
+    console.log(result[1]);
     //
     var getChatGroupNewMsg = [];
     //
@@ -2539,9 +2656,7 @@ module.exports = class Sessions {
         "shortName": resultAllContacts.short,
         "pushname": resultAllContacts.notify,
         "formattedName": resultAllContacts.vname,
-        "isMyContact": resultAllContacts.verify,
-        "isWAContact": '',
-        "isBusiness": ''
+        "isMyContact": resultAllContacts.verify
       });
       //
     });

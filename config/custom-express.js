@@ -1,27 +1,24 @@
 //
 // Configuração dos módulos
-const fs = require('fs');
 const express = require('express');
 const app = express();
-const consign = require('consign');
 const cors = require('cors');
 const path = require('path');
-const config = require('../config.global');
 //
-const http = require('http').createServer({}, app);
+const http = require('http').Server(app);
 // https://www.scaleway.com/en/docs/tutorials/socket-io/
 const io = require('socket.io')(http, {
   cors: {
-    origin: '*',
+    origins: ["*"],
     methods: ["GET", "POST"],
+    transports: ['websocket', 'polling'],
     credentials: true
   },
+  allowEIO3: true
 });
-//
 app.use(cors());
 //
 const sistem = require("../controllers/sistem.controller");
-const verifyToken = require("../middleware/verifyToken");
 //
 module.exports = () => {
   //
@@ -44,10 +41,16 @@ module.exports = () => {
   // Rotas
   app.use("/sistema", sistem);
   //
+  app.use((req, res, next) => {
+    req.io = io;
+    next();
+  });
+  //
   app.get('/', function(req, res) {
-    //res.status(200).send('Server Baileys is running API. https://github.com/AlanMartines/mywhatsapp-api-node-baileys');
+    //res.status(200).send('Server WPPConnect is running API. https://github.com/AlanMartines/mywhatsapp-api-node-wppconnect');
     res.sendFile(path.join(__dirname, '/index.html'));
   });
+  //
   //
   const sockets = {};
   //socket

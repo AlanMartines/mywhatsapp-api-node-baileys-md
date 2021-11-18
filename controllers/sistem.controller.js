@@ -4,29 +4,18 @@ const os = require('os');
 const {
   forEach
 } = require('p-iteration');
+const sleep = require('await-sleep');
 const fs = require('fs-extra');
 const path = require('path');
 const express = require("express");
 const multer = require('multer');
-const qr = require("qr-image");
 const upload = multer({});
-var mime = require('mime-types');
+const mime = require('mime-types');
 const router = express.Router();
 const Sessions = require("../sessions.js");
 const verifyToken = require("../middleware/verifyToken");
-const config = require('../config.global');
 //
 // ------------------------------------------------------------------------------------------------//
-//
-async function deletaToken(filePath) {
-  //
-  const cacheExists = await fs.pathExists(filePath);
-  console.log('- O arquivo é: ' + cacheExists);
-  if (cacheExists) {
-    fs.remove(filePath);
-    console.log('- O arquivo removido: ' + cacheExists);
-  }
-}
 //
 async function deletaArquivosTemp(filePath) {
   //
@@ -38,13 +27,6 @@ async function deletaArquivosTemp(filePath) {
   }
 }
 //
-function sleep(ms) {
-  console.log("- Sleep:", ms + " ms");
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
-//
 // ------------------------------------------------------------------------------------------------//
 //
 function soNumeros(string) {
@@ -52,13 +34,18 @@ function soNumeros(string) {
   return numbers;
 }
 //
-function validPhone(phone) {
+async function validPhone(phone) {
   // A função abaixo demonstra o uso de uma expressão regular que identifica, de forma simples, telefones válidos no Brasil.
   // Nenhum DDD iniciado por 0 é aceito, e nenhum número de telefone pode iniciar com 0 ou 1.
   // Exemplos válidos: +55 (11) 98888-8888 / 9999-9999 / 21 98888-8888 / 5511988888888
   //
-  var isValid = /^(?:(?:\+|00)?(55)\s?)?(?:\(?([1-9][0-9])\)?\s?)?(?:((?:9\d|[2-9])\d{3})\-?(\d{4}))$/
-  return isValid.test(phone);
+  var isValid = /^(?:(?:\+|00)?(55)\s?)?(?:\(?([1-9][0-9])\)?\s?)?(?:((?:9\d|[2-9])\d{3})\-?(\d{4}))$/;
+  //var isValid = /^(?:(?:\+|00)?(55)\s?)?(?:\(?([1-9][0-9])\)?\s?)(?:((?:9\d|[2-9])\d{3})\-?(\d{4}))$/;
+  //var isValid = /^(?:(?#DDI)(?:\+|00)?(55)\s?)?(?:(?#DDD)\(?([1-9][0-9])\)?\s?)(?:(?#Telefone)((?:9\d|[2-9])\d{3})\-?(\d{4}))$/gm;
+  //var isValid = /^(?:(?:+|00)?(55)\s?)?(?:(?([1-9][0-9]))?\s?)(?:((?:9\d|[2-9])\d{3})-?(\d{4}))$/;
+  var result = await isValid.test(phone);
+  console.log("- validPhone:", result);
+  return result;
 }
 //
 // ------------------------------------------------------------------------------------------------//
@@ -108,13 +95,15 @@ const convertBytes = function(bytes) {
 ║ ╦├┤  │  │ │││││ ┬  └─┐ │ ├─┤├┬┘ │ ├┤  ││
 ╚═╝└─┘ ┴  ┴ ┴┘└┘└─┘  └─┘ ┴ ┴ ┴┴└─ ┴ └─┘─┴┘
 */
-//
 router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next) => {
   //
   var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
+  var session = Sessions.getSession(req.body.SessionName.trim());
   switch (sessionStatus.status) {
     case 'isLogged':
+    case 'qrRead':
       //
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         "Status": sessionStatus
       });
@@ -122,11 +111,12 @@ router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next
     case 'notLogged':
     case 'CLOSED':
     case 'DISCONNECTED':
-    case 'qrRead':
       //
-      var session = await Sessions.Start(req.body.SessionName.trim());
+      var getStart = await Sessions.Start(req.body.SessionName.trim(), req.body.AuthorizationToken.trim());
+      console.log("- AuthorizationToken:", req.body.AuthorizationToken.trim());
       session.state = 'STARTING';
       session.status = 'notLogged';
+      //
       var Start = {
         result: "info",
         state: 'STARTING',
@@ -134,12 +124,14 @@ router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next
         message: 'Sistema iniciando e indisponivel para uso'
       };
       //
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         "Status": Start
       });
       //
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "Status": sessionStatus
       });
@@ -157,6 +149,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
   switch (sessionStatus.status) {
     case 'isLogged':
       //
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         "Status": sessionStatus
       });
@@ -166,9 +159,9 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
     case 'qrRead':
       //
       if (req.body.View === true) {
-        var xSession = session.qrcode;
+        var xSession = session.qrcodedata;
         if (xSession) {
-          const imageBuffer = Buffer.from(xSession.replace('data:image/png;base64,', ''), 'base64');
+          const imageBuffer = Buffer.from(xSession, 'base64');
           //
           res.writeHead(200, {
             'Content-Type': 'image/png',
@@ -185,6 +178,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
             message: 'Sistema Off-line'
           };
           //
+          res.setHeader('Content-Type', 'application/json');
           res.status(200).json({
             "Status": getQRCode
           });
@@ -199,6 +193,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
           message: "Aguardando leitura do QR-Code"
         };
         //
+        res.setHeader('Content-Type', 'application/json');
         res.status(200).json({
           "Status": getQRCode
         });
@@ -207,6 +202,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
       //
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "Status": sessionStatus
       });
@@ -220,6 +216,7 @@ router.post("/getSessions", upload.none(''), verifyToken.verify, async (req, res
   var getSessions = await Sessions.getSessions();
   //
   //console.log(result);
+  res.setHeader('Content-Type', 'application/json');
   res.status(200).json({
     getSessions
   });
@@ -227,10 +224,23 @@ router.post("/getSessions", upload.none(''), verifyToken.verify, async (req, res
 //
 // ------------------------------------------------------------------------------------------------//
 //
+router.post("/State", upload.none(''), verifyToken.verify, async (req, res, next) => {
+  var State = await Sessions.State(
+    req.body.SessionName
+  );
+  res.setHeader('Content-Type', 'application/json');
+  res.status(200).json({
+    State
+  });
+}); //State
+//
+// ------------------------------------------------------------------------------------------------//
+//
 router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, next) => {
   var Status = await Sessions.ApiStatus(
     req.body.SessionName
   );
+  res.setHeader('Content-Type', 'application/json');
   res.status(200).json({
     Status
   });
@@ -261,6 +271,7 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
     }
   };
   //console.log(result);
+  res.setHeader('Content-Type', 'application/json');
   res.status(200).json({
     getHardWare
   });
@@ -276,11 +287,13 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
     case 'qrRead':
       //
       var closeSession = await Sessions.closeSession(req.body.SessionName.trim());
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         closeSession
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "closeSession": sessionStatus
       });
@@ -296,11 +309,13 @@ router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, nex
     case 'isLogged':
       //
       var LogoutSession = await Sessions.logoutSession(req.body.SessionName.trim());
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         LogoutSession
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "LogoutSession": sessionStatus
       });
@@ -327,7 +342,7 @@ router.post("/sendContactVcard", upload.none(''), verifyToken.verify, async (req
         soNumeros(req.body.phonefull) + '@c.us'
       );
       //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.canReceiveMessage === true) {
+      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
         //
         var sendContactVcard = await Sessions.sendContactVcard(
           req.body.SessionName.trim(),
@@ -341,11 +356,13 @@ router.post("/sendContactVcard", upload.none(''), verifyToken.verify, async (req
       }
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         sendContactVcard
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "sendContactVcard": sessionStatus
       });
@@ -368,11 +385,13 @@ router.post("/sendContactVcardGroup", upload.none(''), verifyToken.verify, async
       );
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         sendContactVcard
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "sendContactVcard": sessionStatus
       });
@@ -392,7 +411,7 @@ router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, n
         soNumeros(req.body.phonefull) + '@c.us'
       );
       //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.canReceiveMessage === true) {
+      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
         //
         var sendText = await Sessions.sendText(
           req.body.SessionName.trim(),
@@ -406,11 +425,13 @@ router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, n
       }
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         sendText
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "sendText": sessionStatus
       });
@@ -445,7 +466,7 @@ router.post("/sendTextMassa", upload.single('phonefull'), verifyToken.verify, as
             soNumeros(numero) + '@c.us'
           );
           //
-          if (checkNumberStatus.status === 200 && checkNumberStatus.canReceiveMessage === true) {
+          if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
             //
             var sendTextMassaRes = await Sessions.sendText(
               req.body.SessionName.trim(),
@@ -467,11 +488,13 @@ router.post("/sendTextMassa", upload.single('phonefull'), verifyToken.verify, as
       await deletaArquivosTemp(filePath);
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         sendText
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "sendText": sessionStatus
       });
@@ -493,11 +516,13 @@ router.post("/sendTextGrupo", upload.none(''), verifyToken.verify, async (req, r
       );
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         sendText
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "sendText": sessionStatus
       });
@@ -517,14 +542,14 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
         soNumeros(req.body.phonefull) + '@c.us'
       );
       //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.canReceiveMessage === true) {
+      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
         //
         var sendLocation = await Sessions.sendLocation(
           req.body.SessionName.trim(),
           checkNumberStatus.number,
           req.body.lat,
           req.body.long,
-          req.body.local
+          req.body.caption
         );
         //
       } else {
@@ -532,11 +557,13 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
       }
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         sendLocation
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "sendLocation": sessionStatus
       });
@@ -560,11 +587,13 @@ router.post("/sendLocationGroup", upload.none(''), verifyToken.verify, async (re
       );
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         sendLocation
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "sendLocation": sessionStatus
       });
@@ -584,7 +613,7 @@ router.post("/sendLinkPreview", upload.none(''), verifyToken.verify, async (req,
         soNumeros(req.body.phonefull) + '@c.us'
       );
       //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.canReceiveMessage === true) {
+      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
         //
         var sendLinkPreview = await Sessions.sendLinkPreview(
           req.body.SessionName.trim(),
@@ -598,11 +627,13 @@ router.post("/sendLinkPreview", upload.none(''), verifyToken.verify, async (req,
       }
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         sendLinkPreview
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "sendLinkPreview": sessionStatus
       });
@@ -625,11 +656,13 @@ router.post("/sendLinkPreviewGroup", upload.none(''), verifyToken.verify, async 
       );
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         sendLinkPreview
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "sendLinkPreview": sessionStatus
       });
@@ -649,7 +682,7 @@ router.post("/sendImage", upload.single('fileimg'), verifyToken.verify, async (r
         soNumeros(req.body.phonefull) + '@c.us'
       );
       //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.canReceiveMessage === true) {
+      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
         //
         var sendImage = await Sessions.sendImage(
           req.body.SessionName.trim(),
@@ -665,11 +698,13 @@ router.post("/sendImage", upload.single('fileimg'), verifyToken.verify, async (r
       }
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         sendImage
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "sendImage": sessionStatus
       });
@@ -695,7 +730,7 @@ router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req,
         soNumeros(req.body.phonefull) + '@c.us'
       );
       //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.canReceiveMessage === true) {
+      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
         //
         var sendImage = await Sessions.sendImage(
           req.body.SessionName.trim(),
@@ -713,11 +748,13 @@ router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req,
       await deletaArquivosTemp(filePath);
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         sendImage
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "sendImage": sessionStatus
       });
@@ -737,7 +774,7 @@ router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (
         soNumeros(req.body.phonefull) + '@c.us'
       );
       //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.canReceiveMessage === true) {
+      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
         //
         var sendImage = await Sessions.sendImage(
           req.body.SessionName.trim(),
@@ -753,11 +790,13 @@ router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (
       }
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         sendImage
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "sendImage": sessionStatus
       });
@@ -800,7 +839,7 @@ router.post("/sendImageMassa", sendImageMassa, verifyToken.verify, async (req, r
             soNumeros(numero) + '@c.us'
           );
           //
-          if (checkNumberStatus.status === 200 && checkNumberStatus.canReceiveMessage === true) {
+          if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
             //
             var sendImageMassaRes = await Sessions.sendImage(
               req.body.SessionName.trim(),
@@ -825,11 +864,13 @@ router.post("/sendImageMassa", sendImageMassa, verifyToken.verify, async (req, r
       await deletaArquivosTemp(filePathContato);
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         sendImage
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "sendImage": sessionStatus
       });
@@ -854,7 +895,7 @@ router.post("/sendMultImage", upload.array('fileimgs', 50), verifyToken.verify, 
         soNumeros(req.body.phonefull) + '@c.us'
       );
       //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.canReceiveMessage === true) {
+      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
         //
         await forEach(resultsFiles, async (resultfile) => {
           //
@@ -878,11 +919,13 @@ router.post("/sendMultImage", upload.array('fileimgs', 50), verifyToken.verify, 
       //
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         sendImage
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "sendImage": sessionStatus
       });
@@ -927,7 +970,7 @@ router.post("/sendMultImageMassa", sendMultImageMassa, verifyToken.verify, async
             soNumeros(numero) + '@c.us'
           );
           //
-          if (checkNumberStatus.status === 200 && checkNumberStatus.canReceiveMessage === true) {
+          if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
             //
             await forEach(resultsFilesImg, async (resultfile) => {
               //
@@ -956,11 +999,13 @@ router.post("/sendMultImageMassa", sendMultImageMassa, verifyToken.verify, async
       await deletaArquivosTemp(filePathContato);
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         sendImage
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "sendImage": sessionStatus
       });
@@ -985,11 +1030,13 @@ router.post("/sendImageGrupo", upload.single('fileimg'), verifyToken.verify, asy
       );
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         sendImage
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "sendImage": sessionStatus
       });
@@ -1021,11 +1068,13 @@ router.post("/sendImageBase64Grupo", upload.single(''), verifyToken.verify, asyn
       await deletaArquivosTemp(filePath);
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         sendImage
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "sendImage": sessionStatus
       });
@@ -1050,11 +1099,13 @@ router.post("/sendImageFromBase64Grupo", upload.single(''), verifyToken.verify, 
       );
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         sendImage
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "sendImage": sessionStatus
       });
@@ -1074,7 +1125,7 @@ router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, 
         soNumeros(req.body.phonefull) + '@c.us'
       );
       //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.canReceiveMessage === true) {
+      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
         //
         var sendFile = await Sessions.sendFile(
           req.body.SessionName.trim(),
@@ -1082,7 +1133,7 @@ router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, 
           req.file.buffer,
           req.file.mimetype,
           req.file.originalname,
-          req.file.originalname.split('.')[1],
+          req.file.mimetype.split('/')[1],
           req.body.caption
         );
         //
@@ -1091,11 +1142,13 @@ router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, 
       }
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         sendFile
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "sendFile": sessionStatus
       });
@@ -1120,11 +1173,13 @@ router.post("/sendFileGroup", upload.single('file'), verifyToken.verify, async (
       );
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         sendFile
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "sendFile": sessionStatus
       });
@@ -1150,7 +1205,7 @@ router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, 
         soNumeros(req.body.phonefull).trim() + '@c.us'
       );
       //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.canReceiveMessage === true) {
+      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
         //
         var sendFile = await Sessions.sendFile(
           req.body.SessionName.trim(),
@@ -1168,11 +1223,13 @@ router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, 
       await deletaArquivosTemp(filePath);
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         sendFile
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "sendImageGrupo": sessionStatus
       });
@@ -1205,11 +1262,13 @@ router.post("/sendFileBase64Group", upload.none(''), verifyToken.verify, async (
       await deletaArquivosTemp(filePath);
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         sendFile
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "sendImageGrupo": sessionStatus
       });
@@ -1229,7 +1288,7 @@ router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (r
         soNumeros(req.body.phonefull) + '@c.us'
       );
       //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.canReceiveMessage === true) {
+      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
         //
         var sendFile = await Sessions.sendFile(
           req.body.SessionName.trim(),
@@ -1245,11 +1304,13 @@ router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (r
       }
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         sendFile
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "sendFile": sessionStatus
       });
@@ -1274,11 +1335,13 @@ router.post("/sendFileFromBase64Group", upload.none(''), verifyToken.verify, asy
       );
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         sendFile
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "sendFile": sessionStatus
       });
@@ -1311,6 +1374,7 @@ router.post("/getAllContacts", upload.none(''), verifyToken.verify, async (req, 
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "getAllContacts": sessionStatus
       });
@@ -1338,7 +1402,8 @@ router.post("/getAllChats", upload.none(''), verifyToken.verify, async (req, res
       });
       break;
     default:
-      res.status(400).json({
+      res.setHeader('Content-Type', 'application/json');
+res.status(400).json({
         "getAllChats": sessionStatus
       });
   }
@@ -1364,6 +1429,7 @@ router.post("/getAllGroups", upload.none(''), verifyToken.verify, async (req, re
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "getAllGroups": sessionStatus
       });
@@ -1381,11 +1447,13 @@ router.post("/getSessionTokenBrowser", upload.none(''), verifyToken.verify, asyn
       var getSessionTokenBrowser = await Sessions.getSessionTokenBrowser(
         req.body.SessionName
       );
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         getSessionTokenBrowser
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "getSessionTokenBrowser": sessionStatus
       });
@@ -1403,11 +1471,13 @@ router.post("/getBlockList", upload.none(''), verifyToken.verify, async (req, re
       var getBlockList = await Sessions.getBlockList(
         req.body.SessionName
       );
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         getBlockList
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "getBlockList": sessionStatus
       });
@@ -1427,7 +1497,7 @@ router.post("/getStatus", upload.none(''), verifyToken.verify, async (req, res, 
         soNumeros(req.body.phonefull) + '@c.us'
       );
       //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.canReceiveMessage === true) {
+      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
         //
         var getStatus = await Sessions.getStatus(
           req.body.SessionName.trim(),
@@ -1439,11 +1509,13 @@ router.post("/getStatus", upload.none(''), verifyToken.verify, async (req, res, 
       }
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         getStatus
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "getStatus": sessionStatus
       });
@@ -1466,7 +1538,7 @@ router.post("/getNumberProfile", upload.none(''), verifyToken.verify, async (req
         soNumeros(req.body.phonefull) + '@c.us'
       );
       //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.canReceiveMessage === true) {
+      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
         //
         var getNumberProfile = await Sessions.getNumberProfile(
           req.body.SessionName.trim(),
@@ -1478,11 +1550,13 @@ router.post("/getNumberProfile", upload.none(''), verifyToken.verify, async (req
       }
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         getNumberProfile
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "getNumberProfile": sessionStatus
       });
@@ -1502,7 +1576,7 @@ router.post("/getProfilePicFromServer", upload.none(''), verifyToken.verify, asy
         soNumeros(req.body.phonefull) + '@c.us'
       );
       //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.canReceiveMessage === true) {
+      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
         //
         var getProfilePicFromServer = await Sessions.getProfilePicFromServer(
           req.body.SessionName.trim(),
@@ -1514,11 +1588,13 @@ router.post("/getProfilePicFromServer", upload.none(''), verifyToken.verify, asy
       }
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         getProfilePicFromServer
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "getProfilePicFromServer": sessionStatus
       });
@@ -1542,13 +1618,42 @@ router.post("/checkNumberStatus", upload.none(''), verifyToken.verify, async (re
       );
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         checkNumberStatus
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "checkNumberStatus": sessionStatus
+      });
+  }
+}); //checkNumberStatus
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
+// Verificar o status do número
+router.post("/phoneValidate", upload.none(''), verifyToken.verify, async (req, res, next) => {
+  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
+  switch (sessionStatus.status) {
+    case 'inChat':
+    case 'qrReadSuccess':
+    case 'isLogged':
+    case 'chatsAvailable':
+      //
+      var phone = soNumeros(req.body.phonefull);
+      var validPhone = await validPhone(phone);
+      //
+      res.setHeader('Content-Type', 'application/json');
+      res.status(200).json({
+        validPhone
+      });
+      break;
+    default:
+      res.setHeader('Content-Type', 'application/json');
+      res.status(400).json({
+        "phoneValidate": sessionStatus
       });
   }
 }); //checkNumberStatus
@@ -1583,7 +1688,7 @@ router.post("/checkNumberStatusMassa", upload.single('contatos'), verifyToken.ve
             soNumeros(numero) + '@c.us'
           );
           //
-          if (checkNumberStatus.status === 200 && checkNumberStatus.canReceiveMessage === true) {
+          if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
             //
             checkNumberStatusMassa.push(checkNumberStatus);
             //
@@ -1597,11 +1702,13 @@ router.post("/checkNumberStatusMassa", upload.single('contatos'), verifyToken.ve
       await deletaArquivosTemp(filePath);
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         checkNumberStatusMassa
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "checkNumberStatusMassa": sessionStatus
       });
@@ -1626,11 +1733,13 @@ router.post("/leaveGroup", upload.none(''), verifyToken.verify, async (req, res,
         req.body.SessionName.trim(),
         req.body.groupId + '@g.us'
       );
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         leaveGroup
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "leaveGroup": sessionStatus
       });
@@ -1649,11 +1758,13 @@ router.post("/getGroupMembers", upload.none(''), verifyToken.verify, async (req,
         req.body.SessionName.trim(),
         req.body.groupId + '@g.us'
       );
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         getGroupMembers
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "getGroupMembers": sessionStatus
       });
@@ -1675,11 +1786,13 @@ router.post("/getGroupMembersIds", upload.none(''), verifyToken.verify, async (r
         req.body.SessionName.trim(),
         req.body.groupId + '@g.us'
       );
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         getGroupMembersIds
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "getGroupMembersIds": sessionStatus
       });
@@ -1700,11 +1813,13 @@ router.post("/getGroupInviteLink", upload.none(''), verifyToken.verify, async (r
         req.body.SessionName.trim(),
         req.body.groupId + '@g.us'
       );
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         GroupInviteLink
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "GroupInviteLink": sessionStatus
       });
@@ -1737,19 +1852,14 @@ router.post("/createGroup", upload.single('participants'), verifyToken.verify, a
         //
         if (numero.length !== 0) {
           //
-          if (validPhone(numero) === true) {
+          var checkNumberStatus = await Sessions.checkNumberStatus(
+            req.body.SessionName.trim(),
+            numero + '@c.us'
+          );
+          //
+          if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
             //
-            var checkNumberStatus = await Sessions.checkNumberStatus(
-              req.body.SessionName.trim(),
-              soNumeros(numero) + '@c.us'
-            );
-            //
-            if (checkNumberStatus.status === 200 && checkNumberStatus.canReceiveMessage === true) {
-              //
-              contactlistValid.push(soNumeros(checkNumberStatus.number) + '@s.whatsapp.net');
-            } else {
-              contactlistInvalid.push(numero + '@s.whatsapp.net');
-            }
+            contactlistValid.push(checkNumberStatus.number);
           } else {
             contactlistInvalid.push(numero + '@s.whatsapp.net');
           }
@@ -1768,16 +1878,96 @@ router.post("/createGroup", upload.single('participants'), verifyToken.verify, a
       //
       await deletaArquivosTemp(filePath);
       //
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         createGroup
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "createGroup": sessionStatus
       });
   }
 }); //createGroup
+//
+// ------------------------------------------------------------------------------------------------//
+//
+// Criar grupo (título, participantes a adicionar)
+router.post("/createCountGroup", upload.single('participants'), verifyToken.verify, async (req, res, next) => {
+  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
+  switch (sessionStatus.status) {
+    case 'isLogged':
+      //
+      var createCountGroup = [];
+      var createGroup = [];
+      //
+      var folderName = fs.mkdtempSync(path.join(os.tmpdir(), 'baileys-' + req.body.SessionName.trim() + '-'));
+      var filePath = path.join(folderName, req.file.originalname);
+      fs.writeFileSync(filePath, req.file.buffer.toString('base64'), 'base64');
+      console.log("- File:", filePath);
+      //
+      var arrayNumbers = fs.readFileSync(filePath, 'utf-8').toString().split(/\r?\n/);
+      //
+      var contactlistValid = [];
+      var contactlistInvalid = [];
+      //
+      for (var i in arrayNumbers) {
+        //console.log(arrayNumbers[i]);
+        var numero = soNumeros(arrayNumbers[i]);
+        //
+        if (numero.length !== 0) {
+          //
+
+          var checkNumberStatus = await Sessions.checkNumberStatus(
+            req.body.SessionName.trim(),
+            numero + '@c.us'
+          );
+          //
+          if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+            //
+            contactlistValid.push(checkNumberStatus.number);
+          } else {
+            contactlistInvalid.push(numero + '@s.whatsapp.net');
+          }
+          //
+        }
+        //
+        await sleep(1000);
+      }
+      //
+      for (count = 1; count <= req.body.count; count++) {
+        var resCreateGroup = await Sessions.createGroup(
+          req.body.SessionName.trim(),
+          req.body.title + "-" + count,
+          contactlistValid,
+          contactlistInvalid
+        );
+        //
+        await sleep(5000);
+        //
+        createCountGroup.push(resCreateGroup);
+        //
+        createGroup.push({
+          "createGroup": createCountGroup
+        });
+        //
+      }
+      //
+      await deletaArquivosTemp(filePath);
+      //
+      res.setHeader('Content-Type', 'application/json');
+      res.status(200).json({
+        "createCountGroup": createGroup
+      });
+      break;
+    default:
+      res.setHeader('Content-Type', 'application/json');
+      res.status(400).json({
+        "createCountGroup": sessionStatus
+      });
+  }
+}); //createCountGroup
 //
 // ------------------------------------------------------------------------------------------------//
 //
@@ -1805,22 +1995,19 @@ router.post("/createGroupSetAdminMembers", upload.single('participants'), verify
         //
         if (numero.length !== 0) {
           //
-          if (validPhone(numero) === true) {
+
+          var checkNumberStatus = await Sessions.checkNumberStatus(
+            req.body.SessionName.trim(),
+            numero + '@c.us'
+          );
+          //
+          if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
             //
-            var checkNumberStatus = await Sessions.checkNumberStatus(
-              req.body.SessionName.trim(),
-              soNumeros(numero) + '@c.us'
-            );
-            //
-            if (checkNumberStatus.status === 200 && checkNumberStatus.canReceiveMessage === true) {
-              //
-              contactlistValid.push(checkNumberStatus.number + '@s.whatsapp.net');
-            } else {
-              contactlistInvalid.push(checkNumberStatus.number + '@s.whatsapp.net');
-            }
+            contactlistValid.push(checkNumberStatus.number);
           } else {
-            contactlistInvalid.push(checkNumberStatus.number + '@s.whatsapp.net');
+            contactlistInvalid.push(numero + '@s.whatsapp.net');
           }
+
           //
         }
         //
@@ -1842,8 +2029,8 @@ router.post("/createGroupSetAdminMembers", upload.single('participants'), verify
         //
         var promoteParticipant = await Sessions.promoteParticipant(
           req.body.SessionName.trim(),
-          createGroup.gid,
-          createGroup.contactlistValid
+          createGroup.gid + '@g.us',
+          contactlistValid
         );
         //
         createGroupSetAdminMembers.push(promoteParticipant);
@@ -1854,11 +2041,13 @@ router.post("/createGroupSetAdminMembers", upload.single('participants'), verify
       //
       await deletaArquivosTemp(filePath);
       //
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         createGroupSetAdminMembers
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "createGroupSetAdminMembers": sessionStatus
       });
@@ -1892,22 +2081,19 @@ router.post("/createCountGroupSetAdminMembers", upload.single('participants'), v
         //
         if (numero.length !== 0) {
           //
-          if (validPhone(numero) === true) {
+
+          var checkNumberStatus = await Sessions.checkNumberStatus(
+            req.body.SessionName.trim(),
+            numero + '@c.us'
+          );
+          //
+          if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
             //
-            var checkNumberStatus = await Sessions.checkNumberStatus(
-              req.body.SessionName.trim(),
-              soNumeros(numero) + '@c.us'
-            );
-            //
-            if (checkNumberStatus.status === 200 && checkNumberStatus.canReceiveMessage === true) {
-              //
-              contactlistValid.push(checkNumberStatus.number + '@s.whatsapp.net');
-            } else {
-              contactlistInvalid.push(checkNumberStatus.number + '@s.whatsapp.net');
-            }
+            contactlistValid.push(checkNumberStatus.number);
           } else {
-            contactlistInvalid.push(checkNumberStatus.number + '@s.whatsapp.net');
+            contactlistInvalid.push(numero + '@s.whatsapp.net');
           }
+
           //
         }
         //
@@ -1930,7 +2116,7 @@ router.post("/createCountGroupSetAdminMembers", upload.single('participants'), v
           //
           var promoteParticipant = await Sessions.promoteParticipant(
             req.body.SessionName.trim(),
-            resCreateGroup.gid,
+            resCreateGroup.gid + '@g.us',
             resCreateGroup.contactlistValid
           );
           //
@@ -1949,11 +2135,13 @@ router.post("/createCountGroupSetAdminMembers", upload.single('participants'), v
       //
       await deletaArquivosTemp(filePath);
       //
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         "createCountGroupSetAdminMembers": createGroup
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "createCountGroupSetAdminMembers": sessionStatus
       });
@@ -1977,23 +2165,25 @@ router.post("/removeParticipant", upload.none(''), verifyToken.verify, async (re
         soNumeros(req.body.phonefull).trim() + '@c.us'
       );
       //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.canReceiveMessage === true) {
+      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
         //
         var removeParticipant = await Sessions.removeParticipant(
           req.body.SessionName.trim(),
           req.body.groupId.trim() + '@g.us',
-          [checkNumberStatus.number + '@s.whatsapp.net']
+          [checkNumberStatus.number]
         );
         //
       } else {
         var removeParticipant = checkNumberStatus;
       }
       //
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         removeParticipant
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "removeParticipant": sessionStatus
       });
@@ -2014,23 +2204,25 @@ router.post("/addParticipant", upload.none(''), verifyToken.verify, async (req, 
         soNumeros(req.body.phonefull) + '@c.us'
       );
       //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.canReceiveMessage === true) {
+      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
         //
         var addParticipant = await Sessions.addParticipant(
           req.body.SessionName.trim(),
           req.body.groupId.trim() + '@g.us',
-          [checkNumberStatus.number + '@s.whatsapp.net']
+          [checkNumberStatus.number]
         );
         //
       } else {
         var addParticipant = checkNumberStatus;
       }
       //
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         addParticipant
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "addParticipant": sessionStatus
       });
@@ -2051,23 +2243,25 @@ router.post("/promoteParticipant", upload.none(''), verifyToken.verify, async (r
         soNumeros(req.body.phonefull) + '@c.us'
       );
       //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.canReceiveMessage === true) {
+      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
         //
         var promoteParticipant = await Sessions.promoteParticipant(
           req.body.SessionName.trim(),
           req.body.groupId.trim() + '@g.us',
-          [checkNumberStatus.number + '@s.whatsapp.net']
+          [checkNumberStatus.number]
         );
         //
       } else {
         var promoteParticipant = checkNumberStatus;
       }
       //
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         promoteParticipant
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "promoteParticipant": sessionStatus
       });
@@ -2087,23 +2281,25 @@ router.post("/demoteParticipant", upload.none(''), verifyToken.verify, async (re
         soNumeros(req.body.phonefull) + '@c.us'
       );
       //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.canReceiveMessage === true) {
+      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
         //
         var demoteParticipant = await Sessions.demoteParticipant(
           req.body.SessionName.trim(),
           req.body.groupId.trim() + '@g.us',
-          [checkNumberStatus.number + '@s.whatsapp.net']
+          [checkNumberStatus.number]
         );
         //
       } else {
         var demoteParticipant = checkNumberStatus;
       }
       //
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         demoteParticipant
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "demoteParticipant": sessionStatus
       });
@@ -2125,11 +2321,13 @@ router.post("/getGroupInfoFromInviteLink", upload.none(''), verifyToken.verify, 
         req.body.SessionName.trim(),
         req.body.InviteCode
       );
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         getGroupInfoFromInviteLink
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "getGroupInfoFromInviteLink": sessionStatus
       });
@@ -2152,16 +2350,75 @@ router.post("/joinGroup", upload.none(''), verifyToken.verify, async (req, res, 
         req.body.SessionName.trim(),
         req.body.InviteCode
       );
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         joinGroup
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "joinGroup": sessionStatus
       });
   }
 }); //joinGroup
+//
+// ------------------------------------------------------------------------------------------------//
+//
+router.post("/onlyAdminsMessagesGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
+  //
+  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
+  switch (sessionStatus.status) {
+    case 'inChat':
+    case 'qrReadSuccess':
+    case 'isLogged':
+    case 'chatsAvailable':
+      //
+      var onlyAdminsMessagesGroup = await Sessions.onlyAdminsMessagesGroup(
+        req.body.SessionName.trim(),
+        req.body.groupId + '@g.us'
+      );
+      res.setHeader('Content-Type', 'application/json');
+      res.status(200).json({
+        onlyAdminsMessagesGroup
+      });
+      break;
+    default:
+      res.setHeader('Content-Type', 'application/json');
+      res.status(400).json({
+        "onlyAdminsMessagesGroup": sessionStatus
+      });
+  }
+}); //onlyAdminsMessagesGroup
+//
+// ------------------------------------------------------------------------------------------------//
+//
+router.post("/everyoneModifySettingsGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
+  //
+  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
+  switch (sessionStatus.status) {
+    case 'inChat':
+    case 'qrReadSuccess':
+    case 'isLogged':
+    case 'chatsAvailable':
+      //
+      var everyoneModifySettingsGroup = await Sessions.everyoneModifySettingsGroup(
+        req.body.SessionName.trim(),
+        req.body.groupId + '@g.us',
+        req.body.change
+      );
+      res.setHeader('Content-Type', 'application/json');
+      res.status(200).json({
+        everyoneModifySettingsGroup
+      });
+      break;
+    default:
+      res.setHeader('Content-Type', 'application/json');
+      res.status(400).json({
+        "everyoneModifySettingsGroup": sessionStatus
+      });
+  }
+}); //everyoneModifySettingsGroup
 //
 // ------------------------------------------------------------------------------------------------//
 //
@@ -2185,11 +2442,13 @@ router.post("/setProfileStatus", upload.none(''), verifyToken.verify, async (req
         req.body.SessionName.trim(),
         req.body.ProfileStatus
       );
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         setProfileStatus
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "setProfileStatus": sessionStatus
       });
@@ -2212,11 +2471,13 @@ router.post("/setProfileName", upload.none(''), verifyToken.verify, async (req, 
         req.body.SessionName.trim(),
         req.body.ProfileName
       );
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         setProfileName
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "setProfileName": sessionStatus
       });
@@ -2247,11 +2508,13 @@ router.post("/setProfilePic", upload.single('fileimg'), verifyToken.verify, asyn
         filePath
       );
       //
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         setProfilePic
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "setProfilePic": sessionStatus
       });
@@ -2276,12 +2539,14 @@ router.post("/killServiceWorker", upload.none(''), verifyToken.verify, async (re
     case 'chatsAvailable':
       //
       var killServiceWorker = await Sessions.killServiceWorker(req.body.SessionName.trim());
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         killServiceWorker
       });
       //
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "killServiceWorker": sessionStatus
       });
@@ -2300,12 +2565,14 @@ router.post("/restartService", upload.none(''), verifyToken.verify, async (req, 
     case 'chatsAvailable':
       //
       var restartService = await Sessions.restartService(req.body.SessionName.trim());
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         restartService
       });
       //
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "restartService": sessionStatus
       });
@@ -2342,6 +2609,7 @@ router.post("/reloadService", upload.none(''), verifyToken.verify, async (req, r
             //
             //await deletaToken(session.tokenPatch + "/" + req.body.SessionName + ".data.json");
             //
+            res.setHeader('Content-Type', 'application/json');
             res.status(200).json({
               "reloadService": reload
             });
@@ -2350,6 +2618,7 @@ router.post("/reloadService", upload.none(''), verifyToken.verify, async (req, r
             //
             var reload = restartService;
             //
+            res.setHeader('Content-Type', 'application/json');
             res.status(400).json({
               "reloadService": reload
             });
@@ -2360,6 +2629,7 @@ router.post("/reloadService", upload.none(''), verifyToken.verify, async (req, r
           //
           var reload = killServiceWorker;
           //
+          res.setHeader('Content-Type', 'application/json');
           res.status(400).json({
             "reloadService": reload
           });
@@ -2367,6 +2637,7 @@ router.post("/reloadService", upload.none(''), verifyToken.verify, async (req, r
         }
       } catch (error) {
         //
+        res.setHeader('Content-Type', 'application/json');
         res.status(404).json({
           "reloadService": {
             "erro": true,
@@ -2380,6 +2651,7 @@ router.post("/reloadService", upload.none(''), verifyToken.verify, async (req, r
       //
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "reloadService": sessionStatus
       });
@@ -2400,11 +2672,13 @@ router.post("/getHostDevice", upload.none(''), verifyToken.verify, async (req, r
       var getHostDevice = await Sessions.getHostDevice(req.body.SessionName.trim());
       //
       //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         getHostDevice
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "getHostDevice": sessionStatus
       });
@@ -2423,11 +2697,13 @@ router.post("/getConnectionState", upload.none(''), verifyToken.verify, async (r
     case 'chatsAvailable':
       //
       var getConnectionState = await Sessions.getConnectionState(req.body.SessionName.trim());
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         getConnectionState
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "getConnectionState": sessionStatus
       });
@@ -2447,11 +2723,13 @@ router.post("/getBatteryLevel", upload.none(''), verifyToken.verify, async (req,
       //
       var getBatteryLevel = await Sessions.getBatteryLevel(req.body.SessionName.trim());
       //
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         getBatteryLevel
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "getBatteryLevel": sessionStatus
       });
@@ -2470,11 +2748,13 @@ router.post("/isConnected", upload.none(''), verifyToken.verify, async (req, res
     case 'chatsAvailable':
       //
       var isConnected = await Sessions.isConnected(req.body.SessionName.trim());
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         isConnected
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "isConnected": sessionStatus
       });
@@ -2493,11 +2773,13 @@ router.post("/getWAVersion", upload.none(''), verifyToken.verify, async (req, re
     case 'chatsAvailable':
       //
       var getWAVersion = await Sessions.getWAVersion(req.body.SessionName.trim());
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         getWAVersion
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "getWAVersion": sessionStatus
       });
@@ -2519,11 +2801,13 @@ router.post("/startPhoneWatchdog", upload.none(''), verifyToken.verify, async (r
         req.body.SessionName.trim(),
         req.body.interval
       );
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         startPhoneWatchdog
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "getWAVersion": sessionStatus
       });
@@ -2542,11 +2826,13 @@ router.post("/stopPhoneWatchdog", upload.none(''), verifyToken.verify, async (re
     case 'chatsAvailable':
       //
       var stopPhoneWatchdog = await Sessions.stopPhoneWatchdog(req.body.SessionName.trim());
+      res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
         stopPhoneWatchdog
       });
       break;
     default:
+      res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
         "stopPhoneWatchdog": sessionStatus
       });
@@ -2572,7 +2858,8 @@ router.post("/RotaTeste", upload.single('fileimg'), async (req, res, next) => {
   switch (mimetype) {
     case 'image/gif':
       //
-      res.status(200).json({
+      res.setHeader('Content-Type', 'application/json');
+res.status(200).json({
         error: false,
         message: 'Arquivo imagem gif'
       });
@@ -2580,7 +2867,8 @@ router.post("/RotaTeste", upload.single('fileimg'), async (req, res, next) => {
       break;
     case 'video/gif':
       //
-      res.status(200).json({
+      res.setHeader('Content-Type', 'application/json');
+res.status(200).json({
         error: false,
         message: 'Arquivo video gif'
       });
@@ -2588,7 +2876,8 @@ router.post("/RotaTeste", upload.single('fileimg'), async (req, res, next) => {
       break;
     case 'image/jpeg':
       //
-      res.status(200).json({
+      res.setHeader('Content-Type', 'application/json');
+res.status(200).json({
         error: false,
         message: 'Arquivo jpeg'
       });
@@ -2596,7 +2885,8 @@ router.post("/RotaTeste", upload.single('fileimg'), async (req, res, next) => {
       break;
     case 'video/mp4':
       //
-      res.status(200).json({
+      res.setHeader('Content-Type', 'application/json');
+res.status(200).json({
         error: false,
         message: 'Arquivo video mp4'
       });
@@ -2604,7 +2894,8 @@ router.post("/RotaTeste", upload.single('fileimg'), async (req, res, next) => {
       break;
     case 'audio/mp4':
       //
-      res.status(200).json({
+      res.setHeader('Content-Type', 'application/json');
+res.status(200).json({
         error: false,
         message: 'Arquivo mp4Audio'
       });
@@ -2612,7 +2903,8 @@ router.post("/RotaTeste", upload.single('fileimg'), async (req, res, next) => {
       break;
     case 'audio/ogg; codecs=opus':
       //
-      res.status(200).json({
+      res.setHeader('Content-Type', 'application/json');
+res.status(200).json({
         error: false,
         message: 'Arquivo ogg'
       });
@@ -2620,7 +2912,8 @@ router.post("/RotaTeste", upload.single('fileimg'), async (req, res, next) => {
       break;
     case 'application/pdf':
       //
-      res.status(200).json({
+      res.setHeader('Content-Type', 'application/json');
+res.status(200).json({
         error: false,
         message: 'Arquivo pdf'
       });
@@ -2628,7 +2921,8 @@ router.post("/RotaTeste", upload.single('fileimg'), async (req, res, next) => {
       break;
     case 'image/png':
       //
-      res.status(200).json({
+      res.setHeader('Content-Type', 'application/json');
+res.status(200).json({
         error: false,
         message: 'Arquivo png'
       });
@@ -2636,7 +2930,8 @@ router.post("/RotaTeste", upload.single('fileimg'), async (req, res, next) => {
       break;
     case 'image/webp':
       //
-      res.status(200).json({
+      res.setHeader('Content-Type', 'application/json');
+res.status(200).json({
         error: false,
         message: 'Arquivo webp'
       });
@@ -2644,7 +2939,8 @@ router.post("/RotaTeste", upload.single('fileimg'), async (req, res, next) => {
       break;
     default:
       //
-      res.status(200).json({
+      res.setHeader('Content-Type', 'application/json');
+res.status(200).json({
         error: true,
         message: 'Arquivo invalido'
       });
@@ -2654,6 +2950,8 @@ router.post("/RotaTeste", upload.single('fileimg'), async (req, res, next) => {
   //
   var resRotaTeste = await Sessions.RotaTeste(req.body.SessionName.trim());
   //
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Content-Type', 'application/json');
   res.status(200).json({
     "RotaTeste": resRotaTeste
   });

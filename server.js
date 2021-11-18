@@ -2,12 +2,6 @@ const fs = require('fs-extra');
 const {
   yo
 } = require('yoo-hoo');
-/*
-require("dotenv").config({
-  path: "./.env"
-});
-*/
-//
 const config = require('./config.global');
 //
 yo('My-WhatsApp', {
@@ -40,8 +34,11 @@ TOKENSPATCH_LINUX=/usr/local/tokens
 #
 TOKENSPATCH_WIN=c:/tokens
 #
-# Validate in terminal 0 or 1
-VALIDATE_MYSQL=1
+# Validate in mysql 0 or 1
+VALIDATE_MYSQL=0
+#
+# Save session in mysql 0 or 1
+SESSION_IN_MYSQL=0
 #
 HOST_MYSQL=localhost
 #

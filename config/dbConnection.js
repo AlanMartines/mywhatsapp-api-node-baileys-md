@@ -1,10 +1,4 @@
 const mysql = require("mysql2");
-//require('dotenv/config');
-/*
-require("dotenv").config({
-  path: "./.env"
-});
-*/
 const config = require('../config.global');
 //
 // connect to the db
@@ -19,20 +13,6 @@ const dbConnectionInfo = {
   queueLimit: 0
 };
 //
-//For mysql single connection
-/* var dbconnection = mysql.createConnection(
-        dbConnectionInfo
-); 
-//
- dbconnection.connect(function (err) {
-    if (!err) {
-        console.log("Database is connected ...");
-    } else {
-        console.log("Error connecting database ...");
-    }
-}); 
-//
-*/
 //Create mysql connection pool
 var dbconnection = mysql.createPool(
   dbConnectionInfo
@@ -54,11 +34,6 @@ dbconnection.on('connection', function(connection) {
     console.log('- Waiting for available connection slot');
   });
   //
-  /*
-  connection.end(function(err) {
-    console.log('- All connections in the pool have ended');
-  });
-	*/
 });
 //
 module.exports = dbconnection;
