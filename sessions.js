@@ -428,9 +428,7 @@ module.exports = class Sessions {
     //-------------------------------------------------------------------------------------------------------------------------------------//
     //
     // salvar os dados da sessão
-    var client = undefined;
     var loadState = () => {
-      var state = undefined;
       try {
         var sessão = JSON.parse(fs.readFileSync(`${session.tokenPatch}/${SessionName}.data.json`, {
           encoding: 'utf-8'
