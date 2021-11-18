@@ -4,6 +4,7 @@ const config = require('./config.global');
 const fs = require("fs-extra");
 const qr = require("qr-image");
 const moment = require("moment");
+const pino = require("pino");
 const Base64BufferThumbnail = require('base64-buffer-thumbnail');
 const {
   fromPath,
@@ -26,7 +27,7 @@ const {
   downloadContentFromMessage,
   proto,
 } = require('@adiwajshing/baileys-md');
-const con = require("./config/dbConnection");
+const baileys = require("@adiwajshing/baileys-md");
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
@@ -426,24 +427,47 @@ module.exports = class Sessions {
     //
     //-------------------------------------------------------------------------------------------------------------------------------------//
     //
-    try {
-      const credentials = readFileSync(`${session.tokenPatch}/${SessionName}.data.json`, {
-        encoding: 'utf-8'
-      });
-      var value = JSON.parse(credentials, BufferJSON.reviver);
-
-      var loadSession = {
-        creds: value.creds,
-        keys: initInMemoryKeyStore(value.keys),
-      };
-    } catch {
-      console.log('Erro ao carregar credenciais');
-      var value = null;
+    // salvar os dados da sessão
+    const saveState = (state) => {
+      //console.log('saving pre-keys')
+      state = state || client.authState
+      fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`,
+        JSON.stringify(state, baileys.BufferJSON.replacer, 2)
+      );
     }
     //
-    const client = new makeWAclient({
+    var client = undefined;
+    var loadState = () => {
+      var state = undefined;
+      try {
+        var sessão = JSON.parse(fs.readFileSync(`${session.tokenPatch}/${SessionName}.data.json`, {
+          encoding: 'utf-8'
+        }), baileys.BufferJSON.reviver);
+        state = {
+          creds: sessão.creds,
+          keys: baileys.initInMemoryKeyStore(sessão.keys)
+        };
+      } catch (error) {}
+      return state;
+    };
+    // salvar os dados da sessão
+    const saveState = (state) => {
+      //console.log('saving pre-keys')
+      state = state || client.authState
+      fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(state, baileys.BufferJSON.replacer, 2));
+    }
+    //
+    const client = baileys["default"]({
       printQRInTerminal: true,
-      auth: loadSession,
+      browser: ['My WhatsApp', 'Chrome', '87'],
+      logger: pino({
+        level: 'warn'
+      }),
+      auth: loadState()
+    });
+    //
+    client.ev.on('chats.delete', async e => {
+      console.log(e)
     });
     //
     client.ev.on('presence.update', (presences) => {
@@ -479,41 +503,6 @@ module.exports = class Sessions {
       }
     });
 
-    client.ev.on('messages.upsert', async ({
-      messages
-    }) => {
-      const message = messages[0];
-      testeCases(client, message);
-    });
-
-    client.ev.on('auth-state.update', () => saveSession(client));
-
-    client.ev.on('connection.update', (update) => {
-      const {
-        connection,
-        lastDisconnect
-      } = update;
-
-      console.log();
-      console.log();
-      console.log('Connection: ', connection);
-
-      if (connection === 'close') {
-        // const statusError = (lastDisconnect.error as Boom).output.statusCode;
-        const statusErrorLogout = DisconnectReason.loggedOut;
-        const errorIsNotLogout = statusError !== statusErrorLogout;
-
-        if (errorIsNotLogout) {
-          startclient();
-        } else {
-          const path = join(__dirname, '../', 'auth_info_multi.json');
-          unlinkSync(path);
-          console.log('Connection closed');
-          process.exit();
-        }
-      }
-      console.log('Connection update', update);
-    });
     //
     return client;
   } //initSession
