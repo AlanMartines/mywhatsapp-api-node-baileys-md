@@ -428,14 +428,6 @@ module.exports = class Sessions {
     //-------------------------------------------------------------------------------------------------------------------------------------//
     //
     // salvar os dados da sessão
-    const saveState = (state) => {
-      //console.log('saving pre-keys')
-      state = state || client.authState
-      fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`,
-        JSON.stringify(state, baileys.BufferJSON.replacer, 2)
-      );
-    }
-    //
     var client = undefined;
     var loadState = () => {
       var state = undefined;
