@@ -199,6 +199,9 @@ git clone https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md.git Api
 # Acesse a pasta do projeto no terminal/cmd
 cd ApiBaileysMd
 
+# npm install download git repository
+git config --global url.https://github.com/.insteadOf git://github.com/
+
 # Instale as dependências
 npm install --allow-root --unsafe-perm=true
 

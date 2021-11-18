@@ -51,7 +51,6 @@
     "pdf2pic": "^2.1.4",
     "qrcode": "^1.4.4",
     "qr-image": "^3.2.0",
-    "sharp": "^0.29.3",
     "socket.io": "^4.3.2",
     "socket.io-client": "^4.3.2",
     "typescript": "^4.5.2",
