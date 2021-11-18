@@ -441,7 +441,10 @@ module.exports = class Sessions {
       var value = null;
     }
     //
-    const client = new makeWAclient();
+    const client = new makeWAclient({
+      printQRInTerminal: true,
+      auth: loadSession,
+    });
     //
     client.ev.on('presence.update', (presences) => {
       console.log('Presence: ', presences);
