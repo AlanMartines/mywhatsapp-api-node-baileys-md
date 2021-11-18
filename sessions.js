@@ -13,15 +13,19 @@ const {
 const {
   forEach
 } = require('p-iteration');
-const makeWASocket, {
+const makeWAclient, {
   AuthenticationState,
-  DisconnectReason,
-  AnyMessageContent,
   BufferJSON,
+  DisconnectReason,
   initInMemoryKeyStore,
-  delay
+  WAclient,
+  delay,
+  AnyMessageContent,
+  MiscMessageGenerationOptions,
+  downloadContentFromMessage,
+  proto,
 } = require('@adiwajshing/baileys-md');
-const io = require("socket.io-client"),
+const io = require("client.io-client"),
   ioClient = io.connect("http://" + config.HOST + ":" + config.PORT);
 const con = require("./config/dbConnection");
 //
@@ -422,200 +426,95 @@ module.exports = class Sessions {
     console.log("- AuthorizationToken:", session.AuthorizationToken);
     //
     //-------------------------------------------------------------------------------------------------------------------------------------//
-    const client = new WAConnection();
-    //client.autoReconnect = true;
-    //client.user = "My WhatsApp";
-    client.version = [3, 3234, 9]; // https://github.com/adiwajshing/Baileys/issues/782
-    client.autoReconnect = ReconnectMode.onConnectionLost;
-    client.logUnhandledMessages = false;
-    client.connectOptions = {
-      regenerateQRIntervalMs: 15000,
-      /** fails the connection if no data is received for X seconds */
-      maxIdleTimeMs: 60000,
-      /** maximum attempts to connect */
-      maxRetries: Infinity,
-      /** max time for the phone to respond to a connectivity test */
-      /** should the chats be waited for;
-       * should generally keep this as true, unless you only care about sending & receiving new messages
-       * & don't care about chat history
-       * */
-      waitForChats: true,
-      /** if set to true, the connect only waits for the last message of the chat
-       * setting to false, generally yields a faster connect
-       */
-      waitOnlyForLastMessage: false,
-      /** max time for the phone to respond to a connectivity test */
-      phoneResponseTime: 15000,
-      /** minimum time between new connections */
-      connectCooldownMs: 4000,
-      /** agent used for WS connections (could be a proxy agent) */
-      agent: undefined,
-      /** agent used for fetch requests -- uploading/downloading media */
-      fetchAgent: undefined,
-      /** always uses takeover for connecting */
-      alwaysUseTakeover: true,
-      /** log QR to terminal */
-      logQR: parseInt(config.VIEW_QRCODE_TERMINAL)
-    };
-    client.browserDescription = ['My WhatsApp', 'Chrome', '87'];
-    await fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`) && await client.loadAuthInfo(`${session.tokenPatch}/${SessionName}.data.json`);
-    client.autoReconnect = ReconnectMode.onConnectionLost; // only automatically reconnect when the connection breaks
-    client.logger.level = 'info'; // set to 'debug' or  'info' to see what kind of stuff you can implement
-    // attempt to reconnect at most 10 times in a row
-    client.connectOptions.maxRetries = 10;
-    client.chatOrderingKey = waChatKey(true); // order chats such that pinned chats are on top
     //
-    let lastqr = null;
-    let attempts = 0;
-    //
-    client.on("qr", async (qr_data) => {
-      let qr_svg = qr.imageSync(qr_data, {
-        type: 'png'
+    try {
+      const credentials = readFileSync(`${session.tokenPatch}/${SessionName}.data.json`, {
+        encoding: 'utf-8'
       });
-      //
-      let base64data = qr_svg.toString('base64');
-      let qr_str = "data:image/png;base64," + base64data;
-      //
-      lastqr = qr;
-      attempts++;
-      //
-      console.log("- State:", client.state);
-      //
-      console.log('- Número de tentativas de ler o qr-code:', attempts);
-      session.attempts = attempts;
-      //
-      console.log("- Captura do QR-Code");
-      //
-      session.qrcode = qr_str;
-      session.qrcodedata = base64data;
-      //
-      session.state = "QRCODE";
-      session.status = "qrRead";
-      session.message = 'Sistema iniciando e indisponivel para uso';
-      //
-      await updateStateDb(session.state, session.status, session.AuthorizationToken);
-      //
+      var value = JSON.parse(credentials, BufferJSON.reviver);
+
+      var loadSession = {
+        creds: value.creds,
+        keys: initInMemoryKeyStore(value.keys),
+      };
+    } catch {
+      console.log('Erro ao carregar credenciais');
+      var value = null;
+    }
+    //
+    const client = makeWAclient({
+      printQRInTerminal: true,
+      auth: loadSession,
     });
     //
-    // this will be called as soon as the credentials are updated
-    client.on('open', async () => {
-      // save credentials whenever updated
-      console.log(`- Credentials updated init!`)
-      const authInfo = await client.base64EncodedAuthInfo(); // get all the auth info we need to restore this session
-      session.browserSessionToken = JSON.stringify(authInfo, null, '\t');
-      await fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(authInfo, null, '\t')); // save this info to a file
-      //
-      session.state = "CONNECTED";
-      session.status = 'isLogged';
-      session.qrcodedata = null;
-      session.message = 'Sistema iniciando e disponivel para uso';
-      //
-      await updateStateDb(session.state, session.status, session.AuthorizationToken);
-      //
+    client.ev.on('presence.update', (presences) => {
+      console.log('Presence: ', presences);
     });
-    //
-    client.on('credentials-updated', async () => {
-      console.log('- Credentials updated!')
-      const authInfo = await client.base64EncodedAuthInfo(); // get all the auth info we need to restore this session
-      session.browserSessionToken = JSON.stringify(authInfo, null, '\t');
-      await fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(authInfo, null, '\t')); // save this info to a file
-      //
-      session.state = "CONNECTED";
-      session.status = 'isLogged';
-      session.qrcodedata = null;
-      session.message = 'Sistema iniciando e disponivel para uso';
-      //
+
+    client.ev.on('groups.update', (group) => {
+      // Teste 1 - Alterei o nome do grupo e caiu aqui, onde o subject é o novo nome
+      console.log('Grupo update: ', group);
     });
-    //
-    client.on("close", async ({
-      reason,
-      isReconnecting
-    }) => {
-      console.log("- Close because " + reason + ", reconnecting: " + isReconnecting);
-      if (!isReconnecting && reason == "invalid_session") {
-        if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) {
-          fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`);
-        }
-        //
-        session.state = "CLOSED";
-        session.status = 'CLOSED';
-        session.client = false;
-        session.qrcodedata = null;
-        session.message = "Sessão fechada";
-        //
-        client.clearAuthInfo();
-        //
-        await Sessions.Start(SessionName.trim());
-        //
+
+    client.ev.on('group-participants.update', (group) => {
+      switch (group.action) {
+        case 'add':
+          console.log('Participante(s) adicionado(s): ', group.participants);
+          break;
+
+        case 'remove':
+          console.log('Participante(s) removido(s): ', group.participants);
+          break;
+
+        case 'promote':
+          console.log('Participante(s) promovido(s) a admin: ', group.participants);
+          break;
+
+        case 'demote':
+          console.log('Participante(s) despromovido(s) de admin: ', group.participants);
+          break;
+
+        default:
+          console.log('Ação não tratada');
+          break;
       }
-      //
     });
-    //
-    //
-    let error;
-    await client.connect().then(async ([user, chats, contacts, unread]) => {
-      //
-      contacts.forEach(contact => {
-        const name = contact.name || contact.notify
-        console.log('- Hi I am your contact ' + name + ', my id is ' + contact.jid)
-      });
-      //
-      session.state = "CONNECTED";
-      session.status = 'isLogged';
-      session.message = 'Sistema iniciado e disponivel para uso';
-      //
-      await updateStateDb(session.state, session.status, session.AuthorizationToken);
-      //
-    }).catch(async (err) => {
-      //
-      error = err;
-      //
-      session.state = 'NOTFOUND';
-      session.status = 'notLogged';
-      session.qrcodedata = null;
-      session.message = 'Sistema Off-line';
-      //
-      await updateStateDb(session.state, session.status, session.AuthorizationToken);
-      //
-      return false;
+
+    client.ev.on('messages.upsert', async ({
+      messages
+    }) => {
+      const message = messages[0];
+      testeCases(client, message);
     });
-    //
-    if (!client) {
-      console.error("- Connect error:", error);
-    }
-    //
-    console.log("- State:", client.state);
-    //
-    if (client.state == "open") {
-      //
-      session.state = "CONNECTED";
-      session.status = 'isLogged';
-      session.qrcodedata = null;
-      session.message = 'Sistema iniciando e disponivel para uso';
-      //
-    } else if (client.state == "connecting") {
-      //
-      session.state = "STARTING";
-      session.status = 'notLogged';
-      session.qrcodedata = null;
-      session.message = 'Sistema iniciando e indisponivel para uso';
-      //
-    } else if (client.state == "close") {
-      //
-      session.state = "CLOSED";
-      session.status = 'CLOSED';
-      session.client = false;
-      session.qrcodedata = null;
-      session.message = "Sessão fechada";
-      //
-    } else {
-      //
-      session.state = "STARTING";
-      session.status = 'notLogged';
-      session.qrcodedata = null;
-      session.message = 'Sistema iniciando e indisponivel para uso';
-      //
-    }
+
+    client.ev.on('auth-state.update', () => saveSession(client));
+
+    client.ev.on('connection.update', (update) => {
+      const {
+        connection,
+        lastDisconnect
+      } = update;
+
+      console.log();
+      console.log();
+      console.log('Connection: ', connection);
+
+      if (connection === 'close') {
+        // const statusError = (lastDisconnect.error as Boom).output.statusCode;
+        const statusErrorLogout = DisconnectReason.loggedOut;
+        const errorIsNotLogout = statusError !== statusErrorLogout;
+
+        if (errorIsNotLogout) {
+          startclient();
+        } else {
+          const path = join(__dirname, '../', 'auth_info_multi.json');
+          unlinkSync(path);
+          console.log('Connection closed');
+          process.exit();
+        }
+      }
+      console.log('Connection update', update);
+    });
     //
     return client;
   } //initSession
@@ -628,189 +527,13 @@ module.exports = class Sessions {
     ╚═╝└─┘ ┴  ┴ ┴┘└┘└─┘  └─┘ ┴ ┴ ┴┴└─ ┴ └─┘─┴┘
   */
   //
-  static async setup(SessionName, AuthorizationToken) {
+  static async setup(SessionName) {
     console.log("- Sinstema iniciando");
     var session = Sessions.getSession(SessionName);
     await session.client.then(async (client) => {
       //
       console.log("- State setup:", client.state);
-      //
-      if (client.state == "open") {
-        //
-        session.state = "CONNECTED";
-        session.status = 'isLogged';
-        session.qrcodedata = null;
-        session.message = 'Sistema iniciando e disponivel para uso';
-        //
-        await updateStateDb(session.state, session.status, session.AuthorizationToken);
-        //
-      } else if (client.state == "connecting") {
-        //
-        session.state = "STARTING";
-        session.status = 'notLogged';
-        session.qrcodedata = null;
-        session.message = 'Sistema iniciando e indisponivel para uso';
-        //
-        await updateStateDb(session.state, session.status, session.AuthorizationToken);
-        //
-      } else if (client.state == "close") {
-        //
-        session.state = "CLOSED";
-        session.status = 'CLOSED';
-        session.client = false;
-        session.qrcodedata = null;
-        session.message = "Sessão fechada";
-        //
-        await updateStateDb(session.state, session.status, session.AuthorizationToken);
-        //
-      }
-      // this will be called as soon as the credentials are updated
-      client.on('open', async () => {
-        // save credentials whenever updated
-        console.log(`- Credentials updated setup!`)
-        const authInfo = client.base64EncodedAuthInfo(); // get all the auth info we need to restore this session
-        session.browserSessionToken = JSON.stringify(authInfo, null, '\t');
-        fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(authInfo, null, '\t')); // save this info to a file
-        //
-        session.state = "CONNECTED";
-        session.status = 'isLogged';
-        session.qrcodedata = null;
-        session.message = 'Sistema iniciando e disponivel para uso';
-        //
-        await updateStateDb(session.state, session.status, session.AuthorizationToken);
-        //
-      });
-      //
-      // this will be called as soon as the credentials are updated
-      client.on('connecting', async ({
-        reason,
-        isReconnecting
-      }) => {
-        // save credentials whenever updated
-        console.log("- Connecting because " + reason + ", reconnecting: " + isReconnecting)
-        //
-        session.state = "CLOSED";
-        session.status = 'CLOSED';
-        session.client = false;
-        session.qrcodedata = null;
-        console.log("- Sessão fechada");
-        //
-      });
-      //
-      client.on("close", async ({
-        reason,
-        isReconnecting
-      }) => {
-        console.log("- Close because " + reason + ", reconnecting: " + isReconnecting);
-        if (!isReconnecting && reason == "invalid_session") {
-          if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) {
-            fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`);
-          }
-          client.clearAuthInfo();
-          //
-          session.state = "DISCONNECTED";
-          session.status = 'notLogged';
-          session.client = false;
-          session.qrcodedata = null;
-          console.log("- Sessão fechada");
-          //
-        } else if (!isReconnecting && reason == "intentional") {
-          //
-          session.state = "CLOSED";
-          session.status = 'CLOSED';
-          session.qrcodedata = null;
-          session.message = 'Sessão fechada';
-          //
-        } else if (!isReconnecting && reason == "replaced") {
-          //
-          session.state = "CLOSED";
-          session.status = 'CLOSED';
-          session.qrcodedata = null;
-          session.message = 'Sessão fechada';
-          //
-          //await Sessions.Start(SessionName.trim());
-          //
-        } else {
-          //
-          session.state = "CLOSED";
-          session.status = 'CLOSED';
-          session.qrcodedata = null;
-          session.message = 'Sessão fechada';
-          //
-        }
-        //
-        //await deletaToken(session.tokenPatch + "/" + SessionName + ".data.json");
-        //
-        await updateStateDb(session.state, session.status, session.AuthorizationToken);
-        //
-      });
-      //
-      /** when the connection to the phone changes */
-      client.on('connection-phone-change', (state) => {
-        console.log("- State:", state);
-        //
-        // { connected: false }
-        if (state.connected) {
-          //
-          console.log("- Telefone conectado");
-          //
-        } else if (!state.connected) {
-          //
-          console.log("- Telefone desconectado");
-          //
-        }
-        //
-      });
-      //
-      client.on('chats-received', async ({
-        hasNewChats
-      }) => {
-        console.log(`- You have ${client.chats.length} chats, new chats available: ${hasNewChats}`);
-        const unread = await client.loadAllUnreadMessages()
-        console.log("- You have " + unread.length + " unread messages")
-      });
-      //
-      client.on('contacts-received', () => {
-        console.log(`- You have ${Object.keys(client.contacts).length} contacts`);
-      });
-      //
-      client.on('initial-data-received', () => {
-        console.log('- Received all initial messages');
-      });
-      //
-      client.on('call', ({
-        jid,
-        id
-      }) => {
-        conn.rejectIncomingCall(id);
-        conn.sendMessage(jid, 'Busy rn', 'conversation');
-      });
-      //
-      client.on('blocklist-update', (json) => {
-        console.log('- Update Blocklist');
-        session.blocklist = JSON.stringify(json, null, 2);
-      });
-      //
-      client.on('CB:Conn,pushname', (json) => {
-        const pushname = json[1].pushname
-        client.user.name = pushname // update on client too
-        console.log("- Name updated: " + pushname);
-      });
-      //
-      client.on(`CB:action,,battery`, (json) => {
-        const batteryLevelStr = json[2][0][1].value
-        const batterylevel = parseInt(batteryLevelStr);
-        console.log("- Battery level: " + batterylevel + "%");
-      });
-      //
-      client.on(`CB:Cmd,type:disconnect`, (json) => {
 
-      });
-      //
-      client.on('CB:Blocklist', (json) => {
-        console.log('- Blocklist');
-        session.blocklist = JSON.stringify(json, null, 2);
-      });
       //
     });
   } //setup
