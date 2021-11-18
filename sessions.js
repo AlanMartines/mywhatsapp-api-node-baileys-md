@@ -465,7 +465,7 @@ module.exports = class Sessions {
         lastDisconnect
       } = update
       if (connection === 'close') {
-        console.log('connection closed due to ', lastDisconnect.error, ', reconnecting ', shouldReconnect)
+        console.log('connection closed due to ', lastDisconnect.error, ', reconnecting ', connection)
         // reconnect if not logged out
 
       } else if (connection === 'open') {
