@@ -441,7 +441,7 @@ module.exports = class Sessions {
       var value = null;
     }
     //
-    const client = makeWAclient({
+    const client = new makeWAclient({
       printQRInTerminal: true,
       auth: loadSession,
     });
