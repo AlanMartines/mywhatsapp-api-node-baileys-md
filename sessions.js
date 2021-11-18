@@ -13,7 +13,8 @@ const {
 const {
   forEach
 } = require('p-iteration');
-const makeWAclient, {
+const {
+  makeWAclient,
   AuthenticationState,
   BufferJSON,
   DisconnectReason,
