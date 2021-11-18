@@ -441,12 +441,6 @@ module.exports = class Sessions {
       } catch (error) {}
       return state;
     };
-    // salvar os dados da sessão
-    const saveState = (state) => {
-      //console.log('saving pre-keys')
-      state = state || client.authState
-      fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(state, baileys.BufferJSON.replacer, 2));
-    }
     //
     const client = baileys["default"]({
       printQRInTerminal: true,
@@ -457,36 +451,23 @@ module.exports = class Sessions {
       auth: loadState()
     });
     //
-    //
-    client.ev.on("qr", async (qr_data) => {
-      let qr_svg = qr.imageSync(qr_data, {
-        type: 'png'
-      });
-      //
-      let base64data = qr_svg.toString('base64');
-      let qr_str = "data:image/png;base64," + base64data;
-      //
-      lastqr = qr;
-      attempts++;
-      //
-      console.log("- State:", client.state);
-      //
-      console.log('- Número de tentativas de ler o qr-code:', attempts);
-      session.attempts = attempts;
-      //
-      console.log("- Captura do QR-Code");
-      //
-      session.qrcode = qr_str;
-      session.qrcodedata = base64data;
-      //
-      session.state = "QRCODE";
-      session.status = "qrRead";
-      session.message = 'Sistema iniciando e indisponivel para uso';
-      //
-      await updateStateDb(session.state, session.status, session.AuthorizationToken);
-      //
+    sock.ev.on('connection.update', (update) => {
+      const {
+        connection,
+        lastDisconnect
+      } = update
+      if (connection === 'close') {
+        console.log('connection closed due to ', lastDisconnect.error, ', reconnecting ', shouldReconnect)
+        // reconnect if not logged out
+
+      } else if (connection === 'open') {
+        console.log('opened connection')
+      }
     });
     //
+    client.ev.on('messages.upsert', m => {
+      console.log('replying to', m.messages[0].key.remoteJid)
+    });
     //
     client.ev.on('chats.delete', async e => {
       console.log(e)
@@ -524,7 +505,6 @@ module.exports = class Sessions {
           break;
       }
     });
-
     //
     return client;
   } //initSession
