@@ -2,7 +2,7 @@
 // Configuração dos módulos
 const config = require('./config.global');
 const fs = require("fs-extra");
-const qr = require("qr-image");
+const QRCode = require('qrcode');
 const moment = require("moment");
 const pino = require("pino");
 const Base64BufferThumbnail = require('base64-buffer-thumbnail');
@@ -30,47 +30,6 @@ const {
 const baileys = require("@adiwajshing/baileys-md");
 //
 // ------------------------------------------------------------------------------------------------------- //
-//
-async function DataHora() {
-  //
-  let date_ob = new Date();
-
-  // Data atual
-  // Ajuste 0 antes da data de um dígito
-  let date = ("0" + date_ob.getDate()).slice(-2);
-
-  // Mês atual
-  let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-
-  // Ano atual
-  let year = date_ob.getFullYear();
-
-  // Hora atual
-  let hours = date_ob.getHours();
-
-  // Minuto atual
-  let minutes = date_ob.getMinutes();
-
-  // Segundo atual
-  let seconds = date_ob.getSeconds();
-
-  // Imprime a data no formato AAAA-MM-DD
-  console.log(year + "-" + month + "-" + date);
-
-  // Imprime a data no formato DD/MM/YYYY
-  console.log(date + "/" + month + "/" + year);
-
-  // Imprime data e hora no formato AAAA-MM-DD HH:MM:SS
-  console.log(year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds);
-
-  // Imprime data e hora no formato DD/MM/YYYY HH:MM:SS
-  console.log(date + "/" + month + "/" + year + " " + hours + ":" + minutes + ":" + seconds);
-
-  // Imprime a hora no formato HH:MM:SS
-  console.log(hours + ":" + minutes + ":" + seconds);
-  //
-  return date + "/" + month + "/" + year + " " + hours + ":" + minutes + ":" + seconds;
-}
 //
 async function saudacao() {
   //
@@ -443,12 +402,27 @@ module.exports = class Sessions {
     };
     //
     const client = baileys["default"]({
-      printQRInTerminal: true,
-      browser: ['My WhatsApp', 'Chrome', '87'],
+      /** provide an auth state object to maintain the auth state */
+      auth: loadState(),
+      /** Fails the connection if the connection times out in this time interval or no data is received */
+      connectTimeoutMs: 5000,
+      /** ping-pong interval for WS connection */
+      keepAliveIntervalMs: 30000,
+      /** proxy agent */
+      agent: undefined,
+      /** pino logger */
       logger: pino({
         level: 'warn'
       }),
-      auth: loadState()
+      /** version to connect with */
+      version: [2, 2142, 12],
+      /** override browser config */
+      browser: ['My-WhatsApp', "Safari", "3.0"],
+      /** agent used for fetch requests -- uploading/downloading media */
+      fetchAgent: undefined,
+      /** should the QR be printed in the terminal */
+      printQRInTerminal: true
+      //
     });
     //
     client.ev.on('auth-state.update', () => {
@@ -459,58 +433,46 @@ module.exports = class Sessions {
       fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(authInfo, BufferJSON.replacer, 2));
     });
     //
-    client.ev.on('connection.update', (update) => {
-      const {
-        connection,
-        lastDisconnect
-      } = update
-      if (connection === 'close') {
-        console.log('connection closed due to ', lastDisconnect.error, ', reconnecting ', connection)
-        // reconnect if not logged out
-
-      } else if (connection === 'open') {
-        console.log('opened connection')
-      }
-    });
+    let attempts = 0;
     //
-    client.ev.on('messages.upsert', m => {
-      console.log('replying to', m.messages[0].key.remoteJid)
-    });
-    //
-    client.ev.on('chats.delete', async e => {
-      console.log(e)
-    });
-    //
-    client.ev.on('presence.update', (presences) => {
-      console.log('Presence: ', presences);
-    });
-
-    client.ev.on('groups.update', (group) => {
-      // Teste 1 - Alterei o nome do grupo e caiu aqui, onde o subject é o novo nome
-      console.log('Grupo update: ', group);
-    });
-
-    client.ev.on('group-participants.update', (group) => {
-      switch (group.action) {
-        case 'add':
-          console.log('Participante(s) adicionado(s): ', group.participants);
-          break;
-
-        case 'remove':
-          console.log('Participante(s) removido(s): ', group.participants);
-          break;
-
-        case 'promote':
-          console.log('Participante(s) promovido(s) a admin: ', group.participants);
-          break;
-
-        case 'demote':
-          console.log('Participante(s) despromovido(s) de admin: ', group.participants);
-          break;
-
-        default:
-          console.log('Ação não tratada');
-          break;
+    client.ev.on('connection.update', async (conn) => {
+      console.log('Connection Update:\n', conn);
+      if (conn.qr) { // if the 'qr' property is available on 'conn'
+        try {
+          console.log('QR Generated');
+          //
+          var readQRCode = await QRCode.toDataURL(conn.qr);
+          var qrCode = readQRCode.replace('data:image/png;base64,', '');
+          //
+          attempts++;
+          //
+          console.log("- State:", conn.connection);
+          //
+          console.log('- Número de tentativas de ler o qr-code:', attempts);
+          session.attempts = attempts;
+          //
+          console.log("- Captura do QR-Code");
+          //
+          session.qrcode = readQRCode;
+          session.qrcodedata = qrCode;
+          //
+          session.state = "QRCODE";
+          session.status = "qrRead";
+          session.message = 'Sistema iniciando e indisponivel para uso';
+          //
+          await updateStateDb(session.state, session.status, session.AuthorizationToken);
+          //
+        } catch (err) {
+          console.error(err);
+          if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) { // and, the QR file is exists
+            fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`); // delete it
+          }
+        }
+      } else if (conn.connection && conn.connection === 'close') { // when websocket is closed
+        if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) { // and, the QR file is exists
+          fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`); // delete it
+        }
+        Sessions.initSession(SessionName);
       }
     });
     //
@@ -531,7 +493,47 @@ module.exports = class Sessions {
     await session.client.then(async (client) => {
       //
       console.log("- State setup:", client.state);
+      //
+      client.ev.on('messages.upsert', m => {
+        console.log('replying to', m.messages[0].key.remoteJid)
+      });
+      //
+      client.ev.on('chats.delete', async e => {
+        console.log(e)
+      });
+      //
+      client.ev.on('presence.update', (presences) => {
+        console.log('Presence: ', presences);
+      });
 
+      client.ev.on('groups.update', (group) => {
+        // Teste 1 - Alterei o nome do grupo e caiu aqui, onde o subject é o novo nome
+        console.log('Grupo update: ', group);
+      });
+
+      client.ev.on('group-participants.update', (group) => {
+        switch (group.action) {
+          case 'add':
+            console.log('Participante(s) adicionado(s): ', group.participants);
+            break;
+
+          case 'remove':
+            console.log('Participante(s) removido(s): ', group.participants);
+            break;
+
+          case 'promote':
+            console.log('Participante(s) promovido(s) a admin: ', group.participants);
+            break;
+
+          case 'demote':
+            console.log('Participante(s) despromovido(s) de admin: ', group.participants);
+            break;
+
+          default:
+            console.log('Ação não tratada');
+            break;
+        }
+      });
       //
     });
   } //setup
