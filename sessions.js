@@ -442,13 +442,28 @@ module.exports = class Sessions {
       return state;
     };
     //
-    const client = baileys["default"]({
-      printQRInTerminal: true,
-      browser: ['My WhatsApp', 'Chrome', '87'],
+   const client = baileys["default"]({
+      /** provide an auth state object to maintain the auth state */
+      auth: loadState(),
+      /** Fails the connection if the connection times out in this time interval or no data is received */
+      connectTimeoutMs: 5000,
+      /** ping-pong interval for WS connection */
+      keepAliveIntervalMs: 30000,
+      /** proxy agent */
+      agent: undefined,
+      /** pino logger */
       logger: pino({
         level: 'warn'
       }),
-      auth: loadState()
+      /** version to connect with */
+      version: [2, 2142, 12],
+      /** override browser config */
+      browser: ['BOT MD Session', "Safari", "3.0"],
+      /** agent used for fetch requests -- uploading/downloading media */
+      fetchAgent: undefined,
+      /** should the QR be printed in the terminal */
+      printQRInTerminal: true
+      //
     });
     //
     client.ev.on('auth-state.update', () => {
@@ -459,19 +474,40 @@ module.exports = class Sessions {
       fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(authInfo, BufferJSON.replacer, 2));
     });
     //
-    client.ev.on('connection.update', (update) => {
-      const {
-        connection,
-        lastDisconnect
-      } = update
-      if (connection === 'close') {
-        console.log('connection closed due to ', lastDisconnect.error, ', reconnecting ', connection)
-        // reconnect if not logged out
-
-      } else if (connection === 'open') {
-        console.log('opened connection')
+  client.ev.on('connection.update', async (conn) => {
+    console.log('Connection Update: ', conn);
+    if (conn.qr) { // if the 'qr' property is available on 'conn'
+      console.log('QR Generated');
+      try {
+        await QRCode.toFile('./qr.png', conn.qr); // generate the file
+        const readQRCode = await QRCode.toDataURL(conn.qr);
+      } catch (err) {
+        console.error(err)
       }
-    });
+    } else if (conn.connection && conn.connection === 'close') { // when websocket is closed
+      if (fs.existsSync('./qr.png')) { // and, the QR file is exists
+        fs.unlinkSync('./qr.png'); // delete it
+      }
+    }
+  });
+    //
+    return client;
+  } //initSession
+  //
+  // ------------------------------------------------------------------------------------------------//
+  //
+  /*
+    ╔═╗┌─┐┌┬┐┌┬┐┬┌┐┌┌─┐  ┌─┐┌┬┐┌─┐┬─┐┌┬┐┌─┐┌┬┐
+    ║ ╦├┤  │  │ │││││ ┬  └─┐ │ ├─┤├┬┘ │ ├┤  ││
+    ╚═╝└─┘ ┴  ┴ ┴┘└┘└─┘  └─┘ ┴ ┴ ┴┴└─ ┴ └─┘─┴┘
+  */
+  //
+  static async setup(SessionName) {
+    console.log("- Sinstema iniciando");
+    var session = Sessions.getSession(SessionName);
+    await session.client.then(async (client) => {
+      //
+      console.log("- State setup:", client.state);
     //
     client.ev.on('messages.upsert', m => {
       console.log('replying to', m.messages[0].key.remoteJid)
@@ -513,25 +549,6 @@ module.exports = class Sessions {
           break;
       }
     });
-    //
-    return client;
-  } //initSession
-  //
-  // ------------------------------------------------------------------------------------------------//
-  //
-  /*
-    ╔═╗┌─┐┌┬┐┌┬┐┬┌┐┌┌─┐  ┌─┐┌┬┐┌─┐┬─┐┌┬┐┌─┐┌┬┐
-    ║ ╦├┤  │  │ │││││ ┬  └─┐ │ ├─┤├┬┘ │ ├┤  ││
-    ╚═╝└─┘ ┴  ┴ ┴┘└┘└─┘  └─┘ ┴ ┴ ┴┴└─ ┴ └─┘─┴┘
-  */
-  //
-  static async setup(SessionName) {
-    console.log("- Sinstema iniciando");
-    var session = Sessions.getSession(SessionName);
-    await session.client.then(async (client) => {
-      //
-      console.log("- State setup:", client.state);
-
       //
     });
   } //setup
