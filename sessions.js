@@ -425,7 +425,56 @@ module.exports = class Sessions {
       //
     });
     //
-
+    client.ev.on('auth-state.update', () => {
+      // save credentials whenever updated
+      console.log(`credentials updated!`)
+      const authInfo = client.authState // get all the auth info we need to restore this session
+      // save this info to a file
+      fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(authInfo, BufferJSON.replacer, 2));
+    });
+    //
+    let attempts = 0;
+    //
+    client.ev.on('connection.update', async (conn) => {
+      console.log('Connection Update:\n', conn);
+      if (conn.qr) { // if the 'qr' property is available on 'conn'
+        try {
+          console.log('QR Generated');
+          //
+          var readQRCode = await QRCode.toDataURL(conn.qr);
+          var qrCode = readQRCode.replace('data:image/png;base64,', '');
+          //
+          attempts++;
+          //
+          console.log("- State:", conn.connection);
+          //
+          console.log('- Número de tentativas de ler o qr-code:', attempts);
+          session.attempts = attempts;
+          //
+          console.log("- Captura do QR-Code");
+          //
+          session.qrcode = readQRCode;
+          session.qrcodedata = qrCode;
+          //
+          session.state = "QRCODE";
+          session.status = "qrRead";
+          session.message = 'Sistema iniciando e indisponivel para uso';
+          //
+          await updateStateDb(session.state, session.status, session.AuthorizationToken);
+          //
+        } catch (err) {
+          console.error(err);
+          if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) { // and, the QR file is exists
+            fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`); // delete it
+          }
+        }
+      } else if (conn.connection && conn.connection === 'close') { // when websocket is closed
+        if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) { // and, the QR file is exists
+          fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`); // delete it
+        }
+        Sessions.initSession(SessionName);
+      }
+    });
     //
     return client;
   } //initSession
