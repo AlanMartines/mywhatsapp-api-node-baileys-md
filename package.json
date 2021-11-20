@@ -31,6 +31,7 @@
   },
   "homepage": "https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md#readme",
   "dependencies": {
+    "@adiwajshing/baileys": "github:adiwajshing/baileys",
     "@adiwajshing/baileys-md": "github:adiwajshing/baileys#multi-device",
     "@hapi/boom": "^9.1.4",
     "async-foreach": "^0.1.3",
