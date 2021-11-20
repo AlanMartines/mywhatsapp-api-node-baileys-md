@@ -21,7 +21,8 @@
     "chat bot",
     "typescript",
     "automatization",
-    "puppeteer"
+    "puppeteer",
+    "baileys"
   ],
   "author": "Alan Martines <alancpmartines@hotmail.com>",
   "license": "MIT",
