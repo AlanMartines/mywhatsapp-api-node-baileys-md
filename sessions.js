@@ -391,7 +391,7 @@ module.exports = class Sessions {
     //-------------------------------------------------------------------------------------------------------------------------------------//
     //
     const loadState = () => {
-      state = AuthenticationState || undefined
+      const state = AuthenticationState || undefined
       try {
         var value = JSON.parse(fs.readFileSync(`${session.tokenPatch}/${SessionName}.data.json`, {
             encoding: 'utf-8'
