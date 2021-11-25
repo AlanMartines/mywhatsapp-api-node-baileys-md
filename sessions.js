@@ -438,7 +438,7 @@ module.exports = class Sessions {
         lastDisconnect,
         qr
       } = conn;
-      console.log(JSON.stringify(conn, null, 2));
+      //console.log(JSON.stringify(conn, null, 2));
       if (qr) { // if the 'qr' property is available on 'conn'
         try {
           console.log('QR Generated');
@@ -450,9 +450,11 @@ module.exports = class Sessions {
             console.log(url)
           });
 					*/
+          /*
           qrcodeterminal.generate(qr, {
             small: true
           });
+					*/
           //
           var readQRCode = await QRCode.toDataURL(qr);
           var qrCode = readQRCode.replace('data:image/png;base64,', '');
