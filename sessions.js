@@ -3,6 +3,7 @@
 const config = require('./config.global');
 const fs = require("fs-extra");
 const QRCode = require('qrcode');
+const qrcodeterminal = require('qrcode-terminal');
 const moment = require("moment");
 const pino = require("pino");
 const Base64BufferThumbnail = require('base64-buffer-thumbnail');
@@ -389,20 +390,21 @@ module.exports = class Sessions {
     //
     //-------------------------------------------------------------------------------------------------------------------------------------//
     //
-    // salvar os dados da sessão
-    var loadState = () => {
-      var state = undefined;
+    const loadState = () => {
+      state = AuthenticationState || undefined
       try {
-        var sessão = JSON.parse(fs.readFileSync(`${session.tokenPatch}/${SessionName}.data.json`, {
-          encoding: 'utf-8'
-        }), baileys.BufferJSON.reviver);
+        var value = JSON.parse(fs.readFileSync(`${session.tokenPatch}/${SessionName}.data.json`, {
+            encoding: 'utf-8'
+          }),
+          BufferJSON.reviver
+        )
         state = {
-          creds: sessão.creds,
-          keys: baileys.initInMemoryKeyStore(sessão.keys)
-        };
-      } catch (error) {}
-      return state;
-    };
+          creds: value.creds,
+          keys: initInMemoryKeyStore(value.keys)
+        }
+      } catch {}
+      return state
+    }
     //
     const client = makeWASocket({
       /** provide an auth state object to maintain the auth state */
@@ -436,15 +438,48 @@ module.exports = class Sessions {
       fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(authInfo, BufferJSON.replacer, 2));
     });
     //
+
+
+
+
+
+
+
+    client.ev.on('connection.update', async (update) => {
+      const {
+        connection,
+        lastDisconnect,
+        qr
+      } = update
+      console.log(JSON.stringify(update, null, 2))
+      if (qr) {
+        qrr = qr
+        //qrcode.toString(qr,{type:'terminal'}, function (err, url) {console.log(url)})
+        qrcodeterminal.generate(qr, {
+          small: true
+        });
+      }
+      if (connection === 'close') {
+        Sessions.initSession(SessionName);
+        console.log('CLOSE');
+      }
+      if (connection === 'open') console.log('open');
+    });
+    //
     let attempts = 0;
     //
     client.ev.on('connection.update', async (conn) => {
-      console.log('Connection Update:\n', conn);
-      if (conn.qr) { // if the 'qr' property is available on 'conn'
+      const {
+        connection,
+        lastDisconnect,
+        qr
+      } = conn;
+      console.log(JSON.stringify(conn, null, 2));
+      if (qr) { // if the 'qr' property is available on 'conn'
         try {
           console.log('QR Generated');
           //
-          var readQRCode = await QRCode.toDataURL(conn.qr);
+          var readQRCode = await QRCode.toDataURL(qr);
           var qrCode = readQRCode.replace('data:image/png;base64,', '');
           //
           attempts++;
@@ -479,6 +514,14 @@ module.exports = class Sessions {
       }
     });
     //
+    //
+    client.ev.on('auth-state.update', async () => {
+      console.log(`credentials updated!`)
+      authInfo = client.authState
+      datasesi = JSON.stringify(authInfo, BufferJSON.replacer)
+      await fs.writeFileSync("./frmbot.json", datasesi)
+    });
+    //
     return client;
   } //initSession
   //
@@ -495,7 +538,9 @@ module.exports = class Sessions {
     var session = Sessions.getSession(SessionName);
     await session.client.then(async (client) => {
       //
-      console.log("- State setup:", client.state);
+      conn.ev.on('new.message', (mek) => {
+        console.log(mek)
+      });
       //
       client.ev.on('messages.upsert', m => {
         console.log('replying to', m.messages[0].key.remoteJid)
@@ -508,12 +553,12 @@ module.exports = class Sessions {
       client.ev.on('presence.update', (presences) => {
         console.log('Presence: ', presences);
       });
-
+      //
       client.ev.on('groups.update', (group) => {
         // Teste 1 - Alterei o nome do grupo e caiu aqui, onde o subject é o novo nome
         console.log('Grupo update: ', group);
       });
-
+      //
       client.ev.on('group-participants.update', (group) => {
         switch (group.action) {
           case 'add':
