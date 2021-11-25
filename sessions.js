@@ -438,7 +438,6 @@ module.exports = class Sessions {
         lastDisconnect,
         qr
       } = conn;
-      //console.log(JSON.stringify(conn, null, 2));
       if (qr) { // if the 'qr' property is available on 'conn'
         try {
           console.log('QR Generated');
@@ -484,6 +483,8 @@ module.exports = class Sessions {
           }
         }
       }
+      //
+      console.log(JSON.stringify(conn, null, 2));
       //
       if (connection === 'close') { // when websocket is closed
         if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) { // and, the QR file is exists
