@@ -15,19 +15,23 @@ const {
   forEach
 } = require('p-iteration');
 const {
-  makeWAclient,
+  WASocket,
   AuthenticationState,
   BufferJSON,
-  DisconnectReason,
   initInMemoryKeyStore,
-  WAclient,
-  delay,
+  WAMessage,
+  Contact,
+  SocketConfig,
+  DisconnectReason,
+  BaileysEventMap,
+  GroupMetadata,
   AnyMessageContent,
-  MiscMessageGenerationOptions,
-  downloadContentFromMessage,
-  proto,
+  MessageType,
+  MiscMessageGenerationOptions
 } = require('@adiwajshing/baileys-md');
-const baileys = require("@adiwajshing/baileys-md");
+const {
+  default: makeWASocket
+} = require('@adiwajshing/baileys-md');
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
@@ -189,8 +193,7 @@ async function gerateThumbnail(fileBuffer, mimetype, saveFilename) {
 //
 module.exports = class Sessions {
   //
-  static async getStatusApi(sessionName, options = []) {
-    Sessions.options = Sessions.options || options;
+  static async getStatusApi(sessionName) {
     Sessions.sessions = Sessions.sessions || [];
 
     var session = Sessions.getSession(sessionName);
@@ -401,7 +404,7 @@ module.exports = class Sessions {
       return state;
     };
     //
-    const client = baileys["default"]({
+    const client = makeWASocket({
       /** provide an auth state object to maintain the auth state */
       auth: loadState(),
       /** Fails the connection if the connection times out in this time interval or no data is received */
