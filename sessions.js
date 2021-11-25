@@ -443,7 +443,13 @@ module.exports = class Sessions {
         try {
           console.log('QR Generated');
           //
-          //qrcode.toString(qr,{type:'terminal'}, function (err, url) {console.log(url)})
+          /*
+          qrcode.toString(qr, {
+            type: 'terminal'
+          }, function(err, url) {
+            console.log(url)
+          });
+					*/
           qrcodeterminal.generate(qr, {
             small: true
           });
