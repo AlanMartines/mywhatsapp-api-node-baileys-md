@@ -430,27 +430,6 @@ module.exports = class Sessions {
       //
     });
     //
-    client.ev.on('connection.update', async (update) => {
-      const {
-        connection,
-        lastDisconnect,
-        qr
-      } = update
-      console.log(JSON.stringify(update, null, 2))
-      if (qr) {
-        qrr = qr
-        //qrcode.toString(qr,{type:'terminal'}, function (err, url) {console.log(url)})
-        qrcodeterminal.generate(qr, {
-          small: true
-        });
-      }
-      if (connection === 'close') {
-        Sessions.initSession(SessionName);
-        console.log('CLOSE');
-      }
-      if (connection === 'open') console.log('open');
-    });
-    //
     let attempts = 0;
     //
     client.ev.on('connection.update', async (conn) => {
@@ -463,6 +442,11 @@ module.exports = class Sessions {
       if (qr) { // if the 'qr' property is available on 'conn'
         try {
           console.log('QR Generated');
+          //
+          //qrcode.toString(qr,{type:'terminal'}, function (err, url) {console.log(url)})
+          qrcodeterminal.generate(qr, {
+            small: true
+          });
           //
           var readQRCode = await QRCode.toDataURL(qr);
           var qrCode = readQRCode.replace('data:image/png;base64,', '');
