@@ -453,7 +453,7 @@ module.exports = class Sessions {
           //
           attempts++;
           //
-          console.log("- State:", conn.connection);
+          console.log("- State:", connection);
           //
           console.log('- Número de tentativas de ler o qr-code:', attempts);
           session.attempts = attempts;
@@ -524,7 +524,7 @@ module.exports = class Sessions {
     var session = Sessions.getSession(SessionName);
     await session.client.then(async (client) => {
       //
-      conn.ev.on('new.message', (mek) => {
+      client.ev.on('new.message', (mek) => {
         console.log(mek)
       });
       //
