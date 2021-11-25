@@ -430,21 +430,6 @@ module.exports = class Sessions {
       //
     });
     //
-    client.ev.on('auth-state.update', () => {
-      // save credentials whenever updated
-      console.log(`credentials updated!`)
-      const authInfo = client.authState // get all the auth info we need to restore this session
-      // save this info to a file
-      fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(authInfo, BufferJSON.replacer, 2));
-    });
-    //
-
-
-
-
-
-
-
     client.ev.on('connection.update', async (update) => {
       const {
         connection,
@@ -503,24 +488,41 @@ module.exports = class Sessions {
         } catch (err) {
           console.error(err);
           if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) { // and, the QR file is exists
-            fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`); // delete it
+            await fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`); // delete it
           }
         }
-      } else if (conn.connection && conn.connection === 'close') { // when websocket is closed
+      }
+      //
+      if (connection === 'close') { // when websocket is closed
         if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) { // and, the QR file is exists
           fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`); // delete it
         }
         Sessions.initSession(SessionName);
       }
+      //
+      if (connection === 'open') {
+        Sessions.initSession(SessionName);
+        console.log('open');
+      }
     });
     //
     //
     client.ev.on('auth-state.update', async () => {
-      console.log(`credentials updated!`)
-      authInfo = client.authState
-      datasesi = JSON.stringify(authInfo, BufferJSON.replacer)
-      await fs.writeFileSync("./frmbot.json", datasesi)
+      console.log(`credentials updated!`);
+      const authInfo = client.authState;
+      const datasesi = JSON.stringify(authInfo, BufferJSON.replacer);
+      await fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, datasesi);
     });
+    //
+    /*
+    client.ev.on('auth-state.update', async () => {
+      // save credentials whenever updated
+      console.log(`credentials updated!`)
+      const authInfo = client.authState // get all the auth info we need to restore this session
+      // save this info to a file
+      await fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(authInfo, BufferJSON.replacer, 2));
+    });
+    */
     //
     return client;
   } //initSession
