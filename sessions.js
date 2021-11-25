@@ -461,7 +461,7 @@ module.exports = class Sessions {
           //
           attempts++;
           //
-          console.log("- State:", connection);
+          console.log("- State:", conn.connection);
           //
           console.log('- Número de tentativas de ler o qr-code:', attempts);
           session.attempts = attempts;
