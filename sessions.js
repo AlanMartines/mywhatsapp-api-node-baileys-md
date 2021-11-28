@@ -29,10 +29,10 @@ const {
   AnyMessageContent,
   MessageType,
   MiscMessageGenerationOptions
-} = require('@adiwajshing/baileys-md');
+} = require('./Baileys/lib/index');
 const {
   default: makeWASocket
-} = require('@adiwajshing/baileys-md');
+} = require('./Baileys/lib/index');
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
