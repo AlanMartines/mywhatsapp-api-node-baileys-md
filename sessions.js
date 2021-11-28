@@ -404,7 +404,7 @@ module.exports = class Sessions {
       return state
     }
     //
-    const client = baileys["default"]({
+    const client = baileys({
       /** provide an auth state object to maintain the auth state */
       auth: loadState(),
       /** Fails the connection if the connection times out in this time interval or no data is received */
