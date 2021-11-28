@@ -15,9 +15,7 @@ const {
 const {
   forEach
 } = require('p-iteration');
-const makeWASocket, {
-  delay,
-  useSingleFileAuthState,
+const {
   WASocket,
   AuthenticationState,
   BufferJSON,
@@ -32,6 +30,7 @@ const makeWASocket, {
   MessageType,
   MiscMessageGenerationOptions
 } = require('./Baileys/lib/index');
+const baileys = require('./Baileys/lib/index');
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
@@ -405,7 +404,7 @@ module.exports = class Sessions {
       return state
     }
     //
-    const client = makeWASocket({
+    const client = baileys["default"]({
       /** provide an auth state object to maintain the auth state */
       auth: loadState(),
       /** Fails the connection if the connection times out in this time interval or no data is received */
