@@ -432,7 +432,7 @@ module.exports = class Sessions {
         console.log(conn);
         if (qr) { // if the 'qr' property is available on 'conn'
           try {
-            console.log('QR Generated');
+            console.log('- QR Generated');
             //
             /*
             qrcode.toString(qr, {
@@ -464,7 +464,14 @@ module.exports = class Sessions {
             session.status = "qrRead";
             session.message = 'Sistema iniciando e indisponivel para uso';
             //
-            await updateStateDb(session.state, session.status, session.AuthorizationToken);
+            if (attempts <= 3) {
+              await updateStateDb(session.state, session.status, session.AuthorizationToken);
+            }
+            //
+            if (connection === 'close') {
+              lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut ?
+                startSock() : console.log('- Connection closed');
+            }
             //
           } catch (err) {
             console.error(err);
@@ -474,17 +481,6 @@ module.exports = class Sessions {
           }
         }
         //
-        if (connection === 'close') { // when websocket is closed
-          if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) { // and, the QR file is exists
-            fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`); // delete it
-          }
-          startSock();
-        }
-        //
-        if (connection === 'open') {
-          startSock();
-          console.log('open');
-        }
       });
       //
       //
@@ -504,19 +500,6 @@ module.exports = class Sessions {
       	await fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(authInfo, BufferJSON.replacer, 2));
       });
       */
-      //
-      client.ev.on('connection.update', (update) => {
-        const {
-          connection,
-          lastDisconnect
-        } = update;
-        if (connection === 'close') {
-          lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut ?
-            startSock() :
-            console.log('+ connection closed');
-        }
-        console.log('+ connection update', update);
-      });
       //
       client.ev.on('creds.update', saveState);
       //
