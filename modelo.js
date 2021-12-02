@@ -23,27 +23,10 @@ const {
   saveState
 } = useSingleFileAuthState('./wabasemdConnection.json')
 //
-function loadSession() {
-  try {
-    const credentials = readFileSync('./wabasemdConnection.json', {
-      encoding: 'utf-8'
-    });
-    const value = JSON.parse(credentials, BufferJSON.reviver);
-
-    return {
-      creds: value.creds,
-      keys: initInMemoryKeyStore(value.keys),
-    };
-  } catch {
-    console.log('- Erro ao carregar credenciais');
-  }
-  return null;
-}
-//
 const startSock = () => {
   const sock = makeWASocket({
     /** provide an auth state object to maintain the auth state */
-    auth: loadSession(),
+    auth: state,
     /** Fails the connection if the connection times out in this time interval or no data is received */
     connectTimeoutMs: 5000,
     /** ping-pong interval for WS connection */
