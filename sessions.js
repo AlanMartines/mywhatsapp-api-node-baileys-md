@@ -501,7 +501,7 @@ module.exports = class Sessions {
       return client;
     }
     //
-    startSock();
+    return startSock();
   } //initSession
   //
   // ------------------------------------------------------------------------------------------------//
