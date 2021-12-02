@@ -457,7 +457,7 @@ module.exports = class Sessions {
       //
       client.ev.on('creds.update', saveState);
       //
-      return sock
+      return client
     }
     //
     return startSock();
