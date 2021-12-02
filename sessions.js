@@ -6,10 +6,6 @@ const QRCode = require('qrcode');
 const qrcodeterminal = require('qrcode-terminal');
 const moment = require("moment");
 const pino = require("pino");
-const {
-  Boom
-}
-fro = require("@hapi/boom");
 const Base64BufferThumbnail = require('base64-buffer-thumbnail');
 const {
   fromPath,
