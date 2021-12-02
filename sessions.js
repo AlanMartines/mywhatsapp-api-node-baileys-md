@@ -395,99 +395,99 @@ module.exports = class Sessions {
       saveState
     } = useSingleFileAuthState(`${session.tokenPatch}/${SessionName}.data.json`);
     //
-    //
-    //
-    //-------------------------------------------------------------------------------------------------------------------------------------//
-    //
-    //
-    const startSock = () => {
-      const client = makeWASocket({
-        /** provide an auth state object to maintain the auth state */
-        auth: state,
-        /** Fails the connection if the connection times out in this time interval or no data is received */
-        connectTimeoutMs: 5000,
-        /** ping-pong interval for WS connection */
-        keepAliveIntervalMs: 30000,
-        /** proxy agent */
-        agent: undefined,
-        /** pino logger */
-        logger: pino({
-          level: 'warn'
-        }),
-        /** version to connect with */
-        version: [2, 2142, 12],
-        /** override browser config */
-        browser: ['My-WhatsApp', "Safari", "3.0"],
-        /** agent used for fetch requests -- uploading/downloading media */
-        fetchAgent: undefined,
-        /** should the QR be printed in the terminal */
-        printQRInTerminal: true
-        //
-      });
+    const client = makeWASocket({
+      /** provide an auth state object to maintain the auth state */
+      auth: state,
+      /** Fails the connection if the connection times out in this time interval or no data is received */
+      connectTimeoutMs: 5000,
+      /** ping-pong interval for WS connection */
+      keepAliveIntervalMs: 30000,
+      /** proxy agent */
+      agent: undefined,
+      /** pino logger */
+      logger: pino({
+        level: 'warn'
+      }),
+      /** version to connect with */
+      version: [2, 2142, 12],
+      /** override browser config */
+      browser: ['My-WhatsApp', "Safari", "3.0"],
+      /** agent used for fetch requests -- uploading/downloading media */
+      fetchAgent: undefined,
+      /** should the QR be printed in the terminal */
+      printQRInTerminal: true
       //
-      let attempts = 0;
-      //
-      client.ev.on('connection.update', async (conn) => {
-        const {
-          connection,
-          lastDisconnect,
-          qr
-        } = conn;
-        if (qr) { // if the 'qr' property is available on 'conn'
-          try {
-            console.log('- QR Generated');
-            //
-            /*
-            qrcode.toString(qr, {
-            	type: 'terminal'
-            }, function(err, url) {
-            	console.log(url)
-            });
-            */
-            /*
-            qrcodeterminal.generate(qr, {
-            	small: true
-            });
-            */
-            //
-            var readQRCode = await QRCode.toDataURL(qr);
-            var qrCode = readQRCode.replace('data:image/png;base64,', '');
-            //
-            attempts++;
-            //
-            console.log('- Número de tentativas de ler o qr-code:', attempts);
-            session.attempts = attempts;
-            //
-            console.log("- Captura do QR-Code");
-            //
-            session.qrcode = readQRCode;
-            session.qrcodedata = qrCode;
-            //
-            session.state = "QRCODE";
-            session.status = "qrRead";
-            session.message = 'Sistema iniciando e indisponivel para uso';
-            //
-            if (attempts <= 3) {
-              await updateStateDb(session.state, session.status, session.AuthorizationToken);
-            }
-            //
-          } catch (err) {
-            console.error(err);
-            if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) { // and, the QR file is exists
-              await fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`); // delete it
-            }
+    });
+    //
+    let attempts = 0;
+    //
+    client.ev.on('connection.update', async (conn) => {
+      const {
+        connection,
+        lastDisconnect,
+        qr
+      } = conn;
+      if (qr) { // if the 'qr' property is available on 'conn'
+        try {
+          console.log('- QR Generated');
+          //
+          /*
+          qrcode.toString(qr, {
+          	type: 'terminal'
+          }, function(err, url) {
+          	console.log(url)
+          });
+          */
+          /*
+          qrcodeterminal.generate(qr, {
+          	small: true
+          });
+          */
+          //
+          var readQRCode = await QRCode.toDataURL(qr);
+          var qrCode = readQRCode.replace('data:image/png;base64,', '');
+          //
+          attempts++;
+          //
+          console.log('- Número de tentativas de ler o qr-code:', attempts);
+          session.attempts = attempts;
+          //
+          console.log("- Captura do QR-Code");
+          //
+          session.qrcode = readQRCode;
+          session.qrcodedata = qrCode;
+          //
+          session.state = "QRCODE";
+          session.status = "qrRead";
+          session.message = 'Sistema iniciando e indisponivel para uso';
+          //
+          if (attempts <= 3) {
+            await updateStateDb(session.state, session.status, session.AuthorizationToken);
+          }
+          //
+          if (connection === 'close') {
+            lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut ?
+              Sessions.initSession(SessionName, session.AuthorizationToken) : console.log('- Connection closed');
+          }
+          //
+        } catch (err) {
+          console.error(err);
+          if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) { // and, the QR file is exists
+            await fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`); // delete it
           }
         }
         //
         if (connection === 'close') {
           lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut ?
-            startSock() : console.log('- Connection closed');
+            Sessions.initSession(SessionName, session.AuthorizationToken) : console.log('- Connection closed');
         }
         //
-      });
+      }
       //
-      //
-      /*
+    });
+    //
+    //
+    /*
       client.ev.on('auth-state.update', async () => {
         console.log(`credentials updated!`);
         const authInfo = client.authState;
@@ -495,13 +495,10 @@ module.exports = class Sessions {
         await fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, datasesi);
       });
 			*/
-      //
-      client.ev.on('creds.update', saveState);
-      //
-      return client;
-    }
     //
-    return startSock();
+    client.ev.on('creds.update', saveState);
+    //
+    return client;
   } //initSession
   //
   // ------------------------------------------------------------------------------------------------//
