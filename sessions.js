@@ -390,11 +390,15 @@ module.exports = class Sessions {
     //
     //-------------------------------------------------------------------------------------------------------------------------------------//
     //
-    //
     const {
       state,
       saveState
     } = useSingleFileAuthState(`${session.tokenPatch}/${SessionName}.data.json`);
+    //
+    //
+    //
+    //-------------------------------------------------------------------------------------------------------------------------------------//
+    //
     //
     const startSock = () => {
       const client = makeWASocket({
@@ -429,7 +433,6 @@ module.exports = class Sessions {
           lastDisconnect,
           qr
         } = conn;
-        console.log(conn);
         if (qr) { // if the 'qr' property is available on 'conn'
           try {
             console.log('- QR Generated');
@@ -468,11 +471,6 @@ module.exports = class Sessions {
               await updateStateDb(session.state, session.status, session.AuthorizationToken);
             }
             //
-            if (connection === 'close') {
-              lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut ?
-                startSock() : console.log('- Connection closed');
-            }
-            //
           } catch (err) {
             console.error(err);
             if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) { // and, the QR file is exists
@@ -481,32 +479,29 @@ module.exports = class Sessions {
           }
         }
         //
+        if (connection === 'close') {
+          lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut ?
+            startSock() : console.log('- Connection closed');
+        }
+        //
       });
       //
       //
+      /*
       client.ev.on('auth-state.update', async () => {
         console.log(`credentials updated!`);
         const authInfo = client.authState;
         const datasesi = JSON.stringify(authInfo, BufferJSON.replacer);
         await fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, datasesi);
       });
-      //
-      /*
-      client.ev.on('auth-state.update', async () => {
-      	// save credentials whenever updated
-      	console.log(`credentials updated!`)
-      	const authInfo = client.authState // get all the auth info we need to restore this session
-      	// save this info to a file
-      	await fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(authInfo, BufferJSON.replacer, 2));
-      });
-      */
+			*/
       //
       client.ev.on('creds.update', saveState);
       //
       return client;
     }
     //
-    return startSock();
+    startSock();
   } //initSession
   //
   // ------------------------------------------------------------------------------------------------//
