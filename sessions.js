@@ -467,7 +467,7 @@ module.exports = class Sessions {
           //
           if (connection === 'close') {
             lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut ?
-              Sessions.initSession(SessionName, session.AuthorizationToken) : console.log('- Connection closed');
+              await Start(SessionName, session.AuthorizationToken) : console.log('- Connection closed');
           }
           //
         } catch (err) {
@@ -479,7 +479,7 @@ module.exports = class Sessions {
         //
         if (connection === 'close') {
           lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut ?
-            Sessions.initSession(SessionName, session.AuthorizationToken) : console.log('- Connection closed');
+            await Start(SessionName, session.AuthorizationToken) : console.log('- Connection closed');
         }
         //
       }
