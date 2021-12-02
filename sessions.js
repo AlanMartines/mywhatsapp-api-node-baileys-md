@@ -392,7 +392,7 @@ module.exports = class Sessions {
           keys: initInMemoryKeyStore(value.keys),
         };
       } catch {
-        console.log('Erro ao carregar credenciais');
+        console.log('- Erro ao carregar credenciais');
       }
       return null;
     }
