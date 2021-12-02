@@ -3,7 +3,8 @@ const {
   default: makeWASocket,
   useSingleFileAuthState,
   DisconnectReason
-} = require("@adiwajshing/baileys-md");
+} = require('./Baileys/lib/index');
+
 const {
   state,
   saveState
@@ -11,8 +12,23 @@ const {
 
 const startSock = () => {
   const sock = makeWASocket({
-    printQRInTerminal: true,
-    auth: state
+    /** provide an auth state object to maintain the auth state */
+    auth: state,
+    /** Fails the connection if the connection times out in this time interval or no data is received */
+    connectTimeoutMs: 5000,
+    /** ping-pong interval for WS connection */
+    keepAliveIntervalMs: 30000,
+    /** proxy agent */
+    agent: undefined,
+    /** version to connect with */
+    //version: [2, 2142, 12],
+    /** override browser config */
+    browser: ['My-WhatsApp', "Safari", "3.0"],
+    /** agent used for fetch requests -- uploading/downloading media */
+    fetchAgent: undefined,
+    /** should the QR be printed in the terminal */
+    printQRInTerminal: true
+    //
   });
 
   sock.ev.on('messages.upsert', async m => {

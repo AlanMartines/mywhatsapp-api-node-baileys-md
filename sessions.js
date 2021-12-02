@@ -411,7 +411,7 @@ module.exports = class Sessions {
         level: 'warn'
       }),
       /** version to connect with */
-      version: [2, 2142, 12],
+      //version: [2, 2142, 12],
       /** override browser config */
       browser: ['My-WhatsApp', "Safari", "3.0"],
       /** agent used for fetch requests -- uploading/downloading media */
@@ -467,6 +467,8 @@ module.exports = class Sessions {
       const infoSession = client.authState;
       await fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(infoSession, BufferJSON.replacer, 2), );
     });
+    //
+    client.ev.on('creds.update', saveState);
     //
     return client
   } //initSession
