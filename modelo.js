@@ -1,4 +1,20 @@
-// De 104 para 32
+//
+// Configuração dos módulos
+const config = require('./config.global');
+const fs = require("fs-extra");
+const QRCode = require('qrcode');
+const qrcodeterminal = require('qrcode-terminal');
+const moment = require("moment");
+const pino = require("pino");
+const Base64BufferThumbnail = require('base64-buffer-thumbnail');
+const {
+  fromPath,
+  fromBuffer,
+  fromBase64
+} = require('pdf2pic');
+const {
+  forEach
+} = require('p-iteration');
 const {
   default: makeWASocket,
   WASocket,
@@ -16,8 +32,9 @@ const {
   MessageType,
   MiscMessageGenerationOptions
 } = require('./Baileys/lib/index');
-const fs = require("fs-extra");
-const pino = require("pino");
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
 const {
   state,
   saveState
@@ -48,11 +65,35 @@ const startSock = () => {
     //
   });
   //
-  sock.ev.on('connection.update', (update) => {
+  let attempts = 0;
+  //
+  sock.ev.on('connection.update', async (conn) => {
     const {
       connection,
-      lastDisconnect
-    } = update
+      lastDisconnect,
+      qr
+    } = conn;
+    if (qr) { // if the 'qr' property is available on 'conn'
+      console.log('- QR Generated');
+      //
+      var readQRCode = await QRCode.toDataURL(qr);
+      var qrCode = readQRCode.replace('data:image/png;base64,', '');
+      //
+      attempts++;
+      //
+      console.log('- Número de tentativas de ler o qr-code:', attempts);
+      session.attempts = attempts;
+      //
+      console.log("- Captura do QR-Code");
+      //
+      session.qrcode = readQRCode;
+      session.qrcodedata = qrCode;
+      //
+      session.state = "QRCODE";
+      session.status = "qrRead";
+      session.message = 'Sistema iniciando e indisponivel para uso';
+      //
+    }
     if (connection === 'close') {
       if (fs.existsSync('./wabasemdConnection.json')) {
         fs.unlinkSync('./wabasemdConnection.json');

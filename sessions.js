@@ -32,7 +32,6 @@ const {
   MessageType,
   MiscMessageGenerationOptions
 } = require('./Baileys/lib/index');
-
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
@@ -51,7 +50,7 @@ async function saudacao() {
     var saudacao = "Boa noite";
     //
   } else {
-    var saudacao = "---";
+    var saudacao = "Boa madrugada";
     //
   }
   return saudacao;
@@ -450,18 +449,17 @@ module.exports = class Sessions {
           session.status = "qrRead";
           session.message = 'Sistema iniciando e indisponivel para uso';
           //
-          if (attempts <= 3) {
-            await updateStateDb(session.state, session.status, session.AuthorizationToken);
-          }
-          //
-          if (connection === 'close') {
-            lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut ? initSession(SessionName) : console.log('- Connection closed');
-            if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) {
-              fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`);
-            }
-          }
-          //
         }
+        if (attempts <= 3) {
+          await updateStateDb(session.state, session.status, session.AuthorizationToken);
+        }
+        //
+        if (connection === 'close') {
+          lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut ? initSession(SessionName) : console.log('- Connection closed');
+          await deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+        }
+        //
+
         //
       });
       //
