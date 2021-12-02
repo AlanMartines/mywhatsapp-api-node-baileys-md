@@ -380,9 +380,26 @@ module.exports = class Sessions {
       saveState
     } = useSingleFileAuthState(`${session.tokenPatch}/${SessionName}.data.json`);
     //
+    function loadSession() {
+      try {
+        const credentials = readFileSync(`${session.tokenPatch}/${SessionName}.data.json`, {
+          encoding: 'utf-8'
+        });
+        const value = JSON.parse(credentials, BufferJSON.reviver);
+
+        return {
+          creds: value.creds,
+          keys: initInMemoryKeyStore(value.keys),
+        };
+      } catch {
+        console.log('Erro ao carregar credenciais');
+      }
+      return null;
+    }
+    //
     const client = makeWASocket({
       /** provide an auth state object to maintain the auth state */
-      auth: state,
+      auth: loadSession(),
       /** Fails the connection if the connection times out in this time interval or no data is received */
       connectTimeoutMs: 5000,
       /** ping-pong interval for WS connection */
@@ -447,12 +464,11 @@ module.exports = class Sessions {
     //
     client.ev.on('auth-state.update', async () => {
       console.log(`credentials updated!`);
-      const authInfo = client.authState;
-      const datasesi = JSON.stringify(authInfo, BufferJSON.replacer);
-      await fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, datasesi);
+      const infoSession = client.authState;
+      await fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(infoSession, BufferJSON.replacer, 2), );
     });
     //
-    //client.ev.on('creds.update', saveState);
+    client.ev.on('creds.update', saveState);
     //
     return client
   } //initSession
