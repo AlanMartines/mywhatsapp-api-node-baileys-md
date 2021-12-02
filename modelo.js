@@ -82,16 +82,7 @@ const startSock = () => {
       attempts++;
       //
       console.log('- Número de tentativas de ler o qr-code:', attempts);
-      session.attempts = attempts;
-      //
       console.log("- Captura do QR-Code");
-      //
-      session.qrcode = readQRCode;
-      session.qrcodedata = qrCode;
-      //
-      session.state = "QRCODE";
-      session.status = "qrRead";
-      session.message = 'Sistema iniciando e indisponivel para uso';
       //
     }
     if (connection === 'close') {
