@@ -1,8 +1,20 @@
 // De 104 para 32
 const {
   default: makeWASocket,
+  WASocket,
+  AuthenticationState,
+  BufferJSON,
+  initInMemoryKeyStore,
+  WAMessage,
+  Contact,
+  SocketConfig,
   useSingleFileAuthState,
-  DisconnectReason
+  DisconnectReason,
+  BaileysEventMap,
+  GroupMetadata,
+  AnyMessageContent,
+  MessageType,
+  MiscMessageGenerationOptions
 } = require('./Baileys/lib/index');
 const fs = require("fs-extra");
 const pino = require("pino");
@@ -10,11 +22,28 @@ const {
   state,
   saveState
 } = useSingleFileAuthState('./wabasemdConnection.json')
+//
+function loadSession() {
+  try {
+    const credentials = readFileSync('./wabasemdConnection.json', {
+      encoding: 'utf-8'
+    });
+    const value = JSON.parse(credentials, BufferJSON.reviver);
 
+    return {
+      creds: value.creds,
+      keys: initInMemoryKeyStore(value.keys),
+    };
+  } catch {
+    console.log('- Erro ao carregar credenciais');
+  }
+  return null;
+}
+//
 const startSock = () => {
   const sock = makeWASocket({
     /** provide an auth state object to maintain the auth state */
-    auth: state,
+    auth: loadSession(),
     /** Fails the connection if the connection times out in this time interval or no data is received */
     connectTimeoutMs: 5000,
     /** ping-pong interval for WS connection */
@@ -35,7 +64,7 @@ const startSock = () => {
     printQRInTerminal: true
     //
   });
-
+  //
   sock.ev.on('connection.update', (update) => {
     const {
       connection,
@@ -51,10 +80,18 @@ const startSock = () => {
     }
     console.log('- Connection update');
   });
-
+  //
+  //
+  sock.ev.on('auth-state.update', async () => {
+    console.log(`credentials updated!`);
+    const infoSession = client.authState;
+    await fs.writeFileSync('./wabasemdConnection.json', JSON.stringify(infoSession, BufferJSON.replacer, 2), );
+  });
+  //
+  //
   sock.ev.on('creds.update', saveState);
-
+  //
   return sock
 }
 
-startSock();
+const client = startSock();
