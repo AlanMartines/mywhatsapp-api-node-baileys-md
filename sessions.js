@@ -517,6 +517,21 @@ module.exports = class Sessions {
     });
     */
     //
+    sock.ev.on('connection.update', (update) => {
+      const {
+        connection,
+        lastDisconnect
+      } = update;
+      if (connection === 'close') {
+        lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut ?
+          Sessions.initSession(SessionName) :
+          console.log('+ connection closed');
+      }
+      console.log('+ connection update', update);
+    });
+    //
+    client.ev.on('creds.update', saveState);
+    //
     return client;
   } //initSession
   //
