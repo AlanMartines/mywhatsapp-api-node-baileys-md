@@ -5,6 +5,7 @@ const {
   DisconnectReason
 } = require('./Baileys/lib/index');
 const fs = require("fs-extra");
+const pino = require("pino");
 const {
   state,
   saveState
@@ -20,6 +21,10 @@ const startSock = () => {
     keepAliveIntervalMs: 30000,
     /** proxy agent */
     agent: undefined,
+    /** pino logger */
+    logger: pino({
+      level: 'warn'
+    }),
     /** version to connect with */
     //version: [2, 2142, 12],
     /** override browser config */
@@ -29,17 +34,6 @@ const startSock = () => {
     /** should the QR be printed in the terminal */
     printQRInTerminal: true
     //
-  });
-
-  sock.ev.on('messages.upsert', async m => {
-    const msg = m.messages[0]
-    if (!msg.key.fromMe && m.type === 'notify') {
-      console.log('+ respondendo: ', msg.key.remoteJid)
-      await sock.sendReadReceipt(msg.key.remoteJid, msg.key.participant, [msg.key.id])
-      await sock.sendMessage(msg.key.remoteJid, {
-        text: 'Opa! WABaseMD funcionando!'
-      });
-    }
   });
 
   sock.ev.on('connection.update', (update) => {
