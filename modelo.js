@@ -49,7 +49,7 @@ const startSock = () => {
         startSock() :
         console.log('+ connection closed');
     }
-    console.log('+ connection update', update);
+    console.log('- Connection update');
   });
 
   sock.ev.on('creds.update', saveState);
