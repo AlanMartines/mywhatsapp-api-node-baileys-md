@@ -478,11 +478,11 @@ module.exports = class Sessions {
           if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) { // and, the QR file is exists
             fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`); // delete it
           }
-          Sessions.initSession(SessionName);
+          startSock();
         }
         //
         if (connection === 'open') {
-          Sessions.initSession(SessionName);
+          startSock();
           console.log('open');
         }
       });
@@ -512,7 +512,7 @@ module.exports = class Sessions {
         } = update;
         if (connection === 'close') {
           lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut ?
-            Sessions.initSession(SessionName) :
+            startSock() :
             console.log('+ connection closed');
         }
         console.log('+ connection update', update);
