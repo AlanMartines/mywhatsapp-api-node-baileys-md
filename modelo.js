@@ -4,7 +4,7 @@ const {
   useSingleFileAuthState,
   DisconnectReason
 } = require('./Baileys/lib/index');
-
+const fs = require("fs-extra");
 const {
   state,
   saveState
@@ -51,7 +51,10 @@ const startSock = () => {
       lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut ?
         startSock() :
         console.log('+ connection closed');
-      startSock()
+      if (fs.existsSync(`./wabasemdConnection.json`)) {
+        fs.unlinkSync(`./wabasemdConnection.json`);
+      }
+      startSock();
     }
     console.log('+ connection update', update);
   });

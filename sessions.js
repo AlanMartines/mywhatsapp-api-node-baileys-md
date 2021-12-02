@@ -455,6 +455,9 @@ module.exports = class Sessions {
         //
         if (connection === 'close') {
           lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut ? initSession(SessionName) : console.log('- Connection closed');
+          if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) {
+            fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`);
+          }
         }
         //
       }
