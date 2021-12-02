@@ -357,7 +357,6 @@ module.exports = class Sessions {
   static async initSession(SessionName) {
     console.log("- Iniciando sessão");
     var session = Sessions.getSession(SessionName);
-    session.browserSessionToken = null;
     //
     /*
         ╔═╗┌─┐┌┬┐┬┌─┐┌┐┌┌─┐┬    ╔═╗┬─┐┌─┐┌─┐┌┬┐┌─┐  ╔═╗┌─┐┬─┐┌─┐┌┬┐┌─┐┌┬┐┌─┐┬─┐┌─┐
@@ -365,20 +364,11 @@ module.exports = class Sessions {
         ╚═╝┴   ┴ ┴└─┘┘└┘┴ ┴┴─┘  ╚═╝┴└─└─┘┴ ┴ ┴ └─┘  ╩  ┴ ┴┴└─┴ ┴┴ ┴└─┘ ┴ └─┘┴└─└─┘
      */
     //
-    const osnow = await osplatform();
-    //
-    if (osnow == 'linux' || osnow == 'Linux') {
-      console.log("- Sistema operacional:", osnow);
-      var folderToken = config.TOKENSPATCH_LINUX;
-      session.tokenPatch = folderToken;
-    } else if (osnow == 'win32' || osnow == 'win64' || osnow == 'Windows') {
-      console.log("- Sistema operacional:", osnow);
-      var folderToken = config.TOKENSPATCH_WIN;
-      session.tokenPatch = folderToken;
-    } else {
-      var folderToken = './tokens';
-      session.tokenPatch = folderToken;
-    }
+    session.tokenPatch = config.TOKENSPATCH_WIN;
+    const {
+      state,
+      saveState
+    } = useSingleFileAuthState(`${session.tokenPatch}/${SessionName}.data.json`);
     //
     console.log("- Saudação:", await saudacao());
     //
@@ -390,45 +380,40 @@ module.exports = class Sessions {
     //
     //-------------------------------------------------------------------------------------------------------------------------------------//
     //
-    const {
-      state,
-      saveState
-    } = useSingleFileAuthState(`${session.tokenPatch}/${SessionName}.data.json`);
-    //
-    const client = makeWASocket({
-      /** provide an auth state object to maintain the auth state */
-      auth: state,
-      /** Fails the connection if the connection times out in this time interval or no data is received */
-      connectTimeoutMs: 5000,
-      /** ping-pong interval for WS connection */
-      keepAliveIntervalMs: 30000,
-      /** proxy agent */
-      agent: undefined,
-      /** pino logger */
-      logger: pino({
-        level: 'warn'
-      }),
-      /** version to connect with */
-      version: [2, 2142, 12],
-      /** override browser config */
-      browser: ['My-WhatsApp', "Safari", "3.0"],
-      /** agent used for fetch requests -- uploading/downloading media */
-      fetchAgent: undefined,
-      /** should the QR be printed in the terminal */
-      printQRInTerminal: true
+    const startSock = () => {
+      const client = makeWASocket({
+        /** provide an auth state object to maintain the auth state */
+        auth: state,
+        /** Fails the connection if the connection times out in this time interval or no data is received */
+        connectTimeoutMs: 5000,
+        /** ping-pong interval for WS connection */
+        keepAliveIntervalMs: 30000,
+        /** proxy agent */
+        agent: undefined,
+        /** pino logger */
+        logger: pino({
+          level: 'warn'
+        }),
+        /** version to connect with */
+        version: [2, 2142, 12],
+        /** override browser config */
+        browser: ['My-WhatsApp', "Safari", "3.0"],
+        /** agent used for fetch requests -- uploading/downloading media */
+        fetchAgent: undefined,
+        /** should the QR be printed in the terminal */
+        printQRInTerminal: true
+        //
+      });
       //
-    });
-    //
-    let attempts = 0;
-    //
-    client.ev.on('connection.update', async (conn) => {
-      const {
-        connection,
-        lastDisconnect,
-        qr
-      } = conn;
-      if (qr) { // if the 'qr' property is available on 'conn'
-        try {
+      let attempts = 0;
+      //
+      client.ev.on('connection.update', async (conn) => {
+        const {
+          connection,
+          lastDisconnect,
+          qr
+        } = conn;
+        if (qr) { // if the 'qr' property is available on 'conn'
           console.log('- QR Generated');
           //
           /*
@@ -467,27 +452,15 @@ module.exports = class Sessions {
           //
           if (connection === 'close') {
             lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut ?
-              await Start(SessionName, session.AuthorizationToken) : console.log('- Connection closed');
+              startSock() : console.log('- Connection closed');
           }
           //
-        } catch (err) {
-          console.error(err);
-          if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) { // and, the QR file is exists
-            await fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`); // delete it
-          }
         }
         //
-        if (connection === 'close') {
-          lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut ?
-            await Start(SessionName, session.AuthorizationToken) : console.log('- Connection closed');
-        }
-        //
-      }
+      });
       //
-    });
-    //
-    //
-    /*
+      //
+      /*
       client.ev.on('auth-state.update', async () => {
         console.log(`credentials updated!`);
         const authInfo = client.authState;
@@ -495,10 +468,13 @@ module.exports = class Sessions {
         await fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, datasesi);
       });
 			*/
+      //
+      client.ev.on('creds.update', saveState);
+      //
+      return sock
+    }
     //
-    client.ev.on('creds.update', saveState);
-    //
-    return client;
+    return startSock();
   } //initSession
   //
   // ------------------------------------------------------------------------------------------------//
