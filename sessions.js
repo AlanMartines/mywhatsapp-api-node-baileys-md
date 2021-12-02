@@ -416,19 +416,6 @@ module.exports = class Sessions {
         if (qr) { // if the 'qr' property is available on 'conn'
           console.log('- QR Generated');
           //
-          /*
-          qrcode.toString(qr, {
-          	type: 'terminal'
-          }, function(err, url) {
-          	console.log(url)
-          });
-          */
-          /*
-          qrcodeterminal.generate(qr, {
-          	small: true
-          });
-          */
-          //
           var readQRCode = await QRCode.toDataURL(qr);
           var qrCode = readQRCode.replace('data:image/png;base64,', '');
           //
