@@ -24,6 +24,7 @@ const {
   WAMessage,
   Contact,
   SocketConfig,
+  useSingleFileAuthState,
   DisconnectReason,
   BaileysEventMap,
   GroupMetadata,
