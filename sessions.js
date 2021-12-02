@@ -445,16 +445,14 @@ module.exports = class Sessions {
     });
     //
     //
-    /*
-      client.ev.on('auth-state.update', async () => {
-        console.log(`credentials updated!`);
-        const authInfo = client.authState;
-        const datasesi = JSON.stringify(authInfo, BufferJSON.replacer);
-        await fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, datasesi);
-      });
-			*/
+    client.ev.on('auth-state.update', async () => {
+      console.log(`credentials updated!`);
+      const authInfo = client.authState;
+      const datasesi = JSON.stringify(authInfo, BufferJSON.replacer);
+      await fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, datasesi);
+    });
     //
-    client.ev.on('creds.update', saveState);
+    //client.ev.on('creds.update', saveState);
     //
     return client
   } //initSession
