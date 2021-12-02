@@ -438,8 +438,7 @@ module.exports = class Sessions {
           }
           //
           if (connection === 'close') {
-            lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut ?
-              startSock() : console.log('- Connection closed');
+            lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut ? startSock() : console.log('- Connection closed');
           }
           //
         }
