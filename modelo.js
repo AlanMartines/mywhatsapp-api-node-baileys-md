@@ -48,12 +48,12 @@ const startSock = () => {
       lastDisconnect
     } = update
     if (connection === 'close') {
+      if (fs.existsSync('./wabasemdConnection.json')) {
+        fs.unlinkSync('./wabasemdConnection.json');
+      }
       lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut ?
         startSock() :
         console.log('+ connection closed');
-      if (fs.existsSync(`./wabasemdConnection.json`)) {
-        fs.unlinkSync(`./wabasemdConnection.json`);
-      }
       startSock();
     }
     console.log('+ connection update', update);
