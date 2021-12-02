@@ -30,7 +30,7 @@ const {
   AnyMessageContent,
   MessageType,
   MiscMessageGenerationOptions
-} = require('./Baileys/lib/index');
+} = require("@adiwajshing/baileys-md");
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
