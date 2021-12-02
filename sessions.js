@@ -32,6 +32,7 @@ const {
   MessageType,
   MiscMessageGenerationOptions
 } = require('./Baileys/lib/index');
+
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
@@ -389,151 +390,140 @@ module.exports = class Sessions {
     //
     //-------------------------------------------------------------------------------------------------------------------------------------//
     //
+    //
     const {
       state,
       saveState
-    } = useSingleFileAuthState(`${session.tokenPatch}/${SessionName}.data.json`)
+    } = useSingleFileAuthState(`${session.tokenPatch}/${SessionName}.data.json`);
     //
-    const loadState = () => {
-      const state = AuthenticationState || undefined
-      try {
-        var value = JSON.parse(fs.readFileSync(`${session.tokenPatch}/${SessionName}.data.json`, {
-            encoding: 'utf-8'
-          }),
-          BufferJSON.reviver
-        )
-        state = {
-          creds: value.creds,
-          keys: initInMemoryKeyStore(value.keys)
-        }
-      } catch {}
-      return state
-    }
-    //
-    const client = makeWASocket({
-      /** provide an auth state object to maintain the auth state */
-      auth: state,
-      /** Fails the connection if the connection times out in this time interval or no data is received */
-      connectTimeoutMs: 5000,
-      /** ping-pong interval for WS connection */
-      keepAliveIntervalMs: 30000,
-      /** proxy agent */
-      agent: undefined,
-      /** pino logger */
-      logger: pino({
-        level: 'warn'
-      }),
-      /** version to connect with */
-      version: [2, 2142, 12],
-      /** override browser config */
-      browser: ['My-WhatsApp', "Safari", "3.0"],
-      /** agent used for fetch requests -- uploading/downloading media */
-      fetchAgent: undefined,
-      /** should the QR be printed in the terminal */
-      printQRInTerminal: true
+    const startSock = () => {
+      const client = makeWASocket({
+        /** provide an auth state object to maintain the auth state */
+        auth: state,
+        /** Fails the connection if the connection times out in this time interval or no data is received */
+        connectTimeoutMs: 5000,
+        /** ping-pong interval for WS connection */
+        keepAliveIntervalMs: 30000,
+        /** proxy agent */
+        agent: undefined,
+        /** pino logger */
+        logger: pino({
+          level: 'warn'
+        }),
+        /** version to connect with */
+        version: [2, 2142, 12],
+        /** override browser config */
+        browser: ['My-WhatsApp', "Safari", "3.0"],
+        /** agent used for fetch requests -- uploading/downloading media */
+        fetchAgent: undefined,
+        /** should the QR be printed in the terminal */
+        printQRInTerminal: true
+        //
+      });
       //
-    });
-    //
-    let attempts = 0;
-    //
-    client.ev.on('connection.update', async (conn) => {
-      const {
-        connection,
-        lastDisconnect,
-        qr
-      } = conn;
-      console.log(conn);
-      if (qr) { // if the 'qr' property is available on 'conn'
-        try {
-          console.log('QR Generated');
-          //
-          /*
-          qrcode.toString(qr, {
-            type: 'terminal'
-          }, function(err, url) {
-            console.log(url)
-          });
-					*/
-          /*
-          qrcodeterminal.generate(qr, {
-            small: true
-          });
-					*/
-          //
-          var readQRCode = await QRCode.toDataURL(qr);
-          var qrCode = readQRCode.replace('data:image/png;base64,', '');
-          //
-          attempts++;
-          //
-          console.log('- Número de tentativas de ler o qr-code:', attempts);
-          session.attempts = attempts;
-          //
-          console.log("- Captura do QR-Code");
-          //
-          session.qrcode = readQRCode;
-          session.qrcodedata = qrCode;
-          //
-          session.state = "QRCODE";
-          session.status = "qrRead";
-          session.message = 'Sistema iniciando e indisponivel para uso';
-          //
-          await updateStateDb(session.state, session.status, session.AuthorizationToken);
-          //
-        } catch (err) {
-          console.error(err);
-          if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) { // and, the QR file is exists
-            await fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`); // delete it
+      let attempts = 0;
+      //
+      client.ev.on('connection.update', async (conn) => {
+        const {
+          connection,
+          lastDisconnect,
+          qr
+        } = conn;
+        console.log(conn);
+        if (qr) { // if the 'qr' property is available on 'conn'
+          try {
+            console.log('QR Generated');
+            //
+            /*
+            qrcode.toString(qr, {
+            	type: 'terminal'
+            }, function(err, url) {
+            	console.log(url)
+            });
+            */
+            /*
+            qrcodeterminal.generate(qr, {
+            	small: true
+            });
+            */
+            //
+            var readQRCode = await QRCode.toDataURL(qr);
+            var qrCode = readQRCode.replace('data:image/png;base64,', '');
+            //
+            attempts++;
+            //
+            console.log('- Número de tentativas de ler o qr-code:', attempts);
+            session.attempts = attempts;
+            //
+            console.log("- Captura do QR-Code");
+            //
+            session.qrcode = readQRCode;
+            session.qrcodedata = qrCode;
+            //
+            session.state = "QRCODE";
+            session.status = "qrRead";
+            session.message = 'Sistema iniciando e indisponivel para uso';
+            //
+            await updateStateDb(session.state, session.status, session.AuthorizationToken);
+            //
+          } catch (err) {
+            console.error(err);
+            if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) { // and, the QR file is exists
+              await fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`); // delete it
+            }
           }
         }
-      }
-      //
-      if (connection === 'close') { // when websocket is closed
-        if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) { // and, the QR file is exists
-          fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`); // delete it
+        //
+        if (connection === 'close') { // when websocket is closed
+          if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) { // and, the QR file is exists
+            fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`); // delete it
+          }
+          Sessions.initSession(SessionName);
         }
-        Sessions.initSession(SessionName);
-      }
+        //
+        if (connection === 'open') {
+          Sessions.initSession(SessionName);
+          console.log('open');
+        }
+      });
       //
-      if (connection === 'open') {
-        Sessions.initSession(SessionName);
-        console.log('open');
-      }
-    });
+      //
+      client.ev.on('auth-state.update', async () => {
+        console.log(`credentials updated!`);
+        const authInfo = client.authState;
+        const datasesi = JSON.stringify(authInfo, BufferJSON.replacer);
+        await fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, datasesi);
+      });
+      //
+      /*
+      client.ev.on('auth-state.update', async () => {
+      	// save credentials whenever updated
+      	console.log(`credentials updated!`)
+      	const authInfo = client.authState // get all the auth info we need to restore this session
+      	// save this info to a file
+      	await fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(authInfo, BufferJSON.replacer, 2));
+      });
+      */
+      //
+      client.ev.on('connection.update', (update) => {
+        const {
+          connection,
+          lastDisconnect
+        } = update;
+        if (connection === 'close') {
+          lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut ?
+            Sessions.initSession(SessionName) :
+            console.log('+ connection closed');
+        }
+        console.log('+ connection update', update);
+      });
+      //
+      client.ev.on('creds.update', saveState);
+      //
+      return client;
+    }
     //
-    //
-    client.ev.on('auth-state.update', async () => {
-      console.log(`credentials updated!`);
-      const authInfo = client.authState;
-      const datasesi = JSON.stringify(authInfo, BufferJSON.replacer);
-      await fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, datasesi);
-    });
-    //
-    /*
-    client.ev.on('auth-state.update', async () => {
-      // save credentials whenever updated
-      console.log(`credentials updated!`)
-      const authInfo = client.authState // get all the auth info we need to restore this session
-      // save this info to a file
-      await fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(authInfo, BufferJSON.replacer, 2));
-    });
-    */
-    //
-    client.ev.on('connection.update', (update) => {
-      const {
-        connection,
-        lastDisconnect
-      } = update;
-      if (connection === 'close') {
-        lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut ?
-          Sessions.initSession(SessionName) :
-          console.log('+ connection closed');
-      }
-      console.log('+ connection update', update);
-    });
-    //
-    client.ev.on('creds.update', saveState);
-    //
-    return client;
+    return startSock();
   } //initSession
   //
   // ------------------------------------------------------------------------------------------------//
