@@ -468,8 +468,6 @@ module.exports = class Sessions {
       await fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(infoSession, BufferJSON.replacer, 2), );
     });
     //
-    client.ev.on('creds.update', saveState);
-    //
     return client
   } //initSession
   //
