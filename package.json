@@ -6,8 +6,7 @@
   "private": true,
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Erro: nenhum teste especificado.\" && exit 1",
-    "postinstall": "npm i typescript -g && tsc -p ./node_modules/@adiwajshing/baileys-md/"
+    "test": "echo \"Erro: nenhum teste especificado.\" && exit 1"
 
   },
   "repository": {

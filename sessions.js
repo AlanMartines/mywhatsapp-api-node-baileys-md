@@ -30,7 +30,7 @@ const {
   AnyMessageContent,
   MessageType,
   MiscMessageGenerationOptions
-} = require("@adiwajshing/baileys-md");
+} = require('./Baileys/lib/index');
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
@@ -388,6 +388,11 @@ module.exports = class Sessions {
     //
     //-------------------------------------------------------------------------------------------------------------------------------------//
     //
+    const {
+      state,
+      saveState
+    } = useSingleFileAuthState(`${session.tokenPatch}/${SessionName}.data.json`)
+    //
     const loadState = () => {
       const state = AuthenticationState || undefined
       try {
@@ -406,7 +411,7 @@ module.exports = class Sessions {
     //
     const client = makeWASocket({
       /** provide an auth state object to maintain the auth state */
-      auth: loadState(),
+      auth: state,
       /** Fails the connection if the connection times out in this time interval or no data is received */
       connectTimeoutMs: 5000,
       /** ping-pong interval for WS connection */
