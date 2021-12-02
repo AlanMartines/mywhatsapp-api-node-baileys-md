@@ -59,7 +59,7 @@ const startSock = () => {
       }
       lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut ?
         startSock() :
-        console.log('+ connection closed');
+        console.log('- Connection closed');
     }
     console.log('- Connection update');
   });
