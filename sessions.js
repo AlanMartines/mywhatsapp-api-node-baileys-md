@@ -1320,23 +1320,23 @@ module.exports = class Sessions {
     var resultcheckNumberStatus = await session.client.then(async client => {
       //
       return await client.onWhatsApp(number).then((result) => {
-        console.log('Result:\n', JSON.parse(result)); //return object success
+        console.log('Result:\n', [result]); //return object success
         //
-        if (result.exists) {
+        if ([result].exists) {
           //
           return {
             "erro": false,
             "status": 200,
-            "number": result.jid,
+            "number": [result].jid,
             "message": "O número informado pode receber mensagens via whatsapp"
           };
           //
-        } else if (!result.exists) {
+        } else if (![result].exists) {
           //
           return {
             "erro": true,
             "status": 404,
-            "number": result.jid,
+            "number": [result].jid,
             "message": "O número informado não pode receber mensagens via whatsapp"
           };
           //
