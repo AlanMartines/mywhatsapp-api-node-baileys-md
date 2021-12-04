@@ -1682,7 +1682,9 @@ module.exports = class Sessions {
   //
   // Remove participante
   static async removeParticipant(
-    SessionName, groupId, phonefull
+    SessionName,
+    groupId,
+    phonefull
   ) {
     console.log("- removeParticipant");
     var session = Sessions.getSession(SessionName);
