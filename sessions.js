@@ -554,7 +554,7 @@ module.exports = class Sessions {
       //
     });
     //
-    client.ev.on('creds.update', saveState).then();
+    client.ev.on('creds.update', saveState);
     //
     //console.log(client);
     //
