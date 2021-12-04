@@ -1582,10 +1582,10 @@ module.exports = class Sessions {
     console.log("- createGroup");
     var session = Sessions.getSession(SessionName);
     var resultgetGroupInviteLink = await session.client.then(async client => {
-      return await client.groupCreate(title, contactlistValid).then(async (result) => {
-        //console.log('Result: ', result); //return object success
+      return await client.groupCreate(title, contactlistValid).then(async ([result]) => {
+        console.log('Result: ', result); //return object success
         //
-        if (result.status == 200 || result.status == 207) {
+        if (result) {
           // await client.groupUpdateDescription(result.gid, title);
           return {
             "erro": false,
