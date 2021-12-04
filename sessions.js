@@ -568,12 +568,9 @@ module.exports = class Sessions {
     await session.client.then(async (client) => {
       //
       client.ev.on('new.message', (mek) => {
-        console.log(mek)
+        console.log(`- New message: ${mek}`)
       });
       //
-      client.ev.on('messages.upsert', m => {
-        console.log('- Messages upsert replying to:', m.messages[0].key.remoteJid)
-      });
       /** set chats (history sync), messages are reverse chronologically sorted */
       client.ev.on('chats.set', async (e) => {
         const {
@@ -587,7 +584,7 @@ module.exports = class Sessions {
         console.log(`- Chats upsert ${e}`)
       });
       //
-      client.ev.on('chats.delete', async e => {
+      client.ev.on('chats.delete', async (e) => {
         console.log('- Chats delete', e)
       });
       //
@@ -595,23 +592,13 @@ module.exports = class Sessions {
         console.log('- Presence update: ', presences);
       });
       //
-      client.ev.on('groups.update', (group) => {
-        // Teste 1 - Alterei o nome do grupo e caiu aqui, onde o subject é o novo nome
-        console.log('- Grupo update: ', group);
-      });
-      //
-      //
       client.ev.on('messages.upsert', (e) => {
-        const {
-          messages,
-          type
-        } = e;
-        console.log(`- Messages upsert ${messages}, type ${type}`);
+        console.log(`- Messages upsert replying to: ${e.messages[0].key.remoteJid}`)
       });
       //
       client.ev.on('message-info.update', (e) => {
         // Teste 1 - Alterei o nome do grupo e caiu aqui, onde o subject é o novo nome
-        console.log('- Message-info update: ', e);
+        console.log('- Message-info update:', e);
       });
       //
       client.ev.on('groups.update', (group) => {
