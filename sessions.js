@@ -29,9 +29,13 @@ const {
   BaileysEventMap,
   GroupMetadata,
   AnyMessageContent,
-  MiscMessageGenerationOptions
+  MiscMessageGenerationOptions,
+  MessageType,
+  MessageOptions,
+  Mimetype,
+  MessageOptions,
+  Mimetype
 } = require('./Baileys/lib/index');
-
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
