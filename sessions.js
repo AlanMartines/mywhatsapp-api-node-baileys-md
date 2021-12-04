@@ -473,7 +473,7 @@ module.exports = class Sessions {
         qr,
         receivedPendingNotifications
       } = conn;
-      if (qr) { // if the 'qr' property is available on 'conn'
+      if (qr) {
         console.log('- QR Generated');
         //
         var readQRCode = await QRCode.toDataURL(qr);
