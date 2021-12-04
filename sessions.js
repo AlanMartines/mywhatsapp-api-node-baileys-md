@@ -1,11 +1,9 @@
 //
-// ConfiguraÃ§Ã£o dos mÃ³dulos
+// Configuração dos módulos
 const config = require('./config.global');
 const fs = require("fs-extra");
-const QRCode = require('qrcode');
-const qrcodeterminal = require('qrcode-terminal');
+const qr = require("qr-image");
 const moment = require("moment");
-const P = require("pino");
 const Base64BufferThumbnail = require('base64-buffer-thumbnail');
 const {
   fromPath,
@@ -16,28 +14,61 @@ const {
   forEach
 } = require('p-iteration');
 const {
-  default: makeWASocket,
-  WASocket,
-  AuthenticationState,
-  BufferJSON,
-  initInMemoryKeyStore,
-  WAMessage,
-  Contact,
-  SocketConfig,
-  useSingleFileAuthState,
-  DisconnectReason,
-  BaileysEventMap,
-  GroupMetadata,
-  AnyMessageContent,
+  WAConnection,
   MessageType,
-  MiscMessageGenerationOptions,
+  Presence,
   MessageOptions,
   Mimetype,
-  downloadContentFromMessage
+  WALocationMessage,
+  WA_MESSAGE_STUB_TYPES,
+  ReconnectMode,
+  ProxyAgent,
+  waChatKey,
+  GroupSettingChange
 } = require('./Baileys/lib/index');
-const BaileysMd = require('./ingine/baileys-md');
 //
 // ------------------------------------------------------------------------------------------------------- //
+//
+async function DataHora() {
+  //
+  let date_ob = new Date();
+
+  // Data atual
+  // Ajuste 0 antes da data de um dígito
+  let date = ("0" + date_ob.getDate()).slice(-2);
+
+  // Mês atual
+  let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+
+  // Ano atual
+  let year = date_ob.getFullYear();
+
+  // Hora atual
+  let hours = date_ob.getHours();
+
+  // Minuto atual
+  let minutes = date_ob.getMinutes();
+
+  // Segundo atual
+  let seconds = date_ob.getSeconds();
+
+  // Imprime a data no formato AAAA-MM-DD
+  console.log(year + "-" + month + "-" + date);
+
+  // Imprime a data no formato DD/MM/YYYY
+  console.log(date + "/" + month + "/" + year);
+
+  // Imprime data e hora no formato AAAA-MM-DD HH:MM:SS
+  console.log(year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds);
+
+  // Imprime data e hora no formato DD/MM/YYYY HH:MM:SS
+  console.log(date + "/" + month + "/" + year + " " + hours + ":" + minutes + ":" + seconds);
+
+  // Imprime a hora no formato HH:MM:SS
+  console.log(hours + ":" + minutes + ":" + seconds);
+  //
+  return date + "/" + month + "/" + year + " " + hours + ":" + minutes + ":" + seconds;
+}
 //
 async function saudacao() {
   //
@@ -54,7 +85,7 @@ async function saudacao() {
     var saudacao = "Boa noite";
     //
   } else {
-    var saudacao = "Boa madrugada";
+    var saudacao = "---";
     //
   }
   return saudacao;
@@ -95,7 +126,7 @@ async function updateStateDb(state, status, AuthorizationToken) {
     if (resUpdate) {
       console.log('- Status atualizado');
     } else {
-      console.log('- Status nÃ£o atualizado');
+      console.log('- Status não atualizado');
     }
   }
   //
@@ -106,7 +137,7 @@ async function updateStateDb(state, status, AuthorizationToken) {
 async function deletaToken(filePath) {
   //
   const cacheExists = await fs.pathExists(filePath);
-  console.log('- O arquivo Ã©: ' + cacheExists);
+  console.log('- O arquivo é: ' + cacheExists);
   console.log('- Path: ' + filePath);
   if (cacheExists) {
     fs.remove(filePath);
@@ -197,7 +228,8 @@ async function gerateThumbnail(fileBuffer, mimetype, saveFilename) {
 //
 module.exports = class Sessions {
   //
-  static async getStatusApi(sessionName) {
+  static async getStatusApi(sessionName, options = []) {
+    Sessions.options = Sessions.options || options;
     Sessions.sessions = Sessions.sessions || [];
 
     var session = Sessions.getSession(sessionName);
@@ -208,7 +240,7 @@ module.exports = class Sessions {
     console.log("- Status");
     var session = Sessions.getSession(SessionName);
 
-    if (session) { //sÃ³ adiciona se nÃ£o existir
+    if (session) { //só adiciona se não existir
       if (session.state == "CONNECTED") {
         return {
           result: "info",
@@ -239,7 +271,7 @@ module.exports = class Sessions {
           SessionName: SessionName,
           state: session.state,
           status: session.status,
-          message: "SessÃ£o fechada"
+          message: "Sessão fechada"
         };
       } else {
         return {
@@ -285,16 +317,16 @@ module.exports = class Sessions {
       session.blocklist = null;
       session.browserSessionToken = null;
       //
-      console.log('- Nome da sessÃ£o:', session.name);
+      console.log('- Nome da sessão:', session.name);
       console.log('- State do sistema:', session.state);
-      console.log('- Status da sessÃ£o:', session.status);
+      console.log('- Status da sessão:', session.status);
       //
       session.client = Sessions.initSession(SessionName, AuthorizationToken);
       Sessions.setup(SessionName, AuthorizationToken);
     } else {
-      console.log('- Nome da sessÃ£o:', session.name);
+      console.log('- Nome da sessão:', session.name);
       console.log('- State do sistema:', session.state);
-      console.log('- Status da sessÃ£o:', session.status);
+      console.log('- Status da sessão:', session.status);
     }
     //
     await updateStateDb(session.state, session.status, session.AuthorizationToken);
@@ -305,7 +337,7 @@ module.exports = class Sessions {
   // ------------------------------------------------------------------------------------------------------- //
   //
   static async addSesssion(SessionName, AuthorizationToken) {
-    console.log("- Adicionando sessÃ£o");
+    console.log("- Adicionando sessão");
     var newSession = {
       AuthorizationToken: AuthorizationToken,
       name: SessionName,
@@ -323,7 +355,7 @@ module.exports = class Sessions {
       browserSessionToken: null
     }
     Sessions.sessions.push(newSession);
-    console.log("- Nova sessÃ£o: " + newSession.state);
+    console.log("- Nova sessão: " + newSession.state);
 
     //setup session
     newSession.client = Sessions.initSession(SessionName);
@@ -358,119 +390,254 @@ module.exports = class Sessions {
   // ------------------------------------------------------------------------------------------------------- //
   //
   static async initSession(SessionName) {
-    console.log("- Iniciando sessÃ£o");
+    console.log("- Iniciando sessão");
     var session = Sessions.getSession(SessionName);
+    session.browserSessionToken = null;
     //
     /*
-        â•”â•â•—â”Œâ”€â”â”Œâ”¬â”â”¬â”Œâ”€â”â”Œâ”â”Œâ”Œâ”€â”â”¬    â•”â•â•—â”¬â”€â”â”Œâ”€â”â”Œâ”€â”â”Œâ”¬â”â”Œâ”€â”  â•”â•â•—â”Œâ”€â”â”¬â”€â”â”Œâ”€â”â”Œâ”¬â”â”Œâ”€â”â”Œâ”¬â”â”Œâ”€â”â”¬â”€â”â”Œâ”€â”
-        â•‘ â•‘â”œâ”€â”˜ â”‚ â”‚â”‚ â”‚â”‚â”‚â”‚â”œâ”€â”¤â”‚    â•‘  â”œâ”¬â”˜â”œâ”¤ â”œâ”€â”¤ â”‚ â”œâ”¤   â• â•â•â”œâ”€â”¤â”œâ”¬â”˜â”œâ”€â”¤â”‚â”‚â”‚â”œâ”¤  â”‚ â”œâ”¤ â”œâ”¬â”˜â””â”€â”
-        â•šâ•â•â”´   â”´ â”´â””â”€â”˜â”˜â””â”˜â”´ â”´â”´â”€â”˜  â•šâ•â•â”´â””â”€â””â”€â”˜â”´ â”´ â”´ â””â”€â”˜  â•©  â”´ â”´â”´â””â”€â”´ â”´â”´ â”´â””â”€â”˜ â”´ â””â”€â”˜â”´â””â”€â””â”€â”˜
+        ╔═╗┌─┐┌┬┐┬┌─┐┌┐┌┌─┐┬    ╔═╗┬─┐┌─┐┌─┐┌┬┐┌─┐  ╔═╗┌─┐┬─┐┌─┐┌┬┐┌─┐┌┬┐┌─┐┬─┐┌─┐
+        ║ ║├─┘ │ ││ ││││├─┤│    ║  ├┬┘├┤ ├─┤ │ ├┤   ╠═╝├─┤├┬┘├─┤│││├┤  │ ├┤ ├┬┘└─┐
+        ╚═╝┴   ┴ ┴└─┘┘└┘┴ ┴┴─┘  ╚═╝┴└─└─┘┴ ┴ ┴ └─┘  ╩  ┴ ┴┴└─┴ ┴┴ ┴└─┘ ┴ └─┘┴└─└─┘
      */
     //
-    console.log("- SaudaÃ§Ã£o:", await saudacao());
+    const osnow = await osplatform();
     //
-    console.log('- Nome da sessÃ£o:', SessionName);
+    if (osnow == 'linux' || osnow == 'Linux') {
+      console.log("- Sistema operacional:", osnow);
+      var folderToken = config.TOKENSPATCH_LINUX;
+      session.tokenPatch = folderToken;
+    } else if (osnow == 'win32' || osnow == 'win64' || osnow == 'Windows') {
+      console.log("- Sistema operacional:", osnow);
+      var folderToken = config.TOKENSPATCH_WIN;
+      session.tokenPatch = folderToken;
+    } else {
+      var folderToken = './tokens';
+      session.tokenPatch = folderToken;
+    }
+    //
+    console.log("- Saudação:", await saudacao());
+    //
+    console.log('- Nome da sessão:', SessionName);
     //
     console.log('- Folder Token:', session.tokenPatch);
     //
     console.log("- AuthorizationToken:", session.AuthorizationToken);
     //
     //-------------------------------------------------------------------------------------------------------------------------------------//
+    const client = new WAConnection();
+    //client.autoReconnect = true;
+    //client.user = "My WhatsApp";
+    client.version = [3, 3234, 9]; // https://github.com/adiwajshing/Baileys/issues/782
+    client.autoReconnect = ReconnectMode.onConnectionLost;
+    client.logUnhandledMessages = false;
+    client.connectOptions = {
+      regenerateQRIntervalMs: 15000,
+      /** fails the connection if no data is received for X seconds */
+      maxIdleTimeMs: 60000,
+      /** maximum attempts to connect */
+      maxRetries: Infinity,
+      /** max time for the phone to respond to a connectivity test */
+      /** should the chats be waited for;
+       * should generally keep this as true, unless you only care about sending & receiving new messages
+       * & don't care about chat history
+       * */
+      waitForChats: true,
+      /** if set to true, the connect only waits for the last message of the chat
+       * setting to false, generally yields a faster connect
+       */
+      waitOnlyForLastMessage: false,
+      /** max time for the phone to respond to a connectivity test */
+      phoneResponseTime: 15000,
+      /** minimum time between new connections */
+      connectCooldownMs: 4000,
+      /** agent used for WS connections (could be a proxy agent) */
+      agent: undefined,
+      /** agent used for fetch requests -- uploading/downloading media */
+      fetchAgent: undefined,
+      /** always uses takeover for connecting */
+      alwaysUseTakeover: true,
+      /** log QR to terminal */
+      logQR: parseInt(config.VIEW_QRCODE_TERMINAL)
+    };
+    client.browserDescription = ['My WhatsApp', 'Chrome', '87'];
+    await fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`) && await client.loadAuthInfo(`${session.tokenPatch}/${SessionName}.data.json`);
+    client.autoReconnect = ReconnectMode.onConnectionLost; // only automatically reconnect when the connection breaks
+    client.logger.level = 'info'; // set to 'debug' or  'info' to see what kind of stuff you can implement
+    // attempt to reconnect at most 10 times in a row
+    client.connectOptions.maxRetries = 10;
+    client.chatOrderingKey = waChatKey(true); // order chats such that pinned chats are on top
     //
-    session.tokenPatch = config.TOKENSPATCH_LINUX;
-    //
-    let client = undefined
-    /*
-        const loadState = () => {
-          let state = undefined;
-          try {
-            const value = JSON.parse(
-              fs.readFileSync(`${session.tokenPatch }/${SessionName}.data.json`, {
-                encoding: 'utf-8'
-              }),
-              BufferJSON.reviver
-            );
-            state = {
-              creds: value.creds,
-              keys: initInMemoryKeyStore(value.keys)
-            };
-          } catch {}
-          return state;
-        };
-
-        const saveState = (state) => {
-          state = state || client.authState;
-          fs.writeFileSync(`${session.tokenPatch }/${SessionName}.data.json`,
-            JSON.stringify(state, BufferJSON.replacer, 2)
-          );
-        };
-    		*/
-    //
-    const {
-      state,
-      saveState
-    } = useSingleFileAuthState(`${session.tokenPatch }/${SessionName}.data.json`);
-    //
-    // https://github.com/adiwajshing/Baileys/issues/751
-    //
-    const startSock = () => {
-      const client = makeWASocket({
-        /** provide an auth state object to maintain the auth state */
-        auth: state,
-        /** Fails the connection if the connection times out in this time interval or no data is received */
-        connectTimeoutMs: 5000,
-        /** ping-pong interval for WS connection */
-        keepAliveIntervalMs: 30000,
-        /** proxy agent */
-        agent: undefined,
-        /** pino logger */
-        logger: P({
-          level: 'info'
-        }),
-        /** version to connect with */
-        //version: [2, 2142, 12],
-        /** override browser config */
-        browser: ['My-WhatsApp', "Safari", "3.0"],
-        /** agent used for fetch requests -- uploading/downloading media */
-        fetchAgent: undefined,
-        /** should the QR be printed in the terminal */
-        printQRInTerminal: true
-        //
-      });
-      //
-
-      //
-      client.ev.on('creds.update', saveState);
-      //
-      return client
-    }
-    client = startSock()
-    //
+    let lastqr = null;
     let attempts = 0;
     //
-    client.ev.on('connection.update', async (conn) => {
-      const {
-        connection,
-        lastDisconnect,
-        isNewLogin,
-        qr,
-        receivedPendingNotifications
-      } = conn;
-      if (qr) { // if the 'qr' property is available on 'conn'
-        console.log('- QR Generated');
+    client.on("qr", async (qr_data) => {
+      let qr_svg = qr.imageSync(qr_data, {
+        type: 'png'
+      });
+      //
+      let base64data = qr_svg.toString('base64');
+      let qr_str = "data:image/png;base64," + base64data;
+      //
+      lastqr = qr;
+      attempts++;
+      //
+      console.log("- State:", client.state);
+      //
+      console.log('- Número de tentativas de ler o qr-code:', attempts);
+      session.attempts = attempts;
+      //
+      console.log("- Captura do QR-Code");
+      //
+      session.qrcode = qr_str;
+      session.qrcodedata = base64data;
+      //
+      session.state = "QRCODE";
+      session.status = "qrRead";
+      session.message = 'Sistema iniciando e indisponivel para uso';
+      //
+      await updateStateDb(session.state, session.status, session.AuthorizationToken);
+      //
+    });
+    //
+    // this will be called as soon as the credentials are updated
+    client.on('open', async () => {
+      // save credentials whenever updated
+      console.log(`- Credentials updated init!`)
+      const authInfo = await client.base64EncodedAuthInfo(); // get all the auth info we need to restore this session
+      session.browserSessionToken = JSON.stringify(authInfo, null, '\t');
+      await fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(authInfo, null, '\t')); // save this info to a file
+      //
+      session.state = "CONNECTED";
+      session.status = 'isLogged';
+      session.qrcodedata = null;
+      session.message = 'Sistema iniciando e disponivel para uso';
+      //
+      await updateStateDb(session.state, session.status, session.AuthorizationToken);
+      //
+    });
+    //
+    client.on('credentials-updated', async () => {
+      console.log('- Credentials updated!')
+      const authInfo = await client.base64EncodedAuthInfo(); // get all the auth info we need to restore this session
+      session.browserSessionToken = JSON.stringify(authInfo, null, '\t');
+      await fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(authInfo, null, '\t')); // save this info to a file
+      //
+      session.state = "CONNECTED";
+      session.status = 'isLogged';
+      session.qrcodedata = null;
+      session.message = 'Sistema iniciando e disponivel para uso';
+      //
+    });
+    //
+    client.on("close", async ({
+      reason,
+      isReconnecting
+    }) => {
+      console.log("- Close because " + reason + ", reconnecting: " + isReconnecting);
+      if (!isReconnecting && reason == "invalid_session") {
+        if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) {
+          fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`);
+        }
         //
-        var readQRCode = await QRCode.toDataURL(qr);
-        var qrCode = readQRCode.replace('data:image/png;base64,', '');
+        session.state = "CLOSED";
+        session.status = 'CLOSED';
+        session.client = false;
+        session.qrcodedata = null;
+        session.message = "Sessão fechada";
         //
-        attempts++;
+        client.clearAuthInfo();
         //
-        console.log('- NÃºmero de tentativas de ler o qr-code:', attempts);
-        console.log("- Captura do QR-Code");
+        await Sessions.Start(SessionName.trim());
         //
       }
-      if (connection === 'connecting') {
-
-      } else if (connection === 'open') {
+      //
+    });
+    //
+    //
+    let error;
+    await client.connect().then(async ([user, chats, contacts, unread]) => {
+      //
+      contacts.forEach(contact => {
+        const name = contact.name || contact.notify
+        console.log('- Hi I am your contact ' + name + ', my id is ' + contact.jid)
+      });
+      //
+      session.state = "CONNECTED";
+      session.status = 'isLogged';
+      session.message = 'Sistema iniciado e disponivel para uso';
+      //
+      await updateStateDb(session.state, session.status, session.AuthorizationToken);
+      //
+    }).catch(async (err) => {
+      //
+      error = err;
+      //
+      session.state = 'NOTFOUND';
+      session.status = 'notLogged';
+      session.qrcodedata = null;
+      session.message = 'Sistema Off-line';
+      //
+      await updateStateDb(session.state, session.status, session.AuthorizationToken);
+      //
+      return false;
+    });
+    //
+    if (!client) {
+      console.error("- Connect error:", error);
+    }
+    //
+    console.log("- State:", client.state);
+    //
+    if (client.state == "open") {
+      //
+      session.state = "CONNECTED";
+      session.status = 'isLogged';
+      session.qrcodedata = null;
+      session.message = 'Sistema iniciando e disponivel para uso';
+      //
+    } else if (client.state == "connecting") {
+      //
+      session.state = "STARTING";
+      session.status = 'notLogged';
+      session.qrcodedata = null;
+      session.message = 'Sistema iniciando e indisponivel para uso';
+      //
+    } else if (client.state == "close") {
+      //
+      session.state = "CLOSED";
+      session.status = 'CLOSED';
+      session.client = false;
+      session.qrcodedata = null;
+      session.message = "Sessão fechada";
+      //
+    } else {
+      //
+      session.state = "STARTING";
+      session.status = 'notLogged';
+      session.qrcodedata = null;
+      session.message = 'Sistema iniciando e indisponivel para uso';
+      //
+    }
+    //
+    return client;
+  } //initSession
+  //
+  // ------------------------------------------------------------------------------------------------//
+  //
+  /*
+    ╔═╗┌─┐┌┬┐┌┬┐┬┌┐┌┌─┐  ┌─┐┌┬┐┌─┐┬─┐┌┬┐┌─┐┌┬┐
+    ║ ╦├┤  │  │ │││││ ┬  └─┐ │ ├─┤├┬┘ │ ├┤  ││
+    ╚═╝└─┘ ┴  ┴ ┴┘└┘└─┘  └─┘ ┴ ┴ ┴┴└─ ┴ └─┘─┴┘
+  */
+  //
+  static async setup(SessionName) {
+    console.log("- Sinstema iniciando");
+    var session = Sessions.getSession(SessionName);
+    await session.client.then(async (client) => {
+      //
+      console.log("- State setup:", client.state);
+      //
+      if (client.state == "open") {
         //
         session.state = "CONNECTED";
         session.status = 'isLogged';
@@ -479,92 +646,172 @@ module.exports = class Sessions {
         //
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
-      }
-      if (connection === 'close') {
-        if (fs.existsSync(`${session.tokenPatch }/${SessionName}.data.json`)) {
-          fs.unlinkSync(`${session.tokenPatch }/${SessionName}.data.json`);
-        }
+      } else if (client.state == "connecting") {
+        //
+        session.state = "STARTING";
+        session.status = 'notLogged';
+        session.qrcodedata = null;
+        session.message = 'Sistema iniciando e indisponivel para uso';
+        //
+        await updateStateDb(session.state, session.status, session.AuthorizationToken);
+        //
+      } else if (client.state == "close") {
         //
         session.state = "CLOSED";
         session.status = 'CLOSED';
         session.client = false;
         session.qrcodedata = null;
-        session.message = "SessÃ£o fechada";
+        session.message = "Sessão fechada";
         //
-        await Sessions.Start(SessionName.trim());
+        await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
-        // reconnect if not logged out
-        if ((lastDisconnect.error).output.statusCode !== DisconnectReason.loggedOut) {
-          client = startSock()
-        } else {
-          console.log('- Connection closed')
-        }
-      } else {
-
       }
-      //console.log('- Connection update\n', conn);
-      console.log('- Connection update');
-    });
-    //
-    return client;
-  } //initSession
-  //
-  // ------------------------------------------------------------------------------------------------//
-  //
-  /*
-    â•”â•â•—â”Œâ”€â”â”Œâ”¬â”â”Œâ”¬â”â”¬â”Œâ”â”Œâ”Œâ”€â”  â”Œâ”€â”â”Œâ”¬â”â”Œâ”€â”â”¬â”€â”â”Œâ”¬â”â”Œâ”€â”â”Œâ”¬â”
-    â•‘ â•¦â”œâ”¤  â”‚  â”‚ â”‚â”‚â”‚â”‚â”‚ â”¬  â””â”€â” â”‚ â”œâ”€â”¤â”œâ”¬â”˜ â”‚ â”œâ”¤  â”‚â”‚
-    â•šâ•â•â””â”€â”˜ â”´  â”´ â”´â”˜â””â”˜â””â”€â”˜  â””â”€â”˜ â”´ â”´ â”´â”´â””â”€ â”´ â””â”€â”˜â”€â”´â”˜
-  */
-  //
-  static async setup(SessionName) {
-    console.log("- Sinstema iniciando");
-    var session = Sessions.getSession(SessionName);
-    await session.client.then(async (client) => {
-      //
-      client.ev.on('new.message', (mek) => {
-        console.log(mek)
+      // this will be called as soon as the credentials are updated
+      client.on('open', async () => {
+        // save credentials whenever updated
+        console.log(`- Credentials updated setup!`)
+        const authInfo = client.base64EncodedAuthInfo(); // get all the auth info we need to restore this session
+        session.browserSessionToken = JSON.stringify(authInfo, null, '\t');
+        fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(authInfo, null, '\t')); // save this info to a file
+        //
+        session.state = "CONNECTED";
+        session.status = 'isLogged';
+        session.qrcodedata = null;
+        session.message = 'Sistema iniciando e disponivel para uso';
+        //
+        await updateStateDb(session.state, session.status, session.AuthorizationToken);
+        //
       });
       //
-      client.ev.on('messages.upsert', m => {
-        console.log('replying to', m.messages[0].key.remoteJid)
+      // this will be called as soon as the credentials are updated
+      client.on('connecting', async ({
+        reason,
+        isReconnecting
+      }) => {
+        // save credentials whenever updated
+        console.log("- Connecting because " + reason + ", reconnecting: " + isReconnecting)
+        //
+        session.state = "CLOSED";
+        session.status = 'CLOSED';
+        session.client = false;
+        session.qrcodedata = null;
+        console.log("- Sessão fechada");
+        //
       });
       //
-      client.ev.on('chats.delete', async e => {
-        console.log(e)
-      });
-      //
-      client.ev.on('presence.update', (presences) => {
-        console.log('Presence: ', presences);
-      });
-      //
-      client.ev.on('groups.update', (group) => {
-        // Teste 1 - Alterei o nome do grupo e caiu aqui, onde o subject Ã© o novo nome
-        console.log('Grupo update: ', group);
-      });
-      //
-      client.ev.on('group-participants.update', (group) => {
-        switch (group.action) {
-          case 'add':
-            console.log('Participante(s) adicionado(s): ', group.participants);
-            break;
-
-          case 'remove':
-            console.log('Participante(s) removido(s): ', group.participants);
-            break;
-
-          case 'promote':
-            console.log('Participante(s) promovido(s) a admin: ', group.participants);
-            break;
-
-          case 'demote':
-            console.log('Participante(s) despromovido(s) de admin: ', group.participants);
-            break;
-
-          default:
-            console.log('AÃ§Ã£o nÃ£o tratada');
-            break;
+      client.on("close", async ({
+        reason,
+        isReconnecting
+      }) => {
+        console.log("- Close because " + reason + ", reconnecting: " + isReconnecting);
+        if (!isReconnecting && reason == "invalid_session") {
+          if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) {
+            fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`);
+          }
+          client.clearAuthInfo();
+          //
+          session.state = "DISCONNECTED";
+          session.status = 'notLogged';
+          session.client = false;
+          session.qrcodedata = null;
+          console.log("- Sessão fechada");
+          //
+        } else if (!isReconnecting && reason == "intentional") {
+          //
+          session.state = "CLOSED";
+          session.status = 'CLOSED';
+          session.qrcodedata = null;
+          session.message = 'Sessão fechada';
+          //
+        } else if (!isReconnecting && reason == "replaced") {
+          //
+          session.state = "CLOSED";
+          session.status = 'CLOSED';
+          session.qrcodedata = null;
+          session.message = 'Sessão fechada';
+          //
+          //await Sessions.Start(SessionName.trim());
+          //
+        } else {
+          //
+          session.state = "CLOSED";
+          session.status = 'CLOSED';
+          session.qrcodedata = null;
+          session.message = 'Sessão fechada';
+          //
         }
+        //
+        //await deletaToken(session.tokenPatch + "/" + SessionName + ".data.json");
+        //
+        await updateStateDb(session.state, session.status, session.AuthorizationToken);
+        //
+      });
+      //
+      /** when the connection to the phone changes */
+      client.on('connection-phone-change', (state) => {
+        console.log("- State:", state);
+        //
+        // { connected: false }
+        if (state.connected) {
+          //
+          console.log("- Telefone conectado");
+          //
+        } else if (!state.connected) {
+          //
+          console.log("- Telefone desconectado");
+          //
+        }
+        //
+      });
+      //
+      client.on('chats-received', async ({
+        hasNewChats
+      }) => {
+        console.log(`- You have ${client.chats.length} chats, new chats available: ${hasNewChats}`);
+        const unread = await client.loadAllUnreadMessages()
+        console.log("- You have " + unread.length + " unread messages")
+      });
+      //
+      client.on('contacts-received', () => {
+        console.log(`- You have ${Object.keys(client.contacts).length} contacts`);
+      });
+      //
+      client.on('initial-data-received', () => {
+        console.log('- Received all initial messages');
+      });
+      //
+      client.on('call', ({
+        jid,
+        id
+      }) => {
+        conn.rejectIncomingCall(id);
+        conn.sendMessage(jid, 'Busy rn', 'conversation');
+      });
+      //
+      client.on('blocklist-update', (json) => {
+        console.log('- Update Blocklist');
+        session.blocklist = JSON.stringify(json, null, 2);
+      });
+      //
+      client.on('CB:Conn,pushname', (json) => {
+        const pushname = json[1].pushname
+        client.user.name = pushname // update on client too
+        console.log("- Name updated: " + pushname);
+      });
+      //
+      client.on(`CB:action,,battery`, (json) => {
+        const batteryLevelStr = json[2][0][1].value
+        const batterylevel = parseInt(batteryLevelStr);
+        console.log("- Battery level: " + batterylevel + "%");
+      });
+      //
+      client.on(`CB:Cmd,type:disconnect`, (json) => {
+
+      });
+      //
+      client.on('CB:Blocklist', (json) => {
+        console.log('- Blocklist');
+        session.blocklist = JSON.stringify(json, null, 2);
       });
       //
     });
@@ -579,7 +826,7 @@ module.exports = class Sessions {
       try {
         return client.state;
       } catch (error) {
-        //console.log("- Erro ao fechar sessÃ£o:", error.message);
+        //console.log("- Erro ao fechar sessão:", error.message);
         //
         return {
           result: "error",
@@ -596,7 +843,7 @@ module.exports = class Sessions {
   // ------------------------------------------------------------------------------------------------//
   //
   static async closeSession(SessionName) {
-    console.log("- Fechando sessÃ£o");
+    console.log("- Fechando sessão");
     var session = Sessions.getSession(SessionName);
     var closeSession = await session.client.then(async client => {
       try {
@@ -605,13 +852,13 @@ module.exports = class Sessions {
         //
         session.state = "CLOSED";
         session.status = 'CLOSED';
-        console.log("- SessÃ£o fechada");
+        console.log("- Sessão fechada");
         //
         var returnClosed = {
           result: "success",
           state: session.state,
           status: session.status,
-          message: "SessÃ£o fechada com sucesso"
+          message: "Sessão fechada com sucesso"
         };
         //
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
@@ -619,13 +866,13 @@ module.exports = class Sessions {
         return returnClosed;
         //
       } catch (error) {
-        //console.log("- Erro ao fechar sessÃ£o:", error);
+        //console.log("- Erro ao fechar sessão:", error);
         //
         return {
           result: "error",
           state: session.state,
           status: session.status,
-          message: "Erro ao fechar sessÃ£o"
+          message: "Erro ao fechar sessão"
         };
         //
       };
@@ -641,7 +888,7 @@ module.exports = class Sessions {
   // ------------------------------------------------------------------------------------------------//
   //
   static async logoutSession(SessionName) {
-    console.log("- Fechando sessÃ£o");
+    console.log("- Fechando sessão");
     var session = Sessions.getSession(SessionName);
     var LogoutSession = await session.client.then(async client => {
       try {
@@ -652,13 +899,13 @@ module.exports = class Sessions {
         //
         session.state = "DISCONNECTED";
         session.status = 'CLOSED';
-        console.log("- SessÃ£o desconetada");
+        console.log("- Sessão desconetada");
         //
         var returnLogout = {
           result: "success",
           state: session.state,
           status: session.status,
-          message: "SessÃ£o desconetada"
+          message: "Sessão desconetada"
         };
         //
         await deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
@@ -668,13 +915,13 @@ module.exports = class Sessions {
         return returnLogout;
         //
       } catch (error) {
-        //console.log("- Erro ao desconetar sessÃ£o:", error);
+        //console.log("- Erro ao desconetar sessão:", error);
         //
         return {
           result: "error",
           state: session.state,
           status: session.status,
-          message: "Erro ao desconetar sessÃ£o"
+          message: "Erro ao desconetar sessão"
         };
         //
       };
@@ -689,9 +936,9 @@ module.exports = class Sessions {
   // ------------------------------------------------------------------------------------------------------- //
   //
   /*
-  â•”â•— â”Œâ”€â”â”Œâ”€â”â”¬â”Œâ”€â”  â•”â•â•—â”¬ â”¬â”Œâ”â”Œâ”Œâ”€â”â”Œâ”¬â”â”¬â”Œâ”€â”â”Œâ”â”Œâ”Œâ”€â”  â”¬ â”¬â”Œâ”€â”â”Œâ”€â”â”Œâ”€â”â”Œâ”€â”
-  â• â•©â•—â”œâ”€â”¤â””â”€â”â”‚â”‚    â• â•£ â”‚ â”‚â”‚â”‚â”‚â”‚   â”‚ â”‚â”‚ â”‚â”‚â”‚â”‚â””â”€â”  â”‚ â”‚â””â”€â”â”œâ”€â”¤â”‚ â”¬â”œâ”¤ 
-  â•šâ•â•â”´ â”´â””â”€â”˜â”´â””â”€â”˜  â•š  â””â”€â”˜â”˜â””â”˜â””â”€â”˜ â”´ â”´â””â”€â”˜â”˜â””â”˜â””â”€â”˜  â””â”€â”˜â””â”€â”˜â”´ â”´â””â”€â”˜â””â”€â”˜
+  ╔╗ ┌─┐┌─┐┬┌─┐  ╔═╗┬ ┬┌┐┌┌─┐┌┬┐┬┌─┐┌┐┌┌─┐  ┬ ┬┌─┐┌─┐┌─┐┌─┐
+  ╠╩╗├─┤└─┐││    ╠╣ │ │││││   │ ││ ││││└─┐  │ │└─┐├─┤│ ┬├┤ 
+  ╚═╝┴ ┴└─┘┴└─┘  ╚  └─┘┘└┘└─┘ ┴ ┴└─┘┘└┘└─┘  └─┘└─┘┴ ┴└─┘└─┘
   */
   //
   // ------------------------------------------------------------------------------------------------//
@@ -753,9 +1000,7 @@ module.exports = class Sessions {
     var session = Sessions.getSession(SessionName);
     var sendResult = await session.client.then(async client => {
       // send a simple text!
-      return await client.sendMessage(number, {
-        text: msg
-      }).then((result) => {
+      return await client.sendMessage(number, msg, MessageType.text).then((result) => {
         //console.log("Result: ", result); //return object success
         //
         return {
@@ -781,7 +1026,7 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  //Enviar localizaÃ§Ã£o
+  //Enviar localização
   static async sendLocation(
     SessionName,
     number,
@@ -789,7 +1034,7 @@ module.exports = class Sessions {
     long,
     caption
   ) {
-    console.log("- Enviando localizaÃ§Ã£o.");
+    console.log("- Enviando localização.");
     var session = Sessions.getSession(SessionName);
     var sendResult = await session.client.then(async client => {
       //
@@ -807,7 +1052,7 @@ module.exports = class Sessions {
         return {
           "erro": false,
           "status": 200,
-          "message": "LocalizaÃ§Ã£o enviada com sucesso."
+          "message": "Localização enviada com sucesso."
         };
         //
       }).catch((erro) => {
@@ -818,7 +1063,7 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "message": "Erro ao enviar localizaÃ§Ã£o."
+          "message": "Erro ao enviar localização."
         };
         //
       });
@@ -963,9 +1208,9 @@ module.exports = class Sessions {
   // ------------------------------------------------------------------------------------------------//
   //
   /*
-  â•¦â•â•—â”Œâ”€â”â”Œâ”¬â”â”¬â”€â”â”¬â”Œâ”€â”â”¬  â”¬â”¬â”Œâ”â”Œâ”Œâ”€â”  â•”â•¦â•—â”Œâ”€â”â”Œâ”¬â”â”Œâ”€â”                
-  â• â•¦â•â”œâ”¤  â”‚ â”œâ”¬â”˜â”‚â”œâ”¤ â””â”â”Œâ”˜â”‚â”‚â”‚â”‚â”‚ â”¬   â•‘â•‘â”œâ”€â”¤ â”‚ â”œâ”€â”¤                
-  â•©â•šâ•â””â”€â”˜ â”´ â”´â””â”€â”´â””â”€â”˜ â””â”˜ â”´â”˜â””â”˜â””â”€â”˜  â•â•©â•â”´ â”´ â”´ â”´ â”´                
+  ╦═╗┌─┐┌┬┐┬─┐┬┌─┐┬  ┬┬┌┐┌┌─┐  ╔╦╗┌─┐┌┬┐┌─┐                
+  ╠╦╝├┤  │ ├┬┘│├┤ └┐┌┘│││││ ┬   ║║├─┤ │ ├─┤                
+  ╩╚═└─┘ ┴ ┴└─┴└─┘ └┘ ┴┘└┘└─┘  ═╩╝┴ ┴ ┴ ┴ ┴                
   */
   //
   // Recuperar contatos
@@ -1050,7 +1295,7 @@ module.exports = class Sessions {
             else Name = allChats[i].jid.replace('@s.whatsapp.net', '');
 
             if (LastMessage[LengthMessages].message) MessagePresence = LastMessage[LengthMessages].message.conversation;
-            else MessagePresence = 'NÃ£o foi possÃ­vel carregar as mensagens anteriores';
+            else MessagePresence = 'Não foi possível carregar as mensagens anteriores';
             let PPIMAGE = null;
             try {
               PPIMAGE = await client.getProfilePicture(`${phonePP}@c.us`);
@@ -1116,7 +1361,7 @@ module.exports = class Sessions {
           }
           //
           // if (LastMessage[LengthMessages].message) MessagePresence = LastMessage[LengthMessages].message.conversation;
-          //else MessagePresence = 'NÃ£o foi possÃ­vel carregar as mensagens anteriores'
+          //else MessagePresence = 'Não foi possível carregar as mensagens anteriores'
           let PPIMAGE = null;
           try {
             PPIMAGE = await client.getProfilePicture(`${phonePP}@c.us`);
@@ -1290,7 +1535,7 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  // Verificar o status do nÃºmero
+  // Verificar o status do número
   static async checkNumberStatus(
     SessionName, number
   ) {
@@ -1307,7 +1552,7 @@ module.exports = class Sessions {
             "erro": false,
             "status": 200,
             "number": result.jid,
-            "message": "O nÃºmero informado pode receber mensagens via whatsapp"
+            "message": "O número informado pode receber mensagens via whatsapp"
           };
           //
         } else if (!result.exists) {
@@ -1316,7 +1561,7 @@ module.exports = class Sessions {
             "erro": true,
             "status": 404,
             "number": result.jid,
-            "message": "O nÃºmero informado nÃ£o pode receber mensagens via whatsapp"
+            "message": "O número informado não pode receber mensagens via whatsapp"
           };
           //
         } else {
@@ -1324,7 +1569,7 @@ module.exports = class Sessions {
           return {
             "erro": true,
             "status": 404,
-            "message": "Erro ao verificar nÃºmero informado"
+            "message": "Erro ao verificar número informado"
           };
           //
         }
@@ -1334,7 +1579,7 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "message": "Erro ao verificar nÃºmero informado"
+          "message": "Erro ao verificar número informado"
         };
         //
       });
@@ -1345,9 +1590,9 @@ module.exports = class Sessions {
   // ------------------------------------------------------------------------------------------------//
   //
   /*
-  â•”â•â•—â”¬â”€â”â”Œâ”€â”â”¬ â”¬â”Œâ”€â”  â•”â•â•—â”¬ â”¬â”Œâ”â”Œâ”Œâ”€â”â”Œâ”¬â”â”¬â”Œâ”€â”â”Œâ”â”Œâ”Œâ”€â”               
-  â•‘ â•¦â”œâ”¬â”˜â”‚ â”‚â”‚ â”‚â”œâ”€â”˜  â• â•£ â”‚ â”‚â”‚â”‚â”‚â”‚   â”‚ â”‚â”‚ â”‚â”‚â”‚â”‚â””â”€â”               
-  â•šâ•â•â”´â””â”€â””â”€â”˜â””â”€â”˜â”´    â•š  â””â”€â”˜â”˜â””â”˜â””â”€â”˜ â”´ â”´â””â”€â”˜â”˜â””â”˜â””â”€â”˜               
+  ╔═╗┬─┐┌─┐┬ ┬┌─┐  ╔═╗┬ ┬┌┐┌┌─┐┌┬┐┬┌─┐┌┐┌┌─┐               
+  ║ ╦├┬┘│ ││ │├─┘  ╠╣ │ │││││   │ ││ ││││└─┐               
+  ╚═╝┴└─└─┘└─┘┴    ╚  └─┘┘└┘└─┘ ┴ ┴└─┘┘└┘└─┘               
   */
   //
   // Deixar o grupo
@@ -1525,7 +1770,7 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  // Criar grupo (tÃ­tulo, participantes a adicionar)
+  // Criar grupo (título, participantes a adicionar)
   static async createGroup(
     SessionName, title, contactlistValid, contactlistInvalid
   ) {
@@ -1580,7 +1825,7 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  // Criar grupo (tÃ­tulo, participantes a adicionar)
+  // Criar grupo (título, participantes a adicionar)
   static async deleteChat(
     SessionName,
     Id
@@ -1803,7 +2048,7 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  // Retorna o status do grupo, jid, descriÃ§Ã£o do link de convite
+  // Retorna o status do grupo, jid, descrição do link de convite
   static async getGroupInfoFromInviteLink(
     SessionName, InviteCode
   ) {
@@ -1828,7 +2073,7 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  // Junte-se a um grupo usando o cÃ³digo de convite do grupo
+  // Junte-se a um grupo usando o código de convite do grupo
   static async joinGroup(
     SessionName, InviteCode
   ) {
@@ -1870,7 +2115,7 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  // Junte-se a um grupo usando o cÃ³digo de convite do grupo
+  // Junte-se a um grupo usando o código de convite do grupo
   static async onlyAdminsMessagesGroup(
     SessionName,
     groupId
@@ -1913,7 +2158,7 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  // Junte-se a um grupo usando o cÃ³digo de convite do grupo
+  // Junte-se a um grupo usando o código de convite do grupo
   static async everyoneModifySettingsGroup(
     SessionName,
     groupId,
@@ -1930,13 +2175,13 @@ module.exports = class Sessions {
             return {
               "erro": false,
               "status": 200,
-              "message": "Todos modificam as configuraÃ§Ãµes do grupo"
+              "message": "Todos modificam as configurações do grupo"
             };
           } else {
             return {
               "erro": false,
               "status": 200,
-              "message": "Somente admins podem modificar as configuraÃ§Ãµes do grupo"
+              "message": "Somente admins podem modificar as configurações do grupo"
             };
           }
         } else {
@@ -1944,7 +2189,7 @@ module.exports = class Sessions {
           return {
             "erro": true,
             "status": 404,
-            "message": "Erro ao habilitar as configuraÃ§Ãµes do grupo"
+            "message": "Erro ao habilitar as configurações do grupo"
           };
           //
         }
@@ -1955,7 +2200,7 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "message": "Erro ao habilitar as configuraÃ§Ãµes do grupo"
+          "message": "Erro ao habilitar as configurações do grupo"
         };
         //
       });
@@ -1966,9 +2211,9 @@ module.exports = class Sessions {
   // ------------------------------------------------------------------------------------------------//
   //
   /*
-  â•”â•â•—â”¬â”€â”â”Œâ”€â”â”Œâ”€â”â”¬â”¬  â”Œâ”€â”  â•”â•â•—â”¬ â”¬â”Œâ”â”Œâ”Œâ”€â”â”Œâ”¬â”â”¬â”Œâ”€â”â”Œâ”â”Œâ”Œâ”€â”           
-  â• â•â•â”œâ”¬â”˜â”‚ â”‚â”œâ”¤ â”‚â”‚  â”œâ”¤   â• â•£ â”‚ â”‚â”‚â”‚â”‚â”‚   â”‚ â”‚â”‚ â”‚â”‚â”‚â”‚â””â”€â”           
-  â•©  â”´â””â”€â””â”€â”˜â””  â”´â”´â”€â”˜â””â”€â”˜  â•š  â””â”€â”˜â”˜â””â”˜â””â”€â”˜ â”´ â”´â””â”€â”˜â”˜â””â”˜â””â”€â”˜           
+  ╔═╗┬─┐┌─┐┌─┐┬┬  ┌─┐  ╔═╗┬ ┬┌┐┌┌─┐┌┬┐┬┌─┐┌┐┌┌─┐           
+  ╠═╝├┬┘│ │├┤ ││  ├┤   ╠╣ │ │││││   │ ││ ││││└─┐           
+  ╩  ┴└─└─┘└  ┴┴─┘└─┘  ╚  └─┘┘└┘└─┘ ┴ ┴└─┘┘└┘└─┘           
   */
   //
   // Set client status
@@ -2068,9 +2313,9 @@ module.exports = class Sessions {
   // ------------------------------------------------------------------------------------------------//
   //
   /*
-  â•”â•¦â•—â”Œâ”€â”â”¬  â”¬â”¬â”Œâ”€â”â”Œâ”€â”  â•”â•â•—â”¬ â”¬â”Œâ”â”Œâ”Œâ”€â”â”Œâ”¬â”â”¬â”Œâ”€â”â”Œâ”â”Œâ”Œâ”€â”             
-   â•‘â•‘â”œâ”¤ â””â”â”Œâ”˜â”‚â”‚  â”œâ”¤   â• â•£ â”‚ â”‚â”‚â”‚â”‚â”‚   â”‚ â”‚â”‚ â”‚â”‚â”‚â”‚â””â”€â”             
-  â•â•©â•â””â”€â”˜ â””â”˜ â”´â””â”€â”˜â””â”€â”˜  â•š  â””â”€â”˜â”˜â””â”˜â””â”€â”˜ â”´ â”´â””â”€â”˜â”˜â””â”˜â””â”€â”˜             
+  ╔╦╗┌─┐┬  ┬┬┌─┐┌─┐  ╔═╗┬ ┬┌┐┌┌─┐┌┬┐┬┌─┐┌┐┌┌─┐             
+   ║║├┤ └┐┌┘││  ├┤   ╠╣ │ │││││   │ ││ ││││└─┐             
+  ═╩╝└─┘ └┘ ┴└─┘└─┘  ╚  └─┘┘└┘└─┘ ┴ ┴└─┘┘└┘└─┘             
   */
   //
   // Delete the Service Worker
@@ -2084,7 +2329,7 @@ module.exports = class Sessions {
         return {
           "erro": false,
           "status": 200,
-          "message": "ServiÃ§o parado com sucesso.",
+          "message": "Serviço parado com sucesso.",
           "killService": result
         };
         //
@@ -2094,7 +2339,7 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "message": "Erro ao parar serviÃ§o."
+          "message": "Erro ao parar serviço."
         };
         //
       });
@@ -2115,7 +2360,7 @@ module.exports = class Sessions {
         return {
           "erro": false,
           "status": 200,
-          "message": "ServiÃ§o reiniciado com sucesso.",
+          "message": "Serviço reiniciado com sucesso.",
           "restartService": result
         };
         //
@@ -2125,7 +2370,7 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "message": "Erro ao reiniciar serviÃ§o."
+          "message": "Erro ao reiniciar serviço."
         };
         //
       });
@@ -2201,7 +2446,7 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "message": "Erro ao obter o estado da conexÃ£o"
+          "message": "Erro ao obter o estado da conexão"
         };
         //
       });
@@ -2274,7 +2519,7 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  // Obter versÃ£o do WhatsappWeb
+  // Obter versão do WhatsappWeb
   static async getWAVersion(SessionName) {
     console.log("- getWAVersion");
     var session = Sessions.getSession(SessionName);
@@ -2285,7 +2530,7 @@ module.exports = class Sessions {
         return {
           "erro": false,
           "status": 200,
-          "message": "VersÃ£o do WhatsappWeb obtido com sucesso",
+          "message": "Versão do WhatsappWeb obtido com sucesso",
           "WAVersion": result
         };
         //
@@ -2295,7 +2540,7 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "message": "Erro ao obter versÃ£o do WhatsappWeb"
+          "message": "Erro ao obter versão do WhatsappWeb"
         };
         //
       });
@@ -2305,7 +2550,7 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  // Inicia a verificaÃ§Ã£o de conexÃ£o do telefone
+  // Inicia a verificação de conexão do telefone
   static async startPhoneWatchdog(SessionName, interval) {
     console.log("- startPhoneWatchdog");
     var session = Sessions.getSession(SessionName);
@@ -2316,7 +2561,7 @@ module.exports = class Sessions {
         return {
           "erro": false,
           "status": 200,
-          "message": "VerificaÃ§Ã£o de conexÃ£o do telefone iniciada com sucesso",
+          "message": "Verificação de conexão do telefone iniciada com sucesso",
           "PhoneWatchdog": result
         };
         //
@@ -2326,7 +2571,7 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "message": "Erro ao inicia a verificaÃ§Ã£o de conexÃ£o do telefone"
+          "message": "Erro ao inicia a verificação de conexão do telefone"
         };
         //
       });
@@ -2336,7 +2581,7 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  // Para a verificaÃ§Ã£o de conexÃ£o do telefone
+  // Para a verificação de conexão do telefone
   static async stopPhoneWatchdog(SessionName) {
     console.log("- stopPhoneWatchdog");
     var session = Sessions.getSession(SessionName);
@@ -2347,7 +2592,7 @@ module.exports = class Sessions {
         return {
           "erro": false,
           "status": 200,
-          "message": "VerificaÃ§Ã£o de conexÃ£o parada iniciada com sucesso",
+          "message": "Verificação de conexão parada iniciada com sucesso",
           "PhoneWatchdog": result
         };
         //
@@ -2357,7 +2602,7 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "message": "Erro ao parar a verificaÃ§Ã£o de conexÃ£o do telefone"
+          "message": "Erro ao parar a verificação de conexão do telefone"
         };
         //
       });
@@ -2368,9 +2613,9 @@ module.exports = class Sessions {
   // ------------------------------------------------------------------------------------------------//
   //
   /*
-  â•”â•¦â•—â”Œâ”€â”â”Œâ”€â”â”Œâ”¬â”â”Œâ”€â”â”Œâ”€â”  â”Œâ”¬â”â”Œâ”€â”  â•¦â•â•—â”Œâ”€â”â”Œâ”¬â”â”Œâ”€â”â”Œâ”€â”
-   â•‘ â”œâ”¤ â””â”€â” â”‚ â”œâ”¤ â””â”€â”   â”‚â”‚â”œâ”¤   â• â•¦â•â”‚ â”‚ â”‚ â”œâ”€â”¤â””â”€â”
-   â•© â””â”€â”˜â””â”€â”˜ â”´ â””â”€â”˜â””â”€â”˜  â”€â”´â”˜â””â”€â”˜  â•©â•šâ•â””â”€â”˜ â”´ â”´ â”´â””â”€â”˜
+  ╔╦╗┌─┐┌─┐┌┬┐┌─┐┌─┐  ┌┬┐┌─┐  ╦═╗┌─┐┌┬┐┌─┐┌─┐
+   ║ ├┤ └─┐ │ ├┤ └─┐   ││├┤   ╠╦╝│ │ │ ├─┤└─┐
+   ╩ └─┘└─┘ ┴ └─┘└─┘  ─┴┘└─┘  ╩╚═└─┘ ┴ ┴ ┴└─┘
    */
   //
   // ------------------------------------------------------------------------------------------------//
@@ -2387,7 +2632,7 @@ module.exports = class Sessions {
       },
       "556791400941@s.whatsapp.net": {
         "jid": "556791400941@s.whatsapp.net",
-        "name": "Paulinho / Garagem FlÃ¡vio",
+        "name": "Paulinho / Garagem Flávio",
         "short": "Paulinho /"
       },
       "554396030588@s.whatsapp.net": {
