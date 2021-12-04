@@ -496,6 +496,7 @@ module.exports = class Sessions {
       }
       //
       if (connection === 'connecting') {
+        console.log("- Connection:", connection);
         //
         session.state = "STARTING";
         session.status = 'notLogged';
@@ -505,6 +506,7 @@ module.exports = class Sessions {
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
       } else if (connection === 'open') {
+        console.log("- Connection:", connection);
         //
         session.state = "CONNECTED";
         session.status = 'isLogged';
@@ -514,6 +516,8 @@ module.exports = class Sessions {
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
       } else if (connection === 'close') {
+        console.log("- Connection:", connection);
+        //
         if ((lastDisconnect.error).output.statusCode !== DisconnectReason.loggedOut) {
           if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) {
             fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`);
