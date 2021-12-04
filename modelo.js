@@ -93,7 +93,7 @@ const startSock = () => {
         startSock() :
         console.log('- Connection closed');
     }
-    console.log('- Connection update\n', conn);
+    //console.log('- Connection update\n', conn);
   });
   //
   //
