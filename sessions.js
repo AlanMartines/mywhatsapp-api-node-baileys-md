@@ -605,29 +605,6 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  static async State(SessionName) {
-    console.log("- State");
-    var session = Sessions.getSession(SessionName);
-    var getState = await session.client.then(async client => {
-      try {
-        return client.state;
-      } catch (error) {
-        //console.log("- Erro ao fechar sessão:", error.message);
-        //
-        return {
-          result: "error",
-          state: session.state,
-          status: session.status,
-          message: "Erro ao obter state"
-        };
-        //
-      }
-    });
-    return getState;;
-  };
-  //
-  // ------------------------------------------------------------------------------------------------//
-  //
   static async closeSession(SessionName) {
     console.log("- Fechando sessão");
     var session = Sessions.getSession(SessionName);
