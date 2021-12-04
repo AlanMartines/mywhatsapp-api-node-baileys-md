@@ -552,6 +552,8 @@ module.exports = class Sessions {
 
       }
       //
+      client.ev.on('creds.update', saveState);
+      //
     });
     //
     return client;
@@ -571,8 +573,6 @@ module.exports = class Sessions {
     await session.client.then(async (client) => {
       //
       console.log(client);
-      //
-      client.ev.on('creds.update', saveState);
       //
       client.ev.on('new.message', (mek) => {
         console.log(`- New message: ${mek}`)
