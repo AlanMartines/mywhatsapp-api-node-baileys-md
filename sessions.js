@@ -1799,7 +1799,7 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "number": contactlistValid,
+          "number": phonefull,
           "message": "Erro ao promover participante a administrador"
         };
         //
