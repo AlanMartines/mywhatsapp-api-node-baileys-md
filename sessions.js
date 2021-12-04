@@ -1597,8 +1597,8 @@ module.exports = class Sessions {
             "id": result.id.replace('@g.us', ''),
             "participants": {
               contactlistValid,
+              contactlistInvalid
             },
-            contactlistInvalid,
             "message": "Grupo criado com a lista de contatos validos"
           };
         } else {
@@ -1609,9 +1609,9 @@ module.exports = class Sessions {
             "title": title,
             "id": null,
             "participants": {
-              contactlistValid
+              contactlistValid,
+              contactlistInvalid
             },
-            contactlistInvalid,
             "message": "Erro ao criar grupo"
           };
           //
