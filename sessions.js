@@ -1779,7 +1779,7 @@ module.exports = class Sessions {
           return {
             "erro": false,
             "status": result.status,
-            "number": contactlistValid,
+            "number": phonefull,
             "message": "Participante promovido a administrador"
           };
         } else {
@@ -1787,7 +1787,7 @@ module.exports = class Sessions {
           return {
             "erro": true,
             "status": result.status,
-            "number": contactlistValid,
+            "number": phonefull,
             "message": "Erro ao promover participante a administrador"
           };
           //
