@@ -436,7 +436,6 @@ module.exports = class Sessions {
         }),
         /** version to connect with */
         //version: [2, 2142, 12],
-        version: undefined,
         /** override browser config */
         browser: ['My-Whatsapp', 'Google Chrome', '96.00'],
         /** agent used for fetch requests -- uploading/downloading media */
@@ -518,7 +517,7 @@ module.exports = class Sessions {
           //
           client = startSock();
           //
-        } else if (connection === 'undefined') {
+        } else if (typeof connection === 'undefined') {
           console.log('- Connection closed');
           //
           session.state = "CLOSED";
