@@ -1315,12 +1315,13 @@ module.exports = class Sessions {
   //
   // Obter a foto do perfil do servidor
   static async getProfilePicFromServer(
-    SessionName, number
+    SessionName,
+    number
   ) {
     console.log("- Obtendo a foto do perfil do servidor!");
     var session = Sessions.getSession(SessionName);
     var resultgetProfilePicFromServer = await session.client.then(async client => {
-      return await client.getProfilePicture(number).then((result) => {
+      return await client.profilePictureUrl(number).then((result) => {
         //console.log('Result: ', result); //return object success
         return {
           "url": result
