@@ -572,7 +572,7 @@ module.exports = class Sessions {
     var session = Sessions.getSession(SessionName);
     await session.client.then(async (client) => {
       //
-      console.log(client);
+      // console.log(client);
       //
       client.ev.on('new.message', (mek) => {
         console.log(`- New message: ${mek}`)
