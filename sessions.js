@@ -466,7 +466,9 @@ module.exports = class Sessions {
       const {
         connection,
         lastDisconnect,
-        qr
+        isNewLogin,
+        qr,
+        receivedPendingNotifications
       } = conn;
       if (qr) { // if the 'qr' property is available on 'conn'
         console.log('- QR Generated');
