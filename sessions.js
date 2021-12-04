@@ -1765,12 +1765,14 @@ module.exports = class Sessions {
   //
   // Promote participant (Give admin privileges)
   static async promoteParticipant(
-    SessionName, groupId, contactlistValid
+    SessionName,
+    groupId,
+    phonefull
   ) {
     console.log("- promoteParticipant");
     var session = Sessions.getSession(SessionName);
     var resultpromoteParticipant = await session.client.then(async client => {
-      return await client.groupParticipantsUpdate(groupId, contactlistValid, "promote").then(([result]) => {
+      return await client.groupParticipantsUpdate(groupId, phonefull, "promote").then(([result]) => {
         console.log('Result: ', result); //return object success
         //
         if (result) {
