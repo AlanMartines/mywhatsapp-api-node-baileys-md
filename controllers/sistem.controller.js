@@ -218,7 +218,7 @@ router.post("/getSessions", upload.none(''), verifyToken.verify, async (req, res
   //console.log(result);
   res.setHeader('Content-Type', 'application/json');
   res.status(200).json({
-    getSessions
+    "Status": getSessions
   });
 }); //getSessions
 //
@@ -230,7 +230,7 @@ router.post("/State", upload.none(''), verifyToken.verify, async (req, res, next
   );
   res.setHeader('Content-Type', 'application/json');
   res.status(200).json({
-    State
+    "Status": State
   });
 }); //State
 //
@@ -242,7 +242,7 @@ router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, nex
   );
   res.setHeader('Content-Type', 'application/json');
   res.status(200).json({
-    Status
+    "Status": Status
   });
 }); //Status
 //
@@ -273,7 +273,7 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
   //console.log(result);
   res.setHeader('Content-Type', 'application/json');
   res.status(200).json({
-    getHardWare
+    "Status": getHardWare
   });
 }); //getHardWare
 //
@@ -289,13 +289,13 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
       var closeSession = await Sessions.closeSession(req.body.SessionName.trim());
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        closeSession
+        "Status": closeSession
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "closeSession": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //Close
@@ -311,13 +311,13 @@ router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, nex
       var LogoutSession = await Sessions.logoutSession(req.body.SessionName.trim());
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        LogoutSession
+        "Status": LogoutSession
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "LogoutSession": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //Logout
@@ -358,13 +358,13 @@ router.post("/sendContactVcard", upload.none(''), verifyToken.verify, async (req
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        sendContactVcard
+        "Status": sendContactVcard
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "sendContactVcard": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //sendContactVcard
@@ -387,13 +387,13 @@ router.post("/sendContactVcardGroup", upload.none(''), verifyToken.verify, async
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        sendContactVcard
+        "Status": sendContactVcard
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "sendContactVcard": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //sendContactVcard
@@ -427,13 +427,13 @@ router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, n
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        sendText
+        "Status": sendText
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "sendText": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //sendText
@@ -490,13 +490,13 @@ router.post("/sendTextMassa", upload.single('phonefull'), verifyToken.verify, as
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        sendText
+        "Status": sendText
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "sendText": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //sendText
@@ -518,13 +518,13 @@ router.post("/sendTextGrupo", upload.none(''), verifyToken.verify, async (req, r
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        sendText
+        "Status": sendText
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "sendText": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //sendTextGrupo
@@ -559,13 +559,13 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        sendLocation
+        "Status": sendLocation
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "sendLocation": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //sendLocation
@@ -589,13 +589,13 @@ router.post("/sendLocationGroup", upload.none(''), verifyToken.verify, async (re
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        sendLocation
+        "Status": sendLocation
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "sendLocation": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //sendLocation
@@ -629,13 +629,13 @@ router.post("/sendLinkPreview", upload.none(''), verifyToken.verify, async (req,
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        sendLinkPreview
+        "Status": sendLinkPreview
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "sendLinkPreview": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //sendLinkPreview
@@ -658,13 +658,13 @@ router.post("/sendLinkPreviewGroup", upload.none(''), verifyToken.verify, async 
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        sendLinkPreview
+        "Status": sendLinkPreview
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "sendLinkPreview": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //sendLinkPreview
@@ -700,13 +700,13 @@ router.post("/sendImage", upload.single('fileimg'), verifyToken.verify, async (r
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        sendImage
+        "Status": sendImage
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "sendImage": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //sendImage
@@ -750,13 +750,13 @@ router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req,
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        sendImage
+        "Status": sendImage
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "sendImage": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //sendImage
@@ -792,13 +792,13 @@ router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        sendImage
+        "Status": sendImage
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "sendImage": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //sendImage
@@ -866,13 +866,13 @@ router.post("/sendImageMassa", sendImageMassa, verifyToken.verify, async (req, r
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        sendImage
+        "Status": sendImage
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "sendImage": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //sendImage
@@ -921,13 +921,13 @@ router.post("/sendMultImage", upload.array('fileimgs', 50), verifyToken.verify, 
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        sendImage
+        "Status": sendImage
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "sendImage": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //sendImage
@@ -1001,13 +1001,13 @@ router.post("/sendMultImageMassa", sendMultImageMassa, verifyToken.verify, async
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        sendImage
+        "Status": sendImage
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "sendImage": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //sendImage
@@ -1032,13 +1032,13 @@ router.post("/sendImageGrupo", upload.single('fileimg'), verifyToken.verify, asy
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        sendImage
+        "Status": sendImage
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "sendImage": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //sendImage
@@ -1070,13 +1070,13 @@ router.post("/sendImageBase64Grupo", upload.single(''), verifyToken.verify, asyn
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        sendImage
+        "Status": sendImage
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "sendImage": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //sendImage
@@ -1101,13 +1101,13 @@ router.post("/sendImageFromBase64Grupo", upload.single(''), verifyToken.verify, 
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        sendImage
+        "Status": sendImage
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "sendImage": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //sendImage
@@ -1144,13 +1144,13 @@ router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, 
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        sendFile
+        "Status": sendFile
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "sendFile": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //sendFile
@@ -1175,13 +1175,13 @@ router.post("/sendFileGroup", upload.single('file'), verifyToken.verify, async (
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        sendFile
+        "Status": sendFile
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "sendFile": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //sendFile
@@ -1225,13 +1225,13 @@ router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, 
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        sendFile
+        "Status": sendFile
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "sendImageGrupo": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //sendFile
@@ -1264,13 +1264,13 @@ router.post("/sendFileBase64Group", upload.none(''), verifyToken.verify, async (
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        sendFile
+        "Status": sendFile
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "sendImageGrupo": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //sendFile
@@ -1306,13 +1306,13 @@ router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (r
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        sendFile
+        "Status": sendFile
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "sendFile": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //sendFile
@@ -1337,13 +1337,13 @@ router.post("/sendFileFromBase64Group", upload.none(''), verifyToken.verify, asy
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        sendFile
+        "Status": sendFile
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "sendFile": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //sendFile
@@ -1369,14 +1369,15 @@ router.post("/getAllContacts", upload.none(''), verifyToken.verify, async (req, 
         req.body.SessionName
       );
       //
-      res.json({
-        getAllContacts
+      res.setHeader('Content-Type', 'application/json');
+      res.status(200).json({
+        "Status": getAllContacts
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "getAllContacts": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //getAllContacts
@@ -1424,14 +1425,15 @@ router.post("/getAllGroups", upload.none(''), verifyToken.verify, async (req, re
         req.body.SessionName
       );
       //
-      res.json({
-        getAllContacts
+      res.setHeader('Content-Type', 'application/json');
+      res.status(200).json({
+        "Status": getAllContacts
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "getAllGroups": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //getAllGroups
@@ -1473,13 +1475,13 @@ router.post("/getBlockList", upload.none(''), verifyToken.verify, async (req, re
       );
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        getBlockList
+        "Status": getBlockList
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "getBlockList": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //getBlockList
@@ -1511,13 +1513,13 @@ router.post("/getStatus", upload.none(''), verifyToken.verify, async (req, res, 
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        getStatus
+        "Status": getStatus
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "getStatus": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //getStatus
@@ -1552,13 +1554,13 @@ router.post("/getNumberProfile", upload.none(''), verifyToken.verify, async (req
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        getNumberProfile
+        "Status": getNumberProfile
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "getNumberProfile": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //getNumberProfile
@@ -1590,13 +1592,13 @@ router.post("/getProfilePicFromServer", upload.none(''), verifyToken.verify, asy
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        getProfilePicFromServer
+        "Status": getProfilePicFromServer
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "getProfilePicFromServer": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //getProfilePicFromServer
@@ -1620,13 +1622,13 @@ router.post("/checkNumberStatus", upload.none(''), verifyToken.verify, async (re
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        checkNumberStatus
+        "Status": checkNumberStatus
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "checkNumberStatus": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //checkNumberStatus
@@ -1647,13 +1649,13 @@ router.post("/phoneValidate", upload.none(''), verifyToken.verify, async (req, r
       //
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        validPhone
+        "Status": validPhone
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "phoneValidate": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //checkNumberStatus
@@ -1704,13 +1706,13 @@ router.post("/checkNumberStatusMassa", upload.single('contatos'), verifyToken.ve
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        checkNumberStatusMassa
+        "Status": checkNumberStatusMassa
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "checkNumberStatusMassa": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //checkNumberStatusMassa
@@ -1735,13 +1737,13 @@ router.post("/leaveGroup", upload.none(''), verifyToken.verify, async (req, res,
       );
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        leaveGroup
+        "Status": leaveGroup
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "leaveGroup": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //leaveGroup
@@ -1760,13 +1762,13 @@ router.post("/getGroupMembers", upload.none(''), verifyToken.verify, async (req,
       );
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        getGroupMembers
+        "Status": getGroupMembers
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "getGroupMembers": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //getGroupMembers
@@ -1788,13 +1790,13 @@ router.post("/getGroupMembersIds", upload.none(''), verifyToken.verify, async (r
       );
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        getGroupMembersIds
+        "Status": getGroupMembersIds
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "getGroupMembersIds": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //getGroupMembersIds
@@ -1815,13 +1817,13 @@ router.post("/getGroupInviteLink", upload.none(''), verifyToken.verify, async (r
       );
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        GroupInviteLink
+        "Status": GroupInviteLink
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "GroupInviteLink": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //getGroupInviteLink
@@ -1880,13 +1882,13 @@ router.post("/createGroup", upload.single('participants'), verifyToken.verify, a
       //
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        createGroup
+        "Status": createGroup
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "createGroup": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //createGroup
@@ -1958,13 +1960,13 @@ router.post("/createCountGroup", upload.single('participants'), verifyToken.veri
       //
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        "createCountGroup": createGroup
+        "Status": createGroup
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "createCountGroup": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //createCountGroup
@@ -2043,13 +2045,13 @@ router.post("/createGroupSetAdminMembers", upload.single('participants'), verify
       //
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        createGroupSetAdminMembers
+        "Status": createGroupSetAdminMembers
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "createGroupSetAdminMembers": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //createGroupSetAdminMembers
@@ -2137,13 +2139,13 @@ router.post("/createCountGroupSetAdminMembers", upload.single('participants'), v
       //
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        "createCountGroupSetAdminMembers": createGroup
+        "Status": createGroup
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "createCountGroupSetAdminMembers": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //createCountGroupSetAdminMembers
@@ -2179,13 +2181,13 @@ router.post("/removeParticipant", upload.none(''), verifyToken.verify, async (re
       //
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        removeParticipant
+        "Status": removeParticipant
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "removeParticipant": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //removeParticipant
@@ -2218,13 +2220,13 @@ router.post("/addParticipant", upload.none(''), verifyToken.verify, async (req, 
       //
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        addParticipant
+        "Status": addParticipant
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "addParticipant": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //addParticipant
@@ -2257,13 +2259,13 @@ router.post("/promoteParticipant", upload.none(''), verifyToken.verify, async (r
       //
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        promoteParticipant
+        "Status": promoteParticipant
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "promoteParticipant": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //promoteParticipant
@@ -2295,13 +2297,13 @@ router.post("/demoteParticipant", upload.none(''), verifyToken.verify, async (re
       //
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        demoteParticipant
+        "Status": demoteParticipant
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "demoteParticipant": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //demoteParticipant
@@ -2352,13 +2354,13 @@ router.post("/joinGroup", upload.none(''), verifyToken.verify, async (req, res, 
       );
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        joinGroup
+        "Status": joinGroup
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "joinGroup": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //joinGroup
@@ -2380,13 +2382,13 @@ router.post("/onlyAdminsMessagesGroup", upload.none(''), verifyToken.verify, asy
       );
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        onlyAdminsMessagesGroup
+        "Status": onlyAdminsMessagesGroup
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "onlyAdminsMessagesGroup": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //onlyAdminsMessagesGroup
@@ -2409,13 +2411,13 @@ router.post("/everyoneModifySettingsGroup", upload.none(''), verifyToken.verify,
       );
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        everyoneModifySettingsGroup
+        "Status": everyoneModifySettingsGroup
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "everyoneModifySettingsGroup": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //everyoneModifySettingsGroup
@@ -2444,13 +2446,13 @@ router.post("/setProfileStatus", upload.none(''), verifyToken.verify, async (req
       );
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        setProfileStatus
+        "Status": setProfileStatus
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "setProfileStatus": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //setProfileStatus
@@ -2473,13 +2475,13 @@ router.post("/setProfileName", upload.none(''), verifyToken.verify, async (req, 
       );
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        setProfileName
+        "Status": setProfileName
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "setProfileName": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //setProfileName
@@ -2510,13 +2512,13 @@ router.post("/setProfilePic", upload.single('fileimg'), verifyToken.verify, asyn
       //
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        setProfilePic
+        "Status": setProfilePic
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "setProfilePic": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //setProfilePic
@@ -2541,14 +2543,14 @@ router.post("/killServiceWorker", upload.none(''), verifyToken.verify, async (re
       var killServiceWorker = await Sessions.killServiceWorker(req.body.SessionName.trim());
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        killServiceWorker
+        "Status": killServiceWorker
       });
       //
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "killServiceWorker": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //killServiceWorker
@@ -2567,14 +2569,14 @@ router.post("/restartService", upload.none(''), verifyToken.verify, async (req, 
       var restartService = await Sessions.restartService(req.body.SessionName.trim());
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        restartService
+        "Status": restartService
       });
       //
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "restartService": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //restartService
@@ -2611,7 +2613,7 @@ router.post("/reloadService", upload.none(''), verifyToken.verify, async (req, r
             //
             res.setHeader('Content-Type', 'application/json');
             res.status(200).json({
-              "reloadService": reload
+              "Status": reload
             });
             //
           } else {
@@ -2620,7 +2622,7 @@ router.post("/reloadService", upload.none(''), verifyToken.verify, async (req, r
             //
             res.setHeader('Content-Type', 'application/json');
             res.status(400).json({
-              "reloadService": reload
+              "Status": reload
             });
             //
           }
@@ -2631,7 +2633,7 @@ router.post("/reloadService", upload.none(''), verifyToken.verify, async (req, r
           //
           res.setHeader('Content-Type', 'application/json');
           res.status(400).json({
-            "reloadService": reload
+            "Status": reload
           });
           //
         }
@@ -2653,7 +2655,7 @@ router.post("/reloadService", upload.none(''), verifyToken.verify, async (req, r
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "reloadService": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //reloadService
@@ -2674,13 +2676,13 @@ router.post("/getHostDevice", upload.none(''), verifyToken.verify, async (req, r
       //console.log(result);
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        getHostDevice
+        "Status": getHostDevice
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "getHostDevice": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //getHostDevice
@@ -2699,13 +2701,13 @@ router.post("/getConnectionState", upload.none(''), verifyToken.verify, async (r
       var getConnectionState = await Sessions.getConnectionState(req.body.SessionName.trim());
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        getConnectionState
+        "Status": getConnectionState
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "getConnectionState": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //getConnectionState
@@ -2725,13 +2727,13 @@ router.post("/getBatteryLevel", upload.none(''), verifyToken.verify, async (req,
       //
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        getBatteryLevel
+        "Status": getBatteryLevel
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "getBatteryLevel": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //getBatteryLevel
@@ -2750,13 +2752,13 @@ router.post("/isConnected", upload.none(''), verifyToken.verify, async (req, res
       var isConnected = await Sessions.isConnected(req.body.SessionName.trim());
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        isConnected
+        "Status": isConnected
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "isConnected": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //isConnected
@@ -2775,13 +2777,13 @@ router.post("/getWAVersion", upload.none(''), verifyToken.verify, async (req, re
       var getWAVersion = await Sessions.getWAVersion(req.body.SessionName.trim());
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        getWAVersion
+        "Status": getWAVersion
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "getWAVersion": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //getWAVersion
@@ -2803,13 +2805,13 @@ router.post("/startPhoneWatchdog", upload.none(''), verifyToken.verify, async (r
       );
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        startPhoneWatchdog
+        "Status": startPhoneWatchdog
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "getWAVersion": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //startPhoneWatchdog
@@ -2828,13 +2830,13 @@ router.post("/stopPhoneWatchdog", upload.none(''), verifyToken.verify, async (re
       var stopPhoneWatchdog = await Sessions.stopPhoneWatchdog(req.body.SessionName.trim());
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
-        stopPhoneWatchdog
+        "Status": stopPhoneWatchdog
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "stopPhoneWatchdog": sessionStatus
+        "Status": sessionStatus
       });
   }
 }); //stopPhoneWatchdog
