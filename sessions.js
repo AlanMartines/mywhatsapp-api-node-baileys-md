@@ -1577,7 +1577,10 @@ module.exports = class Sessions {
   //
   // Criar grupo (título, participantes a adicionar)
   static async createGroup(
-    SessionName, title, contactlistValid, contactlistInvalid
+    SessionName,
+    title,
+    contactlistValid,
+    contactlistInvalid
   ) {
     console.log("- createGroup");
     var session = Sessions.getSession(SessionName);
@@ -1585,15 +1588,17 @@ module.exports = class Sessions {
       return await client.groupCreate(title, contactlistValid).then(async (result) => {
         console.log('Result: ', result); //return object success
         //
-        if (result) {
+        if (result.id) {
           // await client.groupUpdateDescription(result.gid, title);
           return {
             "erro": false,
             "status": 200,
-            "title": title,
-            "gid": result.gid.replace('@g.us', ''),
-            "contactlistValid": contactlistValid,
-            "contactlistInvalid": contactlistInvalid,
+            "title": result.subject,
+            "id": result.id.replace('@g.us', ''),
+            "participants": {
+              contactlistValid,
+            },
+            contactlistInvalid,
             "message": "Grupo criado com a lista de contatos validos"
           };
         } else {
@@ -1602,9 +1607,11 @@ module.exports = class Sessions {
             "erro": true,
             "status": 404,
             "title": title,
-            "gid": null,
-            "contactlistValid": contactlistValid,
-            "contactlistInvalid": contactlistInvalid,
+            "id": null,
+            "participants": {
+              contactlistValid
+            },
+            contactlistInvalid,
             "message": "Erro ao criar grupo"
           };
           //
