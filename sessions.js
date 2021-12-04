@@ -1035,7 +1035,14 @@ module.exports = class Sessions {
           //if (resultAllContacts.isMyContact === true || resultAllContacts.isMyContact === false && resultAllContacts.isUser === true) {
           //
           getChatGroupNewMsg.push({
-            "user": resultAllContacts.jid,            "name": resultAllContacts.name,            "shortName": resultAllContacts.short,            "pushname": resultAllContacts.notify,            "formattedName": resultAllContacts.vname,            "isMyContact": resultAllContacts.verify,            "isWAContact": '',            "isBusiness": ''
+            "user": resultAllContacts.jid,            
+						"name": resultAllContacts.name,            
+						"shortName": resultAllContacts.short,            
+						"pushname": resultAllContacts.notify,            
+						"formattedName": resultAllContacts.vname,            
+						"isMyContact": resultAllContacts.verify,            
+						"isWAContact": '',            
+						"isBusiness": ''
           });
           //}
           //
@@ -1098,7 +1105,12 @@ module.exports = class Sessions {
             }
             
             chatArray = [...chatArray, {
-              chatId: id,              time: newDate,              phone: allChats[i].jid.replace('@s.whatsapp.net', ''),              title: Name,              image: PPIMAGE,              lastchat: MessagePresence
+              chatId: id,              
+							time: newDate,             
+							 phone: allChats[i].jid.replace('@s.whatsapp.net', ''),              
+							 title: Name,              
+							 image: PPIMAGE,              
+							 lastchat: MessagePresence
             }]
   					
             //
@@ -1256,7 +1268,7 @@ module.exports = class Sessions {
     console.log("- Obtendo status!");
     var session = Sessions.getSession(SessionName);
     var resultgetStatus = await session.client.then(async client => {
-      return await client.getStatus(number).then((result) => {
+      return await client.fetchStatus(number).then((result) => {
         //console.log('Result: ', result); //return object success
         return result;
       }).catch((erro) => {
