@@ -776,7 +776,9 @@ module.exports = class Sessions {
     var session = Sessions.getSession(SessionName);
     var sendResult = await session.client.then(async client => {
       // send a simple text!
-      return await client.sendMessage(number, msg, MessageType.text).then((result) => {
+      return await client.sendMessage(number, {
+        text: msg
+      }).then((result) => {
         //console.log("Result: ", result); //return object success
         //
         return {
@@ -1320,7 +1322,7 @@ module.exports = class Sessions {
     var resultcheckNumberStatus = await session.client.then(async client => {
       //
       return await client.onWhatsApp(number).then(([result]) => {
-        console.log('Result:\n', result); //return object success
+        //console.log('Result:\n', result); //return object success
         //
         if (result.exists) {
           //
