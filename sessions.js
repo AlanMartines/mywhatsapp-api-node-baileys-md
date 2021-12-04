@@ -517,7 +517,7 @@ module.exports = class Sessions {
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
           //
           client = startSock()
-        } else if (connection === 'undefined') {
+        } else if (typeof connection === 'undefined') {
           console.log('- Connection closed');
           //
           session.state = "CLOSED";
