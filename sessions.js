@@ -1298,8 +1298,8 @@ module.exports = class Sessions {
     var session = Sessions.getSession(SessionName);
     var resultcheckNumberStatus = await session.client.then(async client => {
       //
-      return await client.isOnWhatsApp(number).then((result) => {
-        //console.log('Result: ', result); //return object success
+      return await client.onWhatsApp(number).then((result) => {
+        console.log('Result: ', result); //return object success
         //
         if (result.exists) {
           //

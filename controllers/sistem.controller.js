@@ -2951,7 +2951,6 @@ res.status(200).json({
   var resRotaTeste = await Sessions.RotaTeste(req.body.SessionName.trim());
   //
   res.setHeader('Content-Type', 'application/json');
-  res.setHeader('Content-Type', 'application/json');
   res.status(200).json({
     "RotaTeste": resRotaTeste
   });
