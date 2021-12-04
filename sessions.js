@@ -517,7 +517,7 @@ module.exports = class Sessions {
           //
           client = startSock();
           //
-        } else if (typeof connection === 'undefined') {
+        } else {
           console.log('- Connection closed');
           //
           session.state = "CLOSED";
