@@ -463,6 +463,9 @@ module.exports = class Sessions {
     let attempts = 0;
     //
     client.ev.on('connection.update', async (conn) => {
+      //
+      console.log("- Connection update");
+      //
       const {
         connection,
         lastDisconnect,
