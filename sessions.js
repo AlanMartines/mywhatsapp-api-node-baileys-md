@@ -1683,7 +1683,7 @@ module.exports = class Sessions {
       return await client.groupParticipantsUpdate(groupId, phonefull, "remove").then(([result]) => {
         console.log('Result: ', result); //return object success
         //
-        if (result.status == 200 || result.status == 207) {
+        if (result) {
           return {
             "erro": false,
             "status": 200,
@@ -1728,7 +1728,7 @@ module.exports = class Sessions {
       return await client.groupParticipantsUpdate(groupId, phonefull, "add").then(([result]) => {
         console.log('Result: ', result); //return object success
         //
-        if (result.status == 200 || result.status == 207) {
+        if (result) {
           return {
             "erro": false,
             "status": 200,
