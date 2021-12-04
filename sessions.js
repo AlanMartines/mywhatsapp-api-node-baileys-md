@@ -399,6 +399,9 @@ module.exports = class Sessions {
     console.log("- Iniciando sessão");
     var session = Sessions.getSession(SessionName);
     //
+    session.tokenPatch = config.TOKENSPATCH_LINUX;
+    //
+    //
     /*
         ╔═╗┌─┐┌┬┐┬┌─┐┌┐┌┌─┐┬    ╔═╗┬─┐┌─┐┌─┐┌┬┐┌─┐  ╔═╗┌─┐┬─┐┌─┐┌┬┐┌─┐┌┬┐┌─┐┬─┐┌─┐
         ║ ║├─┘ │ ││ ││││├─┤│    ║  ├┬┘├┤ ├─┤ │ ├┤   ╠═╝├─┤├┬┘├─┤│││├┤  │ ├┤ ├┬┘└─┐
@@ -414,8 +417,6 @@ module.exports = class Sessions {
     console.log("- AuthorizationToken:", session.AuthorizationToken);
     //
     //-------------------------------------------------------------------------------------------------------------------------------------//
-    //
-    session.tokenPatch = config.TOKENSPATCH_LINUX;
     //
     const {
       state,
