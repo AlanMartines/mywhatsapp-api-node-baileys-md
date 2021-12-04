@@ -1320,7 +1320,7 @@ module.exports = class Sessions {
     var resultcheckNumberStatus = await session.client.then(async client => {
       //
       return await client.onWhatsApp(number).then((result) => {
-        console.log('Result:\n', result.exists); //return object success
+        console.log('Result:\n', JSON.parse(result)); //return object success
         //
         if (result.exists) {
           //
