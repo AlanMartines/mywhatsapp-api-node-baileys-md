@@ -420,6 +420,7 @@ module.exports = class Sessions {
     } = useSingleFileAuthState(`${session.tokenPatch}/${SessionName}.data.json`);
     //
     // https://github.com/adiwajshing/Baileys/issues/751
+    //
     const startSock = () => {
       const client = makeWASocket({
         /** provide an auth state object to maintain the auth state */
