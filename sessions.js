@@ -537,7 +537,7 @@ module.exports = class Sessions {
     //
     client.ev.on('creds.update', saveState);
     //
-    console.log(client);
+    //console.log(client);
     //
     return client;
   } //initSession
