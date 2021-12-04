@@ -424,8 +424,12 @@ module.exports = class Sessions {
       const client = makeWASocket({
         /** provide an auth state object to maintain the auth state */
         auth: state,
+        /** the WS url to connect to WA */
+        waWebSocketUrl: '',
         /** Fails the connection if the connection times out in this time interval or no data is received */
         connectTimeoutMs: 5000,
+        /** Default timeout for queries, undefined for no timeout */
+        defaultQueryTimeoutMs: undefined,
         /** ping-pong interval for WS connection */
         keepAliveIntervalMs: 30000,
         /** proxy agent */
@@ -441,7 +445,12 @@ module.exports = class Sessions {
         /** agent used for fetch requests -- uploading/downloading media */
         fetchAgent: undefined,
         /** should the QR be printed in the terminal */
-        printQRInTerminal: true
+        printQRInTerminal: parseInt(config.VIEW_QRCODE_TERMINAL),
+        /** 
+         * fetch a message from your store 
+         * implement this so that messages failed to send (solves the "this message can take a while" issue) can be retried
+         * */
+        getMessage: undefined
         //
       });
       //
