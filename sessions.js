@@ -250,7 +250,6 @@ module.exports = class Sessions {
       if (session.state == "CONNECTED") {
         return {
           result: "info",
-          SessionName: SessionName,
           state: session.state,
           status: session.status,
           message: "Sistema iniciado e disponivel para uso"
@@ -258,7 +257,6 @@ module.exports = class Sessions {
       } else if (session.state == "STARTING") {
         return {
           result: "info",
-          SessionName: SessionName,
           state: session.state,
           status: session.status,
           message: "Sistema iniciando e indisponivel para uso"
@@ -266,7 +264,6 @@ module.exports = class Sessions {
       } else if (session.state == "QRCODE") {
         return {
           result: "warning",
-          SessionName: SessionName,
           state: session.state,
           status: session.status,
           message: "Sistema aguardando leitura do QR-Code"
@@ -274,7 +271,6 @@ module.exports = class Sessions {
       } else if (session.state == "CLOSED") {
         return {
           result: "info",
-          SessionName: SessionName,
           state: session.state,
           status: session.status,
           message: "Sessão fechada"
@@ -282,7 +278,6 @@ module.exports = class Sessions {
       } else {
         return {
           result: "warning",
-          SessionName: SessionName,
           state: session.state,
           status: session.status,
           message: "Sistema iniciado e indisponivel para uso"
@@ -291,7 +286,6 @@ module.exports = class Sessions {
     } else {
       return {
         result: 'error',
-        SessionName: SessionName,
         state: 'NOTFOUND',
         status: 'notLogged',
         message: 'Sistema Off-line'
