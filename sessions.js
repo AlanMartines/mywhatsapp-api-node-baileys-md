@@ -1407,27 +1407,14 @@ module.exports = class Sessions {
     console.log("- leaveGroup");
     var session = Sessions.getSession(SessionName);
     var resultleaveGroup = await session.client.then(async client => {
-      return await client.groupLeave(groupId).then(([result]) => {
-        console.log('Result: ', result); //return object success
-        //
-        if (result) {
-          return {
-            "erro": false,
-            "status": 200,
-            "groupId": groupId,
-            "message": "Grupo deixado com sucesso"
-          };
-        } else {
-          //
-          return {
-            "erro": true,
-            "status": 404,
-            "groupId": groupId,
-            "message": "Erro ao deixar o grupo"
-          };
-          //
-        }
-        //
+      return await client.groupLeave(groupId).then(() => {
+        //console.log('Result: ', result); //return object success
+        return {
+          "erro": false,
+          "status": 200,
+          "groupId": groupId,
+          "message": "Grupo deixado com sucesso"
+        };
       }).catch((erro) => {
         console.error('Error when sending: ', erro); //return object error
         //
