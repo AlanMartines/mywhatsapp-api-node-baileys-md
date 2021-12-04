@@ -1763,7 +1763,7 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  // Promote participant (Give admin privileges)
+  // Promote participant (add admin privileges)
   static async promoteParticipant(
     SessionName,
     groupId,
@@ -1810,7 +1810,7 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  // Depromote participant (Give admin privileges)
+  // Depromote participant (remove admin privileges)
   static async demoteParticipant(
     SessionName, groupId, phonefull
   ) {
