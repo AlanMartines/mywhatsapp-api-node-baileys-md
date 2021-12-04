@@ -425,7 +425,7 @@ module.exports = class Sessions {
         /** provide an auth state object to maintain the auth state */
         auth: state,
         /** the WS url to connect to WA */
-        waWebSocketUrl: undefined,
+        //waWebSocketUrl: undefined,
         /** Fails the connection if the connection times out in this time interval or no data is received */
         connectTimeoutMs: 5000,
         /** Default timeout for queries, undefined for no timeout */
