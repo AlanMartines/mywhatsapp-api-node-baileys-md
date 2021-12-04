@@ -1453,7 +1453,7 @@ module.exports = class Sessions {
     var session = Sessions.getSession(SessionName);
     var resultgetGroupMembers = await session.client.then(async client => {
       return await client.groupMetadata(groupId).then(async (result) => {
-        //console.log('Result: ', result); //return object success
+        console.log('Result: ', result); //return object success
         //
         var participants = [];
         //
