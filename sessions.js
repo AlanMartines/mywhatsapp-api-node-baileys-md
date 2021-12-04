@@ -1680,7 +1680,7 @@ module.exports = class Sessions {
     console.log("- removeParticipant");
     var session = Sessions.getSession(SessionName);
     var resultremoveParticipant = await session.client.then(async client => {
-      return await client.groupParticipantsUpdate(groupId, phonefull, "remove").then((result) => {
+      return await client.groupParticipantsUpdate(groupId, phonefull, "remove").then(([result]) => {
         console.log('Result: ', result); //return object success
         //
         if (result.status == 200 || result.status == 207) {
@@ -1725,7 +1725,7 @@ module.exports = class Sessions {
     console.log("- addParticipant");
     var session = Sessions.getSession(SessionName);
     var resultaddParticipant = await session.client.then(async client => {
-      return await client.groupParticipantsUpdate(groupId, phonefull, "add").then((result) => {
+      return await client.groupParticipantsUpdate(groupId, phonefull, "add").then(([result]) => {
         console.log('Result: ', result); //return object success
         //
         if (result.status == 200 || result.status == 207) {
