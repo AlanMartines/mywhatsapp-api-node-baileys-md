@@ -1582,7 +1582,7 @@ module.exports = class Sessions {
     console.log("- createGroup");
     var session = Sessions.getSession(SessionName);
     var resultgetGroupInviteLink = await session.client.then(async client => {
-      return await client.groupCreate(title, contactlistValid).then(async ([result]) => {
+      return await client.groupCreate(title, contactlistValid).then(async (result) => {
         console.log('Result: ', result); //return object success
         //
         if (result) {
@@ -1611,7 +1611,7 @@ module.exports = class Sessions {
         }
         //
       }).catch((erro) => {
-        //console.error('Error when sending: ', erro); //return object error
+        console.error('Error when sending: ', erro); //return object error
         //
         return {
           "erro": true,
