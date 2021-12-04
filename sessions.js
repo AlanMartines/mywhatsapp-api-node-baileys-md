@@ -446,8 +446,6 @@ module.exports = class Sessions {
         //
       });
       //
-      console.log(client);
-      //
       return client;
     }
     //
@@ -538,6 +536,8 @@ module.exports = class Sessions {
     });
     //
     client.ev.on('creds.update', saveState);
+    //
+    console.log(client);
     //
     return client;
   } //initSession
