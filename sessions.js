@@ -609,27 +609,37 @@ module.exports = class Sessions {
         console.log(`- Messages upsert ${messages}, type ${type}`);
       });
       //
+      client.ev.on('message-info.update', (e) => {
+        // Teste 1 - Alterei o nome do grupo e caiu aqui, onde o subject é o novo nome
+        console.log('- Message-info update: ', e);
+      });
+      //
       client.ev.on('groups.update', (group) => {
         // Teste 1 - Alterei o nome do grupo e caiu aqui, onde o subject é o novo nome
         console.log('- Grupo update: ', group);
       });
       //
       client.ev.on('group-participants.update', (group) => {
-        switch (group.action) {
+        const {
+          id,
+          participants,
+          action
+        } = group;
+        switch (action) {
           case 'add':
-            console.log('- Participante(s) adicionado(s): ', group.participants);
+            console.log('- Participante(s) adicionado(s): ', participants);
             break;
 
           case 'remove':
-            console.log('- Participante(s) removido(s): ', group.participants);
+            console.log('- Participante(s) removido(s): ', participants);
             break;
 
           case 'promote':
-            console.log('- Participante(s) promovido(s) a admin: ', group.participants);
+            console.log('- Participante(s) promovido(s) a admin: ', participants);
             break;
 
           case 'demote':
-            console.log('- Participante(s) despromovido(s) de admin: ', group.participants);
+            console.log('- Participante(s) despromovido(s) de admin: ', participants);
             break;
 
           default:
