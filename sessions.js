@@ -778,7 +778,9 @@ module.exports = class Sessions {
   //
   //Enviar Texto
   static async sendText(
-    SessionName, number, msg
+    SessionName,
+    number,
+    msg
   ) {
     console.log("- Enviando menssagem de texto.");
     var session = Sessions.getSession(SessionName);
