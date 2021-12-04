@@ -510,7 +510,7 @@ router.post("/sendTextGrupo", upload.none(''), verifyToken.verify, async (req, r
       //
       var sendText = await Sessions.sendText(
         req.body.SessionName.trim(),
-        req.body.groupId.trim(),
+        req.body.groupId.trim() + '@g.us',
         req.body.msg
       );
       //
