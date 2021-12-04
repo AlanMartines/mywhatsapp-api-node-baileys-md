@@ -829,12 +829,17 @@ module.exports = class Sessions {
     var session = Sessions.getSession(SessionName);
     var sendResult = await session.client.then(async client => {
       //
+      var options = {
+        caption: caption,
+        detectLinks: true
+      };
+      //
       return await client.sendMessage(number, {
         location: {
           degreesLatitude: lat,
           degreesLongitude: long
         }
-      }).then((result) => {
+      }, options).then((result) => {
         //console.log("Result: ", result); //return object success
         //
         return {
