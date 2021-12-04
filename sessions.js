@@ -1453,7 +1453,7 @@ module.exports = class Sessions {
     var session = Sessions.getSession(SessionName);
     var resultgetGroupMembers = await session.client.then(async client => {
       return await client.groupMetadata(groupId).then(async (result) => {
-        console.log('Result: ', result); //return object success
+        //console.log('Result: ', result); //return object success
         //
         var participants = [];
         //
@@ -1680,7 +1680,7 @@ module.exports = class Sessions {
     console.log("- removeParticipant");
     var session = Sessions.getSession(SessionName);
     var resultremoveParticipant = await session.client.then(async client => {
-      return await client.groupRemove(groupId, phonefull).then((result) => {
+      return await client.groupParticipantsUpdate(groupId, phonefull, "remove").then((result) => {
         //console.log('Result: ', result); //return object success
         //
         if (result.status == 200 || result.status == 207) {
@@ -1725,7 +1725,7 @@ module.exports = class Sessions {
     console.log("- addParticipant");
     var session = Sessions.getSession(SessionName);
     var resultaddParticipant = await session.client.then(async client => {
-      return await client.groupAdd(groupId, phonefull).then((result) => {
+      return await client.groupParticipantsUpdate(groupId, phonefull, "add").then((result) => {
         //console.log('Result: ', result); //return object success
         //
         if (result.status == 200 || result.status == 207) {
@@ -1770,7 +1770,7 @@ module.exports = class Sessions {
     console.log("- promoteParticipant");
     var session = Sessions.getSession(SessionName);
     var resultpromoteParticipant = await session.client.then(async client => {
-      return await client.groupMakeAdmin(groupId, contactlistValid).then((result) => {
+      return await client.groupParticipantsUpdate(groupId, contactlistValid, "promote").then((result) => {
         //console.log('Result: ', result); //return object success
         //
         if (result.status == 200 || result.status == 207) {
@@ -1815,7 +1815,7 @@ module.exports = class Sessions {
     console.log("- demoteParticipant");
     var session = Sessions.getSession(SessionName);
     var resultdemoteParticipant = await session.client.then(async client => {
-      return await client.groupDemoteAdmin(groupId, phonefull).then((result) => {
+      return await client.groupParticipantsUpdate(groupId, phonefull, "demote").then((result) => {
         //console.log('Result: ', demoteParticipant); //return object success
         //
         if (result.status == 200 || result.status == 207) {
