@@ -421,7 +421,7 @@ module.exports = class Sessions {
       state,
       saveState
     } = useSingleFileAuthState(`${session.tokenPatch}/${SessionName}.data.json`);
-    //
+    // https://github.com/adiwajshing/Baileys/issues/751
     const startSock = () => {
       const client = makeWASocket({
         /** provide an auth state object to maintain the auth state */
@@ -434,7 +434,7 @@ module.exports = class Sessions {
         agent: undefined,
         /** pino logger */
         logger: pino({
-          level: 'info'
+          level: 'silent'
         }),
         /** version to connect with */
         //version: [2, 2142, 12],
@@ -519,7 +519,16 @@ module.exports = class Sessions {
           //
           client = startSock()
         } else {
-          console.log('- Connection closed')
+          console.log('- Connection closed');
+          //
+          session.state = "CLOSED";
+          session.status = 'CLOSED';
+          session.client = false;
+          session.qrcodedata = null;
+          session.message = "Sessão fechada";
+          //
+          await updateStateDb(session.state, session.status, session.AuthorizationToken);
+          //
         }
       } else {
 
@@ -740,9 +749,13 @@ module.exports = class Sessions {
         'END:VCARD'
       //
       return await client.sendMessage(number, {
-        displayname: namecontact,
-        vcard: vcard
-      }, MessageType.contact).then((result) => {
+        contacts: {
+          displayName: namecontact,
+          contacts: [{
+            vcard
+          }]
+        }
+      }).then((result) => {
         //console.log('Result: ', result); //return object success
         //
         return {
