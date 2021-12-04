@@ -572,42 +572,68 @@ module.exports = class Sessions {
       });
       //
       client.ev.on('messages.upsert', m => {
-        console.log('replying to', m.messages[0].key.remoteJid)
+        console.log('- Messages upsert replying to:', m.messages[0].key.remoteJid)
+      });
+      /** set chats (history sync), messages are reverse chronologically sorted */
+      client.ev.on('chats.set', async (e) => {
+        const {
+          chats,
+          messages
+        } = e;
+        console.log(`- Chats set ${chats}, messages ${messages}`)
+      });
+      //
+      client.ev.on('chats.upsert', async (e) => {
+        console.log(`- Chats upsert ${e}`)
       });
       //
       client.ev.on('chats.delete', async e => {
-        console.log(e)
+        console.log('- Chats delete', e)
       });
       //
       client.ev.on('presence.update', (presences) => {
-        console.log('Presence: ', presences);
+        console.log('- Presence update: ', presences);
       });
       //
       client.ev.on('groups.update', (group) => {
         // Teste 1 - Alterei o nome do grupo e caiu aqui, onde o subject é o novo nome
-        console.log('Grupo update: ', group);
+        console.log('- Grupo update: ', group);
+      });
+      //
+      //
+      client.ev.on('messages.upsert', (e) => {
+        const {
+          messages,
+          type
+        } = e;
+        console.log(`- Messages upsert ${messages}, type ${type}`);
+      });
+      //
+      client.ev.on('groups.update', (group) => {
+        // Teste 1 - Alterei o nome do grupo e caiu aqui, onde o subject é o novo nome
+        console.log('- Grupo update: ', group);
       });
       //
       client.ev.on('group-participants.update', (group) => {
         switch (group.action) {
           case 'add':
-            console.log('Participante(s) adicionado(s): ', group.participants);
+            console.log('- Participante(s) adicionado(s): ', group.participants);
             break;
 
           case 'remove':
-            console.log('Participante(s) removido(s): ', group.participants);
+            console.log('- Participante(s) removido(s): ', group.participants);
             break;
 
           case 'promote':
-            console.log('Participante(s) promovido(s) a admin: ', group.participants);
+            console.log('- Participante(s) promovido(s) a admin: ', group.participants);
             break;
 
           case 'demote':
-            console.log('Participante(s) despromovido(s) de admin: ', group.participants);
+            console.log('- Participante(s) despromovido(s) de admin: ', group.participants);
             break;
 
           default:
-            console.log('Ação não tratada');
+            console.log('- Ação não tratada');
             break;
         }
       });
