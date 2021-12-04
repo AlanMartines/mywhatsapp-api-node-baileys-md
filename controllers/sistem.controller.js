@@ -224,13 +224,26 @@ router.post("/getSessions", upload.none(''), verifyToken.verify, async (req, res
 // ------------------------------------------------------------------------------------------------//
 //
 router.post("/State", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var State = await Sessions.State(
-    req.body.SessionName
-  );
-  res.setHeader('Content-Type', 'application/json');
-  res.status(200).json({
-    "Status": State
-  });
+  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
+  switch (sessionStatus.status) {
+    case 'isLogged':
+    case 'qrRead':
+      //
+      var State = await Sessions.State(
+        req.body.SessionName
+      );
+      res.setHeader('Content-Type', 'application/json');
+      res.status(200).json({
+        "Status": State
+      });
+      //
+      break;
+    default:
+      res.setHeader('Content-Type', 'application/json');
+      res.status(400).json({
+        "Status": sessionStatus
+      });
+  }
 }); //State
 //
 // ------------------------------------------------------------------------------------------------//
@@ -243,6 +256,7 @@ router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, nex
   res.status(200).json({
     "Status": Status
   });
+
 }); //Status
 //
 // ------------------------------------------------------------------------------------------------//
@@ -290,6 +304,7 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
       res.status(200).json({
         "Status": closeSession
       });
+      //
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
