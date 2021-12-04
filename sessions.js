@@ -418,6 +418,7 @@ module.exports = class Sessions {
       state,
       saveState
     } = useSingleFileAuthState(`${session.tokenPatch}/${SessionName}.data.json`);
+    //
     // https://github.com/adiwajshing/Baileys/issues/751
     const startSock = () => {
       const client = makeWASocket({
@@ -435,14 +436,17 @@ module.exports = class Sessions {
         }),
         /** version to connect with */
         //version: [2, 2142, 12],
+        version: undefined,
         /** override browser config */
-        browser: ['My-WhatsApp', "Safari", "3.0"],
+        browser: ['My-Whatsapp', 'Google Chrome', '96.00'],
         /** agent used for fetch requests -- uploading/downloading media */
         fetchAgent: undefined,
         /** should the QR be printed in the terminal */
         printQRInTerminal: true
         //
       });
+      //
+      console.log(client);
       //
       return client;
     }
@@ -515,7 +519,7 @@ module.exports = class Sessions {
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
           //
           client = startSock()
-        } else {
+        } else if (connection === 'undefined') {
           console.log('- Connection closed');
           //
           session.state = "CLOSED";
