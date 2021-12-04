@@ -31,7 +31,6 @@ const {
   AnyMessageContent,
   MiscMessageGenerationOptions,
   MessageType,
-  MessageOptions,
   Mimetype,
   MessageOptions,
   Mimetype
