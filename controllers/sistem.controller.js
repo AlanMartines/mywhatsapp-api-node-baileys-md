@@ -34,7 +34,7 @@ function soNumeros(string) {
   return numbers;
 }
 //
-function validatePhone(phone) {
+async function validatePhone(phone) {
   // A função abaixo demonstra o uso de uma expressão regular que identifica, de forma simples, telefones válidos no Brasil.
   // Nenhum DDD iniciado por 0 é aceito, e nenhum número de telefone pode iniciar com 0 ou 1.
   // Exemplos válidos: +55 (11) 98888-8888 / 9999-9999 / 21 98888-8888 / 5511988888888
@@ -1644,7 +1644,7 @@ router.post("/phoneValidate", upload.none(''), verifyToken.verify, async (req, r
     case 'chatsAvailable':
       //
       var phone = soNumeros(req.body.phonefull);
-      var validPhone = validatePhone(phone);
+      var validPhone = await validatePhone(phone);
       //
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json({
