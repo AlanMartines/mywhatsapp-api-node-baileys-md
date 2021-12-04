@@ -203,25 +203,10 @@ cd ApiBaileysMd
 npm install --allow-root --unsafe-perm=true
 
 # Clone este repositório
-git clone https://github.com/adiwajshing/Baileys.git
+git clone -b multi-device https://github.com/adiwajshing/Baileys.git
 
 # Acesse a pasta do projeto
 cd Baileys
-
-# Instale as dependências
-npm install --allow-root --unsafe-perm=true
-
-# Building Baileys
-npm run build:all
-
-# Ir para seu diretório anterior
-cd ..
-
-# Clone este repositório
-git clone -b multi-device https://github.com/adiwajshing/Baileys.git BaileysMd
-
-# Acesse a pasta do projeto
-cd BaileysMd
 
 # Instale as dependências
 npm install --allow-root --unsafe-perm=true
