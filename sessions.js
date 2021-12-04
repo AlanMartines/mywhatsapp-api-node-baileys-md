@@ -1407,10 +1407,10 @@ module.exports = class Sessions {
     console.log("- leaveGroup");
     var session = Sessions.getSession(SessionName);
     var resultleaveGroup = await session.client.then(async client => {
-      return await client.groupLeave(groupId).then((result) => {
+      return await client.groupLeave(groupId).then(([result]) => {
         //console.log('Result: ', result); //return object success
         //
-        if (result.status == 200 || result.status == 207) {
+        if (result) {
           return {
             "erro": false,
             "status": 200,
@@ -1594,7 +1594,7 @@ module.exports = class Sessions {
             "erro": false,
             "status": 200,
             "title": result.subject,
-            "id": result.id.replace('@g.us', ''),
+            "groupId": result.id.replace('@g.us', ''),
             "participants": {
               contactlistValid,
               contactlistInvalid
@@ -1607,7 +1607,7 @@ module.exports = class Sessions {
             "erro": true,
             "status": 404,
             "title": title,
-            "id": null,
+            "groupId": null,
             "participants": {
               contactlistValid,
               contactlistInvalid
@@ -1624,7 +1624,7 @@ module.exports = class Sessions {
           "erro": true,
           "status": 404,
           "title": title,
-          "gid": null,
+          "groupId": null,
           "contactlistValid": contactlistValid,
           "contactlistInvalid": contactlistInvalid,
           "message": "Erro ao criar grupo"
