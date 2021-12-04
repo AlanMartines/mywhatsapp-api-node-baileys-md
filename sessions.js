@@ -1681,7 +1681,7 @@ module.exports = class Sessions {
     var session = Sessions.getSession(SessionName);
     var resultremoveParticipant = await session.client.then(async client => {
       return await client.groupParticipantsUpdate(groupId, phonefull, "remove").then((result) => {
-        //console.log('Result: ', result); //return object success
+        console.log('Result: ', result); //return object success
         //
         if (result.status == 200 || result.status == 207) {
           return {
@@ -1726,7 +1726,7 @@ module.exports = class Sessions {
     var session = Sessions.getSession(SessionName);
     var resultaddParticipant = await session.client.then(async client => {
       return await client.groupParticipantsUpdate(groupId, phonefull, "add").then((result) => {
-        //console.log('Result: ', result); //return object success
+        console.log('Result: ', result); //return object success
         //
         if (result.status == 200 || result.status == 207) {
           return {
@@ -1771,7 +1771,7 @@ module.exports = class Sessions {
     var session = Sessions.getSession(SessionName);
     var resultpromoteParticipant = await session.client.then(async client => {
       return await client.groupParticipantsUpdate(groupId, contactlistValid, "promote").then((result) => {
-        //console.log('Result: ', result); //return object success
+        console.log('Result: ', result); //return object success
         //
         if (result.status == 200 || result.status == 207) {
           return {
@@ -1816,7 +1816,7 @@ module.exports = class Sessions {
     var session = Sessions.getSession(SessionName);
     var resultdemoteParticipant = await session.client.then(async client => {
       return await client.groupParticipantsUpdate(groupId, phonefull, "demote").then((result) => {
-        //console.log('Result: ', demoteParticipant); //return object success
+        console.log('Result: ', demoteParticipant); //return object success
         //
         if (result.status == 200 || result.status == 207) {
           return {
