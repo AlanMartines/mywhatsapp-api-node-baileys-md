@@ -1322,7 +1322,7 @@ module.exports = class Sessions {
       return await client.onWhatsApp(number).then((result) => {
         console.log('Result: ', result); //return object success
         //
-        if (result.exists) {
+        if (result.exists[0]) {
           //
           return {
             "erro": false,
@@ -1331,7 +1331,7 @@ module.exports = class Sessions {
             "message": "O número informado pode receber mensagens via whatsapp"
           };
           //
-        } else if (!result.exists) {
+        } else if (!result.exists[0]) {
           //
           return {
             "erro": true,
