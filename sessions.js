@@ -1,11 +1,11 @@
 //
-// Configuração dos módulos
+// ConfiguraÃ§Ã£o dos mÃ³dulos
 const config = require('./config.global');
 const fs = require("fs-extra");
 const QRCode = require('qrcode');
 const qrcodeterminal = require('qrcode-terminal');
 const moment = require("moment");
-const pino = require("pino");
+const P = require("pino");
 const Base64BufferThumbnail = require('base64-buffer-thumbnail');
 const {
   fromPath,
@@ -30,8 +30,12 @@ const {
   GroupMetadata,
   AnyMessageContent,
   MessageType,
-  MiscMessageGenerationOptions
+  MiscMessageGenerationOptions,
+  MessageOptions,
+  Mimetype,
+  downloadContentFromMessage
 } = require('./Baileys/lib/index');
+const BaileysMd = require('./ingine/baileys-md');
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
@@ -91,7 +95,7 @@ async function updateStateDb(state, status, AuthorizationToken) {
     if (resUpdate) {
       console.log('- Status atualizado');
     } else {
-      console.log('- Status não atualizado');
+      console.log('- Status nÃ£o atualizado');
     }
   }
   //
@@ -102,7 +106,7 @@ async function updateStateDb(state, status, AuthorizationToken) {
 async function deletaToken(filePath) {
   //
   const cacheExists = await fs.pathExists(filePath);
-  console.log('- O arquivo é: ' + cacheExists);
+  console.log('- O arquivo Ã©: ' + cacheExists);
   console.log('- Path: ' + filePath);
   if (cacheExists) {
     fs.remove(filePath);
@@ -204,7 +208,7 @@ module.exports = class Sessions {
     console.log("- Status");
     var session = Sessions.getSession(SessionName);
 
-    if (session) { //só adiciona se não existir
+    if (session) { //sÃ³ adiciona se nÃ£o existir
       if (session.state == "CONNECTED") {
         return {
           result: "info",
@@ -235,7 +239,7 @@ module.exports = class Sessions {
           SessionName: SessionName,
           state: session.state,
           status: session.status,
-          message: "Sessão fechada"
+          message: "SessÃ£o fechada"
         };
       } else {
         return {
@@ -281,16 +285,16 @@ module.exports = class Sessions {
       session.blocklist = null;
       session.browserSessionToken = null;
       //
-      console.log('- Nome da sessão:', session.name);
+      console.log('- Nome da sessÃ£o:', session.name);
       console.log('- State do sistema:', session.state);
-      console.log('- Status da sessão:', session.status);
+      console.log('- Status da sessÃ£o:', session.status);
       //
       session.client = Sessions.initSession(SessionName, AuthorizationToken);
       Sessions.setup(SessionName, AuthorizationToken);
     } else {
-      console.log('- Nome da sessão:', session.name);
+      console.log('- Nome da sessÃ£o:', session.name);
       console.log('- State do sistema:', session.state);
-      console.log('- Status da sessão:', session.status);
+      console.log('- Status da sessÃ£o:', session.status);
     }
     //
     await updateStateDb(session.state, session.status, session.AuthorizationToken);
@@ -301,7 +305,7 @@ module.exports = class Sessions {
   // ------------------------------------------------------------------------------------------------------- //
   //
   static async addSesssion(SessionName, AuthorizationToken) {
-    console.log("- Adicionando sessão");
+    console.log("- Adicionando sessÃ£o");
     var newSession = {
       AuthorizationToken: AuthorizationToken,
       name: SessionName,
@@ -319,7 +323,7 @@ module.exports = class Sessions {
       browserSessionToken: null
     }
     Sessions.sessions.push(newSession);
-    console.log("- Nova sessão: " + newSession.state);
+    console.log("- Nova sessÃ£o: " + newSession.state);
 
     //setup session
     newSession.client = Sessions.initSession(SessionName);
@@ -354,18 +358,18 @@ module.exports = class Sessions {
   // ------------------------------------------------------------------------------------------------------- //
   //
   static async initSession(SessionName) {
-    console.log("- Iniciando sessão");
+    console.log("- Iniciando sessÃ£o");
     var session = Sessions.getSession(SessionName);
     //
     /*
-        ╔═╗┌─┐┌┬┐┬┌─┐┌┐┌┌─┐┬    ╔═╗┬─┐┌─┐┌─┐┌┬┐┌─┐  ╔═╗┌─┐┬─┐┌─┐┌┬┐┌─┐┌┬┐┌─┐┬─┐┌─┐
-        ║ ║├─┘ │ ││ ││││├─┤│    ║  ├┬┘├┤ ├─┤ │ ├┤   ╠═╝├─┤├┬┘├─┤│││├┤  │ ├┤ ├┬┘└─┐
-        ╚═╝┴   ┴ ┴└─┘┘└┘┴ ┴┴─┘  ╚═╝┴└─└─┘┴ ┴ ┴ └─┘  ╩  ┴ ┴┴└─┴ ┴┴ ┴└─┘ ┴ └─┘┴└─└─┘
+        â•”â•â•—â”Œâ”€â”â”Œâ”¬â”â”¬â”Œâ”€â”â”Œâ”â”Œâ”Œâ”€â”â”¬    â•”â•â•—â”¬â”€â”â”Œâ”€â”â”Œâ”€â”â”Œâ”¬â”â”Œâ”€â”  â•”â•â•—â”Œâ”€â”â”¬â”€â”â”Œâ”€â”â”Œâ”¬â”â”Œâ”€â”â”Œâ”¬â”â”Œâ”€â”â”¬â”€â”â”Œâ”€â”
+        â•‘ â•‘â”œâ”€â”˜ â”‚ â”‚â”‚ â”‚â”‚â”‚â”‚â”œâ”€â”¤â”‚    â•‘  â”œâ”¬â”˜â”œâ”¤ â”œâ”€â”¤ â”‚ â”œâ”¤   â• â•â•â”œâ”€â”¤â”œâ”¬â”˜â”œâ”€â”¤â”‚â”‚â”‚â”œâ”¤  â”‚ â”œâ”¤ â”œâ”¬â”˜â””â”€â”
+        â•šâ•â•â”´   â”´ â”´â””â”€â”˜â”˜â””â”˜â”´ â”´â”´â”€â”˜  â•šâ•â•â”´â””â”€â””â”€â”˜â”´ â”´ â”´ â””â”€â”˜  â•©  â”´ â”´â”´â””â”€â”´ â”´â”´ â”´â””â”€â”˜ â”´ â””â”€â”˜â”´â””â”€â””â”€â”˜
      */
     //
-    console.log("- Saudação:", await saudacao());
+    console.log("- SaudaÃ§Ã£o:", await saudacao());
     //
-    console.log('- Nome da sessão:', SessionName);
+    console.log('- Nome da sessÃ£o:', SessionName);
     //
     console.log('- Folder Token:', session.tokenPatch);
     //
@@ -373,14 +377,44 @@ module.exports = class Sessions {
     //
     //-------------------------------------------------------------------------------------------------------------------------------------//
     //
-    session.tokenPatch = config.TOKENSPATCH_WIN;
+    session.tokenPatch = config.TOKENSPATCH_LINUX;
+    //
+    let client = undefined
+    /*
+        const loadState = () => {
+          let state = undefined;
+          try {
+            const value = JSON.parse(
+              fs.readFileSync(`${session.tokenPatch }/${SessionName}.data.json`, {
+                encoding: 'utf-8'
+              }),
+              BufferJSON.reviver
+            );
+            state = {
+              creds: value.creds,
+              keys: initInMemoryKeyStore(value.keys)
+            };
+          } catch {}
+          return state;
+        };
+
+        const saveState = (state) => {
+          state = state || client.authState;
+          fs.writeFileSync(`${session.tokenPatch }/${SessionName}.data.json`,
+            JSON.stringify(state, BufferJSON.replacer, 2)
+          );
+        };
+    		*/
+    //
     const {
       state,
       saveState
-    } = useSingleFileAuthState(`${session.tokenPatch}/${SessionName}.data.json`);
+    } = useSingleFileAuthState(`${session.tokenPatch }/${SessionName}.data.json`);
+    //
+    // https://github.com/adiwajshing/Baileys/issues/751
     //
     const startSock = () => {
-      const sock = makeWASocket({
+      const client = makeWASocket({
         /** provide an auth state object to maintain the auth state */
         auth: state,
         /** Fails the connection if the connection times out in this time interval or no data is received */
@@ -390,8 +424,8 @@ module.exports = class Sessions {
         /** proxy agent */
         agent: undefined,
         /** pino logger */
-        logger: pino({
-          level: 'warn'
+        logger: P({
+          level: 'info'
         }),
         /** version to connect with */
         //version: [2, 2142, 12],
@@ -404,69 +438,83 @@ module.exports = class Sessions {
         //
       });
       //
-      let attempts = 0;
-      //
-      sock.ev.on('connection.update', async (conn) => {
-        const {
-          connection,
-          lastDisconnect,
-          qr
-        } = conn;
-        if (qr) { // if the 'qr' property is available on 'conn'
-          console.log('- QR Generated');
-          //
-          var readQRCode = await QRCode.toDataURL(qr);
-          var qrCode = readQRCode.replace('data:image/png;base64,', '');
-          //
-          attempts++;
-          //
-          console.log('- Número de tentativas de ler o qr-code:', attempts);
-          session.attempts = attempts;
-          //
-          console.log("- Captura do QR-Code");
-          //
-          session.qrcode = readQRCode;
-          session.qrcodedata = qrCode;
-          //
-          session.state = "QRCODE";
-          session.status = "qrRead";
-          session.message = 'Sistema iniciando e indisponivel para uso';
-          //
-        }
-        if (attempts <= 3) {
-          await updateStateDb(session.state, session.status, session.AuthorizationToken);
-        }
-        //
-        if (connection === 'close') {
-          lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut ? initSession(SessionName) : console.log('- Connection closed');
-        }
-        //
 
-        //
-      });
       //
+      client.ev.on('creds.update', saveState);
       //
-      sock.ev.on('auth-state.update', async () => {
-        console.log(`credentials updated!`);
-        const infoSession = client.authState;
-        await fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(infoSession, BufferJSON.replacer, 2), );
-      });
-      //
-      sock.ev.on('creds.update', saveState);
-      //
-      return sock;
+      return client
     }
+    client = startSock()
     //
-    const client = startSock();
+    let attempts = 0;
+    //
+    client.ev.on('connection.update', async (conn) => {
+      const {
+        connection,
+        lastDisconnect,
+        isNewLogin,
+        qr,
+        receivedPendingNotifications
+      } = conn;
+      if (qr) { // if the 'qr' property is available on 'conn'
+        console.log('- QR Generated');
+        //
+        var readQRCode = await QRCode.toDataURL(qr);
+        var qrCode = readQRCode.replace('data:image/png;base64,', '');
+        //
+        attempts++;
+        //
+        console.log('- NÃºmero de tentativas de ler o qr-code:', attempts);
+        console.log("- Captura do QR-Code");
+        //
+      }
+      if (connection === 'connecting') {
+
+      } else if (connection === 'open') {
+        //
+        session.state = "CONNECTED";
+        session.status = 'isLogged';
+        session.qrcodedata = null;
+        session.message = 'Sistema iniciando e disponivel para uso';
+        //
+        await updateStateDb(session.state, session.status, session.AuthorizationToken);
+        //
+      }
+      if (connection === 'close') {
+        if (fs.existsSync(`${session.tokenPatch }/${SessionName}.data.json`)) {
+          fs.unlinkSync(`${session.tokenPatch }/${SessionName}.data.json`);
+        }
+        //
+        session.state = "CLOSED";
+        session.status = 'CLOSED';
+        session.client = false;
+        session.qrcodedata = null;
+        session.message = "SessÃ£o fechada";
+        //
+        await Sessions.Start(SessionName.trim());
+        //
+        // reconnect if not logged out
+        if ((lastDisconnect.error).output.statusCode !== DisconnectReason.loggedOut) {
+          client = startSock()
+        } else {
+          console.log('- Connection closed')
+        }
+      } else {
+
+      }
+      //console.log('- Connection update\n', conn);
+      console.log('- Connection update');
+    });
+    //
     return client;
   } //initSession
   //
   // ------------------------------------------------------------------------------------------------//
   //
   /*
-    ╔═╗┌─┐┌┬┐┌┬┐┬┌┐┌┌─┐  ┌─┐┌┬┐┌─┐┬─┐┌┬┐┌─┐┌┬┐
-    ║ ╦├┤  │  │ │││││ ┬  └─┐ │ ├─┤├┬┘ │ ├┤  ││
-    ╚═╝└─┘ ┴  ┴ ┴┘└┘└─┘  └─┘ ┴ ┴ ┴┴└─ ┴ └─┘─┴┘
+    â•”â•â•—â”Œâ”€â”â”Œâ”¬â”â”Œâ”¬â”â”¬â”Œâ”â”Œâ”Œâ”€â”  â”Œâ”€â”â”Œâ”¬â”â”Œâ”€â”â”¬â”€â”â”Œâ”¬â”â”Œâ”€â”â”Œâ”¬â”
+    â•‘ â•¦â”œâ”¤  â”‚  â”‚ â”‚â”‚â”‚â”‚â”‚ â”¬  â””â”€â” â”‚ â”œâ”€â”¤â”œâ”¬â”˜ â”‚ â”œâ”¤  â”‚â”‚
+    â•šâ•â•â””â”€â”˜ â”´  â”´ â”´â”˜â””â”˜â””â”€â”˜  â””â”€â”˜ â”´ â”´ â”´â”´â””â”€ â”´ â””â”€â”˜â”€â”´â”˜
   */
   //
   static async setup(SessionName) {
@@ -491,7 +539,7 @@ module.exports = class Sessions {
       });
       //
       client.ev.on('groups.update', (group) => {
-        // Teste 1 - Alterei o nome do grupo e caiu aqui, onde o subject é o novo nome
+        // Teste 1 - Alterei o nome do grupo e caiu aqui, onde o subject Ã© o novo nome
         console.log('Grupo update: ', group);
       });
       //
@@ -514,7 +562,7 @@ module.exports = class Sessions {
             break;
 
           default:
-            console.log('Ação não tratada');
+            console.log('AÃ§Ã£o nÃ£o tratada');
             break;
         }
       });
@@ -531,7 +579,7 @@ module.exports = class Sessions {
       try {
         return client.state;
       } catch (error) {
-        //console.log("- Erro ao fechar sessão:", error.message);
+        //console.log("- Erro ao fechar sessÃ£o:", error.message);
         //
         return {
           result: "error",
@@ -548,7 +596,7 @@ module.exports = class Sessions {
   // ------------------------------------------------------------------------------------------------//
   //
   static async closeSession(SessionName) {
-    console.log("- Fechando sessão");
+    console.log("- Fechando sessÃ£o");
     var session = Sessions.getSession(SessionName);
     var closeSession = await session.client.then(async client => {
       try {
@@ -557,13 +605,13 @@ module.exports = class Sessions {
         //
         session.state = "CLOSED";
         session.status = 'CLOSED';
-        console.log("- Sessão fechada");
+        console.log("- SessÃ£o fechada");
         //
         var returnClosed = {
           result: "success",
           state: session.state,
           status: session.status,
-          message: "Sessão fechada com sucesso"
+          message: "SessÃ£o fechada com sucesso"
         };
         //
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
@@ -571,13 +619,13 @@ module.exports = class Sessions {
         return returnClosed;
         //
       } catch (error) {
-        //console.log("- Erro ao fechar sessão:", error);
+        //console.log("- Erro ao fechar sessÃ£o:", error);
         //
         return {
           result: "error",
           state: session.state,
           status: session.status,
-          message: "Erro ao fechar sessão"
+          message: "Erro ao fechar sessÃ£o"
         };
         //
       };
@@ -593,7 +641,7 @@ module.exports = class Sessions {
   // ------------------------------------------------------------------------------------------------//
   //
   static async logoutSession(SessionName) {
-    console.log("- Fechando sessão");
+    console.log("- Fechando sessÃ£o");
     var session = Sessions.getSession(SessionName);
     var LogoutSession = await session.client.then(async client => {
       try {
@@ -604,13 +652,13 @@ module.exports = class Sessions {
         //
         session.state = "DISCONNECTED";
         session.status = 'CLOSED';
-        console.log("- Sessão desconetada");
+        console.log("- SessÃ£o desconetada");
         //
         var returnLogout = {
           result: "success",
           state: session.state,
           status: session.status,
-          message: "Sessão desconetada"
+          message: "SessÃ£o desconetada"
         };
         //
         await deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
@@ -620,13 +668,13 @@ module.exports = class Sessions {
         return returnLogout;
         //
       } catch (error) {
-        //console.log("- Erro ao desconetar sessão:", error);
+        //console.log("- Erro ao desconetar sessÃ£o:", error);
         //
         return {
           result: "error",
           state: session.state,
           status: session.status,
-          message: "Erro ao desconetar sessão"
+          message: "Erro ao desconetar sessÃ£o"
         };
         //
       };
@@ -641,9 +689,9 @@ module.exports = class Sessions {
   // ------------------------------------------------------------------------------------------------------- //
   //
   /*
-  ╔╗ ┌─┐┌─┐┬┌─┐  ╔═╗┬ ┬┌┐┌┌─┐┌┬┐┬┌─┐┌┐┌┌─┐  ┬ ┬┌─┐┌─┐┌─┐┌─┐
-  ╠╩╗├─┤└─┐││    ╠╣ │ │││││   │ ││ ││││└─┐  │ │└─┐├─┤│ ┬├┤ 
-  ╚═╝┴ ┴└─┘┴└─┘  ╚  └─┘┘└┘└─┘ ┴ ┴└─┘┘└┘└─┘  └─┘└─┘┴ ┴└─┘└─┘
+  â•”â•— â”Œâ”€â”â”Œâ”€â”â”¬â”Œâ”€â”  â•”â•â•—â”¬ â”¬â”Œâ”â”Œâ”Œâ”€â”â”Œâ”¬â”â”¬â”Œâ”€â”â”Œâ”â”Œâ”Œâ”€â”  â”¬ â”¬â”Œâ”€â”â”Œâ”€â”â”Œâ”€â”â”Œâ”€â”
+  â• â•©â•—â”œâ”€â”¤â””â”€â”â”‚â”‚    â• â•£ â”‚ â”‚â”‚â”‚â”‚â”‚   â”‚ â”‚â”‚ â”‚â”‚â”‚â”‚â””â”€â”  â”‚ â”‚â””â”€â”â”œâ”€â”¤â”‚ â”¬â”œâ”¤ 
+  â•šâ•â•â”´ â”´â””â”€â”˜â”´â””â”€â”˜  â•š  â””â”€â”˜â”˜â””â”˜â””â”€â”˜ â”´ â”´â””â”€â”˜â”˜â””â”˜â””â”€â”˜  â””â”€â”˜â””â”€â”˜â”´ â”´â””â”€â”˜â””â”€â”˜
   */
   //
   // ------------------------------------------------------------------------------------------------//
@@ -705,7 +753,9 @@ module.exports = class Sessions {
     var session = Sessions.getSession(SessionName);
     var sendResult = await session.client.then(async client => {
       // send a simple text!
-      return await client.sendMessage(number, msg, MessageType.text).then((result) => {
+      return await client.sendMessage(number, {
+        text: msg
+      }).then((result) => {
         //console.log("Result: ", result); //return object success
         //
         return {
@@ -731,7 +781,7 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  //Enviar localização
+  //Enviar localizaÃ§Ã£o
   static async sendLocation(
     SessionName,
     number,
@@ -739,7 +789,7 @@ module.exports = class Sessions {
     long,
     caption
   ) {
-    console.log("- Enviando localização.");
+    console.log("- Enviando localizaÃ§Ã£o.");
     var session = Sessions.getSession(SessionName);
     var sendResult = await session.client.then(async client => {
       //
@@ -757,7 +807,7 @@ module.exports = class Sessions {
         return {
           "erro": false,
           "status": 200,
-          "message": "Localização enviada com sucesso."
+          "message": "LocalizaÃ§Ã£o enviada com sucesso."
         };
         //
       }).catch((erro) => {
@@ -768,7 +818,7 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "message": "Erro ao enviar localização."
+          "message": "Erro ao enviar localizaÃ§Ã£o."
         };
         //
       });
@@ -913,9 +963,9 @@ module.exports = class Sessions {
   // ------------------------------------------------------------------------------------------------//
   //
   /*
-  ╦═╗┌─┐┌┬┐┬─┐┬┌─┐┬  ┬┬┌┐┌┌─┐  ╔╦╗┌─┐┌┬┐┌─┐                
-  ╠╦╝├┤  │ ├┬┘│├┤ └┐┌┘│││││ ┬   ║║├─┤ │ ├─┤                
-  ╩╚═└─┘ ┴ ┴└─┴└─┘ └┘ ┴┘└┘└─┘  ═╩╝┴ ┴ ┴ ┴ ┴                
+  â•¦â•â•—â”Œâ”€â”â”Œâ”¬â”â”¬â”€â”â”¬â”Œâ”€â”â”¬  â”¬â”¬â”Œâ”â”Œâ”Œâ”€â”  â•”â•¦â•—â”Œâ”€â”â”Œâ”¬â”â”Œâ”€â”                
+  â• â•¦â•â”œâ”¤  â”‚ â”œâ”¬â”˜â”‚â”œâ”¤ â””â”â”Œâ”˜â”‚â”‚â”‚â”‚â”‚ â”¬   â•‘â•‘â”œâ”€â”¤ â”‚ â”œâ”€â”¤                
+  â•©â•šâ•â””â”€â”˜ â”´ â”´â””â”€â”´â””â”€â”˜ â””â”˜ â”´â”˜â””â”˜â””â”€â”˜  â•â•©â•â”´ â”´ â”´ â”´ â”´                
   */
   //
   // Recuperar contatos
@@ -1000,7 +1050,7 @@ module.exports = class Sessions {
             else Name = allChats[i].jid.replace('@s.whatsapp.net', '');
 
             if (LastMessage[LengthMessages].message) MessagePresence = LastMessage[LengthMessages].message.conversation;
-            else MessagePresence = 'Não foi possível carregar as mensagens anteriores';
+            else MessagePresence = 'NÃ£o foi possÃ­vel carregar as mensagens anteriores';
             let PPIMAGE = null;
             try {
               PPIMAGE = await client.getProfilePicture(`${phonePP}@c.us`);
@@ -1066,7 +1116,7 @@ module.exports = class Sessions {
           }
           //
           // if (LastMessage[LengthMessages].message) MessagePresence = LastMessage[LengthMessages].message.conversation;
-          //else MessagePresence = 'Não foi possível carregar as mensagens anteriores'
+          //else MessagePresence = 'NÃ£o foi possÃ­vel carregar as mensagens anteriores'
           let PPIMAGE = null;
           try {
             PPIMAGE = await client.getProfilePicture(`${phonePP}@c.us`);
@@ -1240,7 +1290,7 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  // Verificar o status do número
+  // Verificar o status do nÃºmero
   static async checkNumberStatus(
     SessionName, number
   ) {
@@ -1257,7 +1307,7 @@ module.exports = class Sessions {
             "erro": false,
             "status": 200,
             "number": result.jid,
-            "message": "O número informado pode receber mensagens via whatsapp"
+            "message": "O nÃºmero informado pode receber mensagens via whatsapp"
           };
           //
         } else if (!result.exists) {
@@ -1266,7 +1316,7 @@ module.exports = class Sessions {
             "erro": true,
             "status": 404,
             "number": result.jid,
-            "message": "O número informado não pode receber mensagens via whatsapp"
+            "message": "O nÃºmero informado nÃ£o pode receber mensagens via whatsapp"
           };
           //
         } else {
@@ -1274,7 +1324,7 @@ module.exports = class Sessions {
           return {
             "erro": true,
             "status": 404,
-            "message": "Erro ao verificar número informado"
+            "message": "Erro ao verificar nÃºmero informado"
           };
           //
         }
@@ -1284,7 +1334,7 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "message": "Erro ao verificar número informado"
+          "message": "Erro ao verificar nÃºmero informado"
         };
         //
       });
@@ -1295,9 +1345,9 @@ module.exports = class Sessions {
   // ------------------------------------------------------------------------------------------------//
   //
   /*
-  ╔═╗┬─┐┌─┐┬ ┬┌─┐  ╔═╗┬ ┬┌┐┌┌─┐┌┬┐┬┌─┐┌┐┌┌─┐               
-  ║ ╦├┬┘│ ││ │├─┘  ╠╣ │ │││││   │ ││ ││││└─┐               
-  ╚═╝┴└─└─┘└─┘┴    ╚  └─┘┘└┘└─┘ ┴ ┴└─┘┘└┘└─┘               
+  â•”â•â•—â”¬â”€â”â”Œâ”€â”â”¬ â”¬â”Œâ”€â”  â•”â•â•—â”¬ â”¬â”Œâ”â”Œâ”Œâ”€â”â”Œâ”¬â”â”¬â”Œâ”€â”â”Œâ”â”Œâ”Œâ”€â”               
+  â•‘ â•¦â”œâ”¬â”˜â”‚ â”‚â”‚ â”‚â”œâ”€â”˜  â• â•£ â”‚ â”‚â”‚â”‚â”‚â”‚   â”‚ â”‚â”‚ â”‚â”‚â”‚â”‚â””â”€â”               
+  â•šâ•â•â”´â””â”€â””â”€â”˜â””â”€â”˜â”´    â•š  â””â”€â”˜â”˜â””â”˜â””â”€â”˜ â”´ â”´â””â”€â”˜â”˜â””â”˜â””â”€â”˜               
   */
   //
   // Deixar o grupo
@@ -1475,7 +1525,7 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  // Criar grupo (título, participantes a adicionar)
+  // Criar grupo (tÃ­tulo, participantes a adicionar)
   static async createGroup(
     SessionName, title, contactlistValid, contactlistInvalid
   ) {
@@ -1530,7 +1580,7 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  // Criar grupo (título, participantes a adicionar)
+  // Criar grupo (tÃ­tulo, participantes a adicionar)
   static async deleteChat(
     SessionName,
     Id
@@ -1753,7 +1803,7 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  // Retorna o status do grupo, jid, descrição do link de convite
+  // Retorna o status do grupo, jid, descriÃ§Ã£o do link de convite
   static async getGroupInfoFromInviteLink(
     SessionName, InviteCode
   ) {
@@ -1778,7 +1828,7 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  // Junte-se a um grupo usando o código de convite do grupo
+  // Junte-se a um grupo usando o cÃ³digo de convite do grupo
   static async joinGroup(
     SessionName, InviteCode
   ) {
@@ -1820,7 +1870,7 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  // Junte-se a um grupo usando o código de convite do grupo
+  // Junte-se a um grupo usando o cÃ³digo de convite do grupo
   static async onlyAdminsMessagesGroup(
     SessionName,
     groupId
@@ -1863,7 +1913,7 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  // Junte-se a um grupo usando o código de convite do grupo
+  // Junte-se a um grupo usando o cÃ³digo de convite do grupo
   static async everyoneModifySettingsGroup(
     SessionName,
     groupId,
@@ -1880,13 +1930,13 @@ module.exports = class Sessions {
             return {
               "erro": false,
               "status": 200,
-              "message": "Todos modificam as configurações do grupo"
+              "message": "Todos modificam as configuraÃ§Ãµes do grupo"
             };
           } else {
             return {
               "erro": false,
               "status": 200,
-              "message": "Somente admins podem modificar as configurações do grupo"
+              "message": "Somente admins podem modificar as configuraÃ§Ãµes do grupo"
             };
           }
         } else {
@@ -1894,7 +1944,7 @@ module.exports = class Sessions {
           return {
             "erro": true,
             "status": 404,
-            "message": "Erro ao habilitar as configurações do grupo"
+            "message": "Erro ao habilitar as configuraÃ§Ãµes do grupo"
           };
           //
         }
@@ -1905,7 +1955,7 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "message": "Erro ao habilitar as configurações do grupo"
+          "message": "Erro ao habilitar as configuraÃ§Ãµes do grupo"
         };
         //
       });
@@ -1916,9 +1966,9 @@ module.exports = class Sessions {
   // ------------------------------------------------------------------------------------------------//
   //
   /*
-  ╔═╗┬─┐┌─┐┌─┐┬┬  ┌─┐  ╔═╗┬ ┬┌┐┌┌─┐┌┬┐┬┌─┐┌┐┌┌─┐           
-  ╠═╝├┬┘│ │├┤ ││  ├┤   ╠╣ │ │││││   │ ││ ││││└─┐           
-  ╩  ┴└─└─┘└  ┴┴─┘└─┘  ╚  └─┘┘└┘└─┘ ┴ ┴└─┘┘└┘└─┘           
+  â•”â•â•—â”¬â”€â”â”Œâ”€â”â”Œâ”€â”â”¬â”¬  â”Œâ”€â”  â•”â•â•—â”¬ â”¬â”Œâ”â”Œâ”Œâ”€â”â”Œâ”¬â”â”¬â”Œâ”€â”â”Œâ”â”Œâ”Œâ”€â”           
+  â• â•â•â”œâ”¬â”˜â”‚ â”‚â”œâ”¤ â”‚â”‚  â”œâ”¤   â• â•£ â”‚ â”‚â”‚â”‚â”‚â”‚   â”‚ â”‚â”‚ â”‚â”‚â”‚â”‚â””â”€â”           
+  â•©  â”´â””â”€â””â”€â”˜â””  â”´â”´â”€â”˜â””â”€â”˜  â•š  â””â”€â”˜â”˜â””â”˜â””â”€â”˜ â”´ â”´â””â”€â”˜â”˜â””â”˜â””â”€â”˜           
   */
   //
   // Set client status
@@ -2018,9 +2068,9 @@ module.exports = class Sessions {
   // ------------------------------------------------------------------------------------------------//
   //
   /*
-  ╔╦╗┌─┐┬  ┬┬┌─┐┌─┐  ╔═╗┬ ┬┌┐┌┌─┐┌┬┐┬┌─┐┌┐┌┌─┐             
-   ║║├┤ └┐┌┘││  ├┤   ╠╣ │ │││││   │ ││ ││││└─┐             
-  ═╩╝└─┘ └┘ ┴└─┘└─┘  ╚  └─┘┘└┘└─┘ ┴ ┴└─┘┘└┘└─┘             
+  â•”â•¦â•—â”Œâ”€â”â”¬  â”¬â”¬â”Œâ”€â”â”Œâ”€â”  â•”â•â•—â”¬ â”¬â”Œâ”â”Œâ”Œâ”€â”â”Œâ”¬â”â”¬â”Œâ”€â”â”Œâ”â”Œâ”Œâ”€â”             
+   â•‘â•‘â”œâ”¤ â””â”â”Œâ”˜â”‚â”‚  â”œâ”¤   â• â•£ â”‚ â”‚â”‚â”‚â”‚â”‚   â”‚ â”‚â”‚ â”‚â”‚â”‚â”‚â””â”€â”             
+  â•â•©â•â””â”€â”˜ â””â”˜ â”´â””â”€â”˜â””â”€â”˜  â•š  â””â”€â”˜â”˜â””â”˜â””â”€â”˜ â”´ â”´â””â”€â”˜â”˜â””â”˜â””â”€â”˜             
   */
   //
   // Delete the Service Worker
@@ -2034,7 +2084,7 @@ module.exports = class Sessions {
         return {
           "erro": false,
           "status": 200,
-          "message": "Serviço parado com sucesso.",
+          "message": "ServiÃ§o parado com sucesso.",
           "killService": result
         };
         //
@@ -2044,7 +2094,7 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "message": "Erro ao parar serviço."
+          "message": "Erro ao parar serviÃ§o."
         };
         //
       });
@@ -2065,7 +2115,7 @@ module.exports = class Sessions {
         return {
           "erro": false,
           "status": 200,
-          "message": "Serviço reiniciado com sucesso.",
+          "message": "ServiÃ§o reiniciado com sucesso.",
           "restartService": result
         };
         //
@@ -2075,7 +2125,7 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "message": "Erro ao reiniciar serviço."
+          "message": "Erro ao reiniciar serviÃ§o."
         };
         //
       });
@@ -2151,7 +2201,7 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "message": "Erro ao obter o estado da conexão"
+          "message": "Erro ao obter o estado da conexÃ£o"
         };
         //
       });
@@ -2224,7 +2274,7 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  // Obter versão do WhatsappWeb
+  // Obter versÃ£o do WhatsappWeb
   static async getWAVersion(SessionName) {
     console.log("- getWAVersion");
     var session = Sessions.getSession(SessionName);
@@ -2235,7 +2285,7 @@ module.exports = class Sessions {
         return {
           "erro": false,
           "status": 200,
-          "message": "Versão do WhatsappWeb obtido com sucesso",
+          "message": "VersÃ£o do WhatsappWeb obtido com sucesso",
           "WAVersion": result
         };
         //
@@ -2245,7 +2295,7 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "message": "Erro ao obter versão do WhatsappWeb"
+          "message": "Erro ao obter versÃ£o do WhatsappWeb"
         };
         //
       });
@@ -2255,7 +2305,7 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  // Inicia a verificação de conexão do telefone
+  // Inicia a verificaÃ§Ã£o de conexÃ£o do telefone
   static async startPhoneWatchdog(SessionName, interval) {
     console.log("- startPhoneWatchdog");
     var session = Sessions.getSession(SessionName);
@@ -2266,7 +2316,7 @@ module.exports = class Sessions {
         return {
           "erro": false,
           "status": 200,
-          "message": "Verificação de conexão do telefone iniciada com sucesso",
+          "message": "VerificaÃ§Ã£o de conexÃ£o do telefone iniciada com sucesso",
           "PhoneWatchdog": result
         };
         //
@@ -2276,7 +2326,7 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "message": "Erro ao inicia a verificação de conexão do telefone"
+          "message": "Erro ao inicia a verificaÃ§Ã£o de conexÃ£o do telefone"
         };
         //
       });
@@ -2286,7 +2336,7 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  // Para a verificação de conexão do telefone
+  // Para a verificaÃ§Ã£o de conexÃ£o do telefone
   static async stopPhoneWatchdog(SessionName) {
     console.log("- stopPhoneWatchdog");
     var session = Sessions.getSession(SessionName);
@@ -2297,7 +2347,7 @@ module.exports = class Sessions {
         return {
           "erro": false,
           "status": 200,
-          "message": "Verificação de conexão parada iniciada com sucesso",
+          "message": "VerificaÃ§Ã£o de conexÃ£o parada iniciada com sucesso",
           "PhoneWatchdog": result
         };
         //
@@ -2307,7 +2357,7 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "message": "Erro ao parar a verificação de conexão do telefone"
+          "message": "Erro ao parar a verificaÃ§Ã£o de conexÃ£o do telefone"
         };
         //
       });
@@ -2318,9 +2368,9 @@ module.exports = class Sessions {
   // ------------------------------------------------------------------------------------------------//
   //
   /*
-  ╔╦╗┌─┐┌─┐┌┬┐┌─┐┌─┐  ┌┬┐┌─┐  ╦═╗┌─┐┌┬┐┌─┐┌─┐
-   ║ ├┤ └─┐ │ ├┤ └─┐   ││├┤   ╠╦╝│ │ │ ├─┤└─┐
-   ╩ └─┘└─┘ ┴ └─┘└─┘  ─┴┘└─┘  ╩╚═└─┘ ┴ ┴ ┴└─┘
+  â•”â•¦â•—â”Œâ”€â”â”Œâ”€â”â”Œâ”¬â”â”Œâ”€â”â”Œâ”€â”  â”Œâ”¬â”â”Œâ”€â”  â•¦â•â•—â”Œâ”€â”â”Œâ”¬â”â”Œâ”€â”â”Œâ”€â”
+   â•‘ â”œâ”¤ â””â”€â” â”‚ â”œâ”¤ â””â”€â”   â”‚â”‚â”œâ”¤   â• â•¦â•â”‚ â”‚ â”‚ â”œâ”€â”¤â””â”€â”
+   â•© â””â”€â”˜â””â”€â”˜ â”´ â””â”€â”˜â””â”€â”˜  â”€â”´â”˜â””â”€â”˜  â•©â•šâ•â””â”€â”˜ â”´ â”´ â”´â””â”€â”˜
    */
   //
   // ------------------------------------------------------------------------------------------------//
@@ -2337,7 +2387,7 @@ module.exports = class Sessions {
       },
       "556791400941@s.whatsapp.net": {
         "jid": "556791400941@s.whatsapp.net",
-        "name": "Paulinho / Garagem Flávio",
+        "name": "Paulinho / Garagem FlÃ¡vio",
         "short": "Paulinho /"
       },
       "554396030588@s.whatsapp.net": {
