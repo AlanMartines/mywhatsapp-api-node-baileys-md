@@ -194,6 +194,15 @@ apk add --update nodejs nodejs-npm
 cd ~
 
 # Clone este repositório
+git clone https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md.git ApiBaileysMd
+
+# Acesse a pasta do projeto no terminal/cmd
+cd ApiBaileysMd
+
+# Instale as dependências
+npm install --allow-root --unsafe-perm=true
+
+# Clone este repositório
 git clone https://github.com/adiwajshing/Baileys.git
 
 # Acesse a pasta do projeto
@@ -207,15 +216,6 @@ npm run build:all
 
 # Ir para seu diretório anterior
 cd ..
-
-# Clone este repositório
-git clone https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md.git ApiBaileysMd
-
-# Acesse a pasta do projeto no terminal/cmd
-cd ApiBaileysMd
-
-# Instale as dependências
-npm install --allow-root --unsafe-perm=true
 
 # Clone este repositório
 git clone -b multi-device https://github.com/adiwajshing/Baileys.git BaileysMd
