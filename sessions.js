@@ -991,6 +991,7 @@ module.exports = class Sessions {
       //
       return await client.sendMessage(number, {
         document: buffer,
+        jpegThumbnail: buffer,
         fileName: originalname,
         mimetype: mimetype
       }).then((result) => {
