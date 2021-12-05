@@ -675,7 +675,7 @@ router.post("/sendImage", upload.single('fileimg'), verifyToken.verify, async (r
         //
         var sendImage = await Sessions.sendImage(
           req.body.SessionName.trim(),
-          checkNumberStatus.number,
+          checkNumberStatus.number.trim(),
           req.file.buffer,
           req.file.mimetype,
           req.file.originalname,

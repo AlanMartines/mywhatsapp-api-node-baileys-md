@@ -933,19 +933,18 @@ module.exports = class Sessions {
   //
   //Enviar Imagem
   static async sendImage(
-    SessionName, number, buffer, mimetype, filename, caption
+    SessionName, from, buffer, mimetype, originalname, caption
   ) {
     console.log("- Enviando menssagem com imagem.");
     var session = Sessions.getSession(SessionName);
     var resultsendImage = await session.client.then(async (client) => {
       //
-      var options = {
+      return await client.sendMessage(from, {
+        image: buffer,
         mimetype: mimetype,
-        caption: caption,
-        filename: filename
-      };
-      //
-      return await client.sendMessage(number, buffer, MessageType.image, options).then((result) => {
+        fileName: originalname,
+        caption: caption
+      }).then((result) => {
         //console.log('Result: ', result); //return object success
         //
         return {
@@ -985,7 +984,7 @@ module.exports = class Sessions {
   ) {
     console.log("- Enviando arquivo", fileExtension);
     var session = Sessions.getSession(SessionName);
-    var resultsendImage = await session.client.then(async (client) => {
+    var sendFile = await session.client.then(async (client) => {
       //
       let mime = '';
       mime = mimetype;
@@ -1101,36 +1100,8 @@ module.exports = class Sessions {
         });
       }
       //
-      /*
-      return await client.sendMessage(from, {
-        document: buffer,
-        jpegThumbnail: buffer,
-        fileName: originalname,
-        mimetype: mimetype
-      }).then((result) => {
-        //console.log('Result: ', result); //return object success
-        //return (result);
-        //
-        return {
-          "erro": false,
-          "status": 200,
-          "message": "Arquivo enviado com sucesso."
-        };
-        //
-      }).catch((erro) => {
-        //console.error('Error when sending: ', erro); //return object error
-        //return (erro);
-        //
-        return {
-          "erro": true,
-          "status": 404,
-          "message": "Erro ao enviar arquivo"
-        };
-        //
-      });
-			*/
     });
-    return resultsendImage;
+    return sendFile;
   } //sendFile
   //
   // ------------------------------------------------------------------------------------------------//
