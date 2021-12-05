@@ -2028,8 +2028,8 @@ router.post("/createGroupSetAdminMembers", upload.single('participants'), verify
         //
         var promoteParticipant = await Sessions.promoteParticipant(
           req.body.SessionName.trim(),
-          groupMetadata.id,
-          contactlistValid
+          createGroup.groupId + '@g.us',
+          createGroup.contactlistValid
         );
         //
         createGroupSetAdminMembers.push(promoteParticipant);
