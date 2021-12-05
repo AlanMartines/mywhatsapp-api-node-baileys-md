@@ -1092,6 +1092,34 @@ module.exports = class Sessions {
           };
           //
         });
+      } else if (mime.split("/")[1] === "pdf") {
+        return await client.sendMessage(from, {
+          document: buffer,
+          jpegThumbnail: buffer,
+          mimetype: mimetype,
+          fileName: originalname,
+          caption: caption
+        }).then((result) => {
+          //console.log('Result: ', result); //return object success
+          //return (result);
+          //
+          return {
+            "erro": false,
+            "status": 200,
+            "message": "Arquivo enviado com sucesso."
+          };
+          //
+        }).catch((erro) => {
+          console.error('Error when sending: ', erro); //return object error
+          //return (erro);
+          //
+          return {
+            "erro": true,
+            "status": 404,
+            "message": "Erro ao enviar arquivo"
+          };
+          //
+        });
       } else {
         return await client.sendMessage(from, {
           document: buffer,
