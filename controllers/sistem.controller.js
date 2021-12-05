@@ -2022,6 +2022,8 @@ router.post("/createGroupSetAdminMembers", upload.single('participants'), verify
         //
       );
       //
+      console.log(groupMetadata);
+      //
       await sleep(2000);
       //
       if (groupMetadata.erro == false && groupMetadata.status == 200 || groupMetadata.status == 207) {
