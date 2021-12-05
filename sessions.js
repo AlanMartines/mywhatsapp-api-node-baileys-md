@@ -989,9 +989,19 @@ module.exports = class Sessions {
       //
       let jpegBase64 = await gerateThumbnail(buffer, mimetype, originalname);
       //
+      var options = {
+        caption: caption,
+        thumbnail: jpegBase64,
+        mimetype: mimetype,
+        filename: originalname,
+        detectLinks: true,
+        PreviewType: 1
+      };
+      //
       return await client.sendMessage(number, {
         document: buffer,
         mimetype: mimetype,
+        filename: originalname,
         caption: caption
       }).then((result) => {
         //console.log('Result: ', result); //return object success
