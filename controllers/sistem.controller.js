@@ -2012,15 +2012,31 @@ router.post("/createGroupSetAdminMembers", upload.single('participants'), verify
         contactlistInvalid
       );
       //
-      await sleep(5000);
-      //
       createGroupSetAdminMembers.push(createGroup);
       //
-      if (createGroup.erro == false && createGroup.status == 200 || createGroup.status == 207) {
+      await sleep(2000);
+      //
+      const groupMetadata = await client.groupMetadata(groupId).then(async (result) => {
+        //console.log('- Grupo validado com sucesso.');
+        return result;
+      }).catch((erro) => {
+        console.error('- Error validar grupo.');
+        //
+        return {
+          "erro": true,
+          "status": 404,
+          "message": "Error validar grupo"
+        };
+        //
+      });
+      //
+      await sleep(2000);
+      //
+      if (groupMetadata.erro == false && groupMetadata.status == 200 || groupMetadata.status == 207) {
         //
         var promoteParticipant = await Sessions.promoteParticipant(
           req.body.SessionName.trim(),
-          createGroup.groupId + '@g.us',
+          groupMetadata.groupId + '@g.us',
           contactlistValid
         );
         //
