@@ -1273,6 +1273,10 @@ module.exports = class Sessions {
     var session = Sessions.getSession(SessionName);
     var resultgetAllGroups = await session.client.then(async client => {
       let chatArray = [];
+      //
+      let groupMetadata = await client.groupMetadata().catch(e => {});
+      console.log(groupMetadata);
+      //
       try {
         const Chats = await client.loadChats();
         let allChats = Chats.chats;
@@ -1570,7 +1574,6 @@ module.exports = class Sessions {
       return await client.groupMetadata(groupId).then(async (result) => {
         //console.log('Result: ', result); //return object success
         //
-        /*
         var participants = [];
         //
         await forEach(result.participants, async (resultAllContacts) => {
@@ -1588,9 +1591,8 @@ module.exports = class Sessions {
           }
           //
         });
-				*/
         //
-        return result;
+        return participants;
         //
       }).catch((erro) => {
         //console.error('Error when sending:\n', erro); //return object error
