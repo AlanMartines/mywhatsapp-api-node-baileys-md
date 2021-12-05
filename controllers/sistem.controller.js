@@ -2100,7 +2100,7 @@ router.post("/createCountGroupSetAdminMembers", upload.single('participants'), v
       }
       //
       for (count = 1; count <= req.body.count; count++) {
-        var resCreateGroup = await Sessions.createGroup(
+        var createGroup = await Sessions.createGroup(
           req.body.SessionName.trim(),
           req.body.title + "-" + count,
           contactlistValid,
@@ -2109,14 +2109,22 @@ router.post("/createCountGroupSetAdminMembers", upload.single('participants'), v
         //
         await sleep(5000);
         //
-        createCountGroupSetAdminMembers.push(resCreateGroup);
+        createCountGroupSetAdminMembers.push(createGroup);
         //
-        if (resCreateGroup.erro !== true && resCreateGroup.status !== 404) {
+        if (createGroup.erro !== true && createGroup.status !== 404) {
+          //
+          const groupMetadata = await Sessions.getGroupMembers(
+            req.body.SessionName.trim(),
+            createGroup.groupId + '@g.us',
+            //
+          );
+          //
+          await sleep(2000);
           //
           var promoteParticipant = await Sessions.promoteParticipant(
             req.body.SessionName.trim(),
-            resCreateGroup.groupId + '@g.us',
-            resCreateGroup.contactlistValid
+            groupMetadata.id,
+            contactlistValid
           );
           //
           createCountGroupSetAdminMembers.push(promoteParticipant);
