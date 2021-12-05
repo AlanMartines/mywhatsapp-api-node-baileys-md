@@ -2002,7 +2002,7 @@ router.post("/createGroupSetAdminMembers", upload.single('participants'), verify
           //
         }
         //
-        await sleep(1000);
+        await sleep(2000);
       }
       //
       var createGroup = await Sessions.createGroup(
@@ -2020,7 +2020,7 @@ router.post("/createGroupSetAdminMembers", upload.single('participants'), verify
         //
         var promoteParticipant = await Sessions.promoteParticipant(
           req.body.SessionName.trim(),
-          createGroup.gid + '@g.us',
+          createGroup.groupId + '@g.us',
           contactlistValid
         );
         //
@@ -2088,7 +2088,7 @@ router.post("/createCountGroupSetAdminMembers", upload.single('participants'), v
           //
         }
         //
-        await sleep(1000);
+        await sleep(2000);
       }
       //
       for (count = 1; count <= req.body.count; count++) {
@@ -2107,7 +2107,7 @@ router.post("/createCountGroupSetAdminMembers", upload.single('participants'), v
           //
           var promoteParticipant = await Sessions.promoteParticipant(
             req.body.SessionName.trim(),
-            resCreateGroup.gid + '@g.us',
+            resCreateGroup.groupId + '@g.us',
             resCreateGroup.contactlistValid
           );
           //
