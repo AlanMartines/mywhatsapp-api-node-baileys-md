@@ -1203,6 +1203,7 @@ router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, 
           Buffer.from(req.body.base64, 'base64'),
           mimetype,
           req.body.originalname,
+          mimetype.split('/')[1],
           req.body.caption
         );
         //
@@ -1246,6 +1247,7 @@ router.post("/sendFileBase64Group", upload.none(''), verifyToken.verify, async (
         Buffer.from(req.body.base64, 'base64'),
         mimetype,
         req.body.originalname,
+        mimetype.split('/')[1],
         req.body.caption
       );
       //
@@ -1286,6 +1288,7 @@ router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (r
           Buffer.from(req.body.base64, 'base64'),
           req.body.mimetype,
           req.body.originalname,
+          req.body.mimetype.split('/')[1],
           req.body.caption
         );
         //
@@ -1321,6 +1324,7 @@ router.post("/sendFileFromBase64Group", upload.none(''), verifyToken.verify, asy
         Buffer.from(req.body.base64, 'base64'),
         req.body.mimetype,
         req.body.originalname,
+        req.body.mimetype.split('/')[1],
         req.body.caption
       );
       //
