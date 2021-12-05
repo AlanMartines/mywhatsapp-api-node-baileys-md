@@ -1272,64 +1272,12 @@ module.exports = class Sessions {
     //
     var session = Sessions.getSession(SessionName);
     var resultgetAllGroups = await session.client.then(async client => {
-      let chatArray = [];
       //
-      try {
-        const Chats = await client.loadChats();
-        let allChats = Chats.chats;
-        for (let i = 0; i < allChats.length; i++) {
-          let count = 1;
-          let id = count + i;
-          let newDate = moment.unix(allChats[i].t).format('DD/MM/YYYY HH:MM:ss');
-          let messagesBody = allChats[i].messages;
-          let LastMessage = JSON.parse(JSON.stringify(messagesBody));
-          let LengthMessages = LastMessage.length - 1;
-          let MessagePresence = null;
-          let Name = null;
-          let phonePP = allChats[i].jid.replace('@s.whatsapp.net', '');
-          if (allChats[i].name) {
-            Name = allChats[i].name;
-          } else {
-            Name = allChats[i].jid.replace('@s.whatsapp.net', '');
-          }
-          //
-          // if (LastMessage[LengthMessages].message) MessagePresence = LastMessage[LengthMessages].message.conversation;
-          //else MessagePresence = 'Não foi possível carregar as mensagens anteriores'
-          let PPIMAGE = null;
-          try {
-            PPIMAGE = await client.getProfilePicture(`${phonePP}@c.us`);
-          } catch (e) {
-            PPIMAGE = 'https://upload.wikimedia.org/wikipedia/en/e/ee/Unknown-person.gif';
-          }
-          if (allChats[i].jid.includes('@g.us')) {
-            /*
-            chatArray = [
-              ...chatArray,              {
-                chatId: id,                time: newDate,                phone: allChats[i].jid.replace('@s.whatsapp.net', ''),                title: Name,                image: PPIMAGE,              },            ]
-						*/
-            //
-            chatArray.push({
-              "user": allChats[i].jid.replace('@g.us', ''),
-              "name": Name,
-              "formattedName": Name
-            });
-            //
-          }
-        }
 
-        //return chatArray;
-        return await client.loadChats();
-        //
-      } catch (erro) {
-        //console.error('Error when sending: ', erro); //return object error
-        //
-        return {
-          "erro": true,
-          "status": 404,
-          "message": "Erro ao recuperar grupos"
-        };
-        //
-      };
+
+      //return chatArray;
+      return await client.loadChats();
+      //
       //
     });
     //
