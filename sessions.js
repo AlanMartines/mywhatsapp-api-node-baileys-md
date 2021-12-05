@@ -1578,14 +1578,11 @@ module.exports = class Sessions {
         //
         await forEach(result.participants, async (resultAllContacts) => {
           //
-          if (resultAllContacts.admin != 'superadmin') {
-            //
-            participants.push({
-              "user": resultAllContacts.id.replace('@s.whatsapp.net', ''),
-              "admin": resultAllContacts.admin
-            });
-            //
-          }
+          participants.push({
+            "user": resultAllContacts.id.replace('@s.whatsapp.net', ''),
+            "admin": resultAllContacts.admin
+          });
+          //
           //
         });
         //
