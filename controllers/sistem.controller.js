@@ -2005,7 +2005,7 @@ router.post("/createGroupSetAdminMembers", upload.single('participants'), verify
         await sleep(2000);
       }
       //
-      var createGroup = await Sessions.createGroup(
+      let createGroup = await Sessions.createGroup(
         req.body.SessionName.trim(),
         req.body.title,
         contactlistValid,
@@ -2016,19 +2016,11 @@ router.post("/createGroupSetAdminMembers", upload.single('participants'), verify
       //
       await sleep(2000);
       //
-      const groupMetadata = await client.groupMetadata(groupId).then(async (result) => {
-        //console.log('- Grupo validado com sucesso.');
-        return result;
-      }).catch((erro) => {
-        console.error('- Error validar grupo.');
+      const groupMetadata = await Sessions.getGroupMembers(
+        req.body.SessionName.trim(),
+        createGroup.groupId + '@g.us',
         //
-        return {
-          "erro": true,
-          "status": 404,
-          "message": "Error validar grupo"
-        };
-        //
-      });
+      );
       //
       await sleep(2000);
       //
