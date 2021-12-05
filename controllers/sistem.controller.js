@@ -1158,6 +1158,7 @@ router.post("/sendFileGroup", upload.single('file'), verifyToken.verify, async (
         req.file.buffer,
         req.file.mimetype,
         req.file.originalname,
+        req.file.mimetype.split('/')[1],
         req.body.caption
       );
       //
