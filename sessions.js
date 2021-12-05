@@ -20,6 +20,8 @@ const {
   WASocket,
   AuthenticationState,
   BufferJSON,
+  getMessage,
+  WA_DEFAULT_EPHEMERAL,
   initInMemoryKeyStore,
   WAMessage,
   Contact,
@@ -35,7 +37,10 @@ const {
   Mimetype,
   generateWAMessageFromContent,
   downloadContentFromMessage,
-  proto
+  downloadHistory,
+  proto,
+  generateWAMessageContent,
+  prepareWAMessageMedia
 } = require('./Baileys/lib/index');
 //
 // ------------------------------------------------------------------------------------------------------- //
