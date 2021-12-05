@@ -32,7 +32,10 @@ const {
   MiscMessageGenerationOptions,
   MessageType,
   MessageOptions,
-  Mimetype
+  Mimetype,
+  generateWAMessageFromContent,
+  downloadContentFromMessage,
+  proto
 } = require('./Baileys/lib/index');
 //
 // ------------------------------------------------------------------------------------------------------- //
@@ -995,7 +998,21 @@ module.exports = class Sessions {
         PreviewType: 1
       };
       //
-      return await client.sendMessage(number, buffer, MessageType.document, options).then((result) => {
+      chika.sendMessage(from, {
+        document: await getBuffer(url),
+        mimetype: mime,
+        caption: caption,
+        mentions: men ? men : []
+      }, {
+        quoted: msg
+      })
+      return await client.sendMessage(number, {
+        document: buffer,
+        mimetype: mimetype,
+        caption: caption
+      }, {
+        quoted: originalname
+      }).then((result) => {
         //console.log('Result: ', result); //return object success
         //return (result);
         //
