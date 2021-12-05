@@ -1574,6 +1574,7 @@ module.exports = class Sessions {
     var resultgetGroupMembers = await session.client.then(async client => {
       return await client.groupMetadata(groupId).then(async (result) => {
         //console.log('Result: ', result); //return object success
+        /*
         var participants = [];
         //
         await forEach(result.participants, async (resultAllContacts) => {
@@ -1585,8 +1586,9 @@ module.exports = class Sessions {
           //
           //
         });
+				*/
         //
-        return participants;
+        return result;
         //
       }).catch((erro) => {
         //console.error('Error when sending:\n', erro); //return object error
