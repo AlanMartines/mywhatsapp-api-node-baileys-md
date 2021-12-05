@@ -1574,29 +1574,22 @@ module.exports = class Sessions {
     var resultgetGroupMembers = await session.client.then(async client => {
       return await client.groupMetadata(groupId).then(async (result) => {
         //console.log('Result: ', result); //return object success
-        //
-        /*
         var participants = [];
         //
         await forEach(result.participants, async (resultAllContacts) => {
           //
-          if (resultAllContacts.isSuperAdmin == false) {
+          if (resultAllContacts.admin != 'superadmin') {
             //
             participants.push({
-              "user": resultAllContacts.id.replace('@c.us', ''),
-              "name": resultAllContacts.name,
-              "shortName": resultAllContacts.short,
-              "pushname": resultAllContacts.notify,
-              "formattedName": resultAllContacts.formattedName
+              "user": resultAllContacts.id.replace('@s.whatsapp.net', ''),
+              "admin": resultAllContacts.admin
             });
             //
           }
           //
         });
-				*/
         //
-        //return participants;
-        return result;
+        return participants;
         //
       }).catch((erro) => {
         //console.error('Error when sending:\n', erro); //return object error
