@@ -2016,15 +2016,15 @@ router.post("/createGroupSetAdminMembers", upload.single('participants'), verify
       //
       await sleep(2000);
       //
-      const groupMetadata = await Sessions.getGroupMembers(
-        req.body.SessionName.trim(),
-        createGroup.groupId + '@g.us',
+      if (createGroup.erro == false && createGroup.status == 200 || createGroup.status == 207) {
         //
-      );
-      //
-      await sleep(2000);
-      //
-      if (groupMetadata.id) {
+        const groupMetadata = await Sessions.getGroupMembers(
+          req.body.SessionName.trim(),
+          createGroup.groupId + '@g.us',
+          //
+        );
+        //
+        await sleep(2000);
         //
         var promoteParticipant = await Sessions.promoteParticipant(
           req.body.SessionName.trim(),
