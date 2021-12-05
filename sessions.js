@@ -994,9 +994,8 @@ module.exports = class Sessions {
           video: buffer,
           caption: caption,
           gifPlayback: true
-        })
-      }
-      if (mime.split("/")[0] === "image") {
+        });
+      } else if (mime.split("/")[0] === "image") {
         return await client.sendMessage(from, {
           image: buffer,
           fileName: originalname,
@@ -1074,7 +1073,6 @@ module.exports = class Sessions {
           //
         });
       } else {
-        l
         return await client.sendMessage(from, {
           document: buffer,
           mimetype: mimetype,
@@ -1102,7 +1100,6 @@ module.exports = class Sessions {
           //
         });
       }
-
       //
       /*
       return await client.sendMessage(from, {
