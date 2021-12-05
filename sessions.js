@@ -933,39 +933,54 @@ module.exports = class Sessions {
   //
   //Enviar Imagem
   static async sendImage(
-    SessionName, from, buffer, mimetype, originalname, caption
+    SessionName,
+    from,
+    buffer,
+    mimetype,
+    originalname,
+    caption
   ) {
     console.log("- Enviando menssagem com imagem.");
     var session = Sessions.getSession(SessionName);
     var resultsendImage = await session.client.then(async (client) => {
       //
-      return await client.sendMessage(from, {
-        image: buffer,
-        mimetype: mimetype,
-        fileName: originalname,
-        caption: caption
-      }).then((result) => {
-        //console.log('Result: ', result); //return object success
-        //
-        return {
-          "erro": false,
-          "status": 200,
-          "message": "Menssagem enviada com sucesso."
-        };
-        //
-      }).catch((erro) => {
-        //console.error('Error when sending: ', erro); //return object error
-        //return (erro);
-        //
-        return {
-          "erro": true,
-          "status": 404,
-
-          "text": "error",
-          "message": "Erro ao enviar menssagem"
-        };
-        //
-      });
+      let mime = '';
+      mime = mimetype;
+      if (mime.split("/")[1] === "gif") {
+        return await client.sendMessage(from, {
+          video: buffer,
+          caption: caption,
+          gifPlayback: true
+        });
+      } else if (mime.split("/")[0] === "image") {
+        return await client.sendMessage(from, {
+          image: buffer,
+          mimetype: mimetype,
+          fileName: originalname,
+          caption: caption
+        }).then((result) => {
+          //console.log('Result: ', result); //return object success
+          //return (result);
+          //
+          return {
+            "erro": false,
+            "status": 200,
+            "message": "Arquivo enviado com sucesso."
+          };
+          //
+        }).catch((erro) => {
+          //console.error('Error when sending: ', erro); //return object error
+          //return (erro);
+          //
+          return {
+            "erro": true,
+            "status": 404,
+            "message": "Erro ao enviar arquivo"
+          };
+          //
+        });
+      }
+      //
     });
     return resultsendImage;
   } //sendImage
@@ -997,6 +1012,7 @@ module.exports = class Sessions {
       } else if (mime.split("/")[0] === "image") {
         return await client.sendMessage(from, {
           image: buffer,
+          mimetype: mimetype,
           fileName: originalname,
           caption: caption
         }).then((result) => {
