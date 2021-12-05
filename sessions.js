@@ -1566,7 +1566,8 @@ module.exports = class Sessions {
   //
   // Obtenha membros do grupo
   static async getGroupMembers(
-    SessionName, groupId
+    SessionName,
+    groupId
   ) {
     console.log("- getGroupMembers");
     var session = Sessions.getSession(SessionName);
@@ -1574,6 +1575,7 @@ module.exports = class Sessions {
       return await client.groupMetadata(groupId).then(async (result) => {
         //console.log('Result: ', result); //return object success
         //
+        /*
         var participants = [];
         //
         await forEach(result.participants, async (resultAllContacts) => {
@@ -1591,8 +1593,10 @@ module.exports = class Sessions {
           }
           //
         });
+				*/
         //
-        return participants;
+        //return participants;
+        return result;
         //
       }).catch((erro) => {
         //console.error('Error when sending:\n', erro); //return object error
