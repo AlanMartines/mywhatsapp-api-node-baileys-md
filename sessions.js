@@ -976,7 +976,7 @@ module.exports = class Sessions {
   //Enviar arquivo
   static async sendFile(
     SessionName,
-    number,
+    from,
     buffer,
     mimetype,
     originalname,
@@ -987,9 +987,125 @@ module.exports = class Sessions {
     var session = Sessions.getSession(SessionName);
     var resultsendImage = await session.client.then(async (client) => {
       //
-      let jpegBase64 = await gerateThumbnail(buffer, mimetype, originalname);
+      let mime = '';
+      mime = mimetype;
+      if (mime.split("/")[1] === "gif") {
+        return await client.sendMessage(from, {
+          video: buffer,
+          caption: caption,
+          gifPlayback: true
+        })
+      }
+      if (mime.split("/")[0] === "image") {
+        return await client.sendMessage(from, {
+          image: buffer,
+          fileName: originalname,
+          caption: caption
+        }).then((result) => {
+          //console.log('Result: ', result); //return object success
+          //return (result);
+          //
+          return {
+            "erro": false,
+            "status": 200,
+            "message": "Arquivo enviado com sucesso."
+          };
+          //
+        }).catch((erro) => {
+          //console.error('Error when sending: ', erro); //return object error
+          //return (erro);
+          //
+          return {
+            "erro": true,
+            "status": 404,
+            "message": "Erro ao enviar arquivo"
+          };
+          //
+        });
+      } else if (mime.split("/")[0] === "video") {
+        return await client.sendMessage(from, {
+          video: buffer,
+          caption: caption
+        }).then((result) => {
+          //console.log('Result: ', result); //return object success
+          //return (result);
+          //
+          return {
+            "erro": false,
+            "status": 200,
+            "message": "Arquivo enviado com sucesso."
+          };
+          //
+        }).catch((erro) => {
+          //console.error('Error when sending: ', erro); //return object error
+          //return (erro);
+          //
+          return {
+            "erro": true,
+            "status": 404,
+            "message": "Erro ao enviar arquivo"
+          };
+          //
+        });
+      } else if (mime.split("/")[0] === "audio") {
+        return await client.sendMessage(from, {
+          audio: buffer,
+          caption: caption,
+          mimetype: 'audio/mpeg'
+        }).then((result) => {
+          //console.log('Result: ', result); //return object success
+          //return (result);
+          //
+          return {
+            "erro": false,
+            "status": 200,
+            "message": "Arquivo enviado com sucesso."
+          };
+          //
+        }).catch((erro) => {
+          //console.error('Error when sending: ', erro); //return object error
+          //return (erro);
+          //
+          return {
+            "erro": true,
+            "status": 404,
+            "message": "Erro ao enviar arquivo"
+          };
+          //
+        });
+      } else {
+        l
+        return await client.sendMessage(from, {
+          document: buffer,
+          mimetype: mimetype,
+          fileName: originalname,
+          caption: caption
+        }).then((result) => {
+          //console.log('Result: ', result); //return object success
+          //return (result);
+          //
+          return {
+            "erro": false,
+            "status": 200,
+            "message": "Arquivo enviado com sucesso."
+          };
+          //
+        }).catch((erro) => {
+          //console.error('Error when sending: ', erro); //return object error
+          //return (erro);
+          //
+          return {
+            "erro": true,
+            "status": 404,
+            "message": "Erro ao enviar arquivo"
+          };
+          //
+        });
+      }
+
       //
-      return await client.sendMessage(number, {
+      /*
+      return await client.sendMessage(from, {
         document: buffer,
         jpegThumbnail: buffer,
         fileName: originalname,
@@ -1015,6 +1131,7 @@ module.exports = class Sessions {
         };
         //
       });
+			*/
     });
     return resultsendImage;
   } //sendFile
