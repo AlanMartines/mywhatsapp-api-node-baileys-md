@@ -989,29 +989,10 @@ module.exports = class Sessions {
       //
       let jpegBase64 = await gerateThumbnail(buffer, mimetype, originalname);
       //
-      var options = {
-        caption: caption,
-        thumbnail: jpegBase64,
-        mimetype: mimetype,
-        filename: originalname,
-        detectLinks: true,
-        PreviewType: 1
-      };
-      //
-      chika.sendMessage(from, {
-        document: await getBuffer(url),
-        mimetype: mime,
-        caption: caption,
-        mentions: men ? men : []
-      }, {
-        quoted: msg
-      })
       return await client.sendMessage(number, {
         document: buffer,
         mimetype: mimetype,
         caption: caption
-      }, {
-        quoted: originalname
       }).then((result) => {
         //console.log('Result: ', result); //return object success
         //return (result);
