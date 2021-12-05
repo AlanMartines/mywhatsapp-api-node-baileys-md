@@ -111,8 +111,8 @@ router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next
     case 'CLOSED':
     case 'DISCONNECTED':
       //
-      var getStart = await Sessions.Start(req.body.SessionName.trim(), req.body.AuthorizationToken.trim());
-      console.log("- AuthorizationToken:", req.body.AuthorizationToken.trim());
+      var getStart = await Sessions.Start(req.body.SessionName.trim(), req.body.SessionName.trim());
+      console.log("- AuthorizationToken:", req.body.SessionName.trim());
       session.state = 'STARTING';
       session.status = 'notLogged';
       //
