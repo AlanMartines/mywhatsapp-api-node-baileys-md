@@ -1274,9 +1274,6 @@ module.exports = class Sessions {
     var resultgetAllGroups = await session.client.then(async client => {
       let chatArray = [];
       //
-      let groupMetadata = await client.groupMetadata().catch(e => {});
-      console.log(groupMetadata);
-      //
       try {
         const Chats = await client.loadChats();
         let allChats = Chats.chats;
@@ -1319,7 +1316,9 @@ module.exports = class Sessions {
             //
           }
         }
-        return chatArray;
+
+        //return chatArray;
+        return await client.loadChats();
         //
       } catch (erro) {
         //console.error('Error when sending: ', erro); //return object error
