@@ -598,8 +598,18 @@ module.exports = class Sessions {
       //
       /** auth credentials updated -- some pre key state, device ID etc. */
       client.ev.on('creds.update', saveState);
-      // client.ev.on('auth-state.update', () => saveState())
+      // client.ev.on('auth-state.update', () => saveState());
       //
+      client.ev.on('auth-state.update', () => {
+        console.log("- Auth-stat update");
+        //
+        session.state = "CONNECTED";
+        session.status = 'isLogged';
+        session.qrcodedata = null;
+        session.message = 'Sistema iniciando e disponivel para uso';
+        //
+        this.saveAuth();
+      });
     });
     //
     return client;
