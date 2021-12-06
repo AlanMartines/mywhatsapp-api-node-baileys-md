@@ -164,13 +164,6 @@ async function deletaToken(filePath) {
 //
 async function gerateThumbnail(fileBuffer, mimetype, saveFilename) {
   //
-  /*
-  var folderName = fs.mkdtempSync(path.join(os.tmpdir(), 'baileys-'));
-  var filePath = path.join(folderName, saveFilename);
-  fs.writeFileSync(filePath, Buffer.toString('base64'), 'base64');
-  console.log("- File", filePath);
-	*/
-  //
   switch (mimetype) {
     case 'image/gif':
     case 'video/gif':
