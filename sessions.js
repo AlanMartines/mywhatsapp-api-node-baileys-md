@@ -613,7 +613,7 @@ module.exports = class Sessions {
           //
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
           //
-          deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+          //deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
           //
           client = await startSock();
           //
