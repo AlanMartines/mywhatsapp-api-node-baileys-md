@@ -574,7 +574,7 @@ module.exports = class Sessions {
           //
           //deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
           //
-          client = await startSock();
+          await startSock();
         }
         console.log('- Connection closed due to ', lastDisconnect.error, ', reconnecting ', Reconnect);
         if (Reconnect) {
@@ -586,7 +586,7 @@ module.exports = class Sessions {
           //
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
           //
-          client = await startSock();
+          await startSock();
           //
         } else if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
           //
@@ -599,7 +599,7 @@ module.exports = class Sessions {
           //
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
           //
-          client = await startSock();
+          await startSock();
           //
         } else {
           //
@@ -613,7 +613,7 @@ module.exports = class Sessions {
           //
           deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
           //
-          client = await startSock();
+          await startSock();
           //
         }
         //
