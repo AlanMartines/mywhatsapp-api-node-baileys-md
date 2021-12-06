@@ -453,15 +453,15 @@ module.exports = class Sessions {
       fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(state, baileys.BufferJSON.replacer, 2));
     };
 		*/
+    //
+    const {
+      state,
+      saveState
+    } = useSingleFileAuthState(`${session.tokenPatch}/${SessionName}.data.json`);
+    //
     // https://github.com/adiwajshing/Baileys/issues/751
     //
     const startSock = () => {
-      //
-      const {
-        state,
-        saveState
-      } = useSingleFileAuthState(`${session.tokenPatch}/${SessionName}.data.json`);
-      //
       const client = makeWASocket({
         /** provide an auth state object to maintain the auth state */
         auth: state,
