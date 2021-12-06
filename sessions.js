@@ -495,7 +495,6 @@ module.exports = class Sessions {
     //
     let attempts = 0;
     //
-    /*
     client.ev.on('connection.update', async (conn) => {
       //
       console.log("- Connection update".green);
@@ -628,38 +627,16 @@ module.exports = class Sessions {
         console.log(`- Connection ${connection}`.yellow);
       }
       //
-      // auth credentials updated -- some pre key state, device ID etc. 
-
     });
-		*/
-    client.ev.on('creds.update', saveState), async () => {
+    //
+    /** auth credentials updated -- some pre key state, device ID etc. */
+    client.ev.on('creds.update', saveState), async (state) => {
       console.log("- Creds update".green);
     };
     //
-    client.ev.on('connection.update', (update) => {
-      var _a, _b;
-      //
-      const {
-        connection,
-        lastDisconnect,
-        isNewLogin,
-        qr,
-        receivedPendingNotifications
-      } = update;
-      if (connection === 'close') {
-        // reconnect if not logged out
-        if (((_b = (_a = lastDisconnect.error) === null || _a === void 0 ? void 0 : _a.output) === null || _b === void 0 ? void 0 : _b.statusCode) !== DisconnectReason.loggedOut) {
-          client = starts();
-        } else {
-          console.log('connection closed');
-        }
-      }
-      console.log('connection update', update.connection);
-
+    client.ev.on('auth-state.update', (state) => {
+      console.log("- Auth-stat update".green);
     });
-    //
-    client.ev.on('auth-state.update', saveConnection);
-    //
     //
     return client;
   } //initSession
