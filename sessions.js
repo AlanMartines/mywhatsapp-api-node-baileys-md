@@ -776,6 +776,18 @@ module.exports = class Sessions {
         });
 				*/
         //
+        client.ev.on('connection.update', async (conn) => {
+          //
+          const {
+            connection,
+            lastDisconnect,
+            isNewLogin,
+            qr,
+            receivedPendingNotifications
+          } = conn;
+          console.log('- Connection update:', connection);
+        });
+        //
       });
       //
     });
