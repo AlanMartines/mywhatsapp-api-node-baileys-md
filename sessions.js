@@ -628,12 +628,16 @@ module.exports = class Sessions {
         session.qrcodedata = null;
         session.message = "Sessão fechada";
         //
+        client = await startSock();
+        //
       } else {
         console.log("- Connection", connection);
       }
       //
       /** auth credentials updated -- some pre key state, device ID etc. */
-      client.ev.on('creds.update', saveState);
+      client.ev.on('creds.update', saveState), async () => {
+        console.log("- Creds update");
+      };
       //
       client.ev.on('auth-state.update', () => {
         console.log("- Auth-stat update");
