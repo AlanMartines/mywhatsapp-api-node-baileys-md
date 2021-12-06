@@ -704,7 +704,7 @@ module.exports = class Sessions {
           presences
         } = update;
         console.log('- Sessão:', SessionName);
-        console.log(`- Presence update ID ${id}, presences ${presences} `);
+        console.log(`- Presence update ID ${JSON.stringify(id)}, presences ${JSON.stringify(presences)} `);
       });
       //
       client.ev.on('contacts.upsert', async (contacts) => {
