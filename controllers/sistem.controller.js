@@ -268,6 +268,29 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 // ------------------------------------------------------------------------------------------------//
 //
 // Desconecta do whatsapp web
+router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next) => {
+  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
+  switch (sessionStatus.status) {
+    case 'isLogged':
+      //
+      var LogoutSession = await Sessions.logoutSession(req.body.SessionName.trim());
+      res.setHeader('Content-Type', 'application/json');
+      res.status(200).json({
+        "Status": LogoutSession
+      });
+      break;
+    default:
+      res.setHeader('Content-Type', 'application/json');
+      res.status(400).json({
+        "Status": sessionStatus
+      });
+  }
+}); //Logout
+//
+//
+// ------------------------------------------------------------------------------------------------//
+//
+// Desconecta do whatsapp web
 router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, next) => {
   var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
   switch (sessionStatus.status) {
