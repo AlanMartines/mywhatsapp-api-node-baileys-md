@@ -630,7 +630,7 @@ module.exports = class Sessions {
     });
     //
     /** auth credentials updated -- some pre key state, device ID etc. */
-    client.ev.on('creds.update', saveState), async (state) => {
+    client.ev.on('creds.update', saveState) = () => {
       console.log("- Creds update".green);
     };
     //
