@@ -625,6 +625,20 @@ module.exports = class Sessions {
       //
     });
     //
+    sock.ev.on('statusFind', (status) => {
+      if (status == 'isConnected') {
+        console.log("- isConnected".green);
+      } else if (status == 'isDisconnected') {
+        console.log("- isDisconnected".red);
+      } else if (status == 'tokenRemoved') {
+        console.log("- tokenRemoved".yellow);
+      } else if (status == 'qrReadSuccess') {
+        console.log("- qrReadSuccess".green);
+      } else if (status == 'qrReadFail') {
+        console.log("- qrReadFail".red);
+      }
+    });
+    //
     /** auth credentials updated -- some pre key state, device ID etc. */
     client.ev.on('creds.update', saveState);
     //
