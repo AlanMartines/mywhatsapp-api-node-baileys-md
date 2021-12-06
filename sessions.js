@@ -620,7 +620,7 @@ module.exports = class Sessions {
         }
         //
       } else if (connection === 'undefined') {
-        console.log("- Connection undefined");
+        console.log("- Connection undefined".red);
         //
         session.state = "CLOSED";
         session.status = 'CLOSED';
