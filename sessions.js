@@ -549,7 +549,7 @@ module.exports = class Sessions {
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
       } else if (connection === 'open') {
-        console.log("- Connection:", connection);
+        console.log("- Connection open");
         //
         session.state = "CONNECTED";
         session.status = 'isLogged';
@@ -559,7 +559,7 @@ module.exports = class Sessions {
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
       } else if (connection === 'close') {
-        console.log("- Connection", connection);
+        console.log("- Connection close");
         //
         if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
           deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
@@ -575,14 +575,8 @@ module.exports = class Sessions {
           client = await startSock();
           //
         } else {
-          console.log("- Connection close");
+          console.log("- Connection", connection);
           deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
-          //
-          session.state = "CLOSED";
-          session.status = 'CLOSED';
-          session.client = false;
-          session.qrcodedata = null;
-          session.message = "Sessão fechada";
           //
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
           //
@@ -594,22 +588,6 @@ module.exports = class Sessions {
 
       } else {
         console.log("- Connection", connection);
-        /*
-        if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) {
-          //fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`);
-          deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
-        }
-        //client = startSock();
-        //
-        session.state = "CLOSED";
-        session.status = 'CLOSED';
-        session.client = false;
-        session.qrcodedata = null;
-        session.message = "Sessão fechada";
-        //
-        await updateStateDb(session.state, session.status, session.AuthorizationToken);
-        //
-				*/
       }
       //
       /** auth credentials updated -- some pre key state, device ID etc. */
