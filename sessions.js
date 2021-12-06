@@ -432,6 +432,28 @@ module.exports = class Sessions {
       }
     }
     //
+    /*
+    var loadState = () => {
+      var state = undefined;
+      try {
+        var sessao = JSON.parse(fs.readFileSync(`${session.tokenPatch}/${SessionName}.data.json`, {
+          encoding: 'utf-8'
+        }), baileys.BufferJSON.reviver);
+        state = {
+          creds: sessao.creds,
+          keys: baileys.initInMemoryKeyStore(sessao.keys)
+        };
+      } catch (error) {}
+      return state;
+    };
+    // salvar os dados da sessao
+    const saveState = (state) => {
+      //console.log('saving pre-keys')
+      state = state || client.authState
+      fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(state, baileys.BufferJSON.replacer, 2));
+    };
+		*/
+    //
     const {
       state,
       saveState
@@ -476,7 +498,7 @@ module.exports = class Sessions {
       return client;
     }
     //
-    const client = startSock();
+    const client = await startSock();
     //
     let attempts = 0;
     //
@@ -553,7 +575,7 @@ module.exports = class Sessions {
           //
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
           //
-          client = startSock();
+          await startSock();
           //
         } else {
           console.log("- Connection close");
@@ -567,6 +589,9 @@ module.exports = class Sessions {
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
           //
         }
+      } else if (connection === 'undefined') {
+        console.log("- Connection undefined");
+
       } else {
         console.log("- Connection", connection);
         /*
@@ -589,6 +614,7 @@ module.exports = class Sessions {
       //
       /** auth credentials updated -- some pre key state, device ID etc. */
       client.ev.on('creds.update', saveState);
+      // client.ev.on('auth-state.update', () => saveState())
       //
     });
     //
@@ -974,6 +1000,7 @@ module.exports = class Sessions {
       } else if (mime.split("/")[0] === "image") {
         return await client.sendMessage(from, {
           image: buffer,
+          jpegThumbnail: buffer,
           mimetype: mimetype,
           fileName: originalname,
           caption: caption
@@ -1031,6 +1058,7 @@ module.exports = class Sessions {
       } else if (mime.split("/")[0] === "image") {
         return await client.sendMessage(from, {
           image: buffer,
+          jpegThumbnail: buffer,
           mimetype: mimetype,
           fileName: originalname,
           caption: caption
