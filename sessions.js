@@ -600,6 +600,8 @@ module.exports = class Sessions {
           //
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
           //
+          client = await startSock();
+          //
         }
         //
         /*
