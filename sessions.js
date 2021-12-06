@@ -666,6 +666,7 @@ module.exports = class Sessions {
       // console.log(client);
       //
       client.ev.on('new.message', async (mek) => {
+        console.log('- Sessão:', SessionName);
         console.log(`- New message: ${mek}`)
       });
       //
