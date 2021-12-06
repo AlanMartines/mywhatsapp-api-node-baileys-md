@@ -482,6 +482,24 @@ O baileys md está em beta e está rodeado de bugs de conexão e instabilidade, 
 
 ---
 
+## O que há de novo?
+
+---
+
+| Baileys                                 | Contém |
+| --------------------------------------- | ------ |
+| Conectar 4 dispositivos simultaneamente | ❌     |
+| Não precisa de conexão com o celular    | ❌     |
+| Utiliza o whatsapp web                  | ✅     |
+
+| Baileys Multi-Device                    | Contém |
+| --------------------------------------- | ------ |
+| Conectar 4 dispositivos simultaneamente | ✅     |
+| Não precisa de conexão com o celular    | ✅     |
+| Utiliza o whatsapp web                  | ✅     |
+
+---
+
 ## Ban Whatsapp
 
 Existem dois tipos diferentes de banimento.
