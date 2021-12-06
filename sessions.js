@@ -540,7 +540,7 @@ module.exports = class Sessions {
       }
       //
       if (connection === 'connecting') {
-        console.log("- Connection:".green, connection);
+        console.log(`- Connection ${connection}`.green);
         //
         session.state = "STARTING";
         session.status = 'notLogged';
@@ -631,16 +631,16 @@ module.exports = class Sessions {
         client = await startSock();
         //
       } else {
-        console.log("- Connection", connection);
+        console.log(`- Connection ${connection}`.red);
       }
       //
       /** auth credentials updated -- some pre key state, device ID etc. */
       client.ev.on('creds.update', saveState), async () => {
-        console.log("- Creds update");
+        console.log("- Creds update".green);
       };
       //
       client.ev.on('auth-state.update', () => {
-        console.log("- Auth-stat update");
+        console.log("- Auth-stat update".green);
         //
         /*
         session.state = "CONNECTED";
