@@ -156,7 +156,7 @@ async function deletaToken(filePath) {
   const cacheExists = await fs.pathExists(filePath);
   console.log('- O arquivo é: ' + cacheExists);
   if (cacheExists) {
-    await fs.remove(filePath) ? console.log(`- Arquivo "${filePath}" removido com sucesso`) : console.log(`- Arquivo "${filePath}" não removido`);
+    await fs.remove(filePath) ? console.log(`- Arquivo "${filePath}" não removido`) : console.log(`- Arquivo "${filePath}" removido com sucesso`);
   }
 }
 //
