@@ -491,7 +491,7 @@ module.exports = class Sessions {
       return clientStart;
     }
     //
-    const client = await startSock();
+    client = await startSock();
     //
     let attempts = 0;
     //
