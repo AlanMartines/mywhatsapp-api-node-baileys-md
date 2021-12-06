@@ -5,8 +5,7 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Erro: nenhum teste especificado.\" && exit 1"
+    "start": "node index.js"
 
   },
   "repository": {
