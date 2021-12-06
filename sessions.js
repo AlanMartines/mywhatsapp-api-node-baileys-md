@@ -630,7 +630,7 @@ module.exports = class Sessions {
       //
       /** update the given chats */
       client.ev.on('chats.update', async (chats) => {
-        console.log(`- Chats update ${chats}`);
+        console.log(`- Chats update ${JSON.stringify(chats)}`);
       });
       //
       /** delete chats with given ID */
@@ -652,7 +652,7 @@ module.exports = class Sessions {
       });
       //
       client.ev.on('contacts.update', async (contacts) => {
-        console.log(`- Contacts update: ${contacts}`);
+        console.log(`- Contacts update: ${JSON.stringify(contacts)}`);
       });
       //
       /** 
@@ -711,51 +711,6 @@ module.exports = class Sessions {
       //
     });
   } //setup
-  //
-  // ------------------------------------------------------------------------------------------------//
-  //
-  static async closeSession(SessionName) {
-    console.log("- Fechando sessão");
-    var session = Sessions.getSession(SessionName);
-    var closeSession = await session.client.then(async client => {
-      try {
-        await client.close();
-        //console.log("Result: ", result); //return object success
-        //
-        session.state = "CLOSED";
-        session.status = 'CLOSED';
-        console.log("- Sessão fechada");
-        //
-        var returnClosed = {
-          result: "success",
-          state: session.state,
-          status: session.status,
-          message: "Sessão fechada com sucesso"
-        };
-        //
-        await updateStateDb(session.state, session.status, session.AuthorizationToken);
-        //
-        return returnClosed;
-        //
-      } catch (error) {
-        //console.log("- Erro ao fechar sessão:", error);
-        //
-        return {
-          result: "error",
-          state: session.state,
-          status: session.status,
-          message: "Erro ao fechar sessão"
-        };
-        //
-      };
-    });
-    //
-    //await deletaToken(session.tokenPatch + "/" + SessionName + ".data.json");
-    //
-    await updateStateDb(session.state, session.status, session.AuthorizationToken);
-    //
-    return closeSession;
-  } //closeSession
   //
   // ------------------------------------------------------------------------------------------------//
   //
