@@ -787,10 +787,6 @@ module.exports = class Sessions {
     var LogoutSession = await session.client.then(async client => {
       try {
         await client.logout();
-        //
-        //await client.clearAuthInfo();
-        //await client.close();
-        //
         session.state = "DISCONNECTED";
         session.status = 'CLOSED';
         console.log("- Sessão desconetada");
