@@ -559,7 +559,7 @@ module.exports = class Sessions {
           //
           console.log('- Connection closed');
           //
-          client = startSock();
+          //client = startSock();
           //
           session.state = "CLOSED";
           session.status = 'CLOSED';
