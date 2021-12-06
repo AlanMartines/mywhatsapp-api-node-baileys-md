@@ -153,18 +153,11 @@ async function updateStateDb(state, status, AuthorizationToken) {
 //
 async function deletaToken(filePath) {
   //
-  const resFile = false;
-  //
   const cacheExists = await fs.pathExists(filePath);
-  console.log('- O arquivo existe: ' + cacheExists);
-  console.log('- Path: ' + filePath);
+  console.log('- O arquivo é: ' + cacheExists);
   if (cacheExists) {
-    await fs.remove(filePath).then(async () => {
-      console.log(`- Arquivo "${filePath}" removiso com sucesso`);
-      resFile = true;
-    });
+    await fs.remove(filePath) ? console.log(`- Arquivo "${filePath}" removido com sucesso`) : console.log(`- Arquivo "${filePath}" não removido`);
   }
-  return resFile;
 }
 //
 // ------------------------------------------------------------------------------------------------------- //
@@ -433,7 +426,7 @@ module.exports = class Sessions {
       if (typeof configToken.creds.me.id !== 'undefined') {
         console.log('- ID da sessão do Whatsapp:', configToken.creds.me.id);
       } else {
-        await deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+        deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
         //fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`);
       }
     }
@@ -578,7 +571,7 @@ module.exports = class Sessions {
           //
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
           //
-          await deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+          deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
           //
           client = await startSock();
         }
@@ -618,7 +611,7 @@ module.exports = class Sessions {
           //
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
           //
-          await deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+          deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
           //
           //client = await startSock();
           //
