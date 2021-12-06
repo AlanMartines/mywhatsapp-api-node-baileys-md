@@ -457,7 +457,7 @@ module.exports = class Sessions {
     const startSock = () => {
       const clientStart = makeWASocket({
         /** provide an auth state object to maintain the auth state */
-        auth: connect(),
+        auth: state,
         /** the WS url to connect to WA */
         //waWebSocketUrl: undefined,
         /** Fails the connection if the connection times out in this time interval or no data is received */
