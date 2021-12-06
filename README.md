@@ -470,21 +470,7 @@ sudo apt-get update && sudo apt-get install -y certbot
 sudo certbot certonly --manual --force-renewal -d *.yourdomain.net -d yourdomain.net --agree-tos --no-bootstrap --manual-public-ip-logging-ok --preferred-challenges dns-01 --server https://acme-v02.api.letsencrypt.org/directory
 ```
 
-## Em desenvolvimento
-
-Este projeto se encontra em desenvolvimento, então pode conter erros.
-
----
-
-## ❌ Alerta ❌
-
-O baileys md está em beta e está rodeado de bugs de conexão e instabilidade, algumas mensganes podem se repetir ou não ser lidas, porém com o tempo isso vai ser corrgido.
-
----
-
 ## O que há de novo?
-
----
 
 | Baileys                                 | Contém |
 | --------------------------------------- | ------ |
@@ -498,7 +484,13 @@ O baileys md está em beta e está rodeado de bugs de conexão e instabilidade, 
 | Não precisa de conexão com o celular    | ✅     |
 | Utiliza o whatsapp web                  | ✅     |
 
----
+## Em desenvolvimento
+
+Este projeto se encontra em desenvolvimento, então pode conter erros.
+
+## ❌ Alerta ❌
+
+O baileys md está em beta e está rodeado de bugs de conexão e instabilidade, algumas mensganes podem se repetir ou não ser lidas, porém com o tempo isso vai ser corrgido.
 
 ## Ban Whatsapp
 
