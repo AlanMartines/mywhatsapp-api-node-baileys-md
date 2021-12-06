@@ -153,25 +153,11 @@ async function updateStateDb(state, status, AuthorizationToken) {
 //
 async function deletaToken(filePath) {
   //
-  const deletaTok = false;
-  //
-  await fs.pathExists(filePath, function(exists) {
-    console.log('- O arquivo é: ' + exists);
-    if (exists) {
-      fs.unlink(filePath, function(err) {
-        if (err && err.code == 'ENOENT') {
-          console.log(`- Arquivo "${filePath}" não encontrado`);
-        } else if (err) {
-          console.log(`- Erro ao remover arquivo "${filePath}"`);
-        } else {
-          console.log(`- Arquivo "${filePath}" removido com sucesso`);
-        }
-      });
-    } else {
-      console.log(`- Arquivo "${filePath}" não encontrado`);
-    }
-  });
-  //
+  const cacheExists = await fs.pathExists(filePath);
+  console.log('- O arquivo é: ' + cacheExists);
+  if (cacheExists) {
+    await fs.remove(filePath) ? console.log(`- Arquivo "${filePath}" não removido`) : console.log(`- Arquivo "${filePath}" removido com sucesso`);
+  }
   return deletaTok;
 }
 //
