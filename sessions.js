@@ -427,6 +427,7 @@ module.exports = class Sessions {
       if (configToken.creds.me.id) {
         console.log('- ID da sessão do Whatsapp:', configToken.creds.me.id);
       } else {
+        deletaToken(session.tokenPatch);
         //fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`);
       }
     }
