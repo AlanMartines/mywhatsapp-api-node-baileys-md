@@ -592,10 +592,7 @@ module.exports = class Sessions {
 				*/
         //
         if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
-          if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) {
-            //fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`);
-            deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
-          }
+          deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
           //
           session.state = "CLOSED";
           session.status = 'CLOSED';
@@ -617,9 +614,6 @@ module.exports = class Sessions {
           session.message = "Sessão fechada";
           //
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
-          //
-          //
-          client = await startSock();
           //
         }
       } else if (connection === 'undefined') {
