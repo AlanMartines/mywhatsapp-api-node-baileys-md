@@ -595,6 +595,7 @@ module.exports = class Sessions {
           client = await startSock();
           //
         } else {
+          console.log("- Connection close".red);
           //
           session.state = "CLOSED";
           session.status = 'CLOSED';
@@ -622,7 +623,7 @@ module.exports = class Sessions {
         //client = await startSock();
         //
       } else {
-        console.log(`- Connection ${connection}`.red);
+        console.log(`- Connection ${connection}`.yellow);
       }
       //
       /** auth credentials updated -- some pre key state, device ID etc. */
