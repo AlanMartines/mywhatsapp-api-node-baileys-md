@@ -153,13 +153,18 @@ async function updateStateDb(state, status, AuthorizationToken) {
 //
 async function deletaToken(filePath) {
   //
+  const resFile = false;
+  //
   const cacheExists = await fs.pathExists(filePath);
-  console.log('- O arquivo é: ' + cacheExists);
+  console.log('- O arquivo existe: ' + cacheExists);
   console.log('- Path: ' + filePath);
   if (cacheExists) {
-    fs.remove(filePath);
-    console.log('- O arquivo foi removido: ' + cacheExists);
+    await fs.remove(filePath).then(async () => {
+      console.log(`- Arquivo "${filePath}" removiso com sucesso`);
+      resFile = true;
+    });
   }
+  return resFile;
 }
 //
 // ------------------------------------------------------------------------------------------------------- //
@@ -428,7 +433,7 @@ module.exports = class Sessions {
       if (typeof configToken.creds.me.id !== 'undefined') {
         console.log('- ID da sessão do Whatsapp:', configToken.creds.me.id);
       } else {
-        //deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+        let deletaToken = await deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
         //fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`);
       }
     }
@@ -573,7 +578,7 @@ module.exports = class Sessions {
           //
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
           //
-          deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+          let deletaToken = await deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
           //
           client = await startSock();
         }
@@ -613,7 +618,7 @@ module.exports = class Sessions {
           //
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
           //
-          deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+          let deletaToken = await deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
           //
           //client = await startSock();
           //
