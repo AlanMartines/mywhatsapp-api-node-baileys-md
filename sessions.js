@@ -630,9 +630,7 @@ module.exports = class Sessions {
     });
     //
     /** auth credentials updated -- some pre key state, device ID etc. */
-    client.ev.on('creds.update', saveState) = () => {
-      console.log("- Creds update".green);
-    };
+    client.ev.on('creds.update', saveState);
     //
     client.ev.on('auth-state.update', (state) => {
       console.log("- Auth-stat update".green);
@@ -711,9 +709,19 @@ module.exports = class Sessions {
        * add/update the given messages. If they were received while the connection was online, 
        * the update will have type: "notify"
        *  */
-      client.ev.on('messages.upsert', async (messages) => {
+      client.ev.on('messages.upsert', async (m) => {
         console.log('- Sessão:', SessionName);
-        console.log(`- Messages upsert replying to: ${messages.messages[0].key.remoteJid}`)
+        console.log(`- Messages upsert replying to: ${m.messages[0].key.remoteJid}`);
+        //
+        const msg = m.messages[0]
+        if (!msg.key.fromMe && m.type === 'Hi') {
+          console.log('- Respondendo: ', msg.key.remoteJid);
+          await client.sendReadReceipt(msg.key.remoteJid, msg.key.participant, [msg.key.id]);
+          await client.sendMessage(msg.key.remoteJid, {
+            text: 'Opa! WABaseMD funcionando!'
+          });
+        }
+        //
       });
       //
       client.ev.on('message-info.update', async (message) => {
