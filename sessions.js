@@ -561,6 +561,41 @@ module.exports = class Sessions {
       } else if (connection === 'close') {
         console.log("- Connection close");
         //
+        const Reconnect = (lastDisconnect.error).output.statusCode !== DisconnectReason.loggedOut;
+        if (String(lastDisconnect.error).includes("Logged Out")) {
+          //
+          session.state = "CLOSED";
+          session.status = 'CLOSED';
+          session.client = false;
+          session.qrcodedata = null;
+          session.message = "Sessão fechada";
+          //
+          await updateStateDb(session.state, session.status, session.AuthorizationToken);
+          //
+          client = await startSock();
+        }
+        console.log('- Connection closed due to ', lastDisconnect.error, ', reconnecting ', Reconnect);
+        if (Reconnect) {
+          //
+          session.state = "CLOSED";
+          session.status = 'CLOSED';
+          session.client = false;
+          session.qrcodedata = null;
+          session.message = "Sessão fechada";
+          //
+          await updateStateDb(session.state, session.status, session.AuthorizationToken);
+          //
+          client = await startSock();
+        } else {
+          //
+          session.state = "CONNECTED";
+          session.status = 'isLogged';
+          session.qrcodedata = null;
+          session.message = 'Sistema iniciando e disponivel para uso';
+          //
+        }
+        //
+        /*
         if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
           deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
           //
@@ -578,19 +613,18 @@ module.exports = class Sessions {
           console.log("- Connection", connection);
           deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
           //
-          /*
           session.state = "CLOSED";
           session.status = 'CLOSED';
           session.client = false;
           session.qrcodedata = null;
           session.message = "Sessão fechada";
-					*/
           //
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
           //
           client = await startSock();
           //
         }
+				*/
       } else if (connection === 'undefined') {
         console.log("- Connection undefined");
 
