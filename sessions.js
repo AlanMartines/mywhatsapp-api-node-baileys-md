@@ -558,7 +558,6 @@ module.exports = class Sessions {
         } else {
           //
           console.log("- Connection:", connection);
-          console.log('- Connection closed');
           //
           //client = startSock();
           //
