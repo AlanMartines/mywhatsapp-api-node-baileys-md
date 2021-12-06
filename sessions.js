@@ -455,7 +455,7 @@ module.exports = class Sessions {
         agent: undefined,
         /** pino logger */
         logger: pino({
-          level: 'silent'
+          level: 'info'
         }),
         /** version to connect with */
         //version: [2, 2142, 12],
