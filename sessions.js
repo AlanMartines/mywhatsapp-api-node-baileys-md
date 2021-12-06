@@ -709,14 +709,16 @@ module.exports = class Sessions {
         console.log('- Sessão:', SessionName);
         console.log(`- Messages upsert replying to: ${m.messages[0].key.remoteJid}`);
         //
+        /*
         const msg = m.messages[0]
-        if (!msg.key.fromMe && m.type === 'Hi') {
+        if (!msg.key.fromMe && m.type === 'notify') {
           console.log('- Respondendo: ', msg.key.remoteJid);
           await client.sendReadReceipt(msg.key.remoteJid, msg.key.participant, [msg.key.id]);
           await client.sendMessage(msg.key.remoteJid, {
             text: 'Opa! WABaseMD funcionando!'
           });
         }
+				*/
         //
       });
       //
