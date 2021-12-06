@@ -625,7 +625,7 @@ module.exports = class Sessions {
       //
     });
     //
-    sock.ev.on('statusFind', (status) => {
+    client.ev.on('statusFind', (status) => {
       if (status == 'isConnected') {
         console.log("- isConnected".green);
       } else if (status == 'isDisconnected') {
