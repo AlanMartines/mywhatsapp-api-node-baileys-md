@@ -568,7 +568,7 @@ module.exports = class Sessions {
           //
           client = await startSock();
         }
-        console.log('- Connection closed due to ', lastDisconnect.error, ', reconnecting ', Reconnect);
+        console.log(`- Connection closed due to ${lastDisconnect.error}, reconnecting ${Reconnect}`);
         if (Reconnect) {
           //
           session.state = "CONNECTED";
@@ -605,7 +605,7 @@ module.exports = class Sessions {
           //
           deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
           //
-          //client = await startSock();
+          client = await startSock();
           //
         }
         //
