@@ -588,6 +588,19 @@ module.exports = class Sessions {
           //
           client = await startSock();
           //
+        } else if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
+          //
+          deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+          //
+          session.state = "CONNECTED";
+          session.status = 'isLogged';
+          session.qrcodedata = null;
+          session.message = 'Sistema iniciando e disponivel para uso';
+          //
+          await updateStateDb(session.state, session.status, session.AuthorizationToken);
+          //
+          client = await startSock();
+          //
         } else {
           //
           session.state = "CLOSED";
@@ -596,47 +609,23 @@ module.exports = class Sessions {
           session.qrcodedata = null;
           session.message = "Sessão fechada";
           //
-          deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
-          //
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
+          //
+          deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
           //
           client = await startSock();
           //
         }
         //
-        /*
-        if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
-          deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
-          //
-          session.state = "CLOSED";
-          session.status = 'CLOSED';
-          session.client = false;
-          session.qrcodedata = null;
-          session.message = "Sessão fechada";
-          //
-          await updateStateDb(session.state, session.status, session.AuthorizationToken);
-          //
-          client = await startSock();
-          //
-        } else {
-          console.log("- Connection", connection);
-          deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
-          //
-          session.state = "CLOSED";
-          session.status = 'CLOSED';
-          session.client = false;
-          session.qrcodedata = null;
-          session.message = "Sessão fechada";
-          //
-          await updateStateDb(session.state, session.status, session.AuthorizationToken);
-          //
-          client = await startSock();
-          //
-        }
-				*/
       } else if (connection === 'undefined') {
         console.log("- Connection undefined");
-
+        //
+        session.state = "CLOSED";
+        session.status = 'CLOSED';
+        session.client = false;
+        session.qrcodedata = null;
+        session.message = "Sessão fechada";
+        //
       } else {
         console.log("- Connection", connection);
       }
@@ -796,7 +785,7 @@ module.exports = class Sessions {
     var session = Sessions.getSession(SessionName);
     var LogoutSession = await session.client.then(async client => {
       try {
-        await client.logout();
+        //await client.logout();
         session.state = "DISCONNECTED";
         session.status = 'CLOSED';
         console.log("- Sessão desconetada");
