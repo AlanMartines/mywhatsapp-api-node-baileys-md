@@ -592,10 +592,11 @@ module.exports = class Sessions {
           //
           deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
           //
-          session.state = "CONNECTED";
-          session.status = 'isLogged';
+          session.state = "CLOSED";
+          session.status = 'CLOSED';
+          session.client = false;
           session.qrcodedata = null;
-          session.message = 'Sistema iniciando e disponivel para uso';
+          session.message = "Sessão fechada";
           //
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
           //
