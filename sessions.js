@@ -559,7 +559,6 @@ module.exports = class Sessions {
           //
           session.state = "CLOSED";
           session.status = 'CLOSED';
-          session.client = false;
           session.qrcodedata = null;
           session.message = "Sessão fechada";
           //
@@ -587,7 +586,6 @@ module.exports = class Sessions {
           //
           session.state = "CLOSED";
           session.status = 'CLOSED';
-          session.client = false;
           session.qrcodedata = null;
           session.message = "Sessão fechada";
           //
@@ -600,7 +598,6 @@ module.exports = class Sessions {
           //
           session.state = "CLOSED";
           session.status = 'CLOSED';
-          session.client = false;
           session.qrcodedata = null;
           session.message = "Sessão fechada";
           //
@@ -617,7 +614,6 @@ module.exports = class Sessions {
         //
         session.state = "CLOSED";
         session.status = 'CLOSED';
-        session.client = false;
         session.qrcodedata = null;
         session.message = "Sessão fechada";
         //
