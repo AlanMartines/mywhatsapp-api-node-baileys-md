@@ -1405,7 +1405,7 @@ module.exports = class Sessions {
 
 
       //return chatArray;
-      return await client.chats();
+      return await client.extractGroupMetadata();
       //
       //
     });
