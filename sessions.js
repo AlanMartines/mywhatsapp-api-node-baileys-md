@@ -425,6 +425,7 @@ module.exports = class Sessions {
     }
     //
     let client = undefined;
+    /*
     const connect = () => {
       let status = undefined;
       try {
@@ -444,14 +445,13 @@ module.exports = class Sessions {
       fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`,
         JSON.stringify(status, BufferJSON.replacer, 2));
     };
-    /*
+		*/
     //
     const {
       state,
       saveState
     } = useSingleFileAuthState(`${session.tokenPatch}/${SessionName}.data.json`);
     //
-		*/
     // https://github.com/adiwajshing/Baileys/issues/751
     //
     const startSock = () => {
