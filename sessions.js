@@ -598,7 +598,7 @@ module.exports = class Sessions {
       //
       // console.log(client);
       //
-      client.ev.on('new.message', (mek) => {
+      client.ev.on('new.message', async (mek) => {
         console.log(`- New message: ${mek}`)
       });
       //
@@ -611,33 +611,33 @@ module.exports = class Sessions {
         console.log(`- Chats set ${chats}, messages ${messages}`)
       });
       //
-      client.ev.on('chats.upsert', async (e) => {
-        console.log(`- Chats upsert ${e}`)
+      client.ev.on('chats.upsert', async (chats) => {
+        console.log(`- Chats upsert ${chats}`);
       });
       //
-      client.ev.on('chats.delete', async (e) => {
-        console.log('- Chats delete', e)
+      client.ev.on('chats.delete', async (chats) => {
+        console.log(`- Chats delete: ${chats}`);
       });
       //
       client.ev.on('presence.update', (presences) => {
         console.log('- Presence update: ', presences);
       });
       //
-      client.ev.on('messages.upsert', (e) => {
-        console.log(`- Messages upsert replying to: ${e.messages[0].key.remoteJid}`)
+      client.ev.on('messages.upsert', async (messages) => {
+        console.log(`- Messages upsert replying to: ${messages}`)
       });
       //
-      client.ev.on('message-info.update', (e) => {
+      client.ev.on('message-info.update', async (e) => {
         // Teste 1 - Alterei o nome do grupo e caiu aqui, onde o subject é o novo nome
         console.log('- Message-info update:', e);
       });
       //
-      client.ev.on('groups.update', (group) => {
+      client.ev.on('groups.update', async (group) => {
         // Teste 1 - Alterei o nome do grupo e caiu aqui, onde o subject é o novo nome
-        console.log('- Grupo update: ', group);
+        console.log(`- Grupo update: ${group}`);
       });
       //
-      client.ev.on('group-participants.update', (group) => {
+      client.ev.on('group-participants.update', async (group) => {
         const {
           id,
           participants,
@@ -1185,7 +1185,6 @@ module.exports = class Sessions {
     var session = Sessions.getSession(SessionName);
     var resultgetAllContacts = await session.client.then(async client => {
       try {
-        var result = client.contacts;
         //console.log('Result: ', result); //return object success
         //
         /*
@@ -1218,7 +1217,7 @@ module.exports = class Sessions {
         });
 				*/
         //
-        return result;
+        //return result;
         //
       } catch (erro) {
         console.error('Error when sending: ', erro); //return object error
@@ -1326,33 +1325,6 @@ module.exports = class Sessions {
     //
     return resultgetAllGroups;
   } //getAllGroups
-  //
-  // ------------------------------------------------------------------------------------------------//
-  //
-  // Returns browser session token
-  static async getSessionTokenBrowser(SessionName) {
-    console.log("- Obtendo  Session Token Browser.");
-    var session = Sessions.getSession(SessionName);
-    var resultgetSessionTokenBrowser = await session.client.then(async client => {
-      try {
-        //const result = JSON.parse(fs.readFileSync(`${session.tokenPatch}/${SessionName}.data.json`, 'utf8'));
-        //const result = session.browserSessionToken.replace(/\r?\n?\t|\r|\r|\n/g, '');
-        const result = session.browserSessionToken;
-        //console.log('Result: ', result); //return object success
-        return result;
-      } catch (erro) {
-        console.error('Error when sending: ', erro); //return object error
-        //
-        return {
-          "erro": true,
-          "status": 404,
-          "message": "Erro ao recuperar token browser"
-        };
-        //
-      };
-    });
-    return resultgetSessionTokenBrowser;
-  } //getSessionTokenBrowser
   //
   // ------------------------------------------------------------------------------------------------//
   //

@@ -1410,30 +1410,6 @@ router.post("/getAllGroups", upload.none(''), verifyToken.verify, async (req, re
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
-// Returns browser session token
-router.post("/getSessionTokenBrowser", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var getSessionTokenBrowser = await Sessions.getSessionTokenBrowser(
-        req.body.SessionName
-      );
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        getSessionTokenBrowser
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "getSessionTokenBrowser": sessionStatus
-      });
-  }
-}); //getSessionTokenBrowser
-//
-// ------------------------------------------------------------------------------------------------------- //
-//
 // Chama sua lista de contatos bloqueados
 router.post("/getBlockList", upload.none(''), verifyToken.verify, async (req, res, next) => {
   var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
