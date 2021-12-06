@@ -496,15 +496,17 @@ module.exports = class Sessions {
 
     client.ev.on('statusFind', async (status) => {
       if (status == 'isConnected') {
-        console.log("- Connection isConnected".green);
+        console.log("- statusFind isConnected".green);
       } else if (status == 'isDisconnected') {
-        console.log("- Connection isDisconnected".yellow);
+        console.log("- statusFind isDisconnected".yellow);
       } else if (status == 'tokenRemoved') {
-        console.log("- Connection tokenRemoved".yellow);
+        console.log("- statusFind tokenRemoved".yellow);
       } else if (status == 'qrReadSuccess') {
-        console.log("- Connection qrReadSuccess".green);
+        console.log("- statusFind qrReadSuccess".green);
       } else if (status == 'qrReadFail') {
-        console.log("- Connection qrReadFail".red);
+        console.log("- statusFind qrReadFail".red);
+      } else {
+        console.log(`- statusFind ${status}`.yellow);
       }
     });
     //
