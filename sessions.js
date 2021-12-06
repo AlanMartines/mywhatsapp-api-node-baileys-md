@@ -767,7 +767,6 @@ module.exports = class Sessions {
             break;
         }
         //
-        /*
         client.ev.on('blocklist.set', async (blocklist) => {
           console.log('- Sessão:', SessionName);
           console.log(`- Slocklist set: ${blocklist}`);
@@ -779,7 +778,6 @@ module.exports = class Sessions {
           console.log(`- Slocklist update: ${blocklist}`);
           session.blocklist = JSON.stringify(blocklist, null, 2);
         });
-				*/
         //
         client.ev.on('connection.update', async (conn) => {
           //
