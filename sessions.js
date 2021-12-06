@@ -577,6 +577,16 @@ module.exports = class Sessions {
         console.log('- Connection closed due to ', lastDisconnect.error, ', reconnecting ', Reconnect);
         if (Reconnect) {
           //
+          session.state = "CONNECTED";
+          session.status = 'isLogged';
+          session.qrcodedata = null;
+          session.message = 'Sistema iniciando e disponivel para uso';
+          //
+          await updateStateDb(session.state, session.status, session.AuthorizationToken);
+          //
+          client = await startSock();
+        } else {
+          //
           session.state = "CLOSED";
           session.status = 'CLOSED';
           session.client = false;
@@ -584,14 +594,6 @@ module.exports = class Sessions {
           session.message = "Sessão fechada";
           //
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
-          //
-          client = await startSock();
-        } else {
-          //
-          session.state = "CONNECTED";
-          session.status = 'isLogged';
-          session.qrcodedata = null;
-          session.message = 'Sistema iniciando e disponivel para uso';
           //
         }
         //
