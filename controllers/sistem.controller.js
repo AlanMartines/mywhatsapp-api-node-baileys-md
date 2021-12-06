@@ -267,30 +267,6 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 //
 // ------------------------------------------------------------------------------------------------//
 //
-// Fecha a sessão
-router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-    case 'qrRead':
-      //
-      var closeSession = await Sessions.closeSession(req.body.SessionName.trim());
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": closeSession
-      });
-      //
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //Close
-//
-// ------------------------------------------------------------------------------------------------//
-//
 // Desconecta do whatsapp web
 router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, next) => {
   var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
