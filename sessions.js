@@ -556,9 +556,11 @@ module.exports = class Sessions {
           client = startSock();
           //
         } else {
-          //
           console.log("- Connection:", connection);
-          //
+          if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) {
+            //fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`);
+            deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+          }
           //client = startSock();
           //
           session.state = "CLOSED";
