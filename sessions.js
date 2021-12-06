@@ -572,6 +572,8 @@ module.exports = class Sessions {
           //
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
           //
+          //deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+          //
           client = await startSock();
         }
         console.log('- Connection closed due to ', lastDisconnect.error, ', reconnecting ', Reconnect);
@@ -585,6 +587,7 @@ module.exports = class Sessions {
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
           //
           client = await startSock();
+          //
         } else {
           //
           session.state = "CLOSED";
@@ -592,6 +595,8 @@ module.exports = class Sessions {
           session.client = false;
           session.qrcodedata = null;
           session.message = "Sessão fechada";
+          //
+          deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
           //
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
           //
