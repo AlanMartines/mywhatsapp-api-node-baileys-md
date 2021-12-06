@@ -493,8 +493,54 @@ module.exports = class Sessions {
     //
     client = await startSock();
     //
-    let attempts = 0;
+    let count_isconnected = 0;
+    let count_isdisconnected = 0;
+    let count_token = 0;
+    let count_qrsuccess = 0;
+    let count_qrfail = 0;
+    const statusFIND = () => {
+      client.ev.on('statusFind', (status) => {
+        if (status == 'isConnected') {
+          count_isconnected = count_isconnected + 1;
+        } else if (status == 'isDisconnected') {
+          count_isdisconnected = count_isdisconnected + 1;
+        } else if (status == 'tokenRemoved') {
+          count_token = count_token + 1;
+        } else if (status == 'qrReadSuccess') {
+          count_qrsuccess = count_qrsuccess + 1;
+        } else if (status == 'qrReadFail') {
+          count_qrfail = count_qrfail + 1;
+        }
+        let obj = {
+          'session': sessionName,
+          event: 'status-find',
+          'status': 200,
+          "type": 'CONNECTION',
+          'response': status,
+        };
+        if (count_isconnected == 1 && status == 'isConnected') {
+          console.log("- Connection isConnected".green);
+          statusFind(obj);
+        } else if (count_isdisconnected == 1 && status == 'isDisconnected') {
+          console.log("- Connection isDisconnected".yellow);
+          statusFind(obj);
+        } else if (count_token == 1 && status == 'tokenRemoved') {
+          console.log("- Connection tokenRemoved".yellow);
+          statusFind(obj);
+        } else if (count_qrsuccess == 1 && status == 'qrReadSuccess') {
+          console.log("- Connection qrReadSuccess".green);
+          statusFind(obj);
+        } else if (count_qrfail == 1 && status == 'qrReadFail') {
+          console.log("- Connection qrReadFail".red);
+          statusFind(obj);
+        } else if (status != 'isConnected' && status != 'isDisconnected' && status != 'tokenRemoved' && status != 'qrReadSuccess' && status != "qrReadFail") {
+          console.log("- Connection update".green);
+          statusFind(obj);
+        }
+      });
+    };
     //
+    let attempts = 0;
     client.ev.on('connection.update', async (conn) => {
       //
       console.log("- Connection update".green);
@@ -623,20 +669,6 @@ module.exports = class Sessions {
         console.log(`- Connection ${connection}`.yellow);
       }
       //
-    });
-    //
-    client.ev.on('statusFind', (status) => {
-      if (status == 'isConnected') {
-        console.log("- isConnected".green);
-      } else if (status == 'isDisconnected') {
-        console.log("- isDisconnected".red);
-      } else if (status == 'tokenRemoved') {
-        console.log("- tokenRemoved".yellow);
-      } else if (status == 'qrReadSuccess') {
-        console.log("- qrReadSuccess".green);
-      } else if (status == 'qrReadFail') {
-        console.log("- qrReadFail".red);
-      }
     });
     //
     /** auth credentials updated -- some pre key state, device ID etc. */
