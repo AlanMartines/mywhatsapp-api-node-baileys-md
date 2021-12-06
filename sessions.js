@@ -539,7 +539,8 @@ module.exports = class Sessions {
       } else if (connection === 'close') {
         console.log("- Connection:", connection);
         //
-        if ((lastDisconnect.error).output.statusCode !== DisconnectReason.loggedOut) {
+        //
+        if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
           if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) {
             fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`);
           }
@@ -555,7 +556,10 @@ module.exports = class Sessions {
           client = startSock();
           //
         } else {
+          /*
           console.log('- Connection closed');
+          //
+          client = startSock();
           //
           session.state = "CLOSED";
           session.status = 'CLOSED';
@@ -565,6 +569,7 @@ module.exports = class Sessions {
           //
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
           //
+					*/
         }
       } else {
 
