@@ -612,7 +612,7 @@ module.exports = class Sessions {
     var session = Sessions.getSession(SessionName);
     await session.client.then(async (client) => {
       //
-      // console.log(client);
+      client.setMaxListeners(0);
       //
       client.ev.on('new.message', async (mek) => {
         console.log('- Sessão:', SessionName);
