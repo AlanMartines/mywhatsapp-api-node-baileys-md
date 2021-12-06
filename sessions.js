@@ -494,7 +494,7 @@ module.exports = class Sessions {
     client = await startSock();
     //
 
-    client.ev.on('statusFind', (status) => {
+    client.ev.on('statusFind', async (status) => {
       if (status == 'isConnected') {
         console.log("- Connection isConnected".green);
       } else if (status == 'isDisconnected') {
@@ -504,7 +504,7 @@ module.exports = class Sessions {
       } else if (status == 'qrReadSuccess') {
         console.log("- Connection qrReadSuccess".green);
       } else if (status == 'qrReadFail') {
-        console.log("- Connection update".green);
+        console.log("- Connection qrReadFail".red);
       }
     });
     //
