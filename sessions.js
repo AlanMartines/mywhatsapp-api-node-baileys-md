@@ -622,6 +622,12 @@ module.exports = class Sessions {
       } else if (connection === 'undefined') {
         console.log("- Connection undefined".red);
         //
+        session.state = "CLOSED";
+        session.status = 'CLOSED';
+        session.client = false;
+        session.qrcodedata = null;
+        session.message = "Sessão fechada";
+        //
         //client = await startSock();
         //
       } else {
@@ -636,6 +642,14 @@ module.exports = class Sessions {
       client.ev.on('auth-state.update', () => {
         console.log("- Auth-stat update".green);
         //
+        /*
+        session.state = "CONNECTED";
+        session.status = 'isLogged';
+        session.qrcodedata = null;
+        session.message = 'Sistema iniciando e disponivel para uso';
+        //
+        this.saveAuth();
+				*/
       });
     });
     //
