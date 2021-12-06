@@ -578,6 +578,12 @@ module.exports = class Sessions {
           console.log("- Connection", connection);
           deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
           //
+          session.state = "CLOSED";
+          session.status = 'CLOSED';
+          session.client = false;
+          session.qrcodedata = null;
+          session.message = "Sessão fechada";
+          //
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
           //
           client = await startSock();
@@ -611,8 +617,6 @@ module.exports = class Sessions {
     console.log("- Sinstema iniciando");
     var session = Sessions.getSession(SessionName);
     await session.client.then(async (client) => {
-      //
-      client.setMaxListeners(0);
       //
       client.ev.on('new.message', async (mek) => {
         console.log('- Sessão:', SessionName);
