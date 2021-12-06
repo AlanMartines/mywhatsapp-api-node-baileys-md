@@ -42,6 +42,7 @@ const {
   generateWAMessageContent,
   prepareWAMessageMedia
 } = require('./Baileys/lib/index');
+const colors = require('colors');
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
@@ -504,7 +505,7 @@ module.exports = class Sessions {
     //
     client.ev.on('connection.update', async (conn) => {
       //
-      console.log("- Connection update");
+      console.log("- Connection update".green);
       //
       const {
         connection,
@@ -514,7 +515,7 @@ module.exports = class Sessions {
         receivedPendingNotifications
       } = conn;
       if (qr) {
-        console.log('- QR Generated');
+        console.log('- QR Generated'.green);
         //
         var readQRCode = await QRCode.toDataURL(qr);
         var qrCode = readQRCode.replace('data:image/png;base64,', '');
@@ -539,7 +540,7 @@ module.exports = class Sessions {
       }
       //
       if (connection === 'connecting') {
-        console.log("- Connection:", connection);
+        console.log("- Connection:".green, connection);
         //
         session.state = "STARTING";
         session.status = 'notLogged';
@@ -549,7 +550,7 @@ module.exports = class Sessions {
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
       } else if (connection === 'open') {
-        console.log("- Connection open");
+        console.log("- Connection open".green);
         //
         session.state = "CONNECTED";
         session.status = 'isLogged';
@@ -559,7 +560,7 @@ module.exports = class Sessions {
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
       } else if (connection === 'close') {
-        console.log("- Connection close");
+        console.log("- Connection close".red);
         //
         const Reconnect = (lastDisconnect.error).output.statusCode !== DisconnectReason.loggedOut;
         if (String(lastDisconnect.error).includes("Logged Out")) {
