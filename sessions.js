@@ -556,7 +556,7 @@ module.exports = class Sessions {
           client = startSock();
           //
         } else {
-          /*
+          //
           console.log('- Connection closed');
           //
           client = startSock();
@@ -569,7 +569,6 @@ module.exports = class Sessions {
           //
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
           //
-					*/
         }
       } else {
 
