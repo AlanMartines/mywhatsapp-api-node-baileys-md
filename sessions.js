@@ -639,11 +639,11 @@ module.exports = class Sessions {
       });
       //
       /** presence of contact in a chat updated */
-      client.ev.on('presence.update', async (presences) => {
+      client.ev.on('presence.update', async (update) => {
         const {
           id,
           presences
-        } = presences;
+        } = update;
         console.log(`- Presence update ID ${id}, presences ${presences} `);
       });
       //
