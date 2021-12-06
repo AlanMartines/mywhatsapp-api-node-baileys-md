@@ -427,7 +427,7 @@ module.exports = class Sessions {
       if (typeof configToken.creds.me.id !== 'undefined') {
         console.log('- ID da sessão do Whatsapp:', configToken.creds.me.id);
       } else {
-        deletaToken(session.tokenPatch);
+        deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
         //fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`);
       }
     }
@@ -539,10 +539,10 @@ module.exports = class Sessions {
       } else if (connection === 'close') {
         console.log("- Connection:", connection);
         //
-        //
         if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
           if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) {
-            fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`);
+            //fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`);
+            deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
           }
           //
           session.state = "CLOSED";
