@@ -424,10 +424,10 @@ module.exports = class Sessions {
     //
     if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) {
       var configToken = require(`${session.tokenPatch}/${SessionName}.data.json`);
-      if (configToken.me.id) {
+      if (configToken.creds.me.id) {
         console.log('- ID da sessão do Whatsapp:', configToken.creds.me.id);
       } else {
-        fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`);
+        //fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`);
       }
     }
     //
