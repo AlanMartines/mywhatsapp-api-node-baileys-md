@@ -561,6 +561,7 @@ module.exports = class Sessions {
       } else if (connection === 'close') {
         console.log("- Connection:", connection);
         //
+        /*
         const Reconnect = (lastDisconnect.error).output.statusCode !== DisconnectReason.loggedOut;
         if (String(lastDisconnect.error).includes("Logged Out")) {
           //
@@ -588,7 +589,8 @@ module.exports = class Sessions {
           client = await startSock();
         }
         //
-        /*
+				*/
+        //
         if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
           if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) {
             //fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`);
@@ -617,7 +619,6 @@ module.exports = class Sessions {
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
           //
         }
-				*/
       } else if (connection === 'undefined') {
         console.log("- Connection undefined");
 
