@@ -646,21 +646,25 @@ module.exports = class Sessions {
           chats,
           messages
         } = e;
+        console.log('- Sessão:', SessionName);
         console.log(`- Chats set ${chats}, messages ${messages}`)
       });
       //
       /** upsert chats */
       client.ev.on('chats.upsert', async (chats) => {
+        console.log('- Sessão:', SessionName);
         console.log(`- Chats upsert ${chats}`);
       });
       //
       /** update the given chats */
       client.ev.on('chats.update', async (chats) => {
+        console.log('- Sessão:', SessionName);
         console.log(`- Chats update ${JSON.stringify(chats)}`);
       });
       //
       /** delete chats with given ID */
       client.ev.on('chats.delete', async (chats) => {
+        console.log('- Sessão:', SessionName);
         console.log(`- Chats delete: ${chats}`);
       });
       //
@@ -670,14 +674,17 @@ module.exports = class Sessions {
           id,
           presences
         } = update;
+        console.log('- Sessão:', SessionName);
         console.log(`- Presence update ID ${id}, presences ${presences} `);
       });
       //
       client.ev.on('contacts.upsert', async (contacts) => {
+        console.log('- Sessão:', SessionName);
         console.log(`- Contacts upsert: ${contacts}`);
       });
       //
       client.ev.on('contacts.update', async (contacts) => {
+        console.log('- Sessão:', SessionName);
         console.log(`- Contacts update: ${JSON.stringify(contacts)}`);
       });
       //
@@ -686,15 +693,17 @@ module.exports = class Sessions {
        * the update will have type: "notify"
        *  */
       client.ev.on('messages.upsert', async (messages) => {
+        console.log('- Sessão:', SessionName);
         console.log(`- Messages upsert replying to: ${messages.messages[0].key.remoteJid}`)
       });
       //
       client.ev.on('message-info.update', async (message) => {
-        // Teste 1 - Alterei o nome do grupo e caiu aqui, onde o subject é o novo nome
+        console.log('- Sessão:', SessionName);
         console.log(`- Message-info update: ${message}`);
       });
       //
       client.ev.on('groups.update', async (group) => {
+        console.log('- Sessão:', SessionName);
         console.log(`- Grupo update: ${group}`);
       });
       //
@@ -705,6 +714,7 @@ module.exports = class Sessions {
           participants,
           action
         } = group;
+        console.log('- Sessão:', SessionName);
         switch (action) {
           case 'add':
             console.log('- Participante(s) adicionado(s): ', participants);
@@ -724,11 +734,13 @@ module.exports = class Sessions {
         }
         //
         client.ev.on('blocklist.set', async (blocklist) => {
+          console.log('- Sessão:', SessionName);
           console.log(`- Slocklist set: ${blocklist}`);
           session.blocklist = JSON.stringify(blocklist, null, 2);
         });
         //
         client.ev.on('blocklist.update', async (blocklist) => {
+          console.log('- Sessão:', SessionName);
           console.log(`- Slocklist update: ${blocklist}`);
           session.blocklist = JSON.stringify(blocklist, null, 2);
         });
