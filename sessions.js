@@ -556,12 +556,7 @@ module.exports = class Sessions {
           client = startSock();
           //
         } else {
-          console.log("- Connection:", connection);
-          if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) {
-            //fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`);
-            deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
-          }
-          //client = startSock();
+          console.log("- Connection close");
           //
           session.state = "CLOSED";
           session.status = 'CLOSED';
@@ -573,9 +568,26 @@ module.exports = class Sessions {
           //
         }
       } else {
-
+        console.log("- Connection", connection);
+        /*
+        if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) {
+          //fs.unlinkSync(`${session.tokenPatch}/${SessionName}.data.json`);
+          deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+        }
+        //client = startSock();
+        //
+        session.state = "CLOSED";
+        session.status = 'CLOSED';
+        session.client = false;
+        session.qrcodedata = null;
+        session.message = "Sessão fechada";
+        //
+        await updateStateDb(session.state, session.status, session.AuthorizationToken);
+        //
+				*/
       }
       //
+      /** auth credentials updated -- some pre key state, device ID etc. */
       client.ev.on('creds.update', saveState);
       //
     });
@@ -611,32 +623,56 @@ module.exports = class Sessions {
         console.log(`- Chats set ${chats}, messages ${messages}`)
       });
       //
+      /** upsert chats */
       client.ev.on('chats.upsert', async (chats) => {
         console.log(`- Chats upsert ${chats}`);
       });
       //
+      /** update the given chats */
+      client.ev.on('chats.update', async (chats) => {
+        console.log(`- Chats update ${chats}`);
+      });
+      //
+      /** delete chats with given ID */
       client.ev.on('chats.delete', async (chats) => {
         console.log(`- Chats delete: ${chats}`);
       });
       //
-      client.ev.on('presence.update', (presences) => {
-        console.log('- Presence update: ', presences);
+      /** presence of contact in a chat updated */
+      client.ev.on('presence.update', async (presences) => {
+        const {
+          id,
+          presences
+        } = presences;
+        console.log(`- Presence update ID ${id}, presences ${presences} `);
       });
       //
+      client.ev.on('contacts.upsert', async (contacts) => {
+        console.log(`- Contacts upsert: ${contacts}`);
+      });
+      //
+      client.ev.on('contacts.update', async (contacts) => {
+        console.log(`- Contacts update: ${contacts}`);
+      });
+      //
+      /** 
+       * add/update the given messages. If they were received while the connection was online, 
+       * the update will have type: "notify"
+       *  */
       client.ev.on('messages.upsert', async (messages) => {
-        console.log(`- Messages upsert replying to: ${messages}`)
+        console.log(`- Messages upsert replying to: ${messages.messages[0].key.remoteJid}`)
       });
       //
-      client.ev.on('message-info.update', async (e) => {
+      client.ev.on('message-info.update', async (message) => {
         // Teste 1 - Alterei o nome do grupo e caiu aqui, onde o subject é o novo nome
-        console.log('- Message-info update:', e);
+        console.log(`- Message-info update: ${message}`);
       });
       //
       client.ev.on('groups.update', async (group) => {
-        // Teste 1 - Alterei o nome do grupo e caiu aqui, onde o subject é o novo nome
         console.log(`- Grupo update: ${group}`);
       });
       //
+      /** apply an action to participants in a group */
       client.ev.on('group-participants.update', async (group) => {
         const {
           id,
@@ -647,23 +683,30 @@ module.exports = class Sessions {
           case 'add':
             console.log('- Participante(s) adicionado(s): ', participants);
             break;
-
           case 'remove':
             console.log('- Participante(s) removido(s): ', participants);
             break;
-
           case 'promote':
             console.log('- Participante(s) promovido(s) a admin: ', participants);
             break;
-
           case 'demote':
             console.log('- Participante(s) despromovido(s) de admin: ', participants);
             break;
-
           default:
             console.log('- Ação não tratada');
             break;
         }
+        //
+        client.ev.on('blocklist.set', async (blocklist) => {
+          console.log(`- Slocklist set: ${blocklist}`);
+          session.blocklist = JSON.stringify(blocklist, null, 2);
+        });
+        //
+        client.ev.on('blocklist.update', async (blocklist) => {
+          console.log(`- Slocklist update: ${blocklist}`);
+          session.blocklist = JSON.stringify(blocklist, null, 2);
+        });
+        //
       });
       //
     });
