@@ -453,15 +453,15 @@ module.exports = class Sessions {
       fs.writeFileSync(`${session.tokenPatch}/${SessionName}.data.json`, JSON.stringify(state, baileys.BufferJSON.replacer, 2));
     };
 		*/
-    //
-    const {
-      state,
-      saveState
-    } = useSingleFileAuthState(`${session.tokenPatch}/${SessionName}.data.json`);
-    //
     // https://github.com/adiwajshing/Baileys/issues/751
     //
     const startSock = () => {
+      //
+      const {
+        state,
+        saveState
+      } = useSingleFileAuthState(`${session.tokenPatch}/${SessionName}.data.json`);
+      //
       const client = makeWASocket({
         /** provide an auth state object to maintain the auth state */
         auth: state,
@@ -561,36 +561,6 @@ module.exports = class Sessions {
       } else if (connection === 'close') {
         console.log("- Connection", connection);
         //
-        /*
-        const Reconnect = (lastDisconnect.error).output.statusCode !== DisconnectReason.loggedOut;
-        if (String(lastDisconnect.error).includes("Logged Out")) {
-          //
-          session.state = "CLOSED";
-          session.status = 'CLOSED';
-          session.client = false;
-          session.qrcodedata = null;
-          session.message = "Sessão fechada";
-          //
-          await updateStateDb(session.state, session.status, session.AuthorizationToken);
-          //
-          client = await startSock();
-        }
-        console.log('- Connection closed due to ', lastDisconnect.error, ', reconnecting ', Reconnect);
-        if (Reconnect) {
-          //
-          session.state = "CLOSED";
-          session.status = 'CLOSED';
-          session.client = false;
-          session.qrcodedata = null;
-          session.message = "Sessão fechada";
-          //
-          await updateStateDb(session.state, session.status, session.AuthorizationToken);
-          //
-          client = await startSock();
-        }
-        //
-				*/
-        //
         if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
           deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
           //
@@ -606,6 +576,7 @@ module.exports = class Sessions {
           //
         } else {
           console.log("- Connection close");
+          deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
           //
           session.state = "CLOSED";
           session.status = 'CLOSED';
@@ -614,6 +585,8 @@ module.exports = class Sessions {
           session.message = "Sessão fechada";
           //
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
+          //
+          client = await startSock();
           //
         }
       } else if (connection === 'undefined') {
