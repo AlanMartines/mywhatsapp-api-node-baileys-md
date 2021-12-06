@@ -158,7 +158,7 @@ async function deletaToken(filePath) {
   await fs.pathExists(filePath, function(exists) {
     console.log('- O arquivo é: ' + exists);
     if (exists) {
-      await fs.unlink(filePath, function(err) {
+      fs.unlink(filePath, function(err) {
         if (err && err.code == 'ENOENT') {
           console.log(`- Arquivo "${filePath}" não encontrado`);
         } else if (err) {
