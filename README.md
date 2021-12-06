@@ -476,6 +476,12 @@ Este projeto se encontra em desenvolvimento, então pode conter erros.
 
 ---
 
+## ❌ Alerta ❌
+
+O baileys md está em beta e está rodeado de bugs de conexão e instabilidade, algumas mensganes podem se repetir ou não ser lidas, porém com o tempo isso vai ser corrgido.
+
+---
+
 ## Ban Whatsapp
 
 Existem dois tipos diferentes de banimento.
@@ -563,6 +569,10 @@ Envolva-se com as pessoas. Isso é ter propósito!
 
 ---
 
-## License
+## ⚖️ Licença
+
+Este bot esta protegido com a licença MIT ou seja, será permitido a distribuição, modificação, revenda contanto que seja dado o devido reconhecimento para o criador. Caso quebrado, o criador pode recorrer a justiça para reinvidicar seus direitos.
 
 [MIT](https://choosealicense.com/licenses/mit/)
+
+---
