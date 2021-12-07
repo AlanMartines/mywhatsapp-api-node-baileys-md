@@ -497,20 +497,19 @@ module.exports = class Sessions {
 
     client.ev.on('statusFind', async (status) => {
       const
-        statusFind = JSON.stringify(status);
-      if (status == 'isConnected') {
+        resFind = JSON.stringify(status);
+      if (resFind.statusFind == 'isConnected') {
         console.log("- statusFind isConnected".green);
-      } else if (status == 'isDisconnected') {
+      } else if (resFind.statusFind == 'isDisconnected') {
         console.log("- statusFind isDisconnected".yellow);
-      } else if (status == 'tokenRemoved') {
+      } else if (resFind.statusFind == 'tokenRemoved') {
         console.log("- statusFind tokenRemoved".yellow);
-      } else if (status == 'qrReadSuccess') {
+      } else if (resFind.statusFind == 'qrReadSuccess') {
         console.log("- statusFind qrReadSuccess".green);
-      } else if (status == 'qrReadFail') {
+      } else if (resFind.statusFind == 'qrReadFail') {
         console.log("- statusFind qrReadFail".red);
       } else {
-        console.log(`- statusFind ${status}`.yellow);
-        console.log(`- statusFind ${statusFind}`.yellow);
+        console.log(`- statusFind ${resFind.statusFind}`.yellow);
       }
     });
     //
