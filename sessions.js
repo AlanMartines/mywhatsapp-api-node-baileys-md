@@ -163,78 +163,6 @@ async function deletaToken(filePath) {
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
-async function gerateThumbnail(fileBuffer, mimetype, saveFilename) {
-  //
-  switch (mimetype) {
-    case 'image/gif':
-    case 'video/gif':
-    case 'image/jpeg':
-    case 'image/png':
-    case 'image/webp':
-      //
-      //
-      let options = {
-        width: 250,
-        height: 250,
-        responseType: 'base64',
-        jpegOptions: {
-          force: true,
-          quality: 90
-        }
-      }
-      //
-      try {
-        var thumbnail = await Base64BufferThumbnail(fileBuffer, options);
-        //console.log("Base64BufferThumbnail", thumbnail);
-      } catch (err) {
-        console.error(err);
-        var thumbnail = '';
-      }
-      //
-      break;
-    case 'video/mp4':
-      //
-      var thumbnail = '';
-      //
-      break;
-    case 'audio/mp4':
-    case 'audio/ogg; codecs=opus':
-      //
-      var thumbnail = '';
-      //
-      break;
-    case 'application/pdf':
-      //
-      const pdf2picOptions = {
-        format: "jpeg",
-        width: 250,
-        height: 250,
-        density: 100
-      }
-      try {
-        //
-        const pageNumber = 1;
-        const convert = fromBase64(fileBuffer.toString('base64'), pdf2picOptions);
-        //const convert = fromBuffer(fileBuffer, pdf2picOptions);
-        const pageOutput = await convert(pageNumber, true);
-        var thumbnail = Buffer.from(pageOutput.base64, 'base64');
-      } catch (err) {
-        console.error(err);
-        var thumbnail = '';
-      }
-      //
-      break;
-    default:
-      //
-      var thumbnail = '';
-      //
-  }
-  //
-  return thumbnail;
-}
-//
-// ------------------------------------------------------------------------------------------------------- //
-//
 module.exports = class Sessions {
   //
   static async getStatusApi(sessionName, options = []) {
@@ -471,7 +399,7 @@ module.exports = class Sessions {
         agent: undefined,
         /** pino logger */
         logger: pino({
-          level: 'info'
+          level: 'silent'
         }),
         /** version to connect with */
         //version: [2, 2142, 12],
@@ -506,6 +434,8 @@ module.exports = class Sessions {
         console.log("- statusFind tokenRemoved".yellow);
       } else if (resFind.statusFind == 'qrReadSuccess') {
         console.log("- statusFind qrReadSuccess".green);
+      } else if (resFind.statusFind == 'qrReadCode') {
+        console.log("- statusFind qrReadCode".yellow);
       } else if (resFind.statusFind == 'qrReadFail') {
         console.log("- statusFind qrReadFail".red);
       } else {
