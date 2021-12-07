@@ -427,7 +427,7 @@ module.exports = class Sessions {
       //
       const resFind = JSON.stringify(status);
       //
-      console.log(`- statusFind: ${resFind}`.green);
+      console.log(`- statusFind: ${resFind.statusFind}`.green);
       //
       if (resFind.statusFind == 'isConnected') {
         console.log("- statusFind isConnected".green);
