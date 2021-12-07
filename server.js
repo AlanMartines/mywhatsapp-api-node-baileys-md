@@ -26,7 +26,7 @@ fs.access(".env", fs.constants.F_OK, (err) => {
 			HOST=localhost
 			#
 			# Defina o numero da porta a ser usada pela API.
-			PORT=9001
+			PORT=9003
 			#
 			# Define se o qrcode vai ser mostrado no terminal
 			VIEW_QRCODE_TERMINAL=0
