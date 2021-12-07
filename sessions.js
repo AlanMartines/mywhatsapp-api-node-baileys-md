@@ -449,6 +449,8 @@ module.exports = class Sessions {
         //
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
+        deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+        //
       } else if (statusFind == 'notLogged') {
         console.log("- statusFind notLogged".red);
 
@@ -461,6 +463,8 @@ module.exports = class Sessions {
         session.message = "Sessão fechada";
         //
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
+        //
+        deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
         //
       } else if (statusFind == 'qrReadSuccess') {
         console.log("- statusFind qrReadSuccess".green);
@@ -564,21 +568,13 @@ module.exports = class Sessions {
           //
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
           //
+          deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+          //
           client = await startSock();
           //
         }
       } else if (connection === 'undefined') {
         console.log("- Connection undefined".red);
-        //
-        /*
-        session.state = "CLOSED";
-        session.status = 'CLOSED';
-        session.qrcodedata = null;
-        session.message = "Sessão fechada";
-				*/
-        //
-        //client = await startSock();
-        //
       }
     });
     return client;
