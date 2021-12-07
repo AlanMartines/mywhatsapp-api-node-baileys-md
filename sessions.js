@@ -330,7 +330,7 @@ module.exports = class Sessions {
     console.log("- Iniciando sessão");
     var session = Sessions.getSession(SessionName);
     //
-    session.tokenPatch = config.TOKENSPATCH_LINUX;
+    session.tokenPatch = config.TOKENSPATCH;
     //
     //
     /*
