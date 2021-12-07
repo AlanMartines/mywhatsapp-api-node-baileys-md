@@ -1,9 +1,7 @@
-# Use a imagem oficial como imagem principal.
-FROM node:14-slim
+FROM node:14.17.6
 
-RUN mkdir -p /usr/src/mywhats-api
+LABEL version="1.0.0" description="API" maintainer="Alan Martines<alan.martines@produzirsa.com.br>"
 
-# apt-get install --no-install-recommends --no-install-suggests -y \
 RUN   sudo apt-get update && \
 	apt-get upgrade -y && \
 	apt-get install -y \
@@ -93,23 +91,34 @@ RUN   sudo apt-get update && \
 	ffmpeg imagemagick \
 	ghostscript
 
-# Defina o diretório de trabalho.
-WORKDIR /usr/src/mywhats-api
+# Ir para seu diretório home
+RUN mkdir /home/ApiBaileysMd
 
-# Copie o arquivo do seu host para o local atual.
-COPY package*.json ./
+# Clone este repositório
+RUN  git clone https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md.git ApiBaileysMd
 
-# Execute o comando dentro do seu sistema de arquivos de imagem.
-RUN npm install
+# Acesse a pasta do projeto no terminal/cmd
+RUN  cd /home/ApiBaileysMd &&  \
+	npm install --allow-root --unsafe-perm=true
 
-# Copie o restante do código-fonte do seu aplicativo do host para o sistema de arquivos de imagem.
-COPY . .
+# Clone este repositório
+RUN  cd /home/ApiBaileysMd &&  \
+	git clone -b multi-device https://github.com/AlanMartines/Baileys.git
 
-EXPOSE 9000
-# EXPOSE 80 443
+# Acesse a pasta do projeto no terminal/cmd
+RUN  cd /home/ApiBaileysMd/Baileys && \
+	npm install --allow-root --unsafe-perm=true && \
+	npm run build:all
 
-# Execute o comando especificado dentro do contêiner.
-CMD [ "npm", "start" ]
+# Building WPPConnect
+RUN  mkdir /usr/local/tokens
+
+#Set working directory
+WORKDIR /home/ApiBaileysMd
+
+EXPOSE 9003
+
+CMD [ "node", "--trace-warnings", "server.js" ]
 
 ### LEIA-ME ###
 ## Processando o arquivo Dockerfile
