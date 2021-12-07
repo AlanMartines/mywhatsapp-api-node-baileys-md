@@ -153,12 +153,18 @@ async function updateStateDb(state, status, AuthorizationToken) {
 //
 async function deletaToken(filePath) {
   //
-  const cacheExists = await fs.pathExists(filePath);
-  console.log('- O arquivo é: ' + cacheExists);
-  if (cacheExists) {
-    await fs.remove(filePath) ? console.log(`- Arquivo "${filePath}" não removido`) : console.log(`- Arquivo "${filePath}" removido com sucesso`);
-  }
-  return deletaTok;
+  fs.unlink(filePath, function(err) {
+    if (err && err.code == 'ENOENT') {
+      // file doens't exist
+      console.log(`- Arquivo "${filePath}" não existe`);
+    } else if (err) {
+      // other errors, e.g. maybe we don't have enough permission
+      console.log(`- erro ao remover arquivo "${filePath}"`);
+    } else {
+      console.log(`- Arquivo "${filePath}" removido com sucesso`);
+    }
+  });
+
 }
 //
 // ------------------------------------------------------------------------------------------------------- //
