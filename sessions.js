@@ -496,9 +496,8 @@ module.exports = class Sessions {
     //
 
     client.ev.on('statusFind', async (status) => {
-      const {
-        statusFind
-      } = status;
+      const
+        statusFind = JSON.stringify(status);
       if (status == 'isConnected') {
         console.log("- statusFind isConnected".green);
       } else if (status == 'isDisconnected') {
@@ -511,6 +510,7 @@ module.exports = class Sessions {
         console.log("- statusFind qrReadFail".red);
       } else {
         console.log(`- statusFind ${status}`.yellow);
+        console.log(`- statusFind ${statusFind}`.yellow);
       }
     });
     //
