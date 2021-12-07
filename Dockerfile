@@ -110,6 +110,9 @@ RUN  cd /home/ApiBaileysMd/Baileys && \
 	npm install --allow-root --unsafe-perm=true && \
 	npm run build:all
 
+# Acesse a pasta do projeto no terminal/cmd
+COPY .env  /home/ApiBaileysMd
+
 # Building WPPConnect
 RUN  mkdir /usr/local/tokens
 
