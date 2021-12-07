@@ -496,6 +496,9 @@ module.exports = class Sessions {
     //
 
     client.ev.on('statusFind', async (status) => {
+      const {
+        statusFind
+      } = status;
       if (status == 'isConnected') {
         console.log("- statusFind isConnected".green);
       } else if (status == 'isDisconnected') {
