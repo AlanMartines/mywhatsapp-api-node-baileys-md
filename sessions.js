@@ -424,8 +424,10 @@ module.exports = class Sessions {
     //
 
     client.ev.on('statusFind', async (status) => {
-      const
-        resFind = JSON.stringify(status);
+      const resFind = JSON.stringify(status);
+      //
+      console.log(`- statusFind: ${resFind}`.yellow);
+      //
       if (resFind.statusFind == 'isConnected') {
         console.log("- statusFind isConnected".green);
       } else if (resFind.statusFind == 'isDisconnected') {
