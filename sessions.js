@@ -428,83 +428,81 @@ module.exports = class Sessions {
     //
     client = await startSock();
     //
-    /*
-        client.ev.on('statusFind', async (status) => {
-          //
-          const {
-            statusFind
-          } = status;
-          //
-          if (statusFind == 'isConnected') {
-            console.log("- statusFind isConnected".green);
-            //
-            session.state = "CONNECTED";
-            session.status = 'isLogged';
-            session.qrcodedata = null;
-            session.message = 'Sistema iniciando e disponivel para uso';
-            //
-            await updateStateDb(session.state, session.status, session.AuthorizationToken);
-            //
-          } else if (statusFind == 'isDisconnected') {
-            console.log("- statusFind isDisconnected".red);
-            //
-            session.state = "CLOSED";
-            session.status = 'CLOSED';
-            session.qrcodedata = null;
-            session.message = "Sessão fechada";
-            //
-            await updateStateDb(session.state, session.status, session.AuthorizationToken);
-            //
-            deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
-            //
-          } else if (statusFind == 'notLogged') {
-            console.log("- statusFind notLogged".red);
+    client.ev.on('statusFind', async (status) => {
+      //
+      const {
+        statusFind
+      } = status;
+      //
+      if (statusFind == 'isConnected') {
+        console.log("- statusFind isConnected".green);
+        //
+        session.state = "CONNECTED";
+        session.status = 'isLogged';
+        session.qrcodedata = null;
+        session.message = 'Sistema iniciando e disponivel para uso';
+        //
+        await updateStateDb(session.state, session.status, session.AuthorizationToken);
+        //
+      } else if (statusFind == 'isDisconnected') {
+        console.log("- statusFind isDisconnected".red);
+        //
+        session.state = "CLOSED";
+        session.status = 'CLOSED';
+        session.qrcodedata = null;
+        session.message = "Sessão fechada";
+        //
+        await updateStateDb(session.state, session.status, session.AuthorizationToken);
+        //
+        deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+        //
+      } else if (statusFind == 'notLogged') {
+        console.log("- statusFind notLogged".red);
 
-          } else if (statusFind == 'tokenRemoved') {
-            console.log("- statusFind tokenRemoved".yellow);
-            //
-            session.state = "CLOSED";
-            session.status = 'CLOSED';
-            session.qrcodedata = null;
-            session.message = "Sessão fechada";
-            //
-            await updateStateDb(session.state, session.status, session.AuthorizationToken);
-            //
-            deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
-            //
-          } else if (statusFind == 'qrReadSuccess') {
-            console.log("- statusFind qrReadSuccess".green);
-            //
-            session.state = "CONNECTED";
-            session.status = 'isLogged';
-            session.qrcodedata = null;
-            session.message = 'Sistema iniciando e disponivel para uso';
-            //
-            await updateStateDb(session.state, session.status, session.AuthorizationToken);
-            //
-          } else if (statusFind == 'qrReadCode') {
-            console.log("- statusFind qrReadCode".yellow);
-            //
-            session.state = "QRCODE";
-            session.status = "qrRead";
-            session.message = 'Sistema iniciando e indisponivel para uso';
-            //
-            await updateStateDb(session.state, session.status, session.AuthorizationToken);
-            //
-          } else if (statusFind == 'qrReadFail') {
-            console.log("- statusFind qrReadFail".red);
-            //
-            session.state = "QRCODE";
-            session.status = "qrRead";
-            session.message = 'Sistema iniciando e indisponivel para uso';
-            //
-            await updateStateDb(session.state, session.status, session.AuthorizationToken);
-            //
-          } else {
-            console.log(`- statusFind ${statusFind}`.yellow);
-          }
-        });
-    		*/
+      } else if (statusFind == 'tokenRemoved') {
+        console.log("- statusFind tokenRemoved".yellow);
+        //
+        session.state = "CLOSED";
+        session.status = 'CLOSED';
+        session.qrcodedata = null;
+        session.message = "Sessão fechada";
+        //
+        await updateStateDb(session.state, session.status, session.AuthorizationToken);
+        //
+        deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+        //
+      } else if (statusFind == 'qrReadSuccess') {
+        console.log("- statusFind qrReadSuccess".green);
+        //
+        session.state = "CONNECTED";
+        session.status = 'isLogged';
+        session.qrcodedata = null;
+        session.message = 'Sistema iniciando e disponivel para uso';
+        //
+        await updateStateDb(session.state, session.status, session.AuthorizationToken);
+        //
+      } else if (statusFind == 'qrReadCode') {
+        console.log("- statusFind qrReadCode".yellow);
+        //
+        session.state = "QRCODE";
+        session.status = "qrRead";
+        session.message = 'Sistema iniciando e indisponivel para uso';
+        //
+        await updateStateDb(session.state, session.status, session.AuthorizationToken);
+        //
+      } else if (statusFind == 'qrReadFail') {
+        console.log("- statusFind qrReadFail".red);
+        //
+        session.state = "QRCODE";
+        session.status = "qrRead";
+        session.message = 'Sistema iniciando e indisponivel para uso';
+        //
+        await updateStateDb(session.state, session.status, session.AuthorizationToken);
+        //
+      } else {
+        console.log(`- statusFind ${statusFind}`.yellow);
+      }
+    });
     //
     let attempts = 0;
     //
@@ -569,9 +567,8 @@ module.exports = class Sessions {
         connectionvalidate = true;
         //
       } else if (connection === 'close' && connectionvalidate === false) {
-        console.log("- Connection close".red);
-        //
         if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
+          console.log("- Connection close".red);
           //
           session.state = "CLOSED";
           session.status = 'CLOSED';
@@ -585,15 +582,12 @@ module.exports = class Sessions {
           client = await startSock();
           //
         } else {
+          console.log("- Connection close".red);
           //
           session.state = "CLOSED";
           session.status = 'CLOSED';
           session.qrcodedata = null;
           session.message = "Sessão fechada";
-          //
-          await updateStateDb(session.state, session.status, session.AuthorizationToken);
-          //
-          deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
           //
         }
 
