@@ -580,6 +580,13 @@ module.exports = class Sessions {
           //
           client = await startSock();
           //
+        } else {
+          //
+          session.state = "CLOSED";
+          session.status = 'CLOSED';
+          session.qrcodedata = null;
+          session.message = "Sessão fechada";
+          //
         }
       } else if (connection === 'undefined') {
         console.log("- Connection undefined".red);
