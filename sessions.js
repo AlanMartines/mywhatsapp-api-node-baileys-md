@@ -428,6 +428,7 @@ module.exports = class Sessions {
     //
     client = await startSock();
     //
+    /*
     client.ev.on('statusFind', async (status) => {
       //
       const {
@@ -503,12 +504,11 @@ module.exports = class Sessions {
         console.log(`- statusFind ${statusFind}`.yellow);
       }
     });
+		*/
     //
     let attempts = 0;
     //
     client.ev.on('connection.update', async (conn) => {
-      //
-      let connectionvalidate = false;
       //
       console.log("- Connection update".yellow);
       //
@@ -566,7 +566,7 @@ module.exports = class Sessions {
         //
         connectionvalidate = true;
         //
-      } else if (connection === 'close' && connectionvalidate === false) {
+      } else if (connection === 'close' && isNewLogin === false) {
         if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
           console.log("- Connection close".red);
           //
