@@ -458,7 +458,7 @@ module.exports = class Sessions {
         //deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
         //
         //client = await startSock();
-        Sessions.initSession(SessionName);
+        //Sessions.initSession(SessionName);
         //
       } else if (statusFind == 'notLogged') {
         console.log("- statusFind notLogged".red);
@@ -485,7 +485,7 @@ module.exports = class Sessions {
         deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
         //
         //client = await startSock();
-        Sessions.initSession(SessionName);
+        //Sessions.initSession(SessionName);
         //
       } else if (statusFind == 'qrReadSuccess') {
         console.log("- statusFind qrReadSuccess".green);
