@@ -595,7 +595,6 @@ module.exports = class Sessions {
         console.log("- Connection undefined".red);
       }
       //
-      console.log(conn);
     });
     //
     client.ev.on("creds.update", saveState);
