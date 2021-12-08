@@ -488,6 +488,7 @@ module.exports = class Sessions {
         deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
         //
         client = await startSock();
+        Sessions.initSession(SessionName);
         //
       } else if (statusFind == 'qrReadSuccess') {
         console.log("- statusFind qrReadSuccess".green);
@@ -520,13 +521,14 @@ module.exports = class Sessions {
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
         client = await startSock();
+        Sessions.initSession(SessionName);
         //
       } else {
         console.log(`- statusFind ${statusFind}`.yellow);
       }
       //
       client = await startSock();
-      initSession(SessionName);
+      Sessions.initSession(SessionName);
       //
     });
     //
@@ -602,7 +604,7 @@ module.exports = class Sessions {
           deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
           //
           client = await startSock();
-          initSession(SessionName);
+          Sessions.initSession(SessionName);
           //
         } else {
           console.log("- Connection close".red);
