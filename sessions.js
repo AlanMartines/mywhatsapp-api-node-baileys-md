@@ -405,7 +405,7 @@ module.exports = class Sessions {
         agent: undefined,
         /** pino logger */
         logger: pino({
-          level: 'silent'
+          level: 'info'
         }),
         /** version to connect with */
         //version: [2, 2142, 12],
@@ -571,17 +571,32 @@ module.exports = class Sessions {
       } else if (connection === 'close' && connectionvalidate === false) {
         console.log("- Connection close".red);
         //
-        session.state = "CLOSED";
-        session.status = 'CLOSED';
-        session.qrcodedata = null;
-        session.message = "Sessão fechada";
-        //
-        await updateStateDb(session.state, session.status, session.AuthorizationToken);
-        //
-        deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
-        //
-        client = await startSock();
-        //
+        if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
+          //
+          session.state = "CLOSED";
+          session.status = 'CLOSED';
+          session.qrcodedata = null;
+          session.message = "Sessão fechada";
+          //
+          await updateStateDb(session.state, session.status, session.AuthorizationToken);
+          //
+          deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+          //
+          client = await startSock();
+          //
+        } else {
+          //
+          session.state = "CLOSED";
+          session.status = 'CLOSED';
+          session.qrcodedata = null;
+          session.message = "Sessão fechada";
+          //
+          await updateStateDb(session.state, session.status, session.AuthorizationToken);
+          //
+          deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+          //
+        }
+
       } else if (connection === 'undefined') {
         console.log("- Connection undefined".red);
       }
