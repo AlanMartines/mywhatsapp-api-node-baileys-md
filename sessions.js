@@ -675,7 +675,7 @@ module.exports = class Sessions {
       //
       client.ev.on('contacts.upsert', async (contacts) => {
         console.log('- Sessão:', SessionName);
-        console.log(`- Contacts upsert: ${contacts}`);
+        console.log(`- Contacts upsert: ${JSON.stringify(contacts)}`);
       });
       //
       client.ev.on('contacts.update', async (contacts) => {
