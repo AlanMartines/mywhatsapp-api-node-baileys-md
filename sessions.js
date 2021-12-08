@@ -485,7 +485,7 @@ module.exports = class Sessions {
         deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
         //
         //client = await startSock();
-        Sessions.initSession(SessionName);
+        //Sessions.initSession(SessionName);
         //
       } else if (statusFind == 'qrReadSuccess') {
         console.log("- statusFind qrReadSuccess".green);
@@ -607,6 +607,10 @@ module.exports = class Sessions {
           session.message = "Sessão fechada";
           //
         }
+        //
+        //client = await startSock();
+        Sessions.initSession(SessionName);
+        //
       } else if (typeof connection === undefined) {
         console.log("- Connection undefined".red);
       } else {
