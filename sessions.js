@@ -428,7 +428,8 @@ module.exports = class Sessions {
     //
     client = await startSock();
     //
-    /*
+    let attemptsstatus = 0;
+    //
     client.ev.on('statusFind', async (status) => {
       //
       const {
@@ -455,7 +456,7 @@ module.exports = class Sessions {
         //
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
-        deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+        //deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
         //
       } else if (statusFind == 'notLogged') {
         console.log("- statusFind notLogged".red);
@@ -470,7 +471,9 @@ module.exports = class Sessions {
         //
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
-        deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+        //deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+        //
+        client = await startSock();
         //
       } else if (statusFind == 'qrReadSuccess') {
         console.log("- statusFind qrReadSuccess".green);
@@ -504,7 +507,6 @@ module.exports = class Sessions {
         console.log(`- statusFind ${statusFind}`.yellow);
       }
     });
-		*/
     //
     let attempts = 0;
     //
