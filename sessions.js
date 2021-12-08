@@ -605,11 +605,6 @@ module.exports = class Sessions {
     var session = Sessions.getSession(SessionName);
     await session.client.then(async (client) => {
       //
-      client.ev.on('new.message', async (mek) => {
-        console.log('- Sessão:', SessionName);
-        console.log(`- New message: ${mek}`)
-      });
-      //
       /** set chats (history sync), messages are reverse chronologically sorted */
       client.ev.on('chats.set', async (e) => {
         const {
@@ -725,18 +720,6 @@ module.exports = class Sessions {
           console.log('- Sessão:', SessionName);
           console.log(`- Slocklist update: ${blocklist}`);
           session.blocklist = JSON.stringify(blocklist, null, 2);
-        });
-        //
-        client.ev.on('connection.update', async (conn) => {
-          //
-          const {
-            connection,
-            lastDisconnect,
-            isNewLogin,
-            qr,
-            receivedPendingNotifications
-          } = conn;
-          console.log('- Connection update:', connection);
         });
         //
       });
