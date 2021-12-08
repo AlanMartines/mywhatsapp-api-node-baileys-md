@@ -390,6 +390,7 @@ module.exports = class Sessions {
     // https://github.com/adiwajshing/Baileys/issues/751
     //
     const startSock = () => {
+      console.log("- startSock".blue);
       const clientStart = makeWASocket({
         /** provide an auth state object to maintain the auth state */
         auth: state,
@@ -426,7 +427,7 @@ module.exports = class Sessions {
       return clientStart;
     }
     //
-    client = startSock();
+    client = await startSock();
     //
     let attemptsstatus = false;
     //
@@ -486,7 +487,7 @@ module.exports = class Sessions {
         //
         //deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
         //
-        client = startSock();
+        client = await startSock();
         //
       } else if (statusFind == 'qrReadSuccess') {
         console.log("- statusFind qrReadSuccess".green);
