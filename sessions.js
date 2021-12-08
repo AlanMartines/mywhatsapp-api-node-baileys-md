@@ -608,9 +608,6 @@ module.exports = class Sessions {
           //
         }
         //
-        //client = await startSock();
-        Sessions.initSession(SessionName);
-        //
       } else if (typeof connection === undefined) {
         console.log("- Connection undefined".red);
       } else {
