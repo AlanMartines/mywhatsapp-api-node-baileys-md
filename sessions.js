@@ -524,6 +524,9 @@ module.exports = class Sessions {
       } else {
         console.log(`- statusFind ${statusFind}`.yellow);
       }
+      //
+      client = await startSock();
+      //
     });
     //
     let attempts = 0;
