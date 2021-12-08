@@ -405,7 +405,7 @@ module.exports = class Sessions {
         agent: undefined,
         /** pino logger */
         logger: pino({
-          level: 'info'
+          level: 'silent'
         }),
         /** version to connect with */
         //version: [2, 2142, 12],
@@ -600,6 +600,8 @@ module.exports = class Sessions {
       } else if (connection === 'undefined') {
         console.log("- Connection undefined".red);
       }
+      //
+      console.log(conn);
     });
     //
     client.ev.on("creds.update", saveState);
