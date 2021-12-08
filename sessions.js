@@ -609,7 +609,6 @@ module.exports = class Sessions {
           session.message = "Sessão fechada";
           //
         }
-
       } else if (connection === 'undefined') {
         console.log("- Connection undefined".red);
       }
