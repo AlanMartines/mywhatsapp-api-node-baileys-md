@@ -583,6 +583,9 @@ module.exports = class Sessions {
         console.log("- Connection undefined".red);
       }
     });
+    //
+    client.ev.on("creds.update", saveState);
+    //
     return client;
   } //initSession
   //
