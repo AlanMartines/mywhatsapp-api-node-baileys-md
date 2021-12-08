@@ -428,7 +428,7 @@ module.exports = class Sessions {
     //
     client = await startSock();
     //
-    let attemptsstatus = 0;
+    let attemptsstatus = false;
     //
     client.ev.on('statusFind', async (status) => {
       //
@@ -458,9 +458,22 @@ module.exports = class Sessions {
         //
         //deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
         //
+        attemptsstatus = false;
+        //
       } else if (statusFind == 'notLogged') {
         console.log("- statusFind notLogged".red);
-
+        //
+        session.state = "CLOSED";
+        session.status = 'CLOSED';
+        session.qrcodedata = null;
+        session.message = "Sessão fechada";
+        //
+        await updateStateDb(session.state, session.status, session.AuthorizationToken);
+        //
+        //deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+        //
+        client = await startSock();
+        //
       } else if (statusFind == 'tokenRemoved') {
         console.log("- statusFind tokenRemoved".yellow);
         //
@@ -485,6 +498,8 @@ module.exports = class Sessions {
         //
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
+        attemptsstatus++;
+        //
       } else if (statusFind == 'qrReadCode') {
         console.log("- statusFind qrReadCode".yellow);
         //
@@ -502,6 +517,8 @@ module.exports = class Sessions {
         session.message = 'Sistema iniciando e indisponivel para uso';
         //
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
+        //
+        client = await startSock();
         //
       } else {
         console.log(`- statusFind ${statusFind}`.yellow);
@@ -568,7 +585,7 @@ module.exports = class Sessions {
         //
         connectionvalidate = true;
         //
-      } else if (connection === 'close' && isNewLogin === false) {
+      } else if (connection === 'close') {
         if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
           console.log("- Connection close".red);
           //
