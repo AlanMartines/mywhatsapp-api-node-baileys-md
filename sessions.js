@@ -426,7 +426,7 @@ module.exports = class Sessions {
       return clientStart;
     }
     //
-    client = await startSock();
+    client = startSock();
     //
     let attemptsstatus = false;
     //
@@ -486,7 +486,7 @@ module.exports = class Sessions {
         //
         //deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
         //
-        client = await startSock();
+        client = startSock();
         //
       } else if (statusFind == 'qrReadSuccess') {
         console.log("- statusFind qrReadSuccess".green);
