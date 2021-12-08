@@ -529,7 +529,7 @@ module.exports = class Sessions {
     //
     client.ev.on('connection.update', async (conn) => {
       //
-      console.log("- Connection update".yellow);
+      console.log("- Connection update");
       //
       const {
         connection,
@@ -609,7 +609,7 @@ module.exports = class Sessions {
           session.message = "Sessão fechada";
           //
         }
-      } else if (connection === 'undefined') {
+      } else if (typeof connection === undefined) {
         console.log("- Connection undefined".red);
       } else {
         console.log(`- Connection ${connection}`.yellow);
