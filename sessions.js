@@ -526,6 +526,7 @@ module.exports = class Sessions {
       }
       //
       client = await startSock();
+      initSession(SessionName);
       //
     });
     //
@@ -601,6 +602,7 @@ module.exports = class Sessions {
           deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
           //
           client = await startSock();
+          initSession(SessionName);
           //
         } else {
           console.log("- Connection close".red);
