@@ -529,7 +529,7 @@ module.exports = class Sessions {
     //
     client.ev.on('connection.update', async (conn) => {
       //
-      console.log("- Connection update");
+      console.log("- Connection update".blue);
       //
       const {
         connection,
