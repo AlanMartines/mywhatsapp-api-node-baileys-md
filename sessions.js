@@ -565,29 +565,18 @@ module.exports = class Sessions {
         //
       } else if (connection === 'close') {
         console.log("- Connection close".red);
-        if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
-          //
-          //deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
-          //
-          session.state = "CLOSED";
-          session.status = 'CLOSED';
-          session.qrcodedata = null;
-          session.message = "Sessão fechada";
-          //
-          await updateStateDb(session.state, session.status, session.AuthorizationToken);
-          //
-          deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
-          //
-          client = await startSock();
-          //
-        } else {
-          //
-          session.state = "CLOSED";
-          session.status = 'CLOSED';
-          session.qrcodedata = null;
-          session.message = "Sessão fechada";
-          //
-        }
+        //
+        session.state = "CLOSED";
+        session.status = 'CLOSED';
+        session.qrcodedata = null;
+        session.message = "Sessão fechada";
+        //
+        await updateStateDb(session.state, session.status, session.AuthorizationToken);
+        //
+        deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+        //
+        client = await startSock();
+        //
       } else if (connection === 'undefined') {
         console.log("- Connection undefined".red);
       }
