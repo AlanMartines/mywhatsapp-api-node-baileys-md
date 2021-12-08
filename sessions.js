@@ -506,10 +506,10 @@ module.exports = class Sessions {
         });
     		*/
     //
+    let attempts = 0;
+    let connectionvalidate = false;
+    //
     client.ev.on('connection.update', async (conn) => {
-      //
-      let attempts = 0;
-      let connection = false;
       //
       console.log("- Connection update".green);
       //
@@ -565,9 +565,9 @@ module.exports = class Sessions {
         //
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
-        connection = true;
+        connectionvalidate = true;
         //
-      } else if (connection === 'close' && connection === false) {
+      } else if (connection === 'close' && connectionvalidate === false) {
         console.log("- Connection close".red);
         //
         session.state = "CLOSED";
