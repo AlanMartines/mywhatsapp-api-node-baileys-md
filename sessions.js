@@ -563,6 +563,7 @@ module.exports = class Sessions {
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
       } else if (connection === 'close') {
+        console.log("- Connection close".red);
         if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
           //
           //deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
