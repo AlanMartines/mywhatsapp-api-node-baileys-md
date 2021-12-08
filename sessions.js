@@ -507,11 +507,12 @@ module.exports = class Sessions {
     		*/
     //
     let attempts = 0;
-    let connectionvalidate = false;
     //
     client.ev.on('connection.update', async (conn) => {
       //
-      console.log("- Connection update".green);
+      let connectionvalidate = false;
+      //
+      console.log("- Connection update".yellow);
       //
       const {
         connection,
