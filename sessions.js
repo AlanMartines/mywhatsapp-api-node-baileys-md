@@ -611,6 +611,8 @@ module.exports = class Sessions {
         }
       } else if (connection === 'undefined') {
         console.log("- Connection undefined".red);
+      } else {
+        console.log(`- Connection ${connection}`.yellow);
       }
       //
     });
