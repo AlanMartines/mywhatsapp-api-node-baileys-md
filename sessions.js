@@ -762,10 +762,7 @@ module.exports = class Sessions {
     var session = Sessions.getSession(SessionName);
     var LogoutSession = await session.client.then(async client => {
       try {
-        //await client.logout();
-        session.state = "DISCONNECTED";
-        session.status = 'CLOSED';
-        console.log("- Sessão desconetada");
+        await client.logout();
         //
         var returnLogout = {
           result: "success",
@@ -773,6 +770,10 @@ module.exports = class Sessions {
           status: session.status,
           message: "Sessão desconetada"
         };
+        //
+        session.state = "DISCONNECTED";
+        session.status = 'CLOSED';
+        console.log("- Sessão desconetada");
         //
         await deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
         //
