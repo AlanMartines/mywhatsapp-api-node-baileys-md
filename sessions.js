@@ -164,7 +164,6 @@ async function deletaToken(filePath) {
       console.log(`- Arquivo "${filePath}" removido com sucesso`);
     }
   });
-
 }
 //
 // ------------------------------------------------------------------------------------------------------- //
