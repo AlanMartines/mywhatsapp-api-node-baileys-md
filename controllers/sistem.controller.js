@@ -1033,358 +1033,6 @@ router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (r
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Enviar Contato
-router.post("/sendContactVcardGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var sendContactVcard = await Sessions.sendContactVcard(
-        req.body.SessionName.trim(),
-        req.body.groupId.trim() + '@g.us',
-        checkNumberStatus.number,
-        req.body.namecontact
-      );
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendContactVcard
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendContactVcard
-
-
-//
-// ------------------------------------------------------------------------------------------------//
-//
-//Enviar Texto em Grupo
-router.post("/sendTextGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var sendText = await Sessions.sendText(
-        req.body.SessionName.trim(),
-        req.body.groupId.trim() + '@g.us',
-        req.body.msg
-      );
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendText
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendTextGrupo
-
-//
-// ------------------------------------------------------------------------------------------------//
-//
-//Enviar localização no grupo
-router.post("/sendLocationGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var sendLocation = await Sessions.sendLocation(
-        req.body.SessionName.trim(),
-        req.body.groupId.trim() + '@g.us',
-        req.body.lat,
-        req.body.long,
-        req.body.local
-      );
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendLocation
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendLocation
-
-//
-// ------------------------------------------------------------------------------------------------//
-//
-//Enviar links com preview
-router.post("/sendLinkPreviewGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var sendLinkPreview = await Sessions.sendLinkPreview(
-        req.body.SessionName.trim(),
-        req.body.groupId.trim() + '@g.us',
-        req.body.link,
-        req.body.detail
-      );
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendLinkPreview
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendLinkPreview
-
-
-
-
-
-// Enviar imagen no grupo
-router.post("/sendImageGrupo", upload.single('fileimg'), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var sendImage = await Sessions.sendImage(
-        req.body.SessionName.trim(),
-        req.body.groupId.trim() + '@g.us',
-        req.file.buffer,
-        req.file.mimetype,
-        req.file.originalname,
-        req.body.caption
-      );
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendImage
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendImage
-//
-// ------------------------------------------------------------------------------------------------//
-//
-// Enviar imagen no grupo
-router.post("/sendImageBase64Grupo", upload.single(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var folderName = fs.mkdtempSync(path.join(os.tmpdir(), 'baileys-' + req.body.SessionName.trim() + '-'));
-      var filePath = path.join(folderName, req.body.originalname);
-      fs.writeFileSync(filePath, req.body.base64);
-      var mimetype = mime.lookup(filePath);
-      //
-      var sendImage = await Sessions.sendImage(
-        req.body.SessionName.trim(),
-        req.body.groupId.trim() + '@g.us',
-        Buffer.from(req.body.base64, 'base64'),
-        mimetype,
-        req.body.originalname,
-        req.body.caption
-      );
-      //
-      await deletaArquivosTemp(filePath);
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendImage
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendImage
-//
-// ------------------------------------------------------------------------------------------------//
-//
-// Enviar imagen no grupo
-router.post("/sendImageFromBase64Grupo", upload.single(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var sendImage = await Sessions.sendImage(
-        req.body.SessionName.trim(),
-        req.body.groupId.trim() + '@g.us',
-        Buffer.from(req.body.base64, 'base64'),
-        req.body.mimetype,
-        req.body.originalname,
-        req.body.caption
-      );
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendImage
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendImage
-
-// Enviar arquivo/documento
-router.post("/sendFileGroup", upload.single('file'), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var sendFile = await Sessions.sendFile(
-        req.body.SessionName.trim(),
-        req.body.groupId.trim() + '@g.us',
-        req.file.buffer,
-        req.file.mimetype,
-        req.file.originalname,
-        req.file.mimetype.split('/')[1],
-        req.body.caption
-      );
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendFile
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendFile
-
-// Enviar arquivo/documento
-router.post("/sendFileBase64Group", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var folderName = fs.mkdtempSync(path.join(os.tmpdir(), 'baileys-' + req.body.SessionName.trim() + '-'));
-      var filePath = path.join(folderName, req.body.originalname);
-      fs.writeFileSync(filePath, req.body.base64, 'base64');
-      var originalname = path.basename(filePath);
-      var mimetype = mime.lookup(filePath);
-      //
-      var sendFile = await Sessions.sendFile(
-        req.body.SessionName.trim(),
-        req.body.groupId.trim() + '@g.us',
-        Buffer.from(req.body.base64, 'base64'),
-        mimetype,
-        req.body.originalname,
-        mimetype.split('/')[1],
-        req.body.caption
-      );
-      //
-      await deletaArquivosTemp(filePath);
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendFile
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendFile
-
-// Enviar arquivo/documento
-router.post("/sendFileFromBase64Group", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var sendFile = await Sessions.sendFile(
-        req.body.SessionName.trim(),
-        req.body.groupId.trim() + '@g.us',
-        Buffer.from(req.body.base64, 'base64'),
-        req.body.mimetype,
-        req.body.originalname,
-        req.body.mimetype.split('/')[1],
-        req.body.caption
-      );
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendFile
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendFile
-//
-// ------------------------------------------------------------------------------------------------//
-//
 /*
 ╦═╗┌─┐┌┬┐┬─┐┬┌─┐┬  ┬┬┌┐┌┌─┐  ╔╦╗┌─┐┌┬┐┌─┐                
 ╠╦╝├┤  │ ├┬┘│├┤ └┐┌┘│││││ ┬   ║║├─┤ │ ├─┤                
@@ -1735,6 +1383,326 @@ router.post("/checkNumberStatusMassa", upload.single('contatos'), verifyToken.ve
 ║ ╦├┬┘│ ││ │├─┘  ╠╣ │ │││││   │ ││ ││││└─┐               
 ╚═╝┴└─└─┘└─┘┴    ╚  └─┘┘└┘└─┘ ┴ ┴└─┘┘└┘└─┘               
 */
+// Enviar Contato
+router.post("/sendContactVcardGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
+  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
+  switch (sessionStatus.status) {
+    case 'isLogged':
+      //
+      var sendContactVcard = await Sessions.sendContactVcard(
+        req.body.SessionName.trim(),
+        req.body.groupId.trim() + '@g.us',
+        checkNumberStatus.number,
+        req.body.namecontact
+      );
+      //
+      //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
+      res.status(200).json({
+        "Status": sendContactVcard
+      });
+      break;
+    default:
+      res.setHeader('Content-Type', 'application/json');
+      res.status(400).json({
+        "Status": sessionStatus
+      });
+  }
+}); //sendContactVcard
+//
+// ------------------------------------------------------------------------------------------------//
+//
+//Enviar Texto em Grupo
+router.post("/sendTextGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
+  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
+  switch (sessionStatus.status) {
+    case 'isLogged':
+      //
+      var sendText = await Sessions.sendText(
+        req.body.SessionName.trim(),
+        req.body.groupId.trim() + '@g.us',
+        req.body.msg
+      );
+      //
+      //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
+      res.status(200).json({
+        "Status": sendText
+      });
+      break;
+    default:
+      res.setHeader('Content-Type', 'application/json');
+      res.status(400).json({
+        "Status": sessionStatus
+      });
+  }
+}); //sendTextGrupo
+
+//
+// ------------------------------------------------------------------------------------------------//
+//
+//Enviar localização no grupo
+router.post("/sendLocationGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
+  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
+  switch (sessionStatus.status) {
+    case 'isLogged':
+      //
+      var sendLocation = await Sessions.sendLocation(
+        req.body.SessionName.trim(),
+        req.body.groupId.trim() + '@g.us',
+        req.body.lat,
+        req.body.long,
+        req.body.local
+      );
+      //
+      //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
+      res.status(200).json({
+        "Status": sendLocation
+      });
+      break;
+    default:
+      res.setHeader('Content-Type', 'application/json');
+      res.status(400).json({
+        "Status": sessionStatus
+      });
+  }
+}); //sendLocation
+//
+// ------------------------------------------------------------------------------------------------//
+//
+//Enviar links com preview
+router.post("/sendLinkPreviewGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
+  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
+  switch (sessionStatus.status) {
+    case 'isLogged':
+      //
+      var sendLinkPreview = await Sessions.sendLinkPreview(
+        req.body.SessionName.trim(),
+        req.body.groupId.trim() + '@g.us',
+        req.body.link,
+        req.body.detail
+      );
+      //
+      //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
+      res.status(200).json({
+        "Status": sendLinkPreview
+      });
+      break;
+    default:
+      res.setHeader('Content-Type', 'application/json');
+      res.status(400).json({
+        "Status": sessionStatus
+      });
+  }
+}); //sendLinkPreview
+//
+// ------------------------------------------------------------------------------------------------//
+//
+// Enviar imagen no grupo
+router.post("/sendImageGrupo", upload.single('fileimg'), verifyToken.verify, async (req, res, next) => {
+  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
+  switch (sessionStatus.status) {
+    case 'isLogged':
+      //
+      var sendImage = await Sessions.sendImage(
+        req.body.SessionName.trim(),
+        req.body.groupId.trim() + '@g.us',
+        req.file.buffer,
+        req.file.mimetype,
+        req.file.originalname,
+        req.body.caption
+      );
+      //
+      //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
+      res.status(200).json({
+        "Status": sendImage
+      });
+      break;
+    default:
+      res.setHeader('Content-Type', 'application/json');
+      res.status(400).json({
+        "Status": sessionStatus
+      });
+  }
+}); //sendImage
+//
+// ------------------------------------------------------------------------------------------------//
+//
+// Enviar imagen no grupo
+router.post("/sendImageBase64Grupo", upload.single(''), verifyToken.verify, async (req, res, next) => {
+  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
+  switch (sessionStatus.status) {
+    case 'isLogged':
+      //
+      var folderName = fs.mkdtempSync(path.join(os.tmpdir(), 'baileys-' + req.body.SessionName.trim() + '-'));
+      var filePath = path.join(folderName, req.body.originalname);
+      fs.writeFileSync(filePath, req.body.base64);
+      var mimetype = mime.lookup(filePath);
+      //
+      var sendImage = await Sessions.sendImage(
+        req.body.SessionName.trim(),
+        req.body.groupId.trim() + '@g.us',
+        Buffer.from(req.body.base64, 'base64'),
+        mimetype,
+        req.body.originalname,
+        req.body.caption
+      );
+      //
+      await deletaArquivosTemp(filePath);
+      //
+      //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
+      res.status(200).json({
+        "Status": sendImage
+      });
+      break;
+    default:
+      res.setHeader('Content-Type', 'application/json');
+      res.status(400).json({
+        "Status": sessionStatus
+      });
+  }
+}); //sendImage
+//
+// ------------------------------------------------------------------------------------------------//
+//
+// Enviar imagen no grupo
+router.post("/sendImageFromBase64Grupo", upload.single(''), verifyToken.verify, async (req, res, next) => {
+  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
+  switch (sessionStatus.status) {
+    case 'isLogged':
+      //
+      var sendImage = await Sessions.sendImage(
+        req.body.SessionName.trim(),
+        req.body.groupId.trim() + '@g.us',
+        Buffer.from(req.body.base64, 'base64'),
+        req.body.mimetype,
+        req.body.originalname,
+        req.body.caption
+      );
+      //
+      //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
+      res.status(200).json({
+        "Status": sendImage
+      });
+      break;
+    default:
+      res.setHeader('Content-Type', 'application/json');
+      res.status(400).json({
+        "Status": sessionStatus
+      });
+  }
+}); //sendImage
+//
+// ------------------------------------------------------------------------------------------------//
+//
+// Enviar arquivo/documento
+router.post("/sendFileGroup", upload.single('file'), verifyToken.verify, async (req, res, next) => {
+  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
+  switch (sessionStatus.status) {
+    case 'isLogged':
+      //
+      var sendFile = await Sessions.sendFile(
+        req.body.SessionName.trim(),
+        req.body.groupId.trim() + '@g.us',
+        req.file.buffer,
+        req.file.mimetype,
+        req.file.originalname,
+        req.file.mimetype.split('/')[1],
+        req.body.caption
+      );
+      //
+      //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
+      res.status(200).json({
+        "Status": sendFile
+      });
+      break;
+    default:
+      res.setHeader('Content-Type', 'application/json');
+      res.status(400).json({
+        "Status": sessionStatus
+      });
+  }
+}); //sendFile
+//
+// ------------------------------------------------------------------------------------------------//
+//
+// Enviar arquivo/documento
+router.post("/sendFileBase64Group", upload.none(''), verifyToken.verify, async (req, res, next) => {
+  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
+  switch (sessionStatus.status) {
+    case 'isLogged':
+      //
+      var folderName = fs.mkdtempSync(path.join(os.tmpdir(), 'baileys-' + req.body.SessionName.trim() + '-'));
+      var filePath = path.join(folderName, req.body.originalname);
+      fs.writeFileSync(filePath, req.body.base64, 'base64');
+      var originalname = path.basename(filePath);
+      var mimetype = mime.lookup(filePath);
+      //
+      var sendFile = await Sessions.sendFile(
+        req.body.SessionName.trim(),
+        req.body.groupId.trim() + '@g.us',
+        Buffer.from(req.body.base64, 'base64'),
+        mimetype,
+        req.body.originalname,
+        mimetype.split('/')[1],
+        req.body.caption
+      );
+      //
+      await deletaArquivosTemp(filePath);
+      //
+      //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
+      res.status(200).json({
+        "Status": sendFile
+      });
+      break;
+    default:
+      res.setHeader('Content-Type', 'application/json');
+      res.status(400).json({
+        "Status": sessionStatus
+      });
+  }
+}); //sendFile
+//
+// ------------------------------------------------------------------------------------------------//
+//
+// Enviar arquivo/documento
+router.post("/sendFileFromBase64Group", upload.none(''), verifyToken.verify, async (req, res, next) => {
+  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
+  switch (sessionStatus.status) {
+    case 'isLogged':
+      //
+      var sendFile = await Sessions.sendFile(
+        req.body.SessionName.trim(),
+        req.body.groupId.trim() + '@g.us',
+        Buffer.from(req.body.base64, 'base64'),
+        req.body.mimetype,
+        req.body.originalname,
+        req.body.mimetype.split('/')[1],
+        req.body.caption
+      );
+      //
+      //console.log(result);
+      res.setHeader('Content-Type', 'application/json');
+      res.status(200).json({
+        "Status": sendFile
+      });
+      break;
+    default:
+      res.setHeader('Content-Type', 'application/json');
+      res.status(400).json({
+        "Status": sessionStatus
+      });
+  }
+}); //sendFile
+//
+// ------------------------------------------------------------------------------------------------//
 //
 //Deixar o grupo
 router.post("/leaveGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
