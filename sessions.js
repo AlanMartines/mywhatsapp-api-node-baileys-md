@@ -394,28 +394,30 @@ module.exports = class Sessions {
       const clientStart = makeWASocket({
         /** provide an auth state object to maintain the auth state */
         auth: state,
+        /** version to connect with */
+        version: [2, 2146, 9],
+        /** override browser config */
+        browser: ['My-Whatsapp', 'Google Chrome', '96.00'],
         /** the WS url to connect to WA */
-        //waWebSocketUrl: undefined,
+        waWebSocketUrl: 'wss://web.whatsapp.com/ws/chat',
         /** Fails the connection if the connection times out in this time interval or no data is received */
-        connectTimeoutMs: 5000,
-        /** Default timeout for queries, undefined for no timeout */
-        defaultQueryTimeoutMs: undefined,
+        connectTimeoutMs: 20000,
         /** ping-pong interval for WS connection */
-        keepAliveIntervalMs: 30000,
-        /** proxy agent */
-        agent: undefined,
+        keepAliveIntervalMs: 25000,
         /** pino logger */
         logger: pino({
           level: 'silent'
         }),
-        /** version to connect with */
-        //version: [2, 2142, 12],
-        /** override browser config */
-        browser: ['My-Whatsapp', 'Google Chrome', '96.00'],
-        /** agent used for fetch requests -- uploading/downloading media */
-        fetchAgent: undefined,
         /** should the QR be printed in the terminal */
         printQRInTerminal: parseInt(config.VIEW_QRCODE_TERMINAL),
+        //
+        emitOwnEvents: true,
+        /** Default timeout for queries, undefined for no timeout */
+        defaultQueryTimeoutMs: undefined,
+        /** proxy agent */
+        agent: undefined,
+        /** agent used for fetch requests -- uploading/downloading media */
+        fetchAgent: undefined,
         /** 
          * fetch a message from your store 
          * implement this so that messages failed to send (solves the "this message can take a while" issue) can be retried
