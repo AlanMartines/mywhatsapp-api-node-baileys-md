@@ -1357,7 +1357,7 @@ module.exports = class Sessions {
     var session = Sessions.getSession(SessionName);
     var resultgetAllGroups = await session.client.then(async client => {
       //return chatArray;
-      return await client.GroupMetadata();
+      return await client.extractGroupMetadata();
       //
       //
     });
