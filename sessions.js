@@ -578,7 +578,11 @@ module.exports = class Sessions {
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
       } else if (connection === 'close') {
-        if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
+        // reconnect if not logged out
+        const shouldReconnect = (lastDisconnect.error).output.statusCode !== DisconnectReason.loggedOut;
+        console.log('- Connection closed due to ', lastDisconnect.error, ', reconnecting ', shouldReconnect);
+
+        if (shouldReconnect) {
           console.log("- Connection close".red);
           //
           session.state = "CLOSED";
@@ -604,12 +608,13 @@ module.exports = class Sessions {
         //
       } else if (typeof connection === undefined) {
         console.log("- Connection undefined".red);
-      } else {
-        console.log(`- Connection ${connection}`.yellow);
       }
+      //
+      console.log('Connection Update: ', conn)
       //
     });
     //
+    // auto save dos dados da sessão
     client.ev.on("creds.update", saveState);
     //
     return client;
