@@ -347,7 +347,7 @@ module.exports = class Sessions {
     //-------------------------------------------------------------------------------------------------------------------------------------//
     //
     if (fs.existsSync(`${config.TOKENSPATCH}/baileysmd-${SessionName}.data.json`)) {
-      var configToken = require(`baileysmd-${config.TOKENSPATCH}/${SessionName}.data.json`);
+      var configToken = require(`${config.TOKENSPATCH}/baileysmd-${SessionName}.data.json`);
       if (typeof configToken.creds.me.id !== undefined) {
         console.log('- ID da sessão do Whatsapp:', configToken.creds.me.id);
       } else {
@@ -359,7 +359,7 @@ module.exports = class Sessions {
     const connect = () => {
       let status = undefined;
       try {
-        const value = JSON.parse(fs.readFileSync(`baileysmd-${config.TOKENSPATCH}/${SessionName}.data.json`, {
+        const value = JSON.parse(fs.readFileSync(`${config.TOKENSPATCH}/baileysmd-${SessionName}.data.json`, {
           encoding: 'utf-8'
         }), BufferJSON.reviver);
         status = {
@@ -372,7 +372,7 @@ module.exports = class Sessions {
 
     const saveConnection = (status) => {
       status = status || (client === null || client === void 0 ? void 0 : client.authState);
-      fs.writeFileSync(`baileysmd-${config.TOKENSPATCH}/${SessionName}.data.json`,
+      fs.writeFileSync(`${config.TOKENSPATCH}/baileysmd-${SessionName}.data.json`,
         JSON.stringify(status, BufferJSON.replacer, 2));
     };
 		*/
