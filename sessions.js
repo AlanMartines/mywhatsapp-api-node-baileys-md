@@ -449,8 +449,8 @@ module.exports = class Sessions {
       } else if (statusFind == 'isDisconnected') {
         console.log("- statusFind isDisconnected".red);
         //
-        session.state = "CLOSED";
-        session.status = 'CLOSED';
+        session.state = "DISCONNECTED";
+        session.status = 'notLogged';
         session.qrcodedata = null;
         session.message = "Sessão fechada";
         //
@@ -465,7 +465,7 @@ module.exports = class Sessions {
         console.log("- statusFind notLogged".red);
         //
         session.state = "CLOSED";
-        session.status = 'CLOSED';
+        session.status = 'notLogged';
         session.qrcodedata = null;
         session.message = "Sessão fechada";
         //
@@ -477,7 +477,7 @@ module.exports = class Sessions {
         console.log("- statusFind tokenRemoved".yellow);
         //
         session.state = "CLOSED";
-        session.status = 'CLOSED';
+        session.status = 'notLogged';
         session.qrcodedata = null;
         session.message = "Sessão fechada";
         //
