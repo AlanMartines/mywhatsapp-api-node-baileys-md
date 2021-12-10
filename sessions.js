@@ -582,8 +582,6 @@ module.exports = class Sessions {
         console.log(`- Output: \n ${JSON.stringify(DisconnectReason.loggedOut)}`);
         // reconnect if not logged out
         if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
-
-        } else if (lastDisconnect.error.output.statusCode === DisconnectReason.loggedOut) {
           //
           session.state = "CLOSED";
           session.status = 'notLogged';
