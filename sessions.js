@@ -578,6 +578,8 @@ module.exports = class Sessions {
         //
       } else if (connection === 'close') {
         console.log("- Connection close".red);
+        console.log(`- Output: \n ${JSON.stringify(lastDisconnect.error.output)}`);
+        console.log(`- Output: \n ${JSON.stringify(DisconnectReason.loggedOut)}`);
         // reconnect if not logged out
         if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
           //
@@ -607,8 +609,6 @@ module.exports = class Sessions {
       }
       //
       console.log('Connection Update: ', conn);
-      console.log(`- Output: \n ${JSON.stringify(lastDisconnect.error.output)}`);
-      console.log(`- Output: \n ${JSON.stringify(DisconnectReason.loggedOut)}`);
       //
     });
     //
