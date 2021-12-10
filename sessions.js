@@ -357,8 +357,6 @@ module.exports = class Sessions {
         //fs.unlinkSync(`baileysmd-${session.tokenPatch}/${SessionName}.data.json`);
       }
     }
-    //
-    let client = undefined;
     /*
     const connect = () => {
       let status = undefined;
@@ -380,6 +378,8 @@ module.exports = class Sessions {
         JSON.stringify(status, BufferJSON.replacer, 2));
     };
 		*/
+    //
+    let client = undefined;
     //
     const {
       state,
