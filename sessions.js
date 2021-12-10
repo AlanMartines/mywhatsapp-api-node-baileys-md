@@ -580,14 +580,11 @@ module.exports = class Sessions {
         //
       } else if (connection === 'close') {
         // reconnect if not logged out
-        const shouldReconnect = (lastDisconnect.error).output.statusCode !== DisconnectReason.loggedOut;
-        console.log('- Connection closed due to ', lastDisconnect.error, ', reconnecting ', shouldReconnect);
-
-        if (shouldReconnect) {
+        if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
           console.log("- Connection close".red);
           //
           session.state = "CLOSED";
-          session.status = 'CLOSED';
+          session.status = 'notLogged';
           session.qrcodedata = null;
           session.message = "Sessão fechada";
           //
