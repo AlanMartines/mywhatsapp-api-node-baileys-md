@@ -583,7 +583,7 @@ module.exports = class Sessions {
         // reconnect if not logged out
         if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
 
-        } else if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
+        } else if (lastDisconnect.error.output.statusCode === DisconnectReason.loggedOut) {
           //
           session.state = "CLOSED";
           session.status = 'notLogged';
@@ -592,7 +592,7 @@ module.exports = class Sessions {
           //
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
           //
-          deletaToken(`baileysmd-${config.TOKENSPATCH}/${SessionName}.data.json`);
+          deletaToken(`${config.TOKENSPATCH}/baileysmd-${SessionName}.data.json`);
           //
           client = await startSock();
           //
