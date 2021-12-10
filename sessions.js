@@ -598,7 +598,7 @@ module.exports = class Sessions {
           console.log("- Connection close".red);
           //
           session.state = "CLOSED";
-          session.status = 'CLOSED';
+          session.status = 'notLogged';
           session.qrcodedata = null;
           session.message = "Sessão fechada";
           //
