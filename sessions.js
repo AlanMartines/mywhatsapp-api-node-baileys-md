@@ -348,12 +348,12 @@ module.exports = class Sessions {
     //
     //-------------------------------------------------------------------------------------------------------------------------------------//
     //
-    if (fs.existsSync(`${session.tokenPatch}/${SessionName}.data.json`)) {
+    if (fs.existsSync(`${session.tokenPatch}/baileysmd-${SessionName}.data.json`)) {
       var configToken = require(`baileysmd-${session.tokenPatch}/${SessionName}.data.json`);
       if (typeof configToken.creds.me.id !== undefined) {
         console.log('- ID da sessão do Whatsapp:', configToken.creds.me.id);
       } else {
-        deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+        deletaToken(`${session.tokenPatch}/baileysmd-${SessionName}.data.json`);
         //fs.unlinkSync(`baileysmd-${session.tokenPatch}/${SessionName}.data.json`);
       }
     }
@@ -384,7 +384,7 @@ module.exports = class Sessions {
     const {
       state,
       saveState
-    } = useSingleFileAuthState(`baileysmd-${session.tokenPatch}/${SessionName}.data.json`);
+    } = useSingleFileAuthState(`${session.tokenPatch}/baileysmd-${SessionName}.data.json`);
     //
     // https://github.com/adiwajshing/Baileys/issues/751
     //
@@ -456,7 +456,7 @@ module.exports = class Sessions {
         //
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
-        //deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+        //deletaToken(`${session.tokenPatch}/baileysmd-${SessionName}.data.json`);
         //
         //client = await startSock();
         //Sessions.initSession(SessionName);
@@ -471,7 +471,7 @@ module.exports = class Sessions {
         //
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
-        //deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+        //deletaToken(`${session.tokenPatch}/baileysmd-${SessionName}.data.json`);
         //
       } else if (statusFind == 'tokenRemoved') {
         console.log("- statusFind tokenRemoved".yellow);
@@ -581,8 +581,9 @@ module.exports = class Sessions {
       } else if (connection === 'close') {
         console.log("- Connection close".red);
         // reconnect if not logged out
-        /*
         if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
+
+        } else if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
           console.log("- Connection close".red);
           //
           session.state = "CLOSED";
@@ -605,7 +606,6 @@ module.exports = class Sessions {
           session.message = "Sessão fechada";
           //
         }
-				*/
         //
       } else if (typeof connection === undefined) {
         console.log("- Connection undefined".red);
@@ -776,7 +776,7 @@ module.exports = class Sessions {
         session.status = 'CLOSED';
         console.log("- Sessão desconetada");
         //
-        await deletaToken(`${session.tokenPatch}/${SessionName}.data.json`);
+        await deletaToken(`${session.tokenPatch}/baileysmd-${SessionName}.data.json`);
         //
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
