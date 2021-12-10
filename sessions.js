@@ -577,7 +577,8 @@ module.exports = class Sessions {
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
       } else if (connection === 'close') {
-        console.log(`- ${JSON.stringify(lastDisconnect.error.output)}`.yellow);
+        console.log("- Connection close".red);
+        console.log(`- Output: \n ${JSON.stringify(lastDisconnect.error.output)}\n`);
         // reconnect if not logged out
         if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
 
