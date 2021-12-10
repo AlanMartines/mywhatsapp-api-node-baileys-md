@@ -583,7 +583,6 @@ module.exports = class Sessions {
         if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
 
         } else if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
-          console.log("- Connection close".red);
           //
           session.state = "CLOSED";
           session.status = 'notLogged';
