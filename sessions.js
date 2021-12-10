@@ -579,7 +579,9 @@ module.exports = class Sessions {
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
       } else if (connection === 'close') {
+        console.log("- Connection close".red);
         // reconnect if not logged out
+        /*
         if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
           console.log("- Connection close".red);
           //
@@ -603,6 +605,7 @@ module.exports = class Sessions {
           session.message = "Sessão fechada";
           //
         }
+				*/
         //
       } else if (typeof connection === undefined) {
         console.log("- Connection undefined".red);
