@@ -329,8 +329,6 @@ module.exports = class Sessions {
     console.log("- Iniciando sessão");
     var session = Sessions.getSession(SessionName);
     //
-    session.tokenPatch = config.TOKENSPATCH;
-    //
     //
     /*
         ╔═╗┌─┐┌┬┐┬┌─┐┌┐┌┌─┐┬    ╔═╗┬─┐┌─┐┌─┐┌┬┐┌─┐  ╔═╗┌─┐┬─┐┌─┐┌┬┐┌─┐┌┬┐┌─┐┬─┐┌─┐
@@ -342,26 +340,26 @@ module.exports = class Sessions {
     //
     console.log('- Nome da sessão:', SessionName);
     //
-    console.log('- Folder Token:', session.tokenPatch);
+    console.log('- Folder Token:', config.TOKENSPATCH);
     //
     console.log("- AuthorizationToken:", session.AuthorizationToken);
     //
     //-------------------------------------------------------------------------------------------------------------------------------------//
     //
-    if (fs.existsSync(`${session.tokenPatch}/baileysmd-${SessionName}.data.json`)) {
-      var configToken = require(`baileysmd-${session.tokenPatch}/${SessionName}.data.json`);
+    if (fs.existsSync(`${config.TOKENSPATCH}/baileysmd-${SessionName}.data.json`)) {
+      var configToken = require(`baileysmd-${config.TOKENSPATCH}/${SessionName}.data.json`);
       if (typeof configToken.creds.me.id !== undefined) {
         console.log('- ID da sessão do Whatsapp:', configToken.creds.me.id);
       } else {
-        deletaToken(`${session.tokenPatch}/baileysmd-${SessionName}.data.json`);
-        //fs.unlinkSync(`baileysmd-${session.tokenPatch}/${SessionName}.data.json`);
+        deletaToken(`${config.TOKENSPATCH}/baileysmd-${SessionName}.data.json`);
+        //fs.unlinkSync(`baileysmd-${config.TOKENSPATCH}/${SessionName}.data.json`);
       }
     }
     /*
     const connect = () => {
       let status = undefined;
       try {
-        const value = JSON.parse(fs.readFileSync(`baileysmd-${session.tokenPatch}/${SessionName}.data.json`, {
+        const value = JSON.parse(fs.readFileSync(`baileysmd-${config.TOKENSPATCH}/${SessionName}.data.json`, {
           encoding: 'utf-8'
         }), BufferJSON.reviver);
         status = {
@@ -374,7 +372,7 @@ module.exports = class Sessions {
 
     const saveConnection = (status) => {
       status = status || (client === null || client === void 0 ? void 0 : client.authState);
-      fs.writeFileSync(`baileysmd-${session.tokenPatch}/${SessionName}.data.json`,
+      fs.writeFileSync(`baileysmd-${config.TOKENSPATCH}/${SessionName}.data.json`,
         JSON.stringify(status, BufferJSON.replacer, 2));
     };
 		*/
@@ -384,7 +382,7 @@ module.exports = class Sessions {
     const {
       state,
       saveState
-    } = useSingleFileAuthState(`${session.tokenPatch}/baileysmd-${SessionName}.data.json`);
+    } = useSingleFileAuthState(`${config.TOKENSPATCH}/baileysmd-${SessionName}.data.json`);
     //
     // https://github.com/adiwajshing/Baileys/issues/751
     //
@@ -456,7 +454,7 @@ module.exports = class Sessions {
         //
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
-        //deletaToken(`${session.tokenPatch}/baileysmd-${SessionName}.data.json`);
+        //deletaToken(`${config.TOKENSPATCH}/baileysmd-${SessionName}.data.json`);
         //
         //client = await startSock();
         //Sessions.initSession(SessionName);
@@ -471,7 +469,7 @@ module.exports = class Sessions {
         //
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
-        //deletaToken(`${session.tokenPatch}/baileysmd-${SessionName}.data.json`);
+        //deletaToken(`${config.TOKENSPATCH}/baileysmd-${SessionName}.data.json`);
         //
       } else if (statusFind == 'tokenRemoved') {
         console.log("- statusFind tokenRemoved".yellow);
@@ -593,7 +591,7 @@ module.exports = class Sessions {
           //
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
           //
-          deletaToken(`baileysmd-${session.tokenPatch}/${SessionName}.data.json`);
+          deletaToken(`baileysmd-${config.TOKENSPATCH}/${SessionName}.data.json`);
           //
           client = await startSock();
           //
@@ -776,7 +774,7 @@ module.exports = class Sessions {
         session.status = 'CLOSED';
         console.log("- Sessão desconetada");
         //
-        await deletaToken(`${session.tokenPatch}/baileysmd-${SessionName}.data.json`);
+        await deletaToken(`${config.TOKENSPATCH}/baileysmd-${SessionName}.data.json`);
         //
         await updateStateDb(session.state, session.status, session.AuthorizationToken);
         //
