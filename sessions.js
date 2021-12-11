@@ -2031,7 +2031,7 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  // Junte-se a um grupo usando o código de convite do grupo
+  // Só permite que administradores enviem mensagens
   static async onlyAdminsMessagesGroup(
     SessionName,
     groupId
@@ -2064,7 +2064,7 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  // Junte-se a um grupo usando o código de convite do grupo
+  // Permitir que todos modifiquem as configurações do grupo
   static async everyoneModifySettingsGroup(
     SessionName,
     groupId,
@@ -2073,32 +2073,14 @@ module.exports = class Sessions {
     console.log("- everyoneModifySettingsGroup");
     var session = Sessions.getSession(SessionName);
     var everyoneModifySettingsGroup = await session.client.then(async client => {
-      return await client.groupSettingChange(groupId, GroupSettingChange.settingsChange, change).then((result) => {
+      return await client.groupSettingUpdate(groupId, 'unlocked').then((result) => {
         //console.log('- Result: ', result); //return object success
         //
-        if (result.status == 200 || result.status == 207) {
-          if (change) {
-            return {
-              "erro": false,
-              "status": 200,
-              "message": "Todos modificam as configurações do grupo"
-            };
-          } else {
-            return {
-              "erro": false,
-              "status": 200,
-              "message": "Somente admins podem modificar as configurações do grupo"
-            };
-          }
-        } else {
-          //
-          return {
-            "erro": true,
-            "status": 404,
-            "message": "Erro ao habilitar as configurações do grupo"
-          };
-          //
-        }
+        return {
+          "erro": false,
+          "status": 200,
+          "message": "Todos podem modificar as configurações do grupo"
+        };
         //
       }).catch((erro) => {
         console.error('Error when sending: ', erro); //return object error
@@ -2106,13 +2088,46 @@ module.exports = class Sessions {
         return {
           "erro": true,
           "status": 404,
-          "message": "Erro ao habilitar as configurações do grupo"
+          "message": "Erro ao habilitar as configurações do grupo para todos"
         };
         //
       });
     });
     return everyoneModifySettingsGroup;
   } //everyoneModifySettingsGroup
+  //
+  // ------------------------------------------------------------------------------------------------//
+  //
+  // Só permite que os administradores modifiquem as configurações do grupo
+  static async everyoneAdminsModifySettingsGroup(
+    SessionName,
+    groupId
+  ) {
+    console.log("- everyoneAdminsModifySettingsGroup");
+    var session = Sessions.getSession(SessionName);
+    var onlyAdminsMessagesGroup = await session.client.then(async client => {
+      return await client.groupSettingUpdate(groupId, 'locked').then((result) => {
+        //console.log('- Result: ', result); //return object success
+        //
+        return {
+          "erro": false,
+          "status": 200,
+          "message": "Apenas administradores podem modificar as configurações do grupo."
+        };
+        //
+      }).catch((erro) => {
+        console.error('Error when sending: ', erro); //return object error
+        //
+        return {
+          "erro": true,
+          "status": 404,
+          "message": "Erro ao habilitar que administradores modifiquem as configurações do grupo"
+        };
+        //
+      });
+    });
+    return onlyAdminsMessagesGroup;
+  } //onlyAdminsMessagesGroup
   //
   // ------------------------------------------------------------------------------------------------//
   //
