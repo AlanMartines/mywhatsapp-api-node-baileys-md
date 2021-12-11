@@ -1328,14 +1328,20 @@ module.exports = class Sessions {
             var buffer = Buffer.from(resultAllContacts.desc);
             var desc = buffer.toString();
           } else {
-            desc = null;
+            var desc = null;
+          }
+          //
+          if (resultAllContacts.descId && resultAllContacts.descId != undefined) {
+            var descId = resultAllContacts.descId
+          } else {
+            var descId = null;
           }
           //
           getAllGroups.push({
             "groupId": resultAllContacts.id.replace('@g.us', ''),
             "name": resultAllContacts.subject,
             "desc": desc,
-            "descId": resultAllContacts.descId,
+            "descId": descId,
           });
           //
         });
