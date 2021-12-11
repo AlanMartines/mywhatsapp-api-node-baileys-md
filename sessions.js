@@ -1296,20 +1296,8 @@ module.exports = class Sessions {
       //
       return await client.getContactDetail(phonefull).then(async (result) => {
         //console.log('Result: ', result); //return object success
-        let groups = Object.entries(result).slice(0).map(entry => entry[1]);
         //
-        var getAllGroups = [];
-        //
-        await forEach(groups, async (resultAllContacts) => {
-          //
-          getAllGroups.push({
-            "groupId": resultAllContacts.id.replace('@g.us', ''),
-            "name": resultAllContacts.subject
-          });
-          //
-        });
-        //
-        return getAllGroups;
+        return result;
         //
       }).catch((erro) => {
         console.error('Error when sending: ', erro); //return object error
