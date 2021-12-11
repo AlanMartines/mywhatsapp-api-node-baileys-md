@@ -1363,9 +1363,40 @@ module.exports = class Sessions {
     var resultgetAllGroups = await session.client.then(async client => {
       //return chatArray;
       let getGroups = await client.groupFetchAllParticipating();
-      let groups = Object.entries(getGroups).slice(0).map(entry => entry[1]);
-      console.log(groups);
+
       //
+      //
+    });
+    //
+    var resultgetAllGroups = await session.client.then(async client => {
+      return await client.groupFetchAllParticipating().then(async (result) => {
+        //console.log('Result: ', result); //return object success
+        let [groups] = Object.entries(result).slice(0).map(entry => entry[1]);
+        //
+        var getAllGroups = [];
+        //
+        await forEach(groups, async (resultAllContacts) => {
+          //
+          getAllGroups.push({
+            "groupId": resultAllContacts.id,
+            "name": resultAllContacts.subject,
+            "desc": resultAllContacts.desc.toString()
+          });
+          //
+        });
+        //
+        return getAllGroups;
+        //
+      }).catch((erro) => {
+        console.error('Error when sending: ', erro); //return object error
+        //
+        return {
+          "erro": true,
+          "status": 404,
+          "message": "Erro ao recuperar grupos"
+        };
+        //
+      });
       //
     });
     //
