@@ -1334,7 +1334,8 @@ module.exports = class Sessions {
           getAllGroups.push({
             "groupId": resultAllContacts.id.replace('@g.us', ''),
             "name": resultAllContacts.subject,
-            "desc": desc
+            "desc": desc,
+            "descId": resultAllContacts.descId,
           });
           //
         });
