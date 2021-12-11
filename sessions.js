@@ -2040,23 +2040,13 @@ module.exports = class Sessions {
     var session = Sessions.getSession(SessionName);
     var onlyAdminsMessagesGroup = await session.client.then(async client => {
       return await client.groupSettingUpdate(groupId, 'announcement').then((result) => {
-        console.log('- Result: ', result); //return object success
+        //console.log('- Result: ', result); //return object success
         //
-        if (typeof result === undefined) {
-          return {
-            "erro": false,
-            "status": 200,
-            "message": "Apenas mensagens de admins"
-          };
-        } else {
-          //
-          return {
-            "erro": true,
-            "status": 404,
-            "message": "Erro ao habilitar apenas mensagens de admins"
-          };
-          //
-        }
+        return {
+          "erro": false,
+          "status": 200,
+          "message": "Apenas mensagens de admins do grupo"
+        };
         //
       }).catch((erro) => {
         console.error('Error when sending: ', erro); //return object error
