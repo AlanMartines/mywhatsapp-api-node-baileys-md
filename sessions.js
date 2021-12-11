@@ -1324,9 +1324,17 @@ module.exports = class Sessions {
         //
         await forEach(groups, async (resultAllContacts) => {
           //
+          if (getInfoGroups.desc && getInfoGroups.desc != undefined) {
+            var buffer = Buffer.from(getInfoGroups.desc);
+            var desc = buffer.toString();
+          } else {
+            desc = null;
+          }
+          //
           getAllGroups.push({
             "groupId": resultAllContacts.id.replace('@g.us', ''),
-            "name": resultAllContacts.subject
+            "name": resultAllContacts.subject,
+            "desc": desc
           });
           //
         });
