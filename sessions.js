@@ -1159,6 +1159,7 @@ module.exports = class Sessions {
       } else if (mime.split("/")[1] === "pdf") {
         return await client.sendMessage(from, {
           document: buffer,
+          jpegThumbnail: buffer,
           mimetype: mimetype,
           fileName: originalname,
           caption: caption
