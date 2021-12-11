@@ -1284,6 +1284,51 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
+  // Recuperar contatos
+  static async getContactDetail(
+    SessionName,
+    phonefull
+  ) {
+    console.log("- Obtendo todos os contatos!");
+    //
+    var session = Sessions.getSession(SessionName);
+    var resultgetAllContacts = await session.client.then(async client => {
+      //
+      return await client.getContactDetail(phonefull).then(async (result) => {
+        //console.log('Result: ', result); //return object success
+        let groups = Object.entries(result).slice(0).map(entry => entry[1]);
+        //
+        var getAllGroups = [];
+        //
+        await forEach(groups, async (resultAllContacts) => {
+          //
+          getAllGroups.push({
+            "groupId": resultAllContacts.id.replace('@g.us', ''),
+            "name": resultAllContacts.subject
+          });
+          //
+        });
+        //
+        return getAllGroups;
+        //
+      }).catch((erro) => {
+        console.error('Error when sending: ', erro); //return object error
+        //
+        return {
+          "erro": true,
+          "status": 404,
+          "message": "Erro ao recuperar nome dos grupos"
+        };
+        //
+      });
+      //
+    });
+    //
+    return resultgetAllContacts;
+  } //getAllContacts
+  //
+  // ------------------------------------------------------------------------------------------------//
+  //
   // Recuperar grupos
   static async getAllGroups(
     SessionName

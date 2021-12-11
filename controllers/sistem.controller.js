@@ -1068,13 +1068,23 @@ router.post("/getContactDetail", upload.none(''), verifyToken.verify, async (req
     case 'isLogged':
     case 'chatsAvailable':
       //
-      var getAllContacts = await Sessions.getContactDetail(
-        req.body.SessionName,
+      var checkNumberStatus = await Sessions.checkNumberStatus(
+        req.body.SessionName.trim(),
         soNumeros(req.body.phonefull) + '@c.us'
       );
       //
+      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+        //
+        var getAllContacts = await Sessions.getContactDetail(
+          req.body.SessionName,
+          checkNumberStatus.number
+        );
+      } else {
+        var getAllContacts = checkNumberStatus;
+      }
+      //
       res.json({
-        "Status": getContactDetail
+        "Status": getAllContacts
       });
       break;
     default:
