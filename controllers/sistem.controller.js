@@ -96,6 +96,21 @@ const convertBytes = function(bytes) {
 */
 router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next) => {
   //
+  /*
+	if (req.body.number.length > 15) {
+    var number = req.body.number; 
+} else {
+    var number = phoneNumberFormatter(req.body.number);
+    var numberExists = await client.isOnWhatsApp(number);
+    if (!numberExists) {
+        return res.status(422).json({
+            status: false,
+            message: 'The number is not registered'
+        });
+    }
+}
+*/
+  //
   var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
   var session = Sessions.getSession(req.body.SessionName.trim());
   //
