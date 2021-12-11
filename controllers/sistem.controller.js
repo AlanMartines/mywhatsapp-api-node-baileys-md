@@ -888,9 +888,6 @@ router.post("/sendMultImageMassa", sendMultImageMassa, verifyToken.verify, async
 //
 // ------------------------------------------------------------------------------------------------//
 //
-//
-// ------------------------------------------------------------------------------------------------//
-//
 // Enviar arquivo/documento
 router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, res, next) => {
   var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
@@ -931,9 +928,6 @@ router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, 
       });
   }
 }); //sendFile
-//
-// ------------------------------------------------------------------------------------------------//
-//
 //
 // ------------------------------------------------------------------------------------------------//
 //
@@ -987,9 +981,6 @@ router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, 
 }); //sendFile
 //
 // ------------------------------------------------------------------------------------------------//
-//
-//
-// ------------------------------------------------------------------------------------------------------- //
 //
 // Enviar arquivo/documento
 router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (req, res, next) => {
@@ -1068,9 +1059,8 @@ router.post("/getAllContacts", upload.none(''), verifyToken.verify, async (req, 
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
-/*
 // Recuperar chats
-router.post("/getAllChats", upload.none(''), verifyToken.verify, async (req, res, next) => {
+router.post("/getContactDetail", upload.none(''), verifyToken.verify, async (req, res, next) => {
   var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
   switch (sessionStatus.status) {
     case 'inChat':
@@ -1078,7 +1068,7 @@ router.post("/getAllChats", upload.none(''), verifyToken.verify, async (req, res
     case 'isLogged':
     case 'chatsAvailable':
       //
-      var getAllContacts = await Sessions.getAllChats(
+      var getAllContacts = await Sessions.getContactDetail(
         req.body.SessionName
       );
       //
@@ -1088,15 +1078,14 @@ router.post("/getAllChats", upload.none(''), verifyToken.verify, async (req, res
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
-res.status(400).json({
+      res.status(400).json({
         "getAllChats": sessionStatus
       });
   }
-}); //getAllChats
-*/
+}); //getContactDetail
 // ------------------------------------------------------------------------------------------------------- //
 //
-// Recuperar grupos
+// Recuperar detalhes do contato
 router.post("/getAllGroups", upload.none(''), verifyToken.verify, async (req, res, next) => {
   var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
   switch (sessionStatus.status) {
@@ -1106,7 +1095,8 @@ router.post("/getAllGroups", upload.none(''), verifyToken.verify, async (req, re
     case 'chatsAvailable':
       //
       var getAllContacts = await Sessions.getAllGroups(
-        req.body.SessionName
+        req.body.SessionName,
+        soNumeros(req.body.phonefull) + '@c.us'
       );
       //
       res.setHeader('Content-Type', 'application/json');
