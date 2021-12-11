@@ -2407,7 +2407,7 @@ router.post("/everyoneAdminsModifySettingsGroup", upload.none(''), verifyToken.v
     case 'isLogged':
     case 'chatsAvailable':
       //
-      var everyoneModifySettingsGroup = await Sessions.everyoneveryoneAdminsModifySettingsGroupeModifySettingsGroup(
+      var everyoneModifySettingsGroup = await Sessions.everyoneAdminsModifySettingsGroup(
         req.body.SessionName.trim(),
         req.body.groupId + '@g.us'
       );
