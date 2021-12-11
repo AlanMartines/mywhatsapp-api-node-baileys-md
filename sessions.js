@@ -2042,7 +2042,7 @@ module.exports = class Sessions {
       return await client.groupSettingUpdate(groupId, 'announcement').then((result) => {
         console.log('- Result: ', result); //return object success
         //
-        if (result.status == 200 || result.status == 207) {
+        if (typeof result === undefined) {
           return {
             "erro": false,
             "status": 200,
