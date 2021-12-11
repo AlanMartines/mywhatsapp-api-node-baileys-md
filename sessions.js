@@ -584,16 +584,22 @@ module.exports = class Sessions {
         // reconnect if not logged out
         if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
           //
+          client = await startSock();
+          //
+        } else if (lastDisconnect.error.output.statusCode === DisconnectReason.loggedOut) {
+          //
           session.state = "CLOSED";
           session.status = 'notLogged';
           session.qrcodedata = null;
           session.message = "Sessão fechada";
           //
-          await updateStateDb(session.state, session.status, session.AuthorizationToken);
-          //
           deletaToken(`${config.TOKENSPATCH}/baileysmd-${SessionName}.data.json`);
           //
+          await updateStateDb(session.state, session.status, session.AuthorizationToken);
+          //
           client = await startSock();
+          //
+          Sessions.initSession(SessionName);
           //
         } else {
           console.log("- Connection close".red);
