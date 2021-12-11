@@ -1294,7 +1294,7 @@ module.exports = class Sessions {
     var session = Sessions.getSession(SessionName);
     var resultgetAllContacts = await session.client.then(async client => {
       //
-      return await client.getContactDetail(phonefull).then(async (result) => {
+      return await client.Contact(phonefull).then(async (result) => {
         //console.log('Result: ', result); //return object success
         //
         return result;
