@@ -1061,7 +1061,7 @@ router.post("/getAllContacts", upload.none(''), verifyToken.verify, async (req, 
 //
 // Recuperar chats
 router.post("/getContactDetail", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var getContactDetail = await Sessions.ApiStatus(req.body.SessionName.trim());
+  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
   switch (sessionStatus.status) {
     case 'inChat':
     case 'qrReadSuccess':
