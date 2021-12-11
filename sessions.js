@@ -429,6 +429,7 @@ module.exports = class Sessions {
     //
     //client = await startSock();
     //
+    /*
     client.ev.on('statusFind', async (status) => {
       //
       const {
@@ -518,6 +519,7 @@ module.exports = class Sessions {
       }
       //
     });
+		*/
     //
     let attempts = 0;
     //
