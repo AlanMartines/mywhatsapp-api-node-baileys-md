@@ -1379,8 +1379,7 @@ module.exports = class Sessions {
           //
           getAllGroups.push({
             "groupId": resultAllContacts.id,
-            "name": resultAllContacts.subject,
-            "desc": resultAllContacts.desc
+            "name": resultAllContacts.subject
           });
           //
         });
