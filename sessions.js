@@ -1074,6 +1074,7 @@ module.exports = class Sessions {
       if (mime.split("/")[1] === "gif") {
         return await client.sendMessage(from, {
           video: buffer,
+          jpegThumbnail: buffer,
           caption: caption,
           gifPlayback: true
         });
