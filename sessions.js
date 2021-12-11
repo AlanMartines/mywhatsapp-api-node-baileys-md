@@ -1077,6 +1077,26 @@ module.exports = class Sessions {
           jpegThumbnail: buffer,
           caption: caption,
           gifPlayback: true
+        }).then((result) => {
+          //console.log('Result: ', result); //return object success
+          //return (result);
+          //
+          return {
+            "erro": false,
+            "status": 200,
+            "message": "Arquivo enviado com sucesso."
+          };
+          //
+        }).catch((erro) => {
+          console.error('Error when sending: ', erro); //return object error
+          //return (erro);
+          //
+          return {
+            "erro": true,
+            "status": 404,
+            "message": "Erro ao enviar arquivo"
+          };
+          //
         });
       } else if (mime.split("/")[0] === "image") {
         return await client.sendMessage(from, {
