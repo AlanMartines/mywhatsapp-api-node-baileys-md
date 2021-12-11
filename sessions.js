@@ -1371,7 +1371,7 @@ module.exports = class Sessions {
         await forEach(groups, async (resultAllContacts) => {
           //
           getAllGroups.push({
-            "groupId": resultAllContacts.id,
+            "groupId": resultAllContacts.id.replace('@g.us', ''),
             "name": resultAllContacts.subject
           });
           //
