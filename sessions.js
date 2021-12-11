@@ -618,7 +618,7 @@ module.exports = class Sessions {
         console.log("- Connection undefined".red);
       }
       //
-      console.log('Connection Update: ', conn);
+      //console.log('Connection Update: ', conn);
       //
     });
     //
