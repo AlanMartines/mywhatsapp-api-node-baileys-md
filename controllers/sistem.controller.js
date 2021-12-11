@@ -98,6 +98,7 @@ router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next
   //
   var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
   var session = Sessions.getSession(req.body.SessionName.trim());
+  /*
   switch (sessionStatus.status) {
     case 'isLogged':
     case 'qrRead':
@@ -110,31 +111,34 @@ router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next
     case 'notLogged':
     case 'CLOSED':
     case 'DISCONNECTED':
-      //
-      var getStart = await Sessions.Start(req.body.SessionName.trim(), req.body.SessionName.trim());
-      console.log("- AuthorizationToken:", req.body.SessionName.trim());
-      session.state = 'STARTING';
-      session.status = 'notLogged';
-      //
-      var Start = {
-        result: "info",
-        state: 'STARTING',
-        status: 'notLogged',
-        message: 'Sistema iniciando e indisponivel para uso'
-      };
-      //
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": Start
-      });
-      //
-      break;
+			*/
+  //
+  var getStart = await Sessions.Start(req.body.SessionName.trim(), req.body.SessionName.trim());
+  console.log("- AuthorizationToken:", req.body.SessionName.trim());
+  session.state = 'STARTING';
+  session.status = 'notLogged';
+  //
+  var Start = {
+    result: "info",
+    state: 'STARTING',
+    status: 'notLogged',
+    message: 'Sistema iniciando e indisponivel para uso'
+  };
+  //
+  res.setHeader('Content-Type', 'application/json');
+  res.status(200).json({
+    "Status": Start
+  });
+  //
+  /*
+    break;
     default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
+    res.setHeader('Content-Type', 'application/json');
+    res.status(400).json({
+      "Status": sessionStatus
+    });
+}
+    */
   //
 });
 //
