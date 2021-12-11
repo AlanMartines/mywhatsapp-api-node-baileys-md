@@ -1074,7 +1074,6 @@ module.exports = class Sessions {
       if (mime.split("/")[1] === "gif") {
         return await client.sendMessage(from, {
           video: buffer,
-          jpegThumbnail: buffer,
           caption: caption,
           gifPlayback: true
         }).then((result) => {
@@ -1101,7 +1100,6 @@ module.exports = class Sessions {
       } else if (mime.split("/")[0] === "image") {
         return await client.sendMessage(from, {
           image: buffer,
-          jpegThumbnail: buffer,
           mimetype: mimetype,
           fileName: originalname,
           caption: caption
