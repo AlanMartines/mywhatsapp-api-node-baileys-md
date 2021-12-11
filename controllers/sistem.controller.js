@@ -1059,43 +1059,6 @@ router.post("/getAllContacts", upload.none(''), verifyToken.verify, async (req, 
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
-// Recuperar chats
-router.post("/getContactDetail", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      var checkNumberStatus = await Sessions.checkNumberStatus(
-        req.body.SessionName.trim(),
-        soNumeros(req.body.phonefull) + '@c.us'
-      );
-      //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-        //
-        var getAllContacts = await Sessions.getContactDetail(
-          req.body.SessionName,
-          checkNumberStatus.number
-        );
-      } else {
-        var getAllContacts = checkNumberStatus;
-      }
-      //
-      res.json({
-        "Status": getAllContacts
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": getContactDetail
-      });
-  }
-}); //getContactDetail
-// ------------------------------------------------------------------------------------------------------- //
-//
 // Recuperar detalhes do contato
 router.post("/getAllGroups", upload.none(''), verifyToken.verify, async (req, res, next) => {
   var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());

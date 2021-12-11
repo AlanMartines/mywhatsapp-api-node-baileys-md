@@ -1284,39 +1284,6 @@ module.exports = class Sessions {
   //
   // ------------------------------------------------------------------------------------------------//
   //
-  // Recuperar contatos
-  static async getContactDetail(
-    SessionName,
-    phonefull
-  ) {
-    console.log("- Obtendo todos os contatos!");
-    //
-    var session = Sessions.getSession(SessionName);
-    var resultgetAllContacts = await session.client.then(async client => {
-      //
-      return await client.Contact(phonefull).then(async (result) => {
-        //console.log('Result: ', result); //return object success
-        //
-        return result;
-        //
-      }).catch((erro) => {
-        console.error('Error when sending: ', erro); //return object error
-        //
-        return {
-          "erro": true,
-          "status": 404,
-          "message": "Erro ao recuperar nome dos grupos"
-        };
-        //
-      });
-      //
-    });
-    //
-    return resultgetAllContacts;
-  } //getAllContacts
-  //
-  // ------------------------------------------------------------------------------------------------//
-  //
   // Recuperar grupos
   static async getAllGroups(
     SessionName
