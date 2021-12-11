@@ -40,7 +40,8 @@ const {
   downloadHistory,
   proto,
   generateWAMessageContent,
-  prepareWAMessageMedia
+  prepareWAMessageMedia,
+  WAUrlInfo
 } = require('./Baileys/lib/index');
 const colors = require('colors');
 //
