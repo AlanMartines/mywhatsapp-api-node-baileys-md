@@ -1373,6 +1373,8 @@ module.exports = class Sessions {
         //console.log('Result: ', result); //return object success
         let [groups] = Object.entries(result).slice(0).map(entry => entry[1]);
         //
+        console.log(groups);
+        //
         var getAllGroups = [];
         //
         await forEach(groups, async (resultAllContacts) => {
