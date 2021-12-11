@@ -377,7 +377,7 @@ module.exports = class Sessions {
     };
 		*/
     //
-    let client = undefined;
+    // let client = undefined;
     //
     const {
       state,
@@ -386,47 +386,47 @@ module.exports = class Sessions {
     //
     // https://github.com/adiwajshing/Baileys/issues/751
     //
-    const startSock = () => {
-      console.log("- startSock".blue);
-      const clientStart = makeWASocket({
-        /** provide an auth state object to maintain the auth state */
-        auth: state,
-        /** version to connect with */
-        version: [2, 2146, 9],
-        /** override browser config */
-        browser: ['My-Whatsapp', 'Google Chrome', '96.00'],
-        /** the WS url to connect to WA */
-        waWebSocketUrl: 'wss://web.whatsapp.com/ws/chat',
-        /** Fails the connection if the connection times out in this time interval or no data is received */
-        connectTimeoutMs: 20000,
-        /** ping-pong interval for WS connection */
-        keepAliveIntervalMs: 25000,
-        /** pino logger */
-        logger: pino({
-          level: 'silent'
-        }),
-        /** should the QR be printed in the terminal */
-        printQRInTerminal: parseInt(config.VIEW_QRCODE_TERMINAL),
-        //
-        emitOwnEvents: true,
-        /** Default timeout for queries, undefined for no timeout */
-        defaultQueryTimeoutMs: undefined,
-        /** proxy agent */
-        agent: undefined,
-        /** agent used for fetch requests -- uploading/downloading media */
-        fetchAgent: undefined,
-        /** 
-         * fetch a message from your store 
-         * implement this so that messages failed to send (solves the "this message can take a while" issue) can be retried
-         * */
-        getMessage: undefined
-        //
-      });
+    //const startSock = () => {
+    console.log("- startSock".blue);
+    const client = makeWASocket({
+      /** provide an auth state object to maintain the auth state */
+      auth: state,
+      /** version to connect with */
+      version: [2, 2146, 9],
+      /** override browser config */
+      browser: ['My-Whatsapp', 'Google Chrome', '96.00'],
+      /** the WS url to connect to WA */
+      waWebSocketUrl: 'wss://web.whatsapp.com/ws/chat',
+      /** Fails the connection if the connection times out in this time interval or no data is received */
+      connectTimeoutMs: 20000,
+      /** ping-pong interval for WS connection */
+      keepAliveIntervalMs: 25000,
+      /** pino logger */
+      logger: pino({
+        level: 'silent'
+      }),
+      /** should the QR be printed in the terminal */
+      printQRInTerminal: parseInt(config.VIEW_QRCODE_TERMINAL),
       //
-      return clientStart;
-    }
+      emitOwnEvents: true,
+      /** Default timeout for queries, undefined for no timeout */
+      defaultQueryTimeoutMs: undefined,
+      /** proxy agent */
+      agent: undefined,
+      /** agent used for fetch requests -- uploading/downloading media */
+      fetchAgent: undefined,
+      /** 
+       * fetch a message from your store 
+       * implement this so that messages failed to send (solves the "this message can take a while" issue) can be retried
+       * */
+      getMessage: undefined
+      //
+    });
     //
-    client = await startSock();
+    //return clientStart;
+    // }
+    //
+    //client = await startSock();
     //
     client.ev.on('statusFind', async (status) => {
       //
@@ -585,6 +585,8 @@ module.exports = class Sessions {
         if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
           //
           client = await startSock();
+          //
+          Sessions.initSession(SessionName);
           //
         } else if (lastDisconnect.error.output.statusCode === DisconnectReason.loggedOut) {
           //
