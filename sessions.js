@@ -1371,9 +1371,7 @@ module.exports = class Sessions {
     var resultgetAllGroups = await session.client.then(async client => {
       return await client.groupFetchAllParticipating().then(async (result) => {
         //console.log('Result: ', result); //return object success
-        let [groups] = Object.entries(result).slice(0).map(entry => entry[1]);
-        //
-        console.log(groups);
+        let groups = Object.entries(result).slice(0).map(entry => entry[1]);
         //
         var getAllGroups = [];
         //
