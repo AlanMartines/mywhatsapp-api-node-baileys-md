@@ -584,7 +584,7 @@ module.exports = class Sessions {
         // reconnect if not logged out
         if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
           //
-          client = await startSock();
+          //client = await startSock();
           //
           Sessions.initSession(SessionName);
           //
@@ -599,7 +599,7 @@ module.exports = class Sessions {
           //
           await updateStateDb(session.state, session.status, session.AuthorizationToken);
           //
-          client = await startSock();
+          //client = await startSock();
           //
           Sessions.initSession(SessionName);
           //
