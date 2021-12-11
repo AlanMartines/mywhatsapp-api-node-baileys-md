@@ -1987,18 +1987,10 @@ router.post("/createGroupSetAdminMembers", upload.single('participants'), verify
       //
       if (createGroup.erro == false && createGroup.status == 200) {
         //
-        const groupMetadata = await Sessions.getGroupMembers(
-          req.body.SessionName.trim(),
-          createGroup.groupId + '@g.us'
-          //
-        );
-        //
-        await sleep(2000);
-        //
         var promoteParticipant = await Sessions.promoteParticipant(
           req.body.SessionName.trim(),
           createGroup.groupId + '@g.us',
-          createGroup.contactlistValid
+          contactlistValid
         );
         //
         createGroupSetAdminMembers.push(promoteParticipant);
