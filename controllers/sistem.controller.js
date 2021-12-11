@@ -2369,6 +2369,34 @@ router.post("/onlyAdminsMessagesGroup", upload.none(''), verifyToken.verify, asy
 //
 // ------------------------------------------------------------------------------------------------//
 //
+router.post("/everyoneMessagesGroup ", upload.none(''), verifyToken.verify, async (req, res, next) => {
+  //
+  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
+  switch (sessionStatus.status) {
+    case 'inChat':
+    case 'qrReadSuccess':
+    case 'isLogged':
+    case 'chatsAvailable':
+      //
+      var everyoneMessagesGroup = await Sessions.everyoneMessagesGroup(
+        req.body.SessionName.trim(),
+        req.body.groupId + '@g.us'
+      );
+      res.setHeader('Content-Type', 'application/json');
+      res.status(200).json({
+        "Status": everyoneMessagesGroup
+      });
+      break;
+    default:
+      res.setHeader('Content-Type', 'application/json');
+      res.status(400).json({
+        "Status": sessionStatus
+      });
+  }
+}); //everyoneMessagesGroup
+//
+// ------------------------------------------------------------------------------------------------//
+//
 router.post("/everyoneModifySettingsGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
   //
   var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());

@@ -2061,6 +2061,39 @@ module.exports = class Sessions {
     });
     return onlyAdminsMessagesGroup;
   } //onlyAdminsMessagesGroup
+  // 
+  // ------------------------------------------------------------------------------------------------//
+  //
+  // Todos enviem mensagens
+  static async everyoneMessagesGroup(
+    SessionName,
+    groupId
+  ) {
+    console.log("- onlyAdminsMessagesGroup");
+    var session = Sessions.getSession(SessionName);
+    var onlyAdminsMessagesGroup = await session.client.then(async client => {
+      return await client.groupSettingUpdate(groupId, 'not_announcement').then((result) => {
+        //console.log('- Result: ', result); //return object success
+        //
+        return {
+          "erro": false,
+          "status": 200,
+          "message": "Apenas mensagens de admins do grupo"
+        };
+        //
+      }).catch((erro) => {
+        console.error('Error when sending: ', erro); //return object error
+        //
+        return {
+          "erro": true,
+          "status": 404,
+          "message": "Erro ao habilitar apenas mensagens de admins"
+        };
+        //
+      });
+    });
+    return onlyAdminsMessagesGroup;
+  } //onlyAdminsMessagesGroup
   //
   // ------------------------------------------------------------------------------------------------//
   //
