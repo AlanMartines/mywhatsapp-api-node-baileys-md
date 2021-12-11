@@ -1983,7 +1983,7 @@ router.post("/createGroupSetAdminMembers", upload.single('participants'), verify
       //
       createGroupSetAdminMembers.push(createGroup);
       //
-      await sleep(2000);
+      await sleep(10000);
       //
       if (createGroup.erro == false && createGroup.status == 200) {
         //
@@ -2068,23 +2068,15 @@ router.post("/createCountGroupSetAdminMembers", upload.single('participants'), v
           contactlistInvalid
         );
         //
-        await sleep(5000);
-        //
         createCountGroupSetAdminMembers.push(createGroup);
         //
-        if (createGroup.erro !== true && createGroup.status !== 404) {
-          //
-          const groupMetadata = await Sessions.getGroupMembers(
-            req.body.SessionName.trim(),
-            createGroup.groupId + '@g.us',
-            //
-          );
-          //
-          await sleep(2000);
+        await sleep(10000);
+        //
+        if (createGroup.erro == false && createGroup.status == 200) {
           //
           var promoteParticipant = await Sessions.promoteParticipant(
             req.body.SessionName.trim(),
-            groupMetadata.id,
+            createGroup.groupId + '@g.us',
             contactlistValid
           );
           //
