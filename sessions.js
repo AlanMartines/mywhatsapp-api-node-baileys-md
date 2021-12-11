@@ -1880,7 +1880,7 @@ module.exports = class Sessions {
     console.log("- promoteParticipant");
     var session = Sessions.getSession(SessionName);
     var resultpromoteParticipant = await session.client.then(async client => {
-      console.log('Phonefull:', phonefull);
+      //
       return await client.groupParticipantsUpdate(groupId, phonefull, "promote").then(([result]) => {
         console.log('Result: ', result); //return object success
         //
