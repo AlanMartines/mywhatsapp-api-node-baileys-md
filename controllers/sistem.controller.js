@@ -2369,7 +2369,7 @@ router.post("/onlyAdminsMessagesGroup", upload.none(''), verifyToken.verify, asy
 //
 // ------------------------------------------------------------------------------------------------//
 //
-router.post("/everyoneMessagesGroup ", upload.none(''), verifyToken.verify, async (req, res, next) => {
+router.post("/everyoneMessagesGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
   //
   var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
   switch (sessionStatus.status) {
