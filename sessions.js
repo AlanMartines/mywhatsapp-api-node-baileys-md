@@ -2039,8 +2039,8 @@ module.exports = class Sessions {
     console.log("- onlyAdminsMessagesGroup");
     var session = Sessions.getSession(SessionName);
     var onlyAdminsMessagesGroup = await session.client.then(async client => {
-      return await client.groupSettingChange(groupId, GroupSettingChange.messageSend, true).then((result) => {
-        //console.log('- Result: ', result); //return object success
+      return await client.groupSettingUpdate(groupId, 'announcement').then((result) => {
+        console.log('- Result: ', result); //return object success
         //
         if (result.status == 200 || result.status == 207) {
           return {
