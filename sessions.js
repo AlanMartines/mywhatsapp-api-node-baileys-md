@@ -1324,8 +1324,8 @@ module.exports = class Sessions {
         //
         await forEach(groups, async (resultAllContacts) => {
           //
-          if (getInfoGroups.desc && getInfoGroups.desc != undefined) {
-            var buffer = Buffer.from(getInfoGroups.desc);
+          if (resultAllContacts.desc && resultAllContacts.desc != undefined) {
+            var buffer = Buffer.from(resultAllContacts.desc);
             var desc = buffer.toString();
           } else {
             desc = null;
