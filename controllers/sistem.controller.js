@@ -1061,7 +1061,7 @@ router.post("/getAllContacts", upload.none(''), verifyToken.verify, async (req, 
 //
 // Recuperar chats
 router.post("/getContactDetail", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
+  var getContactDetail = await Sessions.ApiStatus(req.body.SessionName.trim());
   switch (sessionStatus.status) {
     case 'inChat':
     case 'qrReadSuccess':
@@ -1069,17 +1069,18 @@ router.post("/getContactDetail", upload.none(''), verifyToken.verify, async (req
     case 'chatsAvailable':
       //
       var getAllContacts = await Sessions.getContactDetail(
-        req.body.SessionName
+        req.body.SessionName,
+        soNumeros(req.body.phonefull) + '@c.us'
       );
       //
       res.json({
-        getAllContacts
+        "Status": getContactDetail
       });
       break;
     default:
       res.setHeader('Content-Type', 'application/json');
       res.status(400).json({
-        "getAllChats": sessionStatus
+        "Status": getContactDetail
       });
   }
 }); //getContactDetail
@@ -1095,8 +1096,7 @@ router.post("/getAllGroups", upload.none(''), verifyToken.verify, async (req, re
     case 'chatsAvailable':
       //
       var getAllContacts = await Sessions.getAllGroups(
-        req.body.SessionName,
-        soNumeros(req.body.phonefull) + '@c.us'
+        req.body.SessionName
       );
       //
       res.setHeader('Content-Type', 'application/json');
