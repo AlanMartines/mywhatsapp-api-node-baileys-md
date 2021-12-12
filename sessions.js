@@ -160,7 +160,7 @@ async function deletaToken(filePath) {
       console.log(`- Arquivo "${filePath}" não existe`);
     } else if (err) {
       // other errors, e.g. maybe we don't have enough permission
-      console.log(`- erro ao remover arquivo "${filePath}"`);
+      console.log(`- Erro ao remover arquivo "${filePath}"`);
     } else {
       console.log(`- Arquivo "${filePath}" removido com sucesso`);
     }
