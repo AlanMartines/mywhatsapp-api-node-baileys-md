@@ -593,6 +593,15 @@ module.exports = class Sessions {
           //
         } else if (lastDisconnect.error.output.statusCode === 428) {
           //
+          session.state = "CLOSED";
+          session.status = 'notLogged';
+          session.qrcodedata = null;
+          session.message = "Sessão fechada";
+          //
+          deletaToken(`${config.TOKENSPATCH}/baileysmd-${SessionName}.data.json`);
+          //
+          await updateStateDb(session.state, session.status, session.AuthorizationToken);
+          //
           //client = await startSock();
           //
           Sessions.initSession(SessionName);
