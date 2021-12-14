@@ -591,7 +591,7 @@ module.exports = class Sessions {
           //
           Sessions.initSession(SessionName);
           //
-        } else if (lastDisconnect.error.output.statusCode !== 428) {
+        } else if (lastDisconnect.error.output.statusCode === 428) {
           //
           //client = await startSock();
           //
