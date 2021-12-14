@@ -347,6 +347,7 @@ module.exports = class Sessions {
     //
     //-------------------------------------------------------------------------------------------------------------------------------------//
     //
+		/*
     if (fs.existsSync(`${config.TOKENSPATCH}/baileysmd-${SessionName}.data.json`)) {
       var configToken = require(`${config.TOKENSPATCH}/baileysmd-${SessionName}.data.json`);
       if (typeof configToken.creds.me.id !== undefined) {
@@ -356,7 +357,6 @@ module.exports = class Sessions {
         //fs.unlinkSync(`baileysmd-${config.TOKENSPATCH}/${SessionName}.data.json`);
       }
     }
-    /*
     const connect = () => {
       let status = undefined;
       try {
