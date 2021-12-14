@@ -581,17 +581,17 @@ module.exports = class Sessions {
         //
       } else if (connection === 'close') {
         console.log("- Connection close".red);
-        console.log(`- Output: \n ${JSON.stringify(lastDisconnect.error.output)}`);
-        console.log(`- Data: \n ${JSON.stringify(lastDisconnect.error.data)}`);
+        console.log(`- Output: \n ${JSON.stringify(lastDisconnect?.error.output)}`);
+        console.log(`- Data: \n ${JSON.stringify(lastDisconnect?.error.data)}`);
         console.log(`- loggedOut: \n ${JSON.stringify(DisconnectReason.loggedOut)}`);
         // reconnect if not logged out
-        if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
+        if (lastDisconnect?.error.output.statusCode !== DisconnectReason?.loggedOut) {
           //
           //client = await startSock();
           //
           Sessions.initSession(SessionName);
           //
-        } else if (lastDisconnect.error.output.statusCode === DisconnectReason.loggedOut) {
+        } else if (lastDisconnect?.error.output.statusCode === DisconnectReason?.loggedOut) {
           //
           session.state = "CLOSED";
           session.status = 'notLogged';
