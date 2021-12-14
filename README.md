@@ -203,7 +203,7 @@ cd ApiBaileysMd
 npm install --allow-root --unsafe-perm=true
 
 # Clone este repositório
-git clone -b multi-device https://github.com/AlanMartines/Baileys.git
+git clone -b multi-device https://github.com/adiwajshing/Baileys.git
 
 # Acesse a pasta do projeto
 cd Baileys
