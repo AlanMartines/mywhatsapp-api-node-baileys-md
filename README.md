@@ -6,6 +6,8 @@
 
 Este projeto usa como base a [Baileys MD](https://github.com/adiwajshing/baileys/tree/multi-device "Baileys MD"), um navegador virtual sem interface gráfica que abre o whatsapp web e executa todos os comandos via código possibilitando assim a automação de todas as funções.
 
+![](https://img.shields.io/github/stars/AlanMartines/mywhatsapp-api-node-baileys-md.svg) ![](https://img.shields.io/github/tag/AlanMartines/mywhatsapp-api-node-baileys-md.svg) ![](https://img.shields.io/github/v/release/AlanMartines/mywhatsapp-api-node-baileys-md.svg) ![](https://img.shields.io/github/issues/AlanMartines/mywhatsapp-api-node-baileys-md.svg) ![](https://img.shields.io/badge/express-v4.17.2-green) ![](https://img.shields.io/badge/node-v14.0-green) ![](https://img.shields.io/github/license/AlanMartines/mywhatsapp-api-node-baileys-md) ![](https://img.shields.io/github/downloads/AlanMartines/mywhatsapp-api-node-baileys-md/total) ![](https://img.shields.io/github/forks/AlanMartines/mywhatsapp-api-node-baileys-md)
+
 ## Nota
 
 Esta Api, segue os mesmos termos de serviço do WhatsApp. É importante que você leia atentamente a estes termos. Você é responsável pelo uso da ferramenta e pelas conseqüências do mau uso. Reforçamos que a API não é destinada para prática de SPAM e que o envio de mensagens indesejadas, viola os termos de serviço do WhatsApp. A violação dos termos pode acarretar no bloqueio e banimento definitivo de sua conta no WhatsApp.
