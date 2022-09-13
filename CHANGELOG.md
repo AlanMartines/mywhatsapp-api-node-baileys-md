@@ -8,9 +8,6 @@ _Todas as mudanças notáveis ​​neste projeto serão documentadas neste arqu
 - Add webhook
 - Add sequelize config use connection
 
-**1.0.0**
-(8 Setembro 2022)
-
 #### Getting started - ✔️📝
 
 - Add Start router
