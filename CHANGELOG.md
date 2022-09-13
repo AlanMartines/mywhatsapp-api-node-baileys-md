@@ -5,6 +5,8 @@ _Todas as mudanças notáveis ​​neste projeto serão documentadas neste arqu
 **1.0.1**
 (12 Setembro 2022)
 
+#### Init- ✔️📝
+
 - Add webhook
 - Add sequelize config use connection
 
