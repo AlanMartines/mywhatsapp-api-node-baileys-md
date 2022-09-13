@@ -35,11 +35,6 @@ module.exports = {
         allowNull: true,
         type: DataTypes.CHAR(20),
       },
-      vencimento: {
-        allowNull: true,
-        type: DataTypes.INTEGER.UNSIGNED,
-				defaultValue: "10",
-      },
       wh_status: {
         allowNull: true,
         type: DataTypes.STRING(255),
