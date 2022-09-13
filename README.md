@@ -2,11 +2,11 @@
   <img src="./public/imagens/whatsapp-bot.png" width="150" alt="My Whats">
 </p>
 
-# API My WhatsApp Multi-Device Support
+# API - My WhatsApp
 
-Este projeto usa como base a [Baileys MD](https://github.com/adiwajshing/baileys/tree/multi-device "Baileys MD"), um navegador virtual sem interface gráfica que abre o whatsapp web e executa todos os comandos via código possibilitando assim a automação de todas as funções.
+Este projeto usa como base o [Baileys](https://github.com/adiwajshing/Baileys "Baileys"), um navegador virtual sem interface gráfica que abre o whatsapp web e executa todos os comandos via código possibilitando assim a automação de todas as funções.
 
-![](https://img.shields.io/github/stars/AlanMartines/mywhatsapp-api-node-baileys-md.svg) ![](https://img.shields.io/github/tag/AlanMartines/mywhatsapp-api-node-baileys-md.svg) ![](https://img.shields.io/github/v/release/AlanMartines/mywhatsapp-api-node-baileys-md.svg) ![](https://img.shields.io/github/issues/AlanMartines/mywhatsapp-api-node-baileys-md.svg) ![](https://img.shields.io/badge/express-v4.17.2-green) ![](https://img.shields.io/badge/node-v14.0-green) ![](https://img.shields.io/github/license/AlanMartines/mywhatsapp-api-node-baileys-md) ![](https://img.shields.io/github/downloads/AlanMartines/mywhatsapp-api-node-baileys-md/total) ![](https://img.shields.io/github/forks/AlanMartines/mywhatsapp-api-node-baileys-md)
+![](https://img.shields.io/github/stars/AlanMartines/connectzap-api-node-baileys-md.svg) ![](https://img.shields.io/github/tag/AlanMartines/connectzap-api-node-baileys-md.svg) ![](https://img.shields.io/github/v/release/AlanMartines/connectzap-api-node-baileys-md.svg) ![](https://img.shields.io/github/issues/AlanMartines/connectzap-api-node-baileys-md.svg) ![](https://img.shields.io/badge/express-v4.17.2-green.svg) ![](https://img.shields.io/badge/node-v14.0-green.svg) ![](https://img.shields.io/badge/npm-v8.3.2-green.svg) ![](https://img.shields.io/github/license/AlanMartines/connectzap-api-node-baileys-md) ![](https://img.shields.io/github/downloads/AlanMartines/connectzap-api-node-baileys-md/total) ![](https://img.shields.io/github/forks/AlanMartines/connectzap-api-node-baileys-md)
 
 ## Nota
 
@@ -15,100 +15,74 @@ Esta Api, segue os mesmos termos de serviço do WhatsApp. É importante que voc�
 #### Dependências Debian (e.g. Ubuntu) 64bits
 
 ```bash
-  sudo apt-get update && \
-	apt-get upgrade -y && \
-	apt-get install -y \
-	git \
-	curl \
-	yarn \
-	gcc \
-	g++ \
-	make \
-	libgbm-dev \
-	wget \
-	unzip \
-	fontconfig \
-	locales \
-	gconf-service \
-	libasound2 \
-	libatk1.0-0 \
-	libc6 \
-	libcairo2 \
-	libcups2 \
-	libdbus-1-3 \
-	libexpat1 \
-	libfontconfig1 \
-	libgconf-2-4 \
-	libgdk-pixbuf2.0-0 \
-	libglib2.0-0 \
-	libgtk-3-0 \
-	libnspr4 \
-	libpango-1.0-0 \
-	libpangocairo-1.0-0 \
-	libstdc++6 \
-	libx11-6 \
-	libx11-xcb1 \
-	libxcb1 \
-	libxcomposite1 \
-	libxcursor1 \
-	libxdamage1 \
-	libxext6 \
-	libxfixes3 \
-	libxi6 \
-	libxrandr2 \
-	libxrender1 \
-	libxss1 \
-	libxtst6 \
-	ca-certificates \
-	fonts-liberation \
-	libnss3 \
-	lsb-release \
-	xdg-utils \
-	ca-certificates \
-	fonts-liberation \
-	libasound2 \
-	libatk-bridge2.0-0 \
-	libatk1.0-0 \
-	libc6 \
-	libcairo2 \
-	libcups2 \
-	libdbus-1-3 \
-	libexpat1 \
-	libfontconfig1 \
-	libgbm1 \
-	libgcc1 \
-	libglib2.0-0 \
-	libgtk-3-0 \
-	libnspr4 \
-	libnss3 \
-	libpango-1.0-0 \
-	libpangocairo-1.0-0 \
-	libstdc++6 \
-	libx11-6 \
-	libx11-xcb1 \
-	libxcb1 \
-	libxcomposite1 \
-	libxcursor1 \
-	libxdamage1 \
-	libxext6 \
-	libxfixes3 \
-	libxi6 \
-	libxrandr2 \
-	libxrender1 \
-	libxss1 \
-	libxtst6 \
-	lsb-release \
-	libu2f-udev \
-	wget \
-	xdg-utils \
-	ffmpeg imagemagick \
-	ghostscript
+sudo apt update && \
+apt upgrade -y && \
+apt install -y \
+git \
+curl \
+yarn \
+gcc \
+g++ \
+make \
+libgbm-dev \
+wget \
+unzip \
+ffmpeg \
+imagemagick \
+unoconv \
+sox \
+fontconfig \
+locales \
+gconf-service \
+libasound2 \
+libatk1.0-0 \
+libc6 \
+libcairo2 \
+libcups2 \
+libdbus-1-3 \
+libexpat1 \
+libfontconfig1 \
+libgconf-2-4 \
+libgdk-pixbuf2.0-0 \
+libglib2.0-0 \
+libgtk-3-0 \
+libnspr4 \
+libpango-1.0-0 \
+libpangocairo-1.0-0 \
+libstdc++6 \
+libx11-6 \
+libx11-xcb1 \
+libxcb1 \
+libxcomposite1 \
+libxcursor1 \
+libxdamage1 \
+libxext6 \
+libxfixes3 \
+libxi6 \
+libxrandr2 \
+libxrender1 \
+libxss1 \
+libxtst6 \
+ca-certificates \
+fonts-liberation \
+libnss3 \
+lsb-release \
+xdg-utils \
+libatk-bridge2.0-0 \
+libgbm1 \
+libgcc1 \
+build-essential \
+nodejs \
+libappindicator1 \
+sudo
 ```
 
 #### Dependências CentOS 7/8 64bits (Validar)
 
 ```bash
 sudo yum install -y \
+ffmpeg \
+sox \
 alsa-lib.x86_64 \
 atk.x86_64 \
 cups-libs.x86_64 \
@@ -128,17 +102,47 @@ xorg-x11-fonts-75dpi \
 xorg-x11-fonts-cyrillic \
 xorg-x11-fonts-misc \
 xorg-x11-fonts-Type1 \
-xorg-x11-utils \
-epel-release && \
-sudo yum localinstall --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm && \
-sudo yum install -y ffmpeg ffmpeg-devel imagemagick ghostscript
+xorg-x11-utils
 ```
 
 #### Dependências Alpine 64bits (Validar)
 
 ```bash
-apk add --no-cache --update \
-apk add --no-cache ffmpeg imagemagick ghostscript
+# replacing default repositories with edge ones
+echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" > /etc/apk/repositories && \
+echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
+echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories && \
+echo "http://dl-cdn.alpinelinux.org/alpine/v3.9/main" >> /etc/apk/repositories && \
+echo "http://dl-cdn.alpinelinux.org/alpine/v3.9/community" >> /etc/apk/repositories && \
+apk update && \
+apk upgrade && \
+apk add --update --no-cache dumb-init curl make gcc g++ linux-headers binutils-gold gnupg \
+libstdc++ nss chromium chromium-chromedriver git vim curl yarn nodejs nodejs-npm npm python \
+python3 dpkg wget
+ffmpeg \
+sox
+```
+
+#### Instale o Google Chrome Debian (e.g. Ubuntu) 64bits
+
+```bash
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+
+sudo apt install ./google-chrome-stable_current_amd64.deb
+```
+
+#### Instale o Google Chrome CentOS 7/8 64bits
+
+```bash
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+
+sudo yum install ./google-chrome-stable_current_*.rpm
+```
+
+#### Instale o Google Chrome Alpine 64bits
+
+```bash
+apk add chromium chromium-chromedriver
 ```
 
 #### Instale o NodeJs Debian (e.g. Ubuntu)
@@ -150,10 +154,10 @@ apk add --no-cache ffmpeg imagemagick ghostscript
 cd ~
 
 # Recuperar o script de instalação para sua versão de preferência
-curl -sL https://deb.nodesource.com/setup_14.x | sudo bash -
+curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -
 
 # Instalar o pacote Node.js
-sudo apt install -y git nodejs yarn gcc g++ tar make vim curl npm python python3
+sudo apt install -y git nodejs yarn gcc g++ make vim curl python python3
 
 # Remover pacotes que não são mais necessários
 sudo apt autoremove -y
@@ -168,10 +172,10 @@ sudo apt autoremove -y
 cd ~
 
 # Recuperar o script de instalação para sua versão de preferência
-curl -sL https://rpm.nodesource.com/setup_14.x | sudo -E bash -
+curl -sL https://rpm.nodesource.com/setup_16.x | sudo -E bash -
 
 # Instalar o pacote Node.js
-sudo yum install -y git nodejs yarn gcc g++ tar make vim curl npm python python3
+sudo yum install -y git nodejs yarn gcc g++ tar make vim curl python python3
 
 # Remover pacotes que não são mais necessários
 sudo yum autoremove -y
@@ -189,6 +193,57 @@ cd ~
 apk add --update nodejs nodejs-npm
 ```
 
+#### Instale o MySQL Debian (e.g. Ubuntu)
+
+###### Instalar
+
+```bash
+#Atualize o índice de pacotes em seu servidor se ainda não tiver feito isso
+sudo apt update
+
+#Instale o pacote mysql-server
+sudo apt install mysql-server -y
+
+#Execute o script de segurança
+sudo mysql_secure_installation
+```
+
+#### Instale o MySQL CentOS
+
+###### Instalar
+
+```bash
+#Atualize o índice de pacotes em seu servidor se ainda não tiver feito isso
+sudo yum update
+
+#baixar os repositórios MySQL
+sudo wget https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm
+
+#Preparar o repositório
+sudo rpm -Uvh mysql80-community-release-el7-3.noarch.rpm
+
+#Instale o pacote mysql-server
+sudo yum install mysql-server -y
+
+#Execute o script de segurança
+sudo mysql_secure_installation
+```
+
+#### Instale o MySQL Alpaine Linux
+
+###### Instalar
+
+```bash
+#Atualize o índice de pacotes em seu servidor se ainda não tiver feito isso
+apk update
+
+#Instale o pacote mysql-server
+apk add mysql mysql-client
+
+#Execute o script de segurança
+mysql_secure_installation
+```
+
 ## Rodando a aplicação
 
 ```bash
@@ -196,28 +251,13 @@ apk add --update nodejs nodejs-npm
 cd ~
 
 # Clone este repositório
-git clone https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md.git ApiBaileysMd
+git clone https://github.com/AlanMartines/connectzap-api-node-baileys-md.git ApiBaileysMd
 
 # Acesse a pasta do projeto no terminal/cmd
 cd ApiBaileysMd
 
 # Instale as dependências
 npm install --allow-root --unsafe-perm=true
-
-# Clone este repositório
-git clone -b multi-device https://github.com/adiwajshing/Baileys.git
-
-# Acesse a pasta do projeto
-cd Baileys
-
-# Instale as dependências
-npm install --allow-root --unsafe-perm=true
-
-# Building Baileys
-npm run build:all
-
-# Ir para seu diretório anterior
-cd ..
 
 # Configuração inicial
 cp .env-example .env
@@ -228,7 +268,7 @@ node server.js
 # Manter os processos ativos a cada reinicialização do servidor
 npm install pm2 -g
 
-pm2 start server.js --name ApiBaileys --watch
+pm2 start server.js --name ApiBaileysMd --watch
 
 pm2 save
 
@@ -239,26 +279,172 @@ sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -
 # Para remover do init script
 pm2 unstartup systemd
 
-# O servidor iniciará na porta:9002
+# O servidor iniciará na porta:9001
 
 # Pronto, escaneie o código QR-Code do Whatsapp e aproveite!
 ```
+
+## Gerar TOKEN_SECRET para uso no jwt
+
+```bash
+node -e "console.log(require('crypto').randomBytes(64).toString('base64').replace(/[^a-zA-Z0-9]/g, ''));"
+```
+
+## Criar pasta tokens (Linux)
+
+```bash
+#Criar pasta para os tokens
+mkdir /usr/local/tokens
+
+#Setar permição na pasta tokens
+chmod -R 777 /usr/local/tokens
+```
+
+## Configuração inicial do arquivo ".env-example"
+
+```sh
+NODE_EN=production
+#
+# Defina o HOST aqui caso voce utilize uma VPS deve ser colocado o IP da VPS
+# Exemplos:
+# HOST=204.202.54.2 => IP da VPS, caso esteja usando virtualização via hospedagem
+# HOST=10.0.0.10 => IP da VM, caso esteja usando virtualização
+# HOST=localhost => caso esteja usando na sua proprima maquina local
+HOST=localhost
+#
+# Defina o numero da porta a ser usada pela API.
+PORT=9001
+#
+# Redis config => NÃO MEXER NA VARIAVEL REDIS_URL
+REDIS_URL=redis://localhost:6379
+#
+# CASO UTILIZE CERTIFICADO SSL COM REDIRECIONAMENTO DE PORTA, DEVE PREENCHER A VARIAVEL DOMAIN_SSL
+# CASO DE NÃO SER CONFIGURADO UM DOMÍNIO MATENHA A VARIAVEL DOMAIN_SSL VAZIA
+# Exemplos:
+# DOMAIN_SSL=api.meudomai.com.br ou meudomai.com.br
+# DOMAIN_SSL=
+DOMAIN_SSL=
+#
+# Define se o qrcode vai ser mostrado no terminal
+VIEW_QRCODE_TERMINAL=0
+#
+# Define a pasta para os tokens
+PATCH_TOKENS=
+#
+# Device name
+DEVICE_NAME='My-Whatsapp'
+#
+# Defina a versão do whatsapp a ser usada.
+# CASO DE NÃO SER CONFIGURADO UM VERSÂO MATENHA A VARIAVEL WA_VERSION VAZIA
+# Exemplos:
+# WA_VERSION='2.2204.13'
+# WA_VERSION=
+#
+WA_VERSION=
+#
+# Auto close
+AUTO_CLOSE=10
+#
+# Chave de segurança para validação no JWT
+SECRET_KEY=09f26e402586e2faa8da4c98a35f1b20d6b033c60
+#
+# Validate in terminal false or true
+VALIDATE_MYSQL=0
+#
+# mysql ou mariabd
+MYSQL_ENGINE=mysql
+#
+# Vesão
+MYSQL_VERSION=latest
+#
+# O host do banco. Ex: localhost
+MYSQL_HOST=localhost
+#
+# Port do banco. Ex: 3306
+MYSQL_PORT=3306
+#
+# Um usuário do banco. Ex: user
+MYSQL_USER=mywhatsappapi
+#
+# A senha do usuário do banco. Ex: user123
+MYSQL_PASSWORD=TuUep8KkjCtAA@
+#
+# A base de dados a qual a aplicação irá se conectar. Ex: node_mysql
+MYSQL_DATABASE=mywhatsapp-api
+#
+# Time Zone
+MYSQL_TIMEZONE='-04:00'
+#
+# Time Zone
+TZ='America/Sao_Paulo'
+#
+# Gag image
+TAG=1.0.0
+#
+# browserWSEndpoint Ex.: ws://127.0.0.1:3000
+BROWSER_WSENDPOINT=
+#
+# Default 1
+MAX_CONCURRENT_SESSIONS=1
+#
+# Set name instace for use ecosystem.config.js
+NAME_INSTANCES=ApiBaileysMdClus
+#
+# Set count instace for use ecosystem.config.js
+INSTANCES=1
+#
+# Caso queira que ao iniciar a API todas as sessões salvas sejam inicializadas automaticamente
+START_ALL_SESSIONS=0
+#
+# Caso queira forçar a reconexão da API em caso de desconexão do WhatsApp defina true
+FORCE_CONNECTION_USE_HERE=0
+#
+# IBM Watson Speech to Text
+SPEECH_TO_TEXT_IAM_APIKEY=X4rbi8vwZmKpXfowaS3GAsA7vdy17Qh7km5D6EzKLHL2
+#
+SPEECH_TO_TEXT_URL=https://api.us-east.speech-to-text.watson.cloud.ibm.com
+```
+
+## Create MySQL DATABASE/TABLE
+
+```sql
+-- Copiando estrutura do banco de dados para mywhatsapp-api
+CREATE DATABASE IF NOT EXISTS `mywhatsapp-api`;
+USE `mywhatsapp-api`;
+
+-- Copiando estrutura para tabela mywhatsapp-api.tokens
+CREATE TABLE IF NOT EXISTS `tokens` (
+  `ID` int unsigned NOT NULL AUTO_INCREMENT,
+  `token` char(255) NOT NULL,
+	`sessionToken` text DEFAULT NULL,
+	`webhook` char(255) DEFAULT NULL,
+  `status` char(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'false',
+  `state` char(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'false',
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `lastactivit` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb3;
+```
+
+## Rotas
+
+> As rota se encontra no arquivo [Insomnia.json](https://github.com/AlanMartines/connectzap-api-node-baileys-md/blob/master/Insomnia.json "Insomnia.json"), importe para seu Insomnia e desfrute da API.
 
 #### Json (POST)
 
 ```json
 {
   "AuthorizationToken": "a56ad842-c707-4446-871c-e570240cd730",
-  "SessionName": "teste"
+  "SessionName": "a56ad842-c707-4446-871c-e570240cd730"
 	...
 }
 ```
 
 #### Iniciar sessão whatsapp (POST method)
 
-```node
+```js
 router.post("/Start", (req, res, next) => {
-  const response = await fetch("http://localhost:9002/sistema/Start", {
+  const response = await fetch("http://localhost:9001/sistema/Start", {
     method: "POST",
     headers: {
       Accept: "application/json",
@@ -276,9 +462,9 @@ router.post("/Start", (req, res, next) => {
 
 #### Exibir QR-Code no navegador (POST method)
 
-```node
+```js
 router.post("/QRCode", (req, res, next) => {
-  const response = await fetch("http://localhost:9002/sistema/QRCode", {
+  const response = await fetch("http://localhost:9001/sistema/QRCode", {
     method: "POST",
     headers: {
       Accept: "application/json",
@@ -297,9 +483,9 @@ router.post("/QRCode", (req, res, next) => {
 
 #### Retorna json com (base64) do QR-Code (POST method)
 
-```node
+```js
 router.post("/QRCode", (req, res, next) => {
-  const response = await fetch("http://localhost:9002/sistema/QRCode", {
+  const response = await fetch("http://localhost:9001/sistema/QRCode", {
     method: "POST",
     headers: {
       Accept: "application/json",
@@ -318,9 +504,9 @@ router.post("/QRCode", (req, res, next) => {
 
 #### Fecha sessão whatsapp (POST method)
 
-```node
+```js
 router.post("/Close", (req, res, next) => {
-  const response = await fetch("http://localhost:9002/sistema/Close", {
+  const response = await fetch("http://localhost:9001/sistema/Close", {
     method: "POST",
     headers: {
       Accept: "application/json",
@@ -336,95 +522,32 @@ router.post("/Close", (req, res, next) => {
 });
 ```
 
-## Gerar TOKEN_SECRET para uso no jwt
+## Docker-Compose
 
 ```bash
-node -e "console.log(require('crypto').randomBytes(256).toString('base64'));"
-```
+# Ir para seu diretório home
+cd ~
 
-## Criar pasta tokens (Linux)
-
-```bash
+#Criar pasta para os tokens
 mkdir /usr/local/tokens
 
-chmod -R 755 /usr/local/tokens
-```
+#Setar permição na pasta tokens
+chmod -R 777 /usr/local/tokens
 
-## Criar pasta tokens (Windows)
+# Clone este repositório
+git clone https://github.com/AlanMartines/connectzap-api-node-baileys-md.git ApiBaileysMd
 
-```cmd
-mkdir c:\tokens
-```
+# Acesse a pasta do projeto no terminal/cmd
+cd ApiBaileysMd
 
-## Configuração inicial do arquivo ".env-example"
+# Instale as dependências
+npm install --allow-root --unsafe-perm=true
 
-```
-NODE_EN=production
-#
-# Defina o HOST aqui caso voce utilize uma VPS deve ser colocado o IP da VPS
-# Exemplos:
-# HOST=204.202.54.2 => IP da VPS, caso esteja usando virtualização via hospedagem
-# HOST=10.0.0.10 => IP da VM, caso esteja usando virtualização
-# HOST=localhost => caso esteja usando na sua proprima maquina local
-HOST=localhost
-#
-# Defina o numero da porta a ser usada pela API.
-PORT=9003
-#
-# Define se o qrcode vai ser mostrado no terminal
-VIEW_QRCODE_TERMINAL=0
-#
-# Chave de segurança para validação no JWT
-JWT_SECRET=09f26e402586e2faa8da4c98a35f1b20d6b033c60
-#
-# Diretório da pasta onde irá salvar os tokens gerados no linux
-TOKENSPATCH=/usr/local/tokens
-#
-# Validate in terminal false or true
-VALIDATE_MYSQL=0
-#
-# O host do banco. Ex: localhost
-MYSQL_HOST=localhost
-#
-# Port do banco. Ex: 3306
-MYSQL_PORT=3306
-#
-# Um usuário do banco. Ex: user
-MYSQL_USER=mywhatsappapi
-#
-# A senha do usuário do banco. Ex: user123
-MYSQL_PASSWORD=TuUep8KkjCtAA@
-#
-# A senha do usuário root do banco. Ex: root123
-MYSQL_ROOT_PASSWORD=TuUep8KkjCtAA@
-#
-# A base de dados a qual a aplicação irá se conectar. Ex: node_mysql
-MYSQL_DATABASE=mywhatsapp-api
-#
-# Criando volume onde irá salvar os tokens gerados
-VOLUME=/usr/local/tokens
-#
-```
+# Configuração inicial
+cp .env-example .env
 
-## Create MySQL DATABASE/TABLE
-
-```sql
--- Copiando estrutura do banco de dados para mywhatsapp-api
-CREATE DATABASE IF NOT EXISTS `mywhatsapp-api`;
-USE `mywhatsapp-api`;
-
--- Copiando estrutura para tabela mywhatsapp-api.tokens
-CREATE TABLE IF NOT EXISTS `tokens` (
-  `ID` int unsigned NOT NULL AUTO_INCREMENT,
-  `token` char(255) NOT NULL,
-  `active` char(5) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'true',
-  `state` char(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'DISCONNECTED',
-  `status` char(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'notLogged',
-  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8mb3;
-
+# Criar um contêiner
+docker-compose -f docker-compose.yml up --build -d
 ```
 
 ## Dockerfile
@@ -433,118 +556,152 @@ CREATE TABLE IF NOT EXISTS `tokens` (
 # Ir para seu diretório home
 cd ~
 
+#Criar pasta para os tokens
+mkdir /usr/local/tokens
+
+#Setar permição na pasta tokens
+chmod -R 777 /usr/local/tokens
+
 # Clone este repositório
-git clone https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md.git
+git clone https://github.com/AlanMartines/connectzap-api-node-baileys-md.git ApiBaileysMd
 
 # Acesse a pasta do projeto no terminal/cmd
-$ cd nodejs-mywhatsapp-api-node-baileys-md
+cd ApiBaileysMd
+
+# Instale as dependências
+npm install --allow-root --unsafe-perm=true
+
+# Configuração inicial
+cp .env-example .env
 
 # Processando o arquivo Dockerfile
-$ docker build -t alanmartines/nodejs-mywhatsapp-api-node-baileys-md:1.0
+docker build -t alanmartines/connectzap-api-node-baileys-md:1.0.0 -f Dockerfile.backend .
 
-# Criar um contêiner
-docker container run --name mywhatsapp-api-node-baileys-md -p 9002:9002 -d alanmartines/nodejs-mywhatsapp-api-node-baileys-md:1.0
+# Criar contêiner
+docker run -d -p 9001:9001 --name ApiWPPconnect \
+  --restart=always \
+	-v ${PWD}:/home/ApiBaileysMd \
+	-v /usr/local/tokens:/usr/local/tokens \
+	-e NODE_EN=production \
+	-e HOST=0.0.0.0 \
+	-e PORT=9001 \
+	-e DOMAIN_SSL= \
+	-e VIEW_QRCODE_TERMINAL=0 \
+	-e DEVICE_NAME='My-Whatsapp' \
+	-e WA_VERSION= \
+	-e PATCH_TOKENS= '/usr/local/tokens'\
+	-e AUTO_CLOSE=60000 \
+	-e SECRET_KEY=09f26e402586e2faa8da4c98a35f1b20d6b033c60 \
+	-e VALIDATE_MYSQL=0 \
+	-e MYSQL_HOST=localhost \
+	-e MYSQL_PORT=3306 \
+	-e MYSQL_USER=mywhatsappapi \
+	-e MYSQL_PASSWORD=TuUep8KkjCtAA@ \
+	-e MYSQL_DATABASE=mywhatsapp-api \
+	-e MYSQL_DIALECT=mysql \
+	-e MYSQL_TIMEZONE='-04:00' \
+	-e BROWSER_WSENDPOINT= \
+	-e START_ALL_SESSIONS=0 \
+	-e FORCE_CONNECTION_USE_HERE=0 \
+  alanmartines/connectzap-api-node-baileys-md:1.0.0
 ```
 
-## Para instalar o certbot e criar o certificado SSL para domínios https
+## Instalar o certbot Debian (e.g. Ubuntu) 64bits
 
 ```barsh
-sudo apt-get update && sudo apt-get install -y software-properties-common
+# Instalar Python e cerbot
+sudo apt install -y certbot python3-certbot-nginx
+
+# Renew certificate interactively
+sudo certbot renew
 ```
+
+## Instalar o certbot CentOS 7/8 64bits
 
 ```barsh
-sudo add-apt-repository universe && sudo add-apt-repository ppa:certbot/certbot
+# Instalar Python e cerbot
+sudo yum install -y epel-release
+
+# Instalar plugin para nginex
+sudo yum install -y certbot-nginx
+
+# Renew certificate interactively
+sudo certbot renew
 ```
+
+## Instalar o certbot Alpine 64bits
 
 ```barsh
-sudo apt-get update && sudo apt-get install -y certbot
+# Instalar Python
+apk add --update python3 py3-pip
+
+# Instalar cerbot
+apk add certbot
+
+# Instalar plugin para nginex
+pip install certbot-nginx
+
+# Renew certificate interactively
+certbot renew
 ```
+
+## Criar o certificado SSL para domínios https Debian (e.g. Ubuntu) 64bits e CentOS 7/8 64bits
 
 ```barsh
-sudo apt-get update && sudo apt-get install -y software-properties-common
+sudo certbot certonly --manual --force-renewal -d *.yourdomain.net -d yourdomain.net \
+--agree-tos --no-bootstrap --manual-public-ip-logging-ok --preferred-challenges dns-01 \
+--server https://acme-v02.api.letsencrypt.org/directory
 ```
+
+## Criar o certificado SSL para domínios https Alpine 64bits
 
 ```barsh
-sudo add-apt-repository universe && sudo add-apt-repository ppa:certbot/certbot
+certbot certonly --manual --force-renewal -d *.yourdomain.net -d yourdomain.net \
+--agree-tos --no-bootstrap --manual-public-ip-logging-ok --preferred-challenges dns-01 \
+--server https://acme-v02.api.letsencrypt.org/directory
 ```
-
-```barsh
-sudo apt-get update && sudo apt-get install -y certbot
-```
-
-```barsh
-sudo certbot certonly --manual --force-renewal -d *.yourdomain.net -d yourdomain.net --agree-tos --no-bootstrap --manual-public-ip-logging-ok --preferred-challenges dns-01 --server https://acme-v02.api.letsencrypt.org/directory
-```
-
-## O que há de novo?
-
-| Baileys                                 | Contém |
-| --------------------------------------- | ------ |
-| Conectar 4 dispositivos simultaneamente | ❌     |
-| Não precisa de conexão com o celular    | ❌     |
-| Utiliza o whatsapp web                  | ✅     |
-
-| Baileys Multi-Device                    | Contém |
-| --------------------------------------- | ------ |
-| Conectar 4 dispositivos simultaneamente | ✅     |
-| Não precisa de conexão com o celular    | ✅     |
-| Utiliza o whatsapp web                  | ✅     |
 
 ## Em desenvolvimento
 
 Este projeto se encontra em desenvolvimento, então pode conter erros.
 
-## ❌ Alerta ❌
-
-O baileys md está em beta e está rodeado de bugs de conexão e instabilidade, algumas mensganes podem se repetir ou não ser lidas, porém com o tempo isso vai ser corrgido.
-
 ## Ban Whatsapp
 
+<blockquote>
 Existem dois tipos diferentes de banimento.
 
 **BANIMENTO TEMPORÁRIO**
 Uma técnica para banir temporariamente uma conta. Eu sei que eles não estão mais acostumados a aplicar banimento temporário, ou eles são tão raros hoje em dia, exceto pelo uso de versões não autorizadas do WhatsApp.
 
 - O WhatsApp pode banir temporariamente sua conta se você estiver usando uma versão não autorizada do WhatsApp.
-
 - Versões não autorizadas do WhatsApp, também conhecidas como “Mods do WhatsApp” no Android, costumam oferecer vários novos recursos, mas sua privacidade pode ser comprometida: esses aplicativos editam o WhatsApp, injetando um código diferente, e não podemos saber se esse código é perigoso para sua privacidade e segurança.
 
 - Usar uma versão modificada do WhatsApp viola os Termos de Serviço, então o WhatsApp pode banir sua conta quando iniciar uma nova onda de banimento. Se o usuário não mudar para a versão oficial do WhatsApp da App Store e Google Play Store dentro de um determinado tempo, ele definitivamente banirá sua conta.
 
 - O WhatsApp deve proteger seus produtos e usuários, portanto, sua ação de banir as versões modificadas é absolutamente correta. Talvez eles pudessem agir de forma diferente, por exemplo, impedindo o acesso a versões modificadas do WhatsApp sem banir o usuário, mas é compreensível. Há alguns anos o WhatsApp está tentando convencer as pessoas a parar de usar versões modificadas do WhatsApp, implementando alguns recursos incluídos nessas versões.
-
 - O WhatsApp pode banir temporariamente sua conta se você criar muitos grupos com pessoas que não têm seu número de telefone salvo em suas listas de endereços.
-
 - O WhatsApp pode banir temporariamente sua conta se você enviar muitas mensagens para pessoas que não têm seu número de telefone salvo em suas listas de endereços.
-
 - O WhatsApp pode banir temporariamente sua conta se você enviar muitas mensagens para uma lista de difusão.
-
 - O WhatsApp poderia anteriormente banir sua conta se você enviar a mesma mensagem para muitas pessoas. O WhatsApp não consegue ler o conteúdo da mensagem, mas se o aplicativo WhatsApp entender que você está encaminhando a mesma mensagem para muitos contatos, você pode ser banido temporariamente. Não deveria estar ativo hoje em dia ou é muito raro, pois o WhatsApp permite encaminhar uma mensagem para no máximo 5 contatos, a fim de evitar a divulgação de notícias falsas.
-
 - O WhatsApp pode banir temporariamente sua conta se muitas pessoas bloquearem você em um determinado tempo.
-
-- Se o usuário foi banido temporariamente várias vezes, ele pode ser banido permanentemente de usar o WhatsApp.
+  Se o usuário foi banido temporariamente várias vezes, ele pode ser banido permanentemente de usar o WhatsApp.
 
 **BANIMENTO PERMANENTE**
 Principais razões pelas quais o WhatsApp pode banir sua conta:
 
 - O WhatsApp proíbe permanentemente contas que executam ações em massa ou automatizadas: elas violam totalmente seus Termos de Serviço porque essas ações usam os serviços do WhatsApp sem qualquer autorização. O WhatsApp proíbe mais de 2,5 milhões de contas por mês devido a mensagens em massa e automatizadas.
-
 - O WhatsApp pode banir permanentemente sua conta se o número de telefone associado tiver sido usado para ações suspeitas. Essa verificação acontece durante o registro da conta.
-
 - O WhatsApp proíbe contas que usam seu serviço intensamente, por exemplo, se a conta enviar muitas mensagens em um determinado período. Não se preocupe, o WhatsApp introduziu um limite que é realmente inalcançável para uma pessoa. Se uma conta atingiu o limite, significa que não é humana, mas é um sistema automatizado.
-
 - O WhatsApp bane todas as contas que recebem vários relatórios de outros usuários.
-
-- O WhatsApp avisa que eles não podem emitir um aviso antes de banir qualquer conta (de acordo com seus Termos de Serviço, eles podem reter o direito de bani-lo sem qualquer comunicação), mas, se o usuário pensa que sua conta foi banida por engano, ele pode enviar um e-mail para que eles vai examinar o caso dele.
-
-- O WhatsApp também proíbe contas com nomes suspeitos em seus nomes de grupo.
-
-- Conforme mencionado no artigo sobre os rótulos de privacidade da Apple para WhatsApp, o WhatsApp pode visualizar todos os nomes e descrições de grupos, a fim de banir automaticamente todas as contas que violam as leis (mas não são coletadas para fins publicitários e esses detalhes não são compartilhados com seus pais empresa, Facebook). Isso é para ajudar o WhatsApp a combater a exploração infantil.
-
-- Infelizmente, o WhatsApp também pode banir sua conta por engano.
-
----
+O WhatsApp avisa que eles não podem emitir um aviso antes de banir qualquer conta (de acordo com seus Termos de Serviço, eles podem reter o direito de bani-lo sem qualquer comunicação), mas, se o usuário pensa que sua conta foi banida por engano, ele pode enviar um e-mail para que eles vai examinar o caso dele.
+O WhatsApp também proíbe contas com nomes suspeitos em seus nomes de grupo.
+Conforme mencionado no artigo sobre os rótulos de privacidade da Apple para WhatsApp, o WhatsApp pode visualizar todos os nomes e descrições de grupos, a fim de banir automaticamente todas as contas que violam as leis (mas não são coletadas para fins publicitários e esses detalhes não são compartilhados com seus pais empresa, Facebook). Isso é para ajudar o WhatsApp a combater a exploração infantil.
+Infelizmente, o WhatsApp também pode banir sua conta por engano. Deixe-nos mostrar alguns exemplos.
+Algumas semanas atrás, recebi um relatório de um usuário do WhatsApp: ele estava em um grupo com outros 12 membros. Um membro deu seu código de 6 dígitos para outra pessoa e ele perdeu sua conta do WhatsApp (o que são contas do WhatsApp roubadas e por que isso acontece?). Este “novo membro” mudou o nome e a descrição do grupo: ele inseriu termos ilegais, acionando sistemas WhatsApp e todo o grupo foi banido.
+Esses usuários tentaram entrar em contato com o Suporte do WhatsApp para solicitar o cancelamento do banimento. O WhatsApp se recusou a cancelar o banimento dessas contas, porque violaram seus Termos de Serviço.
+Mantiveram contato com o suporte por mais de 2 meses, mas nada de novo: sempre recebiam a mesma resposta ou não atendiam.
+Resolvi dar voz a essa história, compartilhando no Twitter. No dia seguinte, essas 13 contas foram canceladas.
+</blockquote>
 
 ## Reflexão
 
@@ -583,12 +740,6 @@ Envolva-se com as pessoas. Isso é ter propósito!
 
 </blockquote>
 
----
-
-## ⚖️ Licença
-
-Este bot esta protegido com a licença MIT ou seja, será permitido a distribuição, modificação, revenda contanto que seja dado o devido reconhecimento para o criador. Caso quebrado, o criador pode recorrer a justiça para reinvidicar seus direitos.
+## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
-
----

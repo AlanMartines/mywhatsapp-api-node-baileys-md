@@ -3,7 +3,7 @@
   "material-icon-theme.folders.color": "#ef5350",
   "workbench.editor.showTabs": true,
   "workbench.editor.enablePreview": false,
-  "editor.formatOnSave": true, // Formata o código sempre que salvamos
+  "editor.formatOnSave": false, // Formata o código sempre que salvamos
   "workbench.startupEditor": "newUntitledFile", // Abre sempre um arquivo em branco
   "editor.minimap.enabled": false, // Desabilita o Mini Map
   "terminal.integrated.cursorStyle": "underline", // Deixa o cursor do terminal como underline

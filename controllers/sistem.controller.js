@@ -1,90 +1,106 @@
+'use strict';
 //
 // Configuração dos módulos
 const os = require('os');
 const {
-  forEach
+	forEach
 } = require('p-iteration');
-const sleep = require('await-sleep');
 const fs = require('fs-extra');
 const path = require('path');
 const express = require("express");
 const multer = require('multer');
-const upload = multer({});
+const validUrl = require('valid-url');
 const mime = require('mime-types');
+const moment = require('moment');
+moment()?.format('YYYY-MM-DD HH:mm:ss');
+moment?.locale('pt-br');
+// https://stackoverflow.com/questions/60408575/how-to-validate-file-extension-with-multer-middleware
+// https://www.edivaldobrito.com.br/como-instalar-o-ffmpeg-4-4-via-ppa-no-ubuntu-20-04-18-04-e-21-04/
+const upload = multer({});
 const router = express.Router();
 const Sessions = require("../sessions.js");
+const config = require('../config.global');
 const verifyToken = require("../middleware/verifyToken");
+const { Tokens } = require('../models');
 //
 // ------------------------------------------------------------------------------------------------//
 //
 async function deletaArquivosTemp(filePath) {
-  //
-  const cacheExists = await fs.pathExists(filePath);
-  console.log('- O arquivo é: ' + cacheExists);
-  if (cacheExists) {
-    fs.remove(filePath);
-    console.log('- O arquivo removido: ' + cacheExists);
-  }
+	//
+	const cacheExists = await fs.pathExists(filePath);
+	if (cacheExists) {
+		fs.remove(filePath);
+		console.log(`- O arquivo "${filePath}" removido`);
+	}
+	//
 }
-//
-// ------------------------------------------------------------------------------------------------//
 //
 function soNumeros(string) {
-  var numbers = string.replace(/[^0-9]/g, '');
-  return numbers;
-}
-//
-async function validatePhone(phone) {
-  // A função abaixo demonstra o uso de uma expressão regular que identifica, de forma simples, telefones válidos no Brasil.
-  // Nenhum DDD iniciado por 0 é aceito, e nenhum número de telefone pode iniciar com 0 ou 1.
-  // Exemplos válidos: +55 (11) 98888-8888 / 9999-9999 / 21 98888-8888 / 5511988888888
-  //
-  var isValid = /^(?:(?:\+|00)?(55)\s?)?(?:\(?([1-9][0-9])\)?\s?)?(?:((?:9\d|[2-9])\d{3})\-?(\d{4}))$/;
-  //var isValid = /^(?:(?:\+|00)?(55)\s?)?(?:\(?([1-9][0-9])\)?\s?)(?:((?:9\d|[2-9])\d{3})\-?(\d{4}))$/;
-  //var isValid = /^(?:(?#DDI)(?:\+|00)?(55)\s?)?(?:(?#DDD)\(?([1-9][0-9])\)?\s?)(?:(?#Telefone)((?:9\d|[2-9])\d{3})\-?(\d{4}))$/gm;
-  //var isValid = /^(?:(?:+|00)?(55)\s?)?(?:(?([1-9][0-9]))?\s?)(?:((?:9\d|[2-9])\d{3})-?(\d{4}))$/;
-  var result = await isValid.test(phone);
-  return result;
+	var numbers = string.replace(/[^0-9]/g, '');
+	return numbers;
 }
 //
 // ------------------------------------------------------------------------------------------------//
 //
-String.prototype.toHHMMSS = function() {
-  var sec_num = parseInt(this, 10); // não se esqueça do segundo parâmetro
-
-  var hours = Math.floor(sec_num / 3600);
-  var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
-  var seconds = sec_num - (hours * 3600) - (minutes * 60);
-
-  if (hours < 10) {
-    hours = "0" + hours;
-  }
-  if (minutes < 10) {
-    minutes = "0" + minutes;
-  }
-  if (seconds < 10) {
-    seconds = "0" + seconds;
-  }
-  var time = hours + ':' + minutes + ':' + seconds;
-  return time;
+function removeWithspace(string) {
+	var string = string.replace(/\r?\n|\r|\s+/g, ""); /* replace all newlines and with a space */
+	return string;
 }
 //
 // ------------------------------------------------------------------------------------------------//
 //
-const convertBytes = function(bytes) {
-  const sizes = ["Bytes", "KB", "MB", "GB", "TB"]
-
-  if (bytes == 0) {
-    return "n/a"
-  }
-
-  const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)))
-
-  if (i == 0) {
-    return bytes + " " + sizes[i]
-  }
-
-  return (bytes / Math.pow(1024, i)).toFixed(1) + " " + sizes[i]
+function validPhone(phone) {
+	// A função abaixo demonstra o uso de uma expressão regular que identifica, de forma simples, telefones válidos no Brasil.
+	// Nenhum DDD iniciado por 0 é aceito, e nenhum número de telefone pode iniciar com 0 ou 1.
+	// Exemplos válidos: +55 (11) 98888-8888 / 9999-9999 / 21 98888-8888 / 5511988888888
+	//
+	var isValid = /^(?:(?:\+|00)?(55)\s?)?(?:\(?([1-9][0-9])\)?\s?)?(?:((?:9\d|[2-9])\d{3})\-?(\d{4}))$/
+	return isValid.test(phone);
+}
+//
+// ------------------------------------------------------------------------------------------------//
+//
+function validInternationalPhoneNumber(phone) {
+	var regex = /^\+(?:[0-9] ?){6,14}[0-9]$/;
+	if (regex.test(phone)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+//
+// ------------------------------------------------------------------------------------------------//
+//
+String.prototype.toHHMMSS = function () {
+	var sec_num = parseInt(this, 10); // não se esqueça do segundo parâmetro
+	var hours = Math.floor(sec_num / 3600);
+	var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+	var seconds = sec_num - (hours * 3600) - (minutes * 60);
+	if (hours < 10) {
+		hours = "0" + hours;
+	}
+	if (minutes < 10) {
+		minutes = "0" + minutes;
+	}
+	if (seconds < 10) {
+		seconds = "0" + seconds;
+	}
+	var time = hours + ':' + minutes + ':' + seconds;
+	return time;
+}
+//
+// ------------------------------------------------------------------------------------------------//
+//
+const convertBytes = function (bytes) {
+	const sizes = ["Bytes", "KB", "MB", "GB", "TB"]
+	if (bytes == 0) {
+		return "n/a"
+	}
+	const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+	if (i == 0) {
+		return bytes + " " + sizes[i]
+	}
+	return (bytes / Math.pow(1024, i)).toFixed(1) + " " + sizes[i]
 }
 //
 // ------------------------------------------------------------------------------------------------//
@@ -94,235 +110,656 @@ const convertBytes = function(bytes) {
 ║ ╦├┤  │  │ │││││ ┬  └─┐ │ ├─┤├┬┘ │ ├┤  ││
 ╚═╝└─┘ ┴  ┴ ┴┘└┘└─┘  └─┘ ┴ ┴ ┴┴└─ ┴ └─┘─┴┘
 */
+//
 router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  //
-  /*
-	if (req.body.number.length > 15) {
-    var number = req.body.number; 
-} else {
-    var number = phoneNumberFormatter(req.body.number);
-    var numberExists = await client.isOnWhatsApp(number);
-    if (!numberExists) {
-        return res.status(422).json({
-            status: false,
-            message: 'The number is not registered'
-        });
-    }
-}
-*/
-  //
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  var session = Sessions.getSession(req.body.SessionName.trim());
-  //
-  switch (sessionStatus.status) {
-    case 'isLogged':
-    case 'qrRead':
-      //
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sessionStatus
-      });
-      break;
-    case 'notLogged':
-    case 'CLOSED':
-    case 'DISCONNECTED':
-      //
-      var getStart = await Sessions.Start(req.body.SessionName.trim(), req.body.SessionName.trim());
-      console.log("- AuthorizationToken:", req.body.SessionName.trim());
-      session.state = 'STARTING';
-      session.status = 'notLogged';
-      //
-      var Start = {
-        result: "info",
-        state: 'STARTING',
-        status: 'notLogged',
-        message: 'Sistema iniciando e indisponivel para uso'
-      };
-      //
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": Start
-      });
-      //
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-  //
+	//
+	try {
+		if (!removeWithspace(req.body.SessionName)) {
+			var resultRes = {
+				"erro": true,
+				"status": 400,
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(resultRes.status).json({
+				"Status": resultRes
+			});
+			//
+		} else {
+			//
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+			//
+			switch (Status.status) {
+				case 'inChat':
+				case 'qrReadSuccess':
+				case 'isLogged':
+				case 'chatsAvailable':
+				case 'qrRead':
+					//
+					var resultRes = {
+						"erro": false,
+						"status": 200,
+						"message": 'Sistema iniciado e disponivel para uso'
+					};
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(resultRes.status).json({
+						"Status": resultRes
+					});
+					break;
+				case 'notLogged':
+				case 'deviceNotConnected':
+				case 'desconnectedMobile':
+				case 'qrReadFail':
+				case 'deleteToken':
+				case 'browserClose':
+				case 'autocloseCalled':
+				case 'serverClose':
+				case 'deleteToken':
+				case 'CLOSED':
+				case 'DISCONNECTED':
+				case 'NOTFOUND':
+					//
+					await Sessions.Start(req.io, removeWithspace(req.body.SessionName), removeWithspace(req.body.SessionName), req.body.whatsappVersion);
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					if (parseInt(config.VALIDATE_MYSQL) == true) {;
+						try {
+							//
+							const row = await Tokens.findOne({
+								limit: 1,
+								attributes: [
+									'webhook', 
+									'wh_status', 
+									'wh_message', 
+									'wh_qrcode', 
+									'wh_connect'
+								],
+								where: {
+									token: removeWithspace(req.body.SessionName)
+								}
+							}).then(async function (entries) {
+								return entries;
+							}).catch(async (err) => {
+								console.log('- Error:', err);
+								return false;
+							});
+							//
+							if (row) {
+								//
+								const webHook = row.webhook;
+								//
+									session.wh_status = webHook;
+									session.wh_message = webHook;
+									session.wh_qrcode = webHook;
+									session.wh_connect = webHook;
+									//
+							} else {
+								session.wh_status = req.body.wh_status;
+								session.wh_message = req.body.wh_message;
+								session.wh_qrcode = req.body.wh_qrcode;
+								session.wh_connect = req.body.wh_connect;
+							}
+						} catch (err) {
+							console.log("- erro:", err);
+						}
+					} else {
+						session.wh_status = req.body.wh_status;
+						session.wh_message = req.body.wh_message;
+						session.wh_qrcode = req.body.wh_qrcode;
+						session.wh_connect = req.body.wh_connect;
+					}
+					//
+					var resultRes = {
+						"erro": false,
+						"status": 200,
+						"message": 'Sistema iniciando'
+					};
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(resultRes.status).json({
+						"Status": resultRes
+					});
+					//
+					break;
+				default:
+					var resultRes = {
+						"erro": true,
+						"status": 400,
+						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+					};
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(resultRes.status).json({
+						"Status": resultRes
+					});
+				//
+			}
+		}
+	} catch (error) {
+		console.log(error);
+		//
+		var resultRes = {
+			"erro": true,
+			"status": 403,
+			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	}
 });
 //
 // ------------------------------------------------------------------------------------------------//
 //
 router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var Status = await Sessions.ApiStatus(
-    req.body.SessionName
-  );
-  res.setHeader('Content-Type', 'application/json');
-  res.status(200).json({
-    "Status": Status
-  });
-
+	//
+	console.log("- Status");
+	try {
+		if (!removeWithspace(req.body.SessionName)) {
+			var resultRes = {
+				"erro": true,
+				"status": 400,
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(resultRes.status).json({
+				"Status": resultRes
+			});
+			//
+		} else {
+			//
+			try {
+				var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(200).json({
+					"Status": Status
+				});
+				//
+			} catch (erro) {
+				console.log("- Erro ao obter status:", erro);
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Erro ao obter status'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+				//
+			}
+		}
+	} catch (error) {
+		console.log(error);
+		//
+		var resultRes = {
+			"erro": true,
+			"status": 403,
+			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	}
 }); //Status
 //
 // ------------------------------------------------------------------------------------------------//
 //
-// Desconecta do whatsapp web
+// Fecha a sessão
 router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var LogoutSession = await Sessions.logoutSession(req.body.SessionName.trim());
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": LogoutSession
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //Logout
+	//
+	try {
+		if (!removeWithspace(req.body.SessionName)) {
+			var resultRes = {
+				"erro": true,
+				"status": 400,
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(resultRes.status).json({
+				"Status": resultRes
+			});
+			//
+		} else {
+			//
+			try {
+				var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+				switch (Status.status) {
+					case 'inChat':
+					case 'qrReadSuccess':
+					case 'isLogged':
+					case 'chatsAvailable':
+					case 'qrRead':
+					case 'notLogged':
+						//
+						var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+						var resultClose = await session.process.add(async () => await Sessions.closeSession(removeWithspace(req.body.SessionName)));
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(resultClose.status).json({
+							"Status": resultClose
+						});
+						//
+						break;
+					default:
+						//
+						var resultRes = {
+							"erro": true,
+							"status": 400,
+							"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+						};
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(resultRes.status).json({
+							"Status": resultRes
+						});
+					//
+				}
+			} catch (erro) {
+				console.log("- Erro ao fechar navegador:", erro);
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Erro ao fechar navegador'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+				//
+			}
+		}
+	} catch (error) {
+		console.log(error);
+		//
+		var resultRes = {
+			"erro": true,
+			"status": 403,
+			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	}
+}); //Close
 //
 // ------------------------------------------------------------------------------------------------//
 //
 // Desconecta do whatsapp web
 router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var LogoutSession = await Sessions.logoutSession(req.body.SessionName.trim());
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": LogoutSession
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
+	//
+	try {
+		if (!removeWithspace(req.body.SessionName)) {
+			var resultRes = {
+				"erro": true,
+				"status": 400,
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(resultRes.status).json({
+				"Status": resultRes
+			});
+			//
+		} else {
+			//
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+			switch (Status.status) {
+				case 'inChat':
+				case 'qrReadSuccess':
+				case 'isLogged':
+				case 'chatsAvailable':
+					//
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					var resultLogout = await session.process.add(async () => await Sessions.logoutSession(res, removeWithspace(req.body.SessionName)));
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(resultLogout.status).json({
+						"Status": resultLogout
+					});
+					//
+					break;
+				default:
+					//
+					var resultRes = {
+						"erro": true,
+						"status": 400,
+						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+					};
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(resultRes.status).json({
+						"Status": resultRes
+					});
+				//
+			}
+		}
+	} catch (error) {
+		console.log(error);
+		//
+		var resultRes = {
+			"erro": true,
+			"status": 403,
+			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	}
 }); //Logout
+//
+// ------------------------------------------------------------------------------------------------//
+//
+router.post("/restartToken", verifyToken.verify, upload.none(''), async (req, res, next) => {
+	//
+	try {
+		if (!removeWithspace(req.body.SessionName)) {
+			var resultRes = {
+				"erro": true,
+				"status": 400,
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(resultRes.status).json({
+				"Status": resultRes
+			});
+			//
+		} else {
+			//
+			var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+			var resultRestart = await Sessions.restartToken(req.io, session.name, session.AuthorizationToken, session.whatsappVersion);
+			res.setHeader('Content-Type', 'application/json');
+			res.status(resultRestart.status).json({
+				"Status": resultRestart
+			});
+			//
+		}
+	} catch (error) {
+		console.log(error);
+		//
+		var resultRes = {
+			"erro": true,
+			"status": 403,
+			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	}
+});
 //
 // ------------------------------------------------------------------------------------------------//
 //
 // Gera o QR-Code
 router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  console.log("- getQRCode");
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  var session = Sessions.getSession(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sessionStatus
-      });
-      break;
-      //
-    case 'notLogged':
-    case 'qrRead':
-      //
-      if (req.body.View === true) {
-        var xSession = session.qrcodedata;
-        if (xSession) {
-          const imageBuffer = Buffer.from(xSession, 'base64');
-          //
-          res.writeHead(200, {
-            'Content-Type': 'image/png',
-            'Content-Length': imageBuffer.length
-          });
-          //
-          res.status(200).end(imageBuffer);
-          //
-        } else {
-          var getQRCode = {
-            result: 'error',
-            state: 'NOTFOUND',
-            status: 'notLogged',
-            message: 'Sistema Off-line'
-          };
-          //
-          res.setHeader('Content-Type', 'application/json');
-          res.status(200).json({
-            "Status": getQRCode
-          });
-          //
-        }
-      } else {
-        var getQRCode = {
-          result: "success",
-          state: session.state,
-          status: session.status,
-          qrcode: session.qrcode,
-          message: "Aguardando leitura do QR-Code"
-        };
-        //
-        res.setHeader('Content-Type', 'application/json');
-        res.status(200).json({
-          "Status": getQRCode
-        });
-        //
-      }
-      //
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-  //
-}); // Gera o QR-Code
+	console.log("- getQRCode");
+	//
+	try {
+		if (!removeWithspace(req.body.SessionName)) {
+			var resultRes = {
+				"erro": true,
+				"status": 400,
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(resultRes.status).json({
+				"Status": resultRes
+			});
+			//
+		} else {
+			//
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+			switch (Status.status) {
+				case 'inChat':
+				case 'qrReadSuccess':
+				case 'isLogged':
+				case 'chatsAvailable':
+					//
+					var resultRes = { "erro": false, "status_code": 200, ...Status };
+					res.setHeader('Content-Type', 'application/json');
+					res.status(resultRes.status_code).json({
+						"Status": resultRes
+					});
+					//
+					break;
+				//
+				case 'notLogged':
+				case 'qrReadFail':
+				case 'deviceNotConnected':
+				case 'desconnectedMobile':
+				case 'deleteToken':
+				case 'qrRead':
+					//
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					if (req.body.View === true) {
+						var qrcode = session.qrcode;
+						if (qrcode) {
+							const imageBuffer = Buffer.from(qrcode.replace('data:image/png;base64,', ''), 'base64');
+							//
+							res.writeHead(200, {
+								'Content-Type': 'image/png',
+								'Content-Length': imageBuffer.length
+							});
+							//
+							res.status(200).end(imageBuffer);
+							//
+						} else {
+							var resultRes = { "erro": true, "status_code": 400, ...Status };
+							res.setHeader('Content-Type', 'application/json');
+							res.status(resultRes.status_code).json({
+								"Status": resultRes
+							});
+							//
+						}
+					} else if (req.body.View === false) {
+						var resultRes = {
+							"erro": false,
+							"status_code": 200,
+							"state": session.state,
+							"status": session.status,
+							"qrcode": session.qrcode,
+							"message": "Aguardando leitura do QR-Code"
+						};
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(resultRes.status_code).json({
+							"Status": resultRes
+						});
+						//
+					}
+					//
+					break;
+				default:
+					//
+					var resultRes = {
+						"erro": true,
+						"status": 400,
+						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+					};
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(resultRes.status).json({
+						"Status": resultRes
+					});
+				//
+			}
+		}
+	} catch (error) {
+		console.log(error);
+		//
+		var resultRes = {
+			"erro": true,
+			"status": 403,
+			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	}
+});
+//
+// ------------------------------------------------------------------------------------------------//
+//
+router.post("/getSession", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	try {
+		if (!removeWithspace(req.body.SessionName)) {
+			var resultRes = {
+				"erro": true,
+				"status": 400,
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(resultRes.status).json({
+				"Status": resultRes
+			});
+			//
+		} else {
+			//
+			var getSession = await Sessions.getSessions(removeWithspace(req.body.SessionName));
+			//
+			var resultRes = { "erro": false, "status": 200, "Session": getSession };
+			res.setHeader('Content-Type', 'application/json');
+			res.status(resultRes.status).json({
+				"Status": resultRes
+			});
+		}
+	} catch (error) {
+		console.log(error);
+		//
+		var resultRes = {
+			"erro": true,
+			"status": 403,
+			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	}
+}); //Status
 //
 // ------------------------------------------------------------------------------------------------//
 //
 router.post("/getSessions", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var getSessions = await Sessions.getSessions();
-  //
-  //console.log(result);
-  res.setHeader('Content-Type', 'application/json');
-  res.status(200).json({
-    "Status": getSessions
-  });
+	//
+	if (!removeWithspace(req.body.SessionName)) {
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		//
+		var getSessions = await Sessions.getSessions();
+		//
+		if (getSessions) {
+			//
+			var resultRes = { "erro": false, "status": 200, "Sessions": getSessions };
+			res.setHeader('Content-Type', 'application/json');
+			res.status(resultRes.status).json({
+				"Status": resultRes
+			});
+			//
+		} else {
+			var resultRes = {
+				"erro": true,
+				"status": 400,
+				"message": 'Nenhuma sessão criada'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(resultRes.status).json({
+				"Status": resultRes
+			});
+			//
+		}
+	}
 }); //getSessions
 //
 // ------------------------------------------------------------------------------------------------//
 //
 // Dados de memoria e uptime
 router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  console.log("- getHardWare");
-  //
-  var getHardWare = {
-    "noformat": {
-      uptime: os.uptime(),
-      freemem: os.freemem(),
-      memusage: (os.totalmem() - os.freemem()),
-      totalmem: os.totalmem(),
-      freeusagemem: `${Math.round((os.freemem()*100)/os.totalmem()).toFixed(0)}`,
-      usagemem: `${Math.round(((os.totalmem()-os.freemem())*100)/os.totalmem()).toFixed(0)}`
-    },
-    "format": {
-      uptime: (os.uptime() + "").toHHMMSS(),
-      freemem: convertBytes(os.freemem()),
-      memusage: convertBytes((os.totalmem() - os.freemem())),
-      totalmem: convertBytes(os.totalmem()),
-      freeusagemem: `${Math.round((os.freemem()*100)/os.totalmem()).toFixed(0)} %`,
-      usagemem: `${Math.round(((os.totalmem()-os.freemem())*100)/os.totalmem()).toFixed(0)} %`
-    }
-  };
-  //console.log(result);
-  res.setHeader('Content-Type', 'application/json');
-  res.status(200).json({
-    "Status": getHardWare
-  });
+	console.log("- getHardWare");
+	//
+	try {
+		var resultRes = {
+			"erro": false,
+			"status": 200,
+			"noformat": {
+				uptime: os.uptime(),
+				freemem: os.freemem(),
+				memusage: (os.totalmem() - os.freemem()),
+				totalmem: os.totalmem(),
+				freeusagemem: `${Math.round((os.freemem() * 100) / os.totalmem()).toFixed(0)}`,
+				usagemem: `${Math.round(((os.totalmem() - os.freemem()) * 100) / os.totalmem()).toFixed(0)}`
+			},
+			"format": {
+				uptime: (os.uptime() + "").toHHMMSS(),
+				freemem: convertBytes(os.freemem()),
+				memusage: convertBytes((os.totalmem() - os.freemem())),
+				totalmem: convertBytes(os.totalmem()),
+				freeusagemem: `${Math.round((os.freemem() * 100) / os.totalmem()).toFixed(0)} %`,
+				usagemem: `${Math.round(((os.totalmem() - os.freemem()) * 100) / os.totalmem()).toFixed(0)} %`
+			}
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} catch (error) {
+		//
+		console.log(error);
+		var resultRes = {
+			"erro": true,
+			"status": 403,
+			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	}
 }); //getHardWare
 //
 // ------------------------------------------------------------------------------------------------//
@@ -333,712 +770,1521 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 ╚═╝┴ ┴└─┘┴└─┘  ╚  └─┘┘└┘└─┘ ┴ ┴└─┘┘└┘└─┘  └─┘└─┘┴ ┴└─┘└─┘
 */
 //
+// Enviar Contato
+router.post("/sendContactVcard", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	try {
+		if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.contact || !req.body.namecontact) {
+			var resultRes = {
+				"erro": true,
+				"status": 400,
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(result.status).json({
+				"Status": result
+			});
+			//
+		} else {
+			//
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+			switch (Status.status) {
+				case 'inChat':
+				case 'qrReadSuccess':
+				case 'isLogged':
+				case 'chatsAvailable':
+					//
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					var checkNumberStatus = await Sessions.checkNumberStatus(
+						removeWithspace(req.body.SessionName),
+						soNumeros(req.body.phonefull).trim()
+					);
+					//
+					if (checkNumberStatus.status == 200 && checkNumberStatus.erro == false) {
+						//
+						var sendContactVcard = await session.process.add(async () => await Sessions.sendContactVcard(
+							removeWithspace(req.body.SessionName),
+							checkNumberStatus.number + '@s.whatsapp.net',
+							soNumeros(req.body.contact),
+							req.body.namecontact
+						));
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(sendContactVcard.status).json({
+							"Status": sendContactVcard
+						});
+						//
+					} else {
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(sendContactVcard.status).json({
+							"Status": sendContactVcard
+						});
+						//
+					}
+					break;
+				default:
+					//
+					var resultRes = {
+						"erro": true,
+						"status": 400,
+						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+					};
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(resultRes.status).json({
+						"Status": resultRes
+					});
+				//
+			}
+		}
+	} catch (error) {
+		//
+		console.log(error);
+		var resultRes = {
+			"erro": true,
+			"status": 403,
+			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	}
+}); //sendContactVcard
 //
 // ------------------------------------------------------------------------------------------------//
 //
-// Enviar Contato
-router.post("/sendContactVcard", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var checkNumberStatus = await Sessions.checkNumberStatus(
-        req.body.SessionName.trim(),
-        soNumeros(req.body.phonefull) + '@c.us'
-      );
-      //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-        //
-        var sendContactVcard = await Sessions.sendContactVcard(
-          req.body.SessionName.trim(),
-          checkNumberStatus.number,
-          req.body.contact,
-          req.body.namecontact
-        );
-        //
-      } else {
-        var sendContactVcard = checkNumberStatus;
-      }
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendContactVcard
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendContactVcard
+// Enviar audio
+// https://www.mpi.nl/corpus/html/lamus2/apa.html
+//
+router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req, res, next) => {
+	//
+	try {
+		if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.file) {
+			var validate = {
+				"erro": true,
+				"status": 400,
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(validate.status).json({
+				"Status": validate
+			});
+			//
+		} else {
+			//
+			//let ext = path.extname(file.originalname);
+			//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
+			//let ext = path.parse(req.file.originalname).ext;
+			//console.log("- acceptedTypes:", req.file.mimetype);
+			let acceptedTypes = req.file.mimetype.split('/')[0];
+			if (acceptedTypes !== "audio") {
+				//
+				var validate = {
+					"erro": true,
+					"status": 400,
+					"message": 'Arquivo selecionado não permitido, apenas arquivo de audio'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(validate.status).json({
+					"Status": validate
+				});
+				//
+			} else {
+				//
+				var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+				var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+				switch (Status.status) {
+					case 'inChat':
+					case 'qrReadSuccess':
+					case 'isLogged':
+					case 'chatsAvailable':
+						//
+						var checkNumberStatus = await Sessions.checkNumberStatus(
+							removeWithspace(req.body.SessionName),
+							soNumeros(req.body.phonefull).trim()
+						);
+						//
+						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+							//
+							var sendPtt = await session.process.add(async () => await Sessions.sendPtt(
+								removeWithspace(req.body.SessionName),
+								checkNumberStatus.number + '@s.whatsapp.net',
+								req.file.buffer,
+								req.file.mimetype,
+								req.body.caption
+							));
+							//
+							res.setHeader('Content-Type', 'application/json');
+							res.status(sendPtt.status).json({
+								"Status": sendPtt
+							});
+							//
+						} else {
+							//
+							res.setHeader('Content-Type', 'application/json');
+							res.status(checkNumberStatus.status).json({
+								"Status": checkNumberStatus
+							});
+							//
+						}
+						//
+						break;
+					default:
+						//
+						var resultRes = {
+							"erro": true,
+							"status": 400,
+							"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+						};
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(resultRes.status).json({
+							"Status": resultRes
+						});
+					//
+				}
+			}
+		}
+	} catch (error) {
+		//
+		console.log(error);
+		var resultRes = {
+			"erro": true,
+			"status": 403,
+			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	}
+	//
+}); //sendVoice
+//
+// ------------------------------------------------------------------------------------------------//
+//
+// Enviar audio
+router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	try {
+		if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.base64 || !req.body.originalname) {
+			var validate = {
+				"erro": true,
+				"status": 400,
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(validate.status).json({
+				"Status": validate
+			});
+			//
+		} else {
+			//
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+			var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+			switch (Status.status) {
+				case 'inChat':
+				case 'qrReadSuccess':
+				case 'isLogged':
+				case 'chatsAvailable':
+					//
+					var checkNumberStatus = await Sessions.checkNumberStatus(
+						removeWithspace(req.body.SessionName),
+						soNumeros(req.body.phonefull).trim()
+					);
+					//
+					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+						//
+						var mimeType = mime.lookup(req.body.originalname);
+						//
+						var sendPtt = await session.process.add(async () => await Sessions.sendPtt(
+							removeWithspace(req.body.SessionName),
+							checkNumberStatus.number + '@s.whatsapp.net',
+							Buffer.from(req.body.base64, 'base64'),
+							mimeType,
+							req.body.caption
+						));
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(sendPtt.status).json({
+							"Status": sendPtt
+						});
+						//
+					} else {
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(checkNumberStatus.status).json({
+							"Status": checkNumberStatus
+						});
+						//
+					}
+					//
+					break;
+				default:
+					//
+					var resultRes = {
+						"erro": true,
+						"status": 400,
+						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+					};
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(resultRes.status).json({
+						"Status": resultRes
+					});
+				//
+			}
+		}
+	} catch (error) {
+		//
+		console.log(error);
+		var resultRes = {
+			"erro": true,
+			"status": 403,
+			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	}
+}); //sendVoice
+//
+// ------------------------------------------------------------------------------------------------//
+//
+// Enviar audio
+router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	try {
+		if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.base64 || !req.body.mimetype || !req.body.originalname) {
+			var validate = {
+				"erro": true,
+				"status": 400,
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(validate.status).json({
+				"Status": validate
+			});
+			//
+		} else {
+			//
+			//let ext = path.extname(file.originalname);
+			//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
+			//let ext = path.parse(req.file.originalname).ext;
+			//console.log("- acceptedTypes:", req.file.mimetype);
+			let acceptedTypes = req.body.mimetype.split('/')[0];
+			if (acceptedTypes !== "audio") {
+				//
+				var validate = {
+					"erro": true,
+					"status": 400,
+					"message": 'Arquivo selecionado não permitido, apenas arquivo de audio'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(validate.status).json({
+					"Status": validate
+				});
+				//
+			} else {
+				//
+				var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+				var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+				switch (Status.status) {
+					case 'inChat':
+					case 'qrReadSuccess':
+					case 'isLogged':
+					case 'chatsAvailable':
+						//
+						var checkNumberStatus = await Sessions.checkNumberStatus(
+							removeWithspace(req.body.SessionName),
+							soNumeros(req.body.phonefull).trim()
+						);
+						//
+						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+							//
+							var sendPtt = await session.process.add(async () => await Sessions.sendPtt(
+								removeWithspace(req.body.SessionName),
+								checkNumberStatus.number + '@s.whatsapp.net',
+								Buffer.from(req.body.base64, 'base64'),
+								req.body.mimetype
+							));
+							//
+							res.setHeader('Content-Type', 'application/json');
+							res.status(sendPtt.status).json({
+								"Status": sendPtt
+							});
+							//
+						} else {
+							//
+							res.setHeader('Content-Type', 'application/json');
+							res.status(checkNumberStatus.status).json({
+								"Status": checkNumberStatus
+							});
+							//
+						}
+						//
+						break;
+					default:
+						//
+						var resultRes = {
+							"erro": true,
+							"status": 400,
+							"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+						};
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(resultRes.status).json({
+							"Status": resultRes
+						});
+					//
+				}
+			}
+		}
+	} catch (error) {
+		//
+		console.log(error);
+		var resultRes = {
+			"erro": true,
+			"status": 403,
+			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	}
+}); //sendPttFromBase64
 //
 // ------------------------------------------------------------------------------------------------//
 //
 //Enviar Texto
 router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var checkNumberStatus = await Sessions.checkNumberStatus(
-        req.body.SessionName.trim(),
-        soNumeros(req.body.phonefull) + '@c.us'
-      );
-      //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-        //
-        var sendText = await Sessions.sendText(
-          req.body.SessionName.trim(),
-          checkNumberStatus.number,
-          req.body.msg
-        );
-
-        //
-      } else {
-        var sendText = checkNumberStatus;
-      }
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendText
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendText
-//
-// ------------------------------------------------------------------------------------------------//
-//
-//Enviar Texto em Massa
-router.post("/sendTextMassa", upload.single('phonefull'), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var sendText = [];
-      //
-      var folderName = fs.mkdtempSync(path.join(os.tmpdir(), 'baileys-' + req.body.SessionName.trim() + '-'));
-      var filePath = path.join(folderName, req.file.originalname);
-      fs.writeFileSync(filePath, req.file.buffer.toString('base64'), 'base64');
-      var originalname = path.basename(filePath);
-      var mimetype = mime.lookup(filePath);
-      //
-      var arrayNumbers = fs.readFileSync(filePath, 'utf-8').toString().split(/\r?\n/);
-      for (var i in arrayNumbers) {
-        //console.log(arrayNumbers[i]);
-        var numero = soNumeros(arrayNumbers[i]);
-        //
-        if (numero.length !== 0) {
-          //
-          var checkNumberStatus = await Sessions.checkNumberStatus(
-            req.body.SessionName.trim(),
-            soNumeros(numero) + '@c.us'
-          );
-          //
-          if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-            //
-            var sendTextMassaRes = await Sessions.sendText(
-              req.body.SessionName.trim(),
-              checkNumberStatus.number,
-              req.body.msg
-            );
-            //
-          } else {
-            var sendTextMassaRes = checkNumberStatus;
-          }
-          //
-          sendText.push(sendTextMassaRes);
-          //
-        }
-        await sleep(1000);
-      }
-      //
-      //
-      await deletaArquivosTemp(filePath);
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendText
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
+	//
+	try {
+		if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.msg) {
+			var validate = {
+				"erro": true,
+				"status": 400,
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(validate.status).json({
+				"Status": validate
+			});
+			//
+		} else {
+			//
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+			var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+			switch (Status.status) {
+				case 'inChat':
+				case 'qrReadSuccess':
+				case 'isLogged':
+				case 'chatsAvailable':
+					//
+					var checkNumberStatus = await Sessions.checkNumberStatus(
+						removeWithspace(req.body.SessionName),
+						soNumeros(req.body.phonefull).trim()
+					);
+					//
+					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+						//
+						var sendText = await session.process.add(async () => await Sessions.sendText(
+							removeWithspace(req.body.SessionName),
+							checkNumberStatus.number + '@s.whatsapp.net',
+							req.body.msg
+						));
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(sendText.status).json({
+							"Status": sendText
+						});
+						//
+					} else {
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(checkNumberStatus.status).json({
+							"Status": checkNumberStatus
+						});
+						//
+					}
+					//
+					break;
+				default:
+					//
+					var resultRes = {
+						"erro": true,
+						"status": 400,
+						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+					};
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(resultRes.status).json({
+						"Status": resultRes
+					});
+				//
+			}
+		}
+	} catch (error) {
+		//
+		console.log(error);
+		var resultRes = {
+			"erro": true,
+			"status": 403,
+			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	}
 }); //sendText
 //
 // ------------------------------------------------------------------------------------------------//
 //
 //Enviar localização
 router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var checkNumberStatus = await Sessions.checkNumberStatus(
-        req.body.SessionName.trim(),
-        soNumeros(req.body.phonefull) + '@c.us'
-      );
-      //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-        //
-        var sendLocation = await Sessions.sendLocation(
-          req.body.SessionName.trim(),
-          checkNumberStatus.number,
-          req.body.lat,
-          req.body.long,
-          req.body.caption
-        );
-        //
-      } else {
-        var sendLocation = checkNumberStatus;
-      }
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendLocation
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
+	//
+	try {
+		if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.lat || !req.body.long || !req.body.local) {
+			//
+			var validate = {
+				"erro": true,
+				"status": 400,
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(validate.status).json({
+				"Status": validate
+			});
+			//
+		} else {
+			//
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+			var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+			switch (Status.status) {
+				case 'inChat':
+				case 'qrReadSuccess':
+				case 'isLogged':
+				case 'chatsAvailable':
+					//
+					var checkNumberStatus = await Sessions.checkNumberStatus(
+						removeWithspace(req.body.SessionName),
+						soNumeros(req.body.phonefull).trim()
+					);
+					//
+					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+						//
+						var sendLocation = await session.process.add(async () => await Sessions.sendLocation(
+							removeWithspace(req.body.SessionName),
+							checkNumberStatus.number + '@s.whatsapp.net',
+							req.body.lat,
+							req.body.long,
+							req.body.local
+						));
+						//
+						//console.log(result);
+						res.setHeader('Content-Type', 'application/json');
+						res.status(sendLocation.status).json({
+							"Status": sendLocation
+						});
+						//
+					} else {
+						//
+						//console.log(result);
+						res.setHeader('Content-Type', 'application/json');
+						res.status(checkNumberStatus.status).json({
+							"Status": checkNumberStatus
+						});
+						//
+					}
+					break;
+				default:
+					//
+					var resultRes = {
+						"erro": true,
+						"status": 400,
+						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+					};
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(resultRes.status).json({
+						"Status": resultRes
+					});
+				//
+			}
+		}
+	} catch (error) {
+		//
+		console.log(error);
+		var resultRes = {
+			"erro": true,
+			"status": 403,
+			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	}
 }); //sendLocation
 //
 // ------------------------------------------------------------------------------------------------//
 //
 //Enviar links com preview
-router.post("/sendLinkPreview", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var checkNumberStatus = await Sessions.checkNumberStatus(
-        req.body.SessionName.trim(),
-        soNumeros(req.body.phonefull) + '@c.us'
-      );
-      //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-        //
-        var sendLinkPreview = await Sessions.sendLinkPreview(
-          req.body.SessionName.trim(),
-          checkNumberStatus.number,
-          req.body.link,
-          req.body.detail
-        );
-        //
-      } else {
-        var sendLinkPreview = checkNumberStatus;
-      }
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendLinkPreview
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
+router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	try {
+		if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.link || !req.body.descricao) {
+			//
+			var validate = {
+				"erro": true,
+				"status": 400,
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(validate.status).json({
+				"Status": validate
+			});
+			//
+		} else {
+			//
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+			var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+			switch (Status.status) {
+				case 'inChat':
+				case 'qrReadSuccess':
+				case 'isLogged':
+				case 'chatsAvailable':
+					//
+					if (!validUrl.isUri(req.body.link)) {
+						var validate = {
+							"erro": true,
+							"status": 401,
+							"message": 'O link informado é invalido, corrija e tente novamente.'
+						};
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(validate.status).json({
+							"Status": validate
+						});
+						//
+					}
+					//
+					var checkNumberStatus = await Sessions.checkNumberStatus(
+						removeWithspace(req.body.SessionName),
+						soNumeros(req.body.phonefull).trim()
+					);
+					//
+					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+						//
+						var sendLink = await session.process.add(async () => await Sessions.sendLink(
+							removeWithspace(req.body.SessionName),
+							checkNumberStatus.number + '@s.whatsapp.net',
+							req.body.link,
+							req.body.descricao
+						));
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(sendLink.status).json({
+							"Status": sendLink
+						});
+						//
+					} else {
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(checkNumberStatus.status).json({
+							"Status": checkNumberStatus
+						});
+						//
+					}
+					//
+					break;
+				default:
+					//
+					var resultRes = {
+						"erro": true,
+						"status": 400,
+						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+					};
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(resultRes.status).json({
+						"Status": resultRes
+					});
+				//
+			}
+		}
+	} catch (error) {
+		//
+		var resultRes = {
+			"erro": true,
+			"status": 403,
+			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	}
 }); //sendLinkPreview
 //
 // ------------------------------------------------------------------------------------------------//
 //
 //Enviar Imagem
-router.post("/sendImage", upload.single('fileimg'), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var checkNumberStatus = await Sessions.checkNumberStatus(
-        req.body.SessionName.trim(),
-        soNumeros(req.body.phonefull) + '@c.us'
-      );
-      //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-        //
-        var sendImage = await Sessions.sendImage(
-          req.body.SessionName.trim(),
-          checkNumberStatus.number.trim(),
-          req.file.buffer,
-          req.file.mimetype,
-          req.file.originalname,
-          req.body.caption
-        );
-        //
-      } else {
-        var sendImage = checkNumberStatus;
-      }
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendImage
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
+router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req, res, next) => {
+	//
+	try {
+		if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.file) {
+			var validate = {
+				"erro": true,
+				"status": 400,
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(validate.status).json({
+				"Status": validate
+			});
+			//
+		} else {
+			//
+			//let ext = path.extname(file.originalname);
+			//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
+			//let ext = path.parse(req.file.originalname).ext;
+			//console.log("- acceptedTypes:", req.file.mimetype);
+			let acceptedTypes = req.file.mimetype.split('/')[0];
+			if (acceptedTypes !== "image") {
+				//
+				var validate = {
+					"erro": true,
+					"status": 400,
+					"message": 'Arquivo selecionado não permitido, apenas arquivo do tipo imagem'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(validate.status).json({
+					"Status": validate
+				});
+				//
+			} else {
+				//
+				var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+				var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+				switch (Status.status) {
+					case 'inChat':
+					case 'qrReadSuccess':
+					case 'isLogged':
+					case 'chatsAvailable':
+						//
+						var checkNumberStatus = await Sessions.checkNumberStatus(
+							removeWithspace(req.body.SessionName),
+							soNumeros(req.body.phonefull).trim()
+						);
+						//
+						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+							//
+							var sendPtt = await session.process.add(async () => await Sessions.sendImage(
+								removeWithspace(req.body.SessionName),
+								checkNumberStatus.number + '@s.whatsapp.net',
+								req.file.buffer,
+								req.file.mimetype,
+								req.file.originalname,
+								req.body.caption
+							));
+							//
+							res.setHeader('Content-Type', 'application/json');
+							res.status(sendPtt.status).json({
+								"Status": sendPtt
+							});
+							//
+						} else {
+							//
+							res.setHeader('Content-Type', 'application/json');
+							res.status(checkNumberStatus.status).json({
+								"Status": checkNumberStatus
+							});
+							//
+						}
+						//
+						break;
+					default:
+						//
+						var resultRes = {
+							"erro": true,
+							"status": 400,
+							"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+						};
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(resultRes.status).json({
+							"Status": resultRes
+						});
+					//
+				}
+			}
+		}
+	} catch (error) {
+		//
+		console.log(error);
+		var resultRes = {
+			"erro": true,
+			"status": 403,
+			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	}
+	//
 }); //sendImage
 //
 // ------------------------------------------------------------------------------------------------//
 //
-//Enviar Imagem
+// Enviar arquivo/documento
 router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var folderName = fs.mkdtempSync(path.join(os.tmpdir(), 'baileys-' + req.body.SessionName.trim() + '-'));
-      var filePath = path.join(folderName, req.body.originalname);
-      fs.writeFileSync(filePath, req.body.base64);
-      var originalname = path.basename(filePath);
-      var mimetype = mime.lookup(filePath);
-      //
-      var checkNumberStatus = await Sessions.checkNumberStatus(
-        req.body.SessionName.trim(),
-        soNumeros(req.body.phonefull) + '@c.us'
-      );
-      //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-        //
-        var sendImage = await Sessions.sendImage(
-          req.body.SessionName.trim(),
-          checkNumberStatus.number,
-          Buffer.from(req.body.base64, 'base64'),
-          mimetype,
-          req.body.originalname,
-          req.body.caption
-        );
-        //
-      } else {
-        var sendImage = checkNumberStatus;
-      }
-      //
-      await deletaArquivosTemp(filePath);
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendImage
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendImage
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.base64 || !req.body.originalname || !req.body.caption) {
+		var validate = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(validate.status).json({
+			"Status": validate
+		});
+		//
+	} else {
+		//
+		//let ext = path.extname(file.originalname);
+		//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
+		//let ext = path.parse(req.file.originalname).ext;
+		//console.log("- acceptedTypes:", req.file.mimetype);
+		var mimeType = mime.lookup(req.body.originalname);
+		let acceptedTypes = mimeType.split('/')[0];
+		if (acceptedTypes !== "image") {
+			//
+			var validate = {
+				"erro": true,
+				"status": 400,
+				"message": 'Arquivo selecionado não permitido, apenas arquivo do tipo imagem'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(validate.status).json({
+				"Status": validate
+			});
+			//
+		} else {
+			//
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+			var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+			switch (Status.status) {
+				case 'inChat':
+				case 'qrReadSuccess':
+				case 'isLogged':
+				case 'chatsAvailable':
+					//
+						var checkNumberStatus = await Sessions.checkNumberStatus(
+							removeWithspace(req.body.SessionName),
+							soNumeros(req.body.phonefull).trim()
+						);
+						//
+						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+							//
+							var sendFileBase64 = await session.process.add(async () => await Sessions.sendImage(
+								removeWithspace(req.body.SessionName),
+								checkNumberStatus.number + '@s.whatsapp.net',
+								Buffer.from(req.body.base64, 'base64'),
+								req.body.originalname,
+								mimeType,
+								req.body.caption
+							));
+							//
+							res.setHeader('Content-Type', 'application/json');
+							res.status(sendFileBase64.status).json({
+								"Status": sendFileBase64
+							});
+							//
+						} else {
+							//
+							res.setHeader('Content-Type', 'application/json');
+							res.status(checkNumberStatus.status).json({
+								"Status": checkNumberStatus
+							});
+						}
+						//
+					break;
+				default:
+					//
+					var resultRes = {
+						"erro": true,
+						"status": 400,
+						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+					};
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(resultRes.status).json({
+						"Status": resultRes
+					});
+				//
+			}
+		}
+	}
+}); //sendFileBase64
 //
 // ------------------------------------------------------------------------------------------------//
 //
-//Enviar Imagem
+// Enviar arquivo/documento
 router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var checkNumberStatus = await Sessions.checkNumberStatus(
-        req.body.SessionName.trim(),
-        soNumeros(req.body.phonefull) + '@c.us'
-      );
-      //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-        //
-        var sendImage = await Sessions.sendImage(
-          req.body.SessionName.trim(),
-          checkNumberStatus.number,
-          Buffer.from(req.body.base64, 'base64'),
-          req.body.mimetype,
-          req.body.originalname,
-          req.body.caption
-        );
-        //
-      } else {
-        var sendImage = checkNumberStatus;
-      }
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendImage
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendImage
-//
-// ------------------------------------------------------------------------------------------------//
-//
-// Enviar Imagem em Massa
-var sendImageMassa = upload.fields([{
-  name: 'phonefull',
-  maxCount: 1
-}, {
-  name: 'fileimg',
-  maxCount: 1
-}]);
-//
-router.post("/sendImageMassa", sendImageMassa, verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      //
-      var folderName = fs.mkdtempSync(path.join(os.tmpdir(), 'baileys-' + req.body.SessionName.trim() + '-'));
-      var filePathContato = path.join(folderName, req.files['phonefull'][0].originalname);
-      fs.writeFileSync(filePathContato, req.files['phonefull'][0].buffer.toString('base64'), 'base64');
-      console.log("- File:", filePathContato);
-      //
-      var sendImage = [];
-      //
-      var arrayNumbers = fs.readFileSync(filePathContato, 'utf-8').toString().split(/\r?\n/);
-      for (var i in arrayNumbers) {
-        //console.log(arrayNumbers[i]);
-        var numero = arrayNumbers[i].trim();
-        //
-        if (numero.length !== 0) {
-          //
-          var checkNumberStatus = await Sessions.checkNumberStatus(
-            req.body.SessionName.trim(),
-            soNumeros(numero) + '@c.us'
-          );
-          //
-          if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-            //
-            var sendImageMassaRes = await Sessions.sendImage(
-              req.body.SessionName.trim(),
-              checkNumberStatus.number,
-              req.files['fileimg'][0].buffer,
-              req.files['fileimg'][0].mimetype,
-              req.files['fileimg'][0].originalname,
-              req.body.caption
-            );
-            //
-          } else {
-            var sendImageMassaRes = checkNumberStatus;
-          }
-          //
-          //return sendResult;
-          //
-          sendImage.push(sendImageMassaRes);
-        }
-        await sleep(1000);
-      }
-      //
-      await deletaArquivosTemp(filePathContato);
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendImage
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendImage
-//
-// ------------------------------------------------------------------------------------------------//
-//
-// Enviar varia imagens
-router.post("/sendMultImage", upload.array('fileimgs', 50), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      //
-      var resultsFiles = req.files;
-      //
-      var sendImage = [];
-      //
-      var checkNumberStatus = await Sessions.checkNumberStatus(
-        req.body.SessionName.trim(),
-        soNumeros(req.body.phonefull) + '@c.us'
-      );
-      //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-        //
-        await forEach(resultsFiles, async (resultfile) => {
-          //
-          var sendMultImageRes = await Sessions.sendImage(
-            req.body.SessionName.trim(),
-            checkNumberStatus.number,
-            resultfile.buffer,
-            resultfile.mimetype,
-            resultfile.originalname,
-            req.body.caption
-          );
-          //
-          sendImage.push(sendMultImageRes);
-          //
-          await sleep(3000);
-          //
-        });
-      } else {
-        var sendImage = checkNumberStatus;
-      }
-      //
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendImage
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendImage
-//
-// ------------------------------------------------------------------------------------------------//
-//
-// Enviar variar imagens para varios contaos
-var sendMultImageMassa = upload.fields([{
-  name: 'phonefull',
-  maxCount: 1
-}, {
-  name: 'fileimgs',
-  maxCount: 30
-}]);
-//
-router.post("/sendMultImageMassa", sendMultImageMassa, verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      //
-      var resultsFilesImg = req.files.fileimgs;
-      //
-      var folderName = fs.mkdtempSync(path.join(os.tmpdir(), 'baileys-' + req.body.SessionName.trim() + '-'));
-      var filePathContato = path.join(folderName, req.files['phonefull'][0].originalname);
-      fs.writeFileSync(filePathContato, req.files['phonefull'][0].buffer.toString('base64'), 'base64');
-      console.log("- File Contato:", filePathContato);
-      var arrayNumbers = fs.readFileSync(filePathContato, 'utf-8').toString().split(/\r?\n/);
-      //
-      var sendImage = [];
-      //
-      for (var i in arrayNumbers) {
-        //console.log(arrayNumbers[i]);
-        var numero = arrayNumbers[i].trim();
-        //
-        if (numero.length !== 0) {
-          //
-          var checkNumberStatus = await Sessions.checkNumberStatus(
-            req.body.SessionName.trim(),
-            soNumeros(numero) + '@c.us'
-          );
-          //
-          if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-            //
-            await forEach(resultsFilesImg, async (resultfile) => {
-              //
-              var sendMultImageMassaRes = await Sessions.sendImage(
-                req.body.SessionName.trim(),
-                checkNumberStatus.number,
-                req.files['fileimgs'][0].buffer,
-                req.files['fileimgs'][0].mimetype,
-                req.files['fileimgs'][0].originalname,
-                req.body.caption
-              );
-              //
-              sendImage.push(sendMultImageMassaRes);
-              //
-              await sleep(3000);
-              //
-            });
-            //
-          } else {
-            var sendImage = checkNumberStatus;
-          }
-        }
-        await sleep(3000);
-      }
-      //
-      await deletaArquivosTemp(filePathContato);
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendImage
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendImage
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.base64 || !req.body.mimetype || !req.body.originalname || !req.body.caption) {
+		var validate = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(validate.status).json({
+			"Status": validate
+		});
+		//
+	} else {
+		//
+		//let ext = path.extname(file.originalname);
+		//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
+		//let ext = path.parse(req.file.originalname).ext;
+		//console.log("- acceptedTypes:", req.file.mimetype);
+		var mimeType = req.body.mimetype;
+		let acceptedTypes = mimeType.split('/')[0];
+		if (acceptedTypes !== "image") {
+			//
+			var validate = {
+				"erro": true,
+				"status": 400,
+				"message": 'Arquivo selecionado não permitido, apenas arquivo do tipo imagem'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(validate.status).json({
+				"Status": validate
+			});
+			//
+		} else {
+			//
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+			var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+			switch (Status.status) {
+				case 'inChat':
+				case 'qrReadSuccess':
+				case 'isLogged':
+				case 'chatsAvailable':
+					//
+					var checkNumberStatus = await Sessions.checkNumberStatus(
+						removeWithspace(req.body.SessionName),
+						soNumeros(req.body.phonefull).trim()
+					);
+					//
+					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+						//
+						var sendFileFromBase64 = await session.process.add(async () => await Sessions.sendImage(
+							removeWithspace(req.body.SessionName),
+							checkNumberStatus.number + '@s.whatsapp.net',
+							Buffer.from(req.body.base64, 'base64'),
+							req.body.originalname,
+							req.body.mimetype,
+							req.body.caption
+						));
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(sendFileFromBase64.status).json({
+							"Status": sendFileFromBase64
+						});
+						//
+					} else {
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(checkNumberStatus.status).json({
+							"Status": checkNumberStatus
+						});
+						//
+					}
+					//
+					break;
+				default:
+					//
+					var resultRes = {
+						"erro": true,
+						"status": 400,
+						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+					};
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(resultRes.status).json({
+						"Status": resultRes
+					});
+				//
+			}
+		}
+	}
+	//
+}); //sendFileFromBase64
 //
 // ------------------------------------------------------------------------------------------------//
 //
 // Enviar arquivo/documento
 router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var checkNumberStatus = await Sessions.checkNumberStatus(
-        req.body.SessionName.trim(),
-        soNumeros(req.body.phonefull) + '@c.us'
-      );
-      //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-        //
-        var sendFile = await Sessions.sendFile(
-          req.body.SessionName.trim(),
-          checkNumberStatus.number,
-          req.file.buffer,
-          req.file.mimetype,
-          req.file.originalname,
-          req.file.mimetype.split('/')[1],
-          req.body.caption
-        );
-        //
-      } else {
-        var sendFile = checkNumberStatus;
-      }
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendFile
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.caption || !req.file) {
+		var validate = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(validate.status).json({
+			"Status": validate
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+					var checkNumberStatus = await Sessions.checkNumberStatus(
+						removeWithspace(req.body.SessionName),
+						soNumeros(req.body.phonefull).trim()
+					);
+					//
+					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+						//
+						var sendFile = await session.process.add(async () => await Sessions.sendFile(
+							removeWithspace(req.body.SessionName),
+							checkNumberStatus.number + '@s.whatsapp.net',
+							req.file.buffer,
+							req.file.originalname,
+							req.file.mimetype,
+							req.body.caption
+						));
+						//
+						//console.log(result);
+						res.setHeader('Content-Type', 'application/json');
+						res.status(sendFile.status).json({
+							"Status": sendFile
+						});
+					} else {
+						//console.log(result);
+						res.setHeader('Content-Type', 'application/json');
+						res.status(checkNumberStatus.status).json({
+							"Status": checkNumberStatus
+						});
+					}
+					//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+	//
 }); //sendFile
+//
+// ------------------------------------------------------------------------------------------------//
+//
+// Enviar arquivo/documento
+router.post("/sendFileUrl", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.url || !req.body.caption) {
+		var validate = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(validate.status).json({
+			"Status": validate
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+					//
+					var checkNumberStatus = await Sessions.checkNumberStatus(
+						removeWithspace(req.body.SessionName),
+						soNumeros(req.body.phonefull).trim()
+					);
+					//
+					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+						//
+						var sendFile = await session.process.add(async () => await Sessions.sendFileUrl(
+							removeWithspace(req.body.SessionName),
+							checkNumberStatus.number + '@s.whatsapp.net',
+							req.body.url,
+							req.body.url.split('/').slice(-1)[0],
+							mime.lookup(req.body.url.split('.').slice(-1)[0]),
+							req.body.caption
+						));
+						//
+						//console.log(result);
+						res.setHeader('Content-Type', 'application/json');
+						res.status(sendFile.status).json({
+							"Status": sendFile
+						});
+					} else {
+						//console.log(result);
+						res.setHeader('Content-Type', 'application/json');
+						res.status(checkNumberStatus.status).json({
+							"Status": checkNumberStatus
+						});
+					}
+					//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+}); //sendFileUrl
 //
 // ------------------------------------------------------------------------------------------------//
 //
 // Enviar arquivo/documento
 router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var folderName = fs.mkdtempSync(path.join(os.tmpdir(), 'baileys-' + req.body.SessionName.trim() + '-'));
-      var filePath = path.join(folderName, req.body.originalname);
-      fs.writeFileSync(filePath, req.body.base64, 'base64');
-      var originalname = path.basename(filePath);
-      var mimetype = mime.lookup(filePath);
-      //
-      var checkNumberStatus = await Sessions.checkNumberStatus(
-        req.body.SessionName.trim(),
-        soNumeros(req.body.phonefull).trim() + '@c.us'
-      );
-      //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-        //
-        var sendFile = await Sessions.sendFile(
-          req.body.SessionName.trim(),
-          checkNumberStatus.number,
-          Buffer.from(req.body.base64, 'base64'),
-          mimetype,
-          req.body.originalname,
-          mimetype.split('/')[1],
-          req.body.caption
-        );
-        //
-      } else {
-        var sendFile = checkNumberStatus;
-      }
-      //
-      await deletaArquivosTemp(filePath);
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendFile
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendFile
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.base64 || !req.body.originalname || !req.body.caption) {
+		var validate = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(validate.status).json({
+			"Status": validate
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+					//var folderName = fs.mkdtempSync(path.join(os.tmpdir(), 'BLS-' + removeWithspace(req.body.SessionName) + '-'));
+					//var filePath = path.join(folderName, req.body.originalname);
+					//var base64Data = req.body.base64.replace(/^data:([A-Za-z-+/]+);base64,/,'');
+					var mimeType = mime.lookup(req.body.originalname);
+					//fs.writeFileSync(filePath, base64Data,  {encoding: 'base64'});
+					//console.log("- File", filePath);
+					//
+					var checkNumberStatus = await Sessions.checkNumberStatus(
+						removeWithspace(req.body.SessionName),
+						soNumeros(req.body.phonefull).trim()
+					);
+					//
+					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+						//
+						var sendFileBase64 = await session.process.add(async () => await Sessions.sendFile(
+							removeWithspace(req.body.SessionName),
+							checkNumberStatus.number + '@s.whatsapp.net',
+							Buffer.from(req.body.base64, 'base64'),
+							req.body.originalname,
+							mimeType,
+							req.body.caption
+						));
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(sendFileBase64.status).json({
+							"Status": sendFileBase64
+						});
+						//
+					} else {
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(checkNumberStatus.status).json({
+							"Status": checkNumberStatus
+						});
+					}
+					//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+}); //sendFileBase64
 //
 // ------------------------------------------------------------------------------------------------//
 //
 // Enviar arquivo/documento
 router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var checkNumberStatus = await Sessions.checkNumberStatus(
-        req.body.SessionName.trim(),
-        soNumeros(req.body.phonefull) + '@c.us'
-      );
-      //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-        //
-        var sendFile = await Sessions.sendFile(
-          req.body.SessionName.trim(),
-          checkNumberStatus.number,
-          Buffer.from(req.body.base64, 'base64'),
-          req.body.mimetype,
-          req.body.originalname,
-          req.body.mimetype.split('/')[1],
-          req.body.caption
-        );
-        //
-      } else {
-        var sendFile = checkNumberStatus;
-      }
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendFile
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendFile
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.base64 || !req.body.mimetype || !req.body.originalname || !req.body.caption) {
+		var validate = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(validate.status).json({
+			"Status": validate
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+				var checkNumberStatus = await Sessions.checkNumberStatus(
+					removeWithspace(req.body.SessionName),
+					soNumeros(req.body.phonefull).trim()
+				);
+				//
+				if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+					//
+					var sendFileFromBase64 = await session.process.add(async () => await Sessions.sendFile(
+						removeWithspace(req.body.SessionName),
+						checkNumberStatus.number + '@s.whatsapp.net',
+						Buffer.from(req.body.base64, 'base64'),
+						req.body.originalname,
+						req.body.mimetype,
+						req.body.caption
+					));
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(sendFileFromBase64.status).json({
+						"Status": sendFileFromBase64
+					});
+					//
+				} else {
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(checkNumberStatus.status).json({
+						"Status": checkNumberStatus
+					});
+					//
+				}
+				//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+	//
+}); //sendFileFromBase64
 //
-// ------------------------------------------------------------------------------------------------------- //
+// ------------------------------------------------------------------------------------------------//
+//
+//Enviar button
+router.post("/sendButton", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.buttonMessage) {
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+				var checkNumberStatus = await Sessions.checkNumberStatus(
+					removeWithspace(req.body.SessionName),
+					soNumeros(req.body.phonefull).trim()
+				);
+				//
+				if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+					//
+					var sendButton = await session.process.add(async () => await Sessions.sendButton(
+						removeWithspace(req.body.SessionName),
+						checkNumberStatus.number + '@s.whatsapp.net',
+						req.body.buttonMessage,
+					));
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(sendButton.status).json({
+						"Status": sendButton
+					});
+					//
+				} else {
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(checkNumberStatus.status).json({
+						"Status": checkNumberStatus
+					});
+					//
+				}
+				//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+}); //sendButton
+//
+// ------------------------------------------------------------------------------------------------//
+//
+//Enviar template
+router.post("/sendTemplate", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.templateMessage) {
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+				var checkNumberStatus = await Sessions.checkNumberStatus(
+					removeWithspace(req.body.SessionName),
+					soNumeros(req.body.phonefull).trim()
+				);
+				//
+				if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+					//
+					var sendTemplate = await session.process.add(async () => await Sessions.sendTemplate(
+						removeWithspace(req.body.SessionName),
+						checkNumberStatus.number + '@s.whatsapp.net',
+						req.body.templateMessage,
+					));
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(sendTemplate.status).json({
+						"Status": sendTemplate
+					});
+					//
+				} else {
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(checkNumberStatus.status).json({
+						"Status": checkNumberStatus
+					});
+					//
+				}
+				//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+}); //sendButton
+//
+// ------------------------------------------------------------------------------------------------//
+//
+//Enviar lista
+router.post("/sendListMessage", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.listMessage) {
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+				var checkNumberStatus = await Sessions.checkNumberStatus(
+					removeWithspace(req.body.SessionName),
+					soNumeros(req.body.phonefull).trim()
+				);
+				//
+				if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+					//
+					var sendListMessage = await session.process.add(async () => await Sessions.sendListMessage(
+						removeWithspace(req.body.SessionName),
+						checkNumberStatus.number + '@s.whatsapp.net',
+						req.body.listMessage,
+					));
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(sendListMessage.status).json({
+						"Status": sendListMessage
+					});
+					//
+				} else {
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(checkNumberStatus.status).json({
+						"Status": checkNumberStatus
+					});
+					//
+				}
+				//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+}); //sendListMessage
+//
+// ------------------------------------------------------------------------------------------------//
 //
 /*
 ╦═╗┌─┐┌┬┐┬─┐┬┌─┐┬  ┬┬┌┐┌┌─┐  ╔╦╗┌─┐┌┬┐┌─┐                
@@ -1048,312 +2294,246 @@ router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (r
 //
 // Recuperar contatos
 router.post("/getAllContacts", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      var getAllContacts = await Sessions.getAllContacts(
-        req.body.SessionName
-      );
-      //
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": getAllContacts
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
+	//
+	if (!removeWithspace(req.body.SessionName)) {
+		var validate = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(validate.status).json({
+			"Status": validate
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+				var getAllContacts = await session.process.add(async () => await Sessions.getAllContacts(
+					removeWithspace(req.body.SessionName)
+				));
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(getAllContacts.status).json({
+					"Status": getAllContacts
+				});
+				//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
 }); //getAllContacts
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
-// Recuperar detalhes do contato
+// Recuperar grupos
 router.post("/getAllGroups", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      var getAllContacts = await Sessions.getAllGroups(
-        req.body.SessionName
-      );
-      //
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": getAllContacts
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
+	//
+	if (!removeWithspace(req.body.SessionName)) {
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+				var getAllGroups = await session.process.add(async () => await Sessions.getAllGroups(
+					req.body.SessionName
+				));
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(getAllGroups.status).json({
+					"Status": getAllGroups
+				});
+				//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
 }); //getAllGroups
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
-// Chama sua lista de contatos bloqueados
-router.post("/getBlockList", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var getBlockList = await Sessions.getBlockList(
-        req.body.SessionName
-      );
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": getBlockList
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //getBlockList
-//
-// ------------------------------------------------------------------------------------------------//
-//
-// Recuperar status de contato
-router.post("/getStatus", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var checkNumberStatus = await Sessions.checkNumberStatus(
-        req.body.SessionName.trim(),
-        soNumeros(req.body.phonefull) + '@c.us'
-      );
-      //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-        //
-        var getStatus = await Sessions.getStatus(
-          req.body.SessionName.trim(),
-          checkNumberStatus.number
-        );
-        //
-      } else {
-        var getStatus = checkNumberStatus;
-      }
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": getStatus
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //getStatus
-//
-// ------------------------------------------------------------------------------------------------------- //
-//
 // Obter o perfil do número
-router.post("/getNumberProfile", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      var checkNumberStatus = await Sessions.checkNumberStatus(
-        req.body.SessionName.trim(),
-        soNumeros(req.body.phonefull) + '@c.us'
-      );
-      //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-        //
-        var getNumberProfile = await Sessions.getNumberProfile(
-          req.body.SessionName.trim(),
-          soNumeros(req.body.phonefull) + '@c.us'
-        );
-        //
-      } else {
-        var getNumberProfile = checkNumberStatus;
-      }
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": getNumberProfile
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //getNumberProfile
-//
-// ------------------------------------------------------------------------------------------------------- //
-//
-// Obter a foto do perfil no servidor
 router.post("/getProfilePicFromServer", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var checkNumberStatus = await Sessions.checkNumberStatus(
-        req.body.SessionName.trim(),
-        soNumeros(req.body.phonefull) + '@c.us'
-      );
-      //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-        //
-        var getProfilePicFromServer = await Sessions.getProfilePicFromServer(
-          req.body.SessionName.trim(),
-          checkNumberStatus.number
-        );
-        //
-      } else {
-        var getProfilePicFromServer = checkNumberStatus;
-      }
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": getProfilePicFromServer
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.phonefull) {
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+				var checkNumberStatus = await Sessions.checkNumberStatus(
+					removeWithspace(req.body.SessionName),
+					soNumeros(req.body.phonefull).trim()
+				);
+				//
+				if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+					//
+					var getProfilePicFromServer = await session.process.add(async () => await Sessions.getProfilePicFromServer(
+						removeWithspace(req.body.SessionName),
+						checkNumberStatus.number + '@s.whatsapp.net'
+					));
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(getProfilePicFromServer.status).json({
+						"Status": getProfilePicFromServer
+					});
+					//
+				} else {
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(checkNumberStatus.status).json({
+						"Status": checkNumberStatus
+					});
+					//
+				}
+				//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
 }); //getProfilePicFromServer
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
 // Verificar o status do número
 router.post("/checkNumberStatus", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      var checkNumberStatus = await Sessions.checkNumberStatus(
-        req.body.SessionName.trim(),
-        soNumeros(req.body.phonefull) + '@c.us'
-      );
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": checkNumberStatus
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.phonefull) {
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+				var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+				var checkNumberStatus = await session.process.add(async () => await Sessions.checkNumberStatus(
+					removeWithspace(req.body.SessionName),
+					soNumeros(req.body.phonefull).trim()
+				));
+				//
+				if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(checkNumberStatus.status).json({
+						"Status": checkNumberStatus
+					});
+					//
+				} else {
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(checkNumberStatus.status).json({
+						"Status": checkNumberStatus
+					});
+					//
+				}
+				//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
 }); //checkNumberStatus
-//
-// ------------------------------------------------------------------------------------------------------- //
-//
-// Verificar o status do número
-router.post("/phoneValidate", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      var phone = soNumeros(req.body.phonefull);
-      var validPhone = await validatePhone(phone);
-      //
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": validPhone
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //checkNumberStatus
-//
-// ------------------------------------------------------------------------------------------------------- //
-//
-// Verificar o status do número em massa
-router.post("/checkNumberStatusMassa", upload.single('contatos'), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      var folderName = fs.mkdtempSync(path.join(os.tmpdir(), 'baileys-' + req.body.SessionName.trim() + '-'));
-      var filePath = path.join(folderName, req.file.originalname);
-      fs.writeFileSync(filePath, req.file.buffer.toString('base64'), 'base64');
-      console.log("- File:", filePath);
-      //
-      var checkNumberStatusMassa = [];
-      //
-      var arrayNumbers = fs.readFileSync(filePath, 'utf-8').toString().split(/\r?\n/);
-      for (var i in arrayNumbers) {
-        //console.log(soNumeros(arrayNumbers[i]));
-        var numero = soNumeros(arrayNumbers[i]);
-        //
-        if (numero.length !== 0) {
-          //
-          var checkNumberStatus = await Sessions.checkNumberStatus(
-            req.body.SessionName.trim(),
-            soNumeros(numero) + '@c.us'
-          );
-          //
-          if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-            //
-            checkNumberStatusMassa.push(checkNumberStatus);
-            //
-          } else {
-            var checkNumberStatusMassa = checkNumberStatus;
-          }
-        }
-        await sleep(1000);
-      }
-      //
-      await deletaArquivosTemp(filePath);
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": checkNumberStatusMassa
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //checkNumberStatusMassa
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
@@ -1362,1079 +2542,2106 @@ router.post("/checkNumberStatusMassa", upload.single('contatos'), verifyToken.ve
 ║ ╦├┬┘│ ││ │├─┘  ╠╣ │ │││││   │ ││ ││││└─┐               
 ╚═╝┴└─└─┘└─┘┴    ╚  └─┘┘└┘└─┘ ┴ ┴└─┘┘└┘└─┘               
 */
+//
 // Enviar Contato
-router.post("/sendContactVcardGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var sendContactVcard = await Sessions.sendContactVcard(
-        req.body.SessionName.trim(),
-        req.body.groupId.trim() + '@g.us',
-        checkNumberStatus.number,
-        req.body.namecontact
-      );
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendContactVcard
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendContactVcard
+router.post("/sendContactVcardGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	try {
+		if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.contact || !req.body.namecontact) {
+			var resultRes = {
+				"erro": true,
+				"status": 400,
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(result.status).json({
+				"Status": result
+			});
+			//
+		} else {
+			//
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+			switch (Status.status) {
+				case 'inChat':
+				case 'qrReadSuccess':
+				case 'isLogged':
+				case 'chatsAvailable':
+					//
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					var sendContactVcard = await session.process.add(async () => await Sessions.sendContactVcard(
+						removeWithspace(req.body.SessionName),
+						req.body.groupId.trim() + '@g.us',
+						soNumeros(req.body.contact),
+						req.body.namecontact
+					));
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(sendContactVcard.status).json({
+						"Status": sendContactVcard
+					});
+					//
+					break;
+				default:
+					//
+					var resultRes = {
+						"erro": true,
+						"status": 400,
+						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+					};
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(resultRes.status).json({
+						"Status": resultRes
+					});
+				//
+			}
+		}
+	} catch (error) {
+		//
+		console.log(error);
+		var resultRes = {
+			"erro": true,
+			"status": 403,
+			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	}
+}); //sendContactVcardGroup
+//
+// ------------------------------------------------------------------------------------------------//
+//
+// Enviar audio
+// https://www.mpi.nl/corpus/html/lamus2/apa.html
+//
+router.post("/sendVoiceGrupo", upload.single('file'), verifyToken.verify, async (req, res, next) => {
+	//
+	try {
+		if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.file) {
+			var validate = {
+				"erro": true,
+				"status": 400,
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(validate.status).json({
+				"Status": validate
+			});
+			//
+		} else {
+			//
+			//let ext = path.extname(file.originalname);
+			//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
+			//let ext = path.parse(req.file.originalname).ext;
+			//console.log("- acceptedTypes:", req.file.mimetype);
+			let acceptedTypes = req.file.mimetype.split('/')[0];
+			if (acceptedTypes !== "audio") {
+				//
+				var validate = {
+					"erro": true,
+					"status": 400,
+					"message": 'Arquivo selecionado não permitido, apenas arquivo de audio'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(validate.status).json({
+					"Status": validate
+				});
+				//
+			} else {
+				//
+				var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+				switch (Status.status) {
+					case 'inChat':
+					case 'qrReadSuccess':
+					case 'isLogged':
+					case 'chatsAvailable':
+						//
+						var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+						var sendPtt = await session.process.add(async () => await Sessions.sendPtt(
+							removeWithspace(req.body.SessionName),
+							req.body.groupId.trim() + '@g.us',
+							req.file.buffer,
+							req.file.mimetype,
+							req.body.caption
+						));
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(sendPtt.status).json({
+							"Status": sendPtt
+						});
+						//
+						break;
+					default:
+						//
+						var resultRes = {
+							"erro": true,
+							"status": 400,
+							"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+						};
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(resultRes.status).json({
+							"Status": resultRes
+						});
+					//
+				}
+			}
+		}
+	} catch (error) {
+		//
+		console.log(error);
+		var resultRes = {
+			"erro": true,
+			"status": 403,
+			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	}
+	//
+}); //sendVoiceGroup
+//
+// ------------------------------------------------------------------------------------------------//
+//
+// Enviar audio
+router.post("/sendVoiceBase64Grupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	try {
+		if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.base64 || !req.body.originalname) {
+			var validate = {
+				"erro": true,
+				"status": 400,
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(validate.status).json({
+				"Status": validate
+			});
+			//
+		} else {
+			//
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+			switch (Status.status) {
+				case 'inChat':
+				case 'qrReadSuccess':
+				case 'isLogged':
+				case 'chatsAvailable':
+					//
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					var mimeType = mime.lookup(req.body.originalname);
+					//
+					var sendPtt = await session.process.add(async () => await Sessions.sendPtt(
+						removeWithspace(req.body.SessionName),
+						req.body.groupId.trim() + '@g.us',
+						Buffer.from(req.body.base64, 'base64'),
+						mimeType,
+						req.body.caption
+					));
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(sendPtt.status).json({
+						"Status": sendPtt
+					});
+					//
+					break;
+				default:
+					//
+					var resultRes = {
+						"erro": true,
+						"status": 400,
+						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+					};
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(resultRes.status).json({
+						"Status": resultRes
+					});
+				//
+			}
+		}
+	} catch (error) {
+		//
+		console.log(error);
+		var resultRes = {
+			"erro": true,
+			"status": 403,
+			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	}
+}); //sendVoice
+//
+// ------------------------------------------------------------------------------------------------//
+//
+// Enviar audio
+router.post("/sendVoiceFromBase64Grupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	try {
+		if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.base64 || !req.body.mimetype || !req.body.originalname) {
+			var validate = {
+				"erro": true,
+				"status": 400,
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(validate.status).json({
+				"Status": validate
+			});
+			//
+		} else {
+			//
+			//let ext = path.extname(file.originalname);
+			//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
+			//let ext = path.parse(req.file.originalname).ext;
+			//console.log("- acceptedTypes:", req.file.mimetype);
+			let acceptedTypes = req.body.mimetype.split('/')[0];
+			if (acceptedTypes !== "audio") {
+				//
+				var validate = {
+					"erro": true,
+					"status": 400,
+					"message": 'Arquivo selecionado não permitido, apenas arquivo de audio'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(validate.status).json({
+					"Status": validate
+				});
+				//
+			} else {
+				//
+				var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+				switch (Status.status) {
+					case 'inChat':
+					case 'qrReadSuccess':
+					case 'isLogged':
+					case 'chatsAvailable':
+						//
+						var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+						var sendPtt = await session.process.add(async () => await Sessions.sendPtt(
+							removeWithspace(req.body.SessionName),
+							req.body.groupId.trim() + '@g.us',
+							Buffer.from(req.body.base64, 'base64'),
+							req.body.mimetype
+						));
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(sendPtt.status).json({
+							"Status": sendPtt
+						});
+						//
+						break;
+					default:
+						//
+						var resultRes = {
+							"erro": true,
+							"status": 400,
+							"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+						};
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(resultRes.status).json({
+							"Status": resultRes
+						});
+					//
+				}
+			}
+		}
+	} catch (error) {
+		//
+		console.log(error);
+		var resultRes = {
+			"erro": true,
+			"status": 403,
+			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	}
+}); //sendPttFromBase64
 //
 // ------------------------------------------------------------------------------------------------//
 //
 //Enviar Texto em Grupo
 router.post("/sendTextGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var sendText = await Sessions.sendText(
-        req.body.SessionName.trim(),
-        req.body.groupId.trim() + '@g.us',
-        req.body.msg
-      );
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendText
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendTextGrupo
-
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.msg) {
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+				var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+				var sendTextGrupo = await session.process.add(async () => await Sessions.sendText(
+					removeWithspace(req.body.SessionName),
+					req.body.groupId.trim() + '@g.us',
+					req.body.msg
+				));
+				//
+				//console.log(result);
+				res.setHeader('Content-Type', 'application/json');
+				res.status(sendTextGrupo.status).json({
+					"Status": sendTextGrupo
+				});
+				//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+}); //sendTextGroup
 //
 // ------------------------------------------------------------------------------------------------//
 //
 //Enviar localização no grupo
-router.post("/sendLocationGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var sendLocation = await Sessions.sendLocation(
-        req.body.SessionName.trim(),
-        req.body.groupId.trim() + '@g.us',
-        req.body.lat,
-        req.body.long,
-        req.body.local
-      );
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendLocation
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendLocation
+router.post("/sendLocationGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.lat || !req.body.long || !req.body.local) {
+		//
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+				var sendLocationGroup = await session.process.add(async () => await Sessions.sendLocation(
+					removeWithspace(req.body.SessionName),
+					req.body.groupId.trim() + '@g.us',
+					req.body.lat,
+					req.body.long,
+					req.body.local
+				));
+				//
+				//console.log(result);
+				res.setHeader('Content-Type', 'application/json');
+				res.status(sendLocationGroup.status).json({
+					"Status": sendLocationGroup
+				});
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+}); //sendLocationGroup
 //
 // ------------------------------------------------------------------------------------------------//
 //
 //Enviar links com preview
-router.post("/sendLinkPreviewGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var sendLinkPreview = await Sessions.sendLinkPreview(
-        req.body.SessionName.trim(),
-        req.body.groupId.trim() + '@g.us',
-        req.body.link,
-        req.body.detail
-      );
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendLinkPreview
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendLinkPreview
+router.post("/sendLinkGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	try {
+		if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.link || !req.body.descricao) {
+			//
+			var validate = {
+				"erro": true,
+				"status": 400,
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(validate.status).json({
+				"Status": validate
+			});
+			//
+		} else {
+			//
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+			switch (Status.status) {
+				case 'inChat':
+				case 'qrReadSuccess':
+				case 'isLogged':
+				case 'chatsAvailable':
+					//
+					if (!validUrl.isUri(req.body.link)) {
+						var validate = {
+							"erro": true,
+							"status": 401,
+							"message": 'O link informado é invalido, corrija e tente novamente.'
+						};
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(validate.status).json({
+							"Status": validate
+						});
+						//
+					}
+					//
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					var sendLink = await session.process.add(async () => await Sessions.sendLink(
+						removeWithspace(req.body.SessionName),
+						req.body.groupId.trim() + '@g.us',
+						req.body.link,
+						req.body.descricao
+					));
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(sendLink.status).json({
+						"Status": sendLink
+					});
+					//
+					break;
+				default:
+					//
+					var resultRes = {
+						"erro": true,
+						"status": 400,
+						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+					};
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(resultRes.status).json({
+						"Status": resultRes
+					});
+				//
+			}
+		}
+	} catch (error) {
+		//
+		var resultRes = {
+			"erro": true,
+			"status": 403,
+			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	}
+}); //sendLinkPreviewGroup
 //
 // ------------------------------------------------------------------------------------------------//
 //
 // Enviar imagen no grupo
-router.post("/sendImageGrupo", upload.single('fileimg'), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var sendImage = await Sessions.sendImage(
-        req.body.SessionName.trim(),
-        req.body.groupId.trim() + '@g.us',
-        req.file.buffer,
-        req.file.mimetype,
-        req.file.originalname,
-        req.body.caption
-      );
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendImage
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendImage
-//
-// ------------------------------------------------------------------------------------------------//
-//
-// Enviar imagen no grupo
-router.post("/sendImageBase64Grupo", upload.single(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var folderName = fs.mkdtempSync(path.join(os.tmpdir(), 'baileys-' + req.body.SessionName.trim() + '-'));
-      var filePath = path.join(folderName, req.body.originalname);
-      fs.writeFileSync(filePath, req.body.base64);
-      var mimetype = mime.lookup(filePath);
-      //
-      var sendImage = await Sessions.sendImage(
-        req.body.SessionName.trim(),
-        req.body.groupId.trim() + '@g.us',
-        Buffer.from(req.body.base64, 'base64'),
-        mimetype,
-        req.body.originalname,
-        req.body.caption
-      );
-      //
-      await deletaArquivosTemp(filePath);
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendImage
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendImage
-//
-// ------------------------------------------------------------------------------------------------//
-//
-// Enviar imagen no grupo
-router.post("/sendImageFromBase64Grupo", upload.single(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var sendImage = await Sessions.sendImage(
-        req.body.SessionName.trim(),
-        req.body.groupId.trim() + '@g.us',
-        Buffer.from(req.body.base64, 'base64'),
-        req.body.mimetype,
-        req.body.originalname,
-        req.body.caption
-      );
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendImage
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendImage
-//
-// ------------------------------------------------------------------------------------------------//
-//
-// Enviar arquivo/documento
-router.post("/sendFileGroup", upload.single('file'), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var sendFile = await Sessions.sendFile(
-        req.body.SessionName.trim(),
-        req.body.groupId.trim() + '@g.us',
-        req.file.buffer,
-        req.file.mimetype,
-        req.file.originalname,
-        req.file.mimetype.split('/')[1],
-        req.body.caption
-      );
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendFile
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendFile
+router.post("/sendImageGrupo", upload.single('file'), verifyToken.verify, async (req, res, next) => {
+		//
+		try {
+			if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.file) {
+				var validate = {
+					"erro": true,
+					"status": 400,
+					"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(validate.status).json({
+					"Status": validate
+				});
+				//
+			} else {
+				//
+				//let ext = path.extname(file.originalname);
+				//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
+				//let ext = path.parse(req.file.originalname).ext;
+				//console.log("- acceptedTypes:", req.file.mimetype);
+				let acceptedTypes = req.file.mimetype.split('/')[0];
+				if (acceptedTypes !== "image") {
+					//
+					var validate = {
+						"erro": true,
+						"status": 400,
+						"message": 'Arquivo selecionado não permitido, apenas arquivo do tipo imagem'
+					};
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(validate.status).json({
+						"Status": validate
+					});
+					//
+				} else {
+					//
+					var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+					switch (Status.status) {
+						case 'inChat':
+						case 'qrReadSuccess':
+						case 'isLogged':
+						case 'chatsAvailable':
+							//
+							var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+								var sendPtt = await session.process.add(async () => await Sessions.sendImage(
+									removeWithspace(req.body.SessionName),
+									req.body.groupId.trim() + '@g.us',
+									req.file.buffer,
+									req.file.mimetype,
+									req.file.originalname,
+									req.body.caption
+								));
+								//
+								res.setHeader('Content-Type', 'application/json');
+								res.status(sendPtt.status).json({
+									"Status": sendPtt
+								});
+								//
+							break;
+						default:
+							//
+							var resultRes = {
+								"erro": true,
+								"status": 400,
+								"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+							};
+							//
+							res.setHeader('Content-Type', 'application/json');
+							res.status(resultRes.status).json({
+								"Status": resultRes
+							});
+						//
+					}
+				}
+			}
+		} catch (error) {
+			//
+			console.log(error);
+			var resultRes = {
+				"erro": true,
+				"status": 403,
+				"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(resultRes.status).json({
+				"Status": resultRes
+			});
+			//
+		}
+		//
+}); //sendImageGroup
 //
 // ------------------------------------------------------------------------------------------------//
 //
 // Enviar arquivo/documento
-router.post("/sendFileBase64Group", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var folderName = fs.mkdtempSync(path.join(os.tmpdir(), 'baileys-' + req.body.SessionName.trim() + '-'));
-      var filePath = path.join(folderName, req.body.originalname);
-      fs.writeFileSync(filePath, req.body.base64, 'base64');
-      var originalname = path.basename(filePath);
-      var mimetype = mime.lookup(filePath);
-      //
-      var sendFile = await Sessions.sendFile(
-        req.body.SessionName.trim(),
-        req.body.groupId.trim() + '@g.us',
-        Buffer.from(req.body.base64, 'base64'),
-        mimetype,
-        req.body.originalname,
-        mimetype.split('/')[1],
-        req.body.caption
-      );
-      //
-      await deletaArquivosTemp(filePath);
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendFile
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendFile
+router.post("/sendImageBase64Grupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.base64 || !req.body.originalname || !req.body.caption) {
+		var validate = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(validate.status).json({
+			"Status": validate
+		});
+		//
+	} else {
+		//
+		//let ext = path.extname(file.originalname);
+		//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
+		//let ext = path.parse(req.file.originalname).ext;
+		//console.log("- acceptedTypes:", req.file.mimetype);
+		var mimeType = mime.lookup(req.body.originalname);
+		let acceptedTypes = mimeType.split('/')[0];
+		if (acceptedTypes !== "image") {
+			//
+			var validate = {
+				"erro": true,
+				"status": 400,
+				"message": 'Arquivo selecionado não permitido, apenas arquivo do tipo imagem'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(validate.status).json({
+				"Status": validate
+			});
+			//
+		} else {
+			//
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+			var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+			switch (Status.status) {
+				case 'inChat':
+				case 'qrReadSuccess':
+				case 'isLogged':
+				case 'chatsAvailable':
+					//
+							var sendFileBase64 = await session.process.add(async () => await Sessions.sendImage(
+								removeWithspace(req.body.SessionName),
+								req.body.groupId.trim() + '@g.us',
+								Buffer.from(req.body.base64, 'base64'),
+								req.body.originalname,
+								mimeType,
+								req.body.caption
+							));
+							//
+							res.setHeader('Content-Type', 'application/json');
+							res.status(sendFileBase64.status).json({
+								"Status": sendFileBase64
+							});
+							//
+					break;
+				default:
+					//
+					var resultRes = {
+						"erro": true,
+						"status": 400,
+						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+					};
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(resultRes.status).json({
+						"Status": resultRes
+					});
+				//
+			}
+		}
+	}
+}); //sendFileBase64
 //
 // ------------------------------------------------------------------------------------------------//
 //
 // Enviar arquivo/documento
-router.post("/sendFileFromBase64Group", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var sendFile = await Sessions.sendFile(
-        req.body.SessionName.trim(),
-        req.body.groupId.trim() + '@g.us',
-        Buffer.from(req.body.base64, 'base64'),
-        req.body.mimetype,
-        req.body.originalname,
-        req.body.mimetype.split('/')[1],
-        req.body.caption
-      );
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": sendFile
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //sendFile
+router.post("/sendImageFromBase64Grupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.base64 || !req.body.mimetype || !req.body.originalname || !req.body.caption) {
+		var validate = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(validate.status).json({
+			"Status": validate
+		});
+		//
+	} else {
+		//
+		//let ext = path.extname(file.originalname);
+		//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
+		//let ext = path.parse(req.file.originalname).ext;
+		//console.log("- acceptedTypes:", req.file.mimetype);
+		var mimeType = req.body.mimetype;
+		let acceptedTypes = mimeType.split('/')[0];
+		if (acceptedTypes !== "image") {
+			//
+			var validate = {
+				"erro": true,
+				"status": 400,
+				"message": 'Arquivo selecionado não permitido, apenas arquivo do tipo imagem'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(validate.status).json({
+				"Status": validate
+			});
+			//
+		} else {
+			//
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+			switch (Status.status) {
+				case 'inChat':
+				case 'qrReadSuccess':
+				case 'isLogged':
+				case 'chatsAvailable':
+					//
+						var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+						var sendFileFromBase64 = await session.process.add(async () => await Sessions.sendImage(
+							removeWithspace(req.body.SessionName),
+							req.body.groupId.trim() + '@g.us',
+							Buffer.from(req.body.base64, 'base64'),
+							req.body.originalname,
+							req.body.mimetype,
+							req.body.caption
+						));
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(sendFileFromBase64.status).json({
+							"Status": sendFileFromBase64
+						});
+						//
+					break;
+				default:
+					//
+					var resultRes = {
+						"erro": true,
+						"status": 400,
+						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+					};
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(resultRes.status).json({
+						"Status": resultRes
+					});
+				//
+			}
+		}
+	}
+	//
+}); //sendFileFromBase64
 //
 // ------------------------------------------------------------------------------------------------//
+//
+// Enviar arquivo/documento
+router.post("/sendFileGrupo", upload.single('file'), verifyToken.verify, async (req, res, next) => {
+		//
+		if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.caption || !req.file) {
+			var validate = {
+				"erro": true,
+				"status": 400,
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(validate.status).json({
+				"Status": validate
+			});
+			//
+		} else {
+			//
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+			switch (Status.status) {
+				case 'inChat':
+				case 'qrReadSuccess':
+				case 'isLogged':
+				case 'chatsAvailable':
+					//
+							var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+							var sendFile = await session.process.add(async () => await Sessions.sendFile(
+								removeWithspace(req.body.SessionName),
+								req.body.groupId.trim() + '@g.us',
+								req.file.buffer,
+								req.file.originalname,
+								req.file.mimetype,
+								req.body.caption
+							));
+							//
+							//console.log(result);
+							res.setHeader('Content-Type', 'application/json');
+							res.status(sendFile.status).json({
+								"Status": sendFile
+							});
+						//
+					break;
+				default:
+					//
+					var resultRes = {
+						"erro": true,
+						"status": 400,
+						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+					};
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(resultRes.status).json({
+						"Status": resultRes
+					});
+				//
+			}
+		}
+		//
+}); //sendFileGroup
+//
+// ------------------------------------------------------------------------------------------------//
+//
+// Enviar arquivo/documento
+router.post("/sendFileUrlGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.url || !req.body.caption) {
+		var validate = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(validate.status).json({
+			"Status": validate
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+				var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+						var sendFile = await session.process.add(async () => await Sessions.sendFileUrl(
+							removeWithspace(req.body.SessionName),
+							req.body.groupId.trim() + '@g.us',
+							req.body.url,
+							req.body.url.split('/').slice(-1)[0],
+							mime.lookup(req.body.url.split('.').slice(-1)[0]),
+							req.body.caption
+						));
+						//
+						//console.log(result);
+						res.setHeader('Content-Type', 'application/json');
+						res.status(sendFile.status).json({
+							"Status": sendFile
+						});
+						//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+}); //sendFileUrl
+//
+// ------------------------------------------------------------------------------------------------//
+//
+// Enviar arquivo/documento
+router.post("/sendFileBase64Grupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.base64 || !req.body.originalname || !req.body.caption) {
+		var validate = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(validate.status).json({
+			"Status": validate
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+				var mimeType = mime.lookup(req.body.originalname);
+				//
+				var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+						var sendFileBase64 = await session.process.add(async () => await Sessions.sendFile(
+							removeWithspace(req.body.SessionName),
+							req.body.groupId.trim() + '@g.us',
+							Buffer.from(req.body.base64, 'base64'),
+							req.body.originalname,
+							mimeType,
+							req.body.caption
+						));
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(sendFileBase64.status).json({
+							"Status": sendFileBase64
+						});
+						//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+}); //sendFileBase64Group
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
+// Enviar arquivo/documento
+router.post("/sendFileFromBase64Grupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.base64 || !req.body.mimetype || !req.body.originalname || !req.body.caption) {
+		var validate = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(validate.status).json({
+			"Status": validate
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+					var sendFileFromBase64 = await session.process.add(async () => await Sessions.sendFile(
+						removeWithspace(req.body.SessionName),
+						req.body.groupId.trim() + '@g.us',
+						Buffer.from(req.body.base64, 'base64'),
+						req.body.originalname,
+						req.body.mimetype,
+						req.body.caption
+					));
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(sendFileFromBase64.status).json({
+						"Status": sendFileFromBase64
+					});
+					//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+	//
+}); //sendFileFromBase64Group
+//
+// ------------------------------------------------------------------------------------------------//
+//
+//Enviar button
+router.post("/sendButtonGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.buttonMessage) {
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+					var sendButton = await session.process.add(async () => await Sessions.sendButton(
+						removeWithspace(req.body.SessionName),
+						req.body.groupId.trim() + '@g.us',
+						req.body.buttonMessage,
+					));
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(sendButton.status).json({
+						"Status": sendButton
+					});
+					//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+}); //sendButton
+//
+// ------------------------------------------------------------------------------------------------//
+//
+//Enviar template
+router.post("/sendTemplateGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.templateMessage) {
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+					var sendTemplate = await session.process.add(async () => await Sessions.sendTemplate(
+						removeWithspace(req.body.SessionName),
+						req.body.groupId.trim() + '@g.us',
+						req.body.templateMessage,
+					));
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(sendTemplate.status).json({
+						"Status": sendTemplate
+					});
+					//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+}); //sendTemplateGrupo
+//
+// ------------------------------------------------------------------------------------------------//
+//
+//Enviar lista
+router.post("/sendListMessageGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.listMessage) {
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+					var sendListMessage = await session.process.add(async () => await Sessions.sendListMessage(
+						removeWithspace(req.body.SessionName),
+						req.body.groupId.trim() + '@g.us',
+						req.body.listMessage,
+					));
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(sendListMessage.status).json({
+						"Status": sendListMessage
+					});
+					//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+}); //sendListMessageGrupo
+//
+// ------------------------------------------------------------------------------------------------------- //
 //
 //Deixar o grupo
 router.post("/leaveGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var leaveGroup = await Sessions.leaveGroup(
-        req.body.SessionName.trim(),
-        req.body.groupId + '@g.us'
-      );
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": leaveGroup
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId) {
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+				var leaveGroup = await session.process.add(async () => await Sessions.leaveGroup(
+					removeWithspace(req.body.SessionName),
+					req.body.groupId + '@g.us'
+				));
+				res.setHeader('Content-Type', 'application/json');
+				res.status(leaveGroup.status).json({
+					"Status": leaveGroup
+				});
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
 }); //leaveGroup
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
-// Obtenha membros do grupo
-router.post("/getGroupMembers", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var getGroupMembers = await Sessions.getGroupMembers(
-        req.body.SessionName.trim(),
-        req.body.groupId + '@g.us'
-      );
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": getGroupMembers
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //getGroupMembers
+// Criar grupo (título, participantes a adicionar)
+router.post("/createGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.title || !req.body.participants) {
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		//
+		if (req.body.title.length >= 25) {
+			var validate = {
+				"erro": true,
+				"status": 400,
+				"message": 'O nome do grupo não pode exceder 25 caracter.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(validate.status).json({
+				"Status": validate
+			});
+			//
+		}
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+					//
+					//
+					var contactlistValid = [];
+					var contactlistInvalid = [];
+					//
+					var arrayNumbers = req.body.participants;
+					//
+					for (var i in arrayNumbers) {
+						//console.log(arrayNumbers[i]);
+						var numero = soNumeros(arrayNumbers[i]);
+						//
+						if (numero.length !== 0) {
+							//
+							var checkNumberStatus = await Sessions.checkNumberStatus(
+								removeWithspace(req.body.SessionName),
+								soNumeros(numero) + '@s.whatsapp.net'
+							);
+							//
+							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+								//
+								contactlistValid.push(checkNumberStatus.number + '@s.whatsapp.net');
+							} else {
+								contactlistInvalid.push(numero + '@s.whatsapp.net');
+							}
+							//
+						}
+						//
+					}
+					//
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					var createGroup = await session.process.add(async () => await Sessions.createGroup(
+						removeWithspace(req.body.SessionName),
+						req.body.title,
+						contactlistValid,
+						contactlistInvalid
+					));
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(createGroup.status).json({
+						"Status": createGroup
+					});
+					//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+}); //createGroup
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
+// update Group Title
+router.post("/updateGroupTitle", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.title) {
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		//
+		if (req.body.title.length >= 25) {
+			var validate = {
+				"erro": true,
+				"status": 400,
+				"message": 'O nome do grupo não pode exceder 25 caracter.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(validate.status).json({
+				"Status": validate
+			});
+			//
+		}
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+					//
+					//
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					var updateGroupTitle = await session.process.add(async () => await Sessions.updateGroupTitle(
+						removeWithspace(req.body.SessionName),
+						req.body.groupId + '@g.us',
+						req.body.title,
+					));
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(updateGroupTitle.status).json({
+						"Status": updateGroupTitle
+					});
+					//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+}); //updateGroupTitle
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
+// update Group desc
+router.post("/updateGroupDesc", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.desc) {
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+					//
+					//
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					var updateGroupDesc = await session.process.add(async () => await Sessions.updateGroupDesc(
+						removeWithspace(req.body.SessionName),
+						req.body.groupId + '@g.us',
+						req.body.desc,
+					));
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(updateGroupDesc.status).json({
+						"Status": updateGroupDesc
+					});
+					//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+}); //updateGroupDesc
 //
 // ------------------------------------------------------------------------------------------------//
 //
-// Obter IDs de membros do grupo 
-router.post("/getGroupMembersIds", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      var getGroupMembersIds = await Sessions.getGroupMembersIds(
-        req.body.SessionName.trim(),
-        req.body.groupId + '@g.us'
-      );
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": getGroupMembersIds
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //getGroupMembersIds
+// Obtenha membros do grupo
+router.post("/getGroupMembers", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId) {
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+				var getGroupMembers = await session.process.add(async () => await Sessions.getGroupMembers(
+					removeWithspace(req.body.SessionName),
+					req.body.groupId + '@g.us'
+				));
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(getGroupMembers.status).json({
+					"Status": getGroupMembers
+				});
+				//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+}); //getGroupMembers
 //
 // ------------------------------------------------------------------------------------------------//
 //
 // Gerar link de url de convite de grupo
 router.post("/getGroupInviteLink", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  //
-  // Gerar link de url de convite de grupo
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var GroupInviteLink = await Sessions.getGroupInviteLink(
-        req.body.SessionName.trim(),
-        req.body.groupId + '@g.us'
-      );
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": GroupInviteLink
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId) {
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+				var GroupInviteLink = await session.process.add(async () => await Sessions.getGroupInviteLink(
+					removeWithspace(req.body.SessionName),
+					req.body.groupId + '@g.us'
+				));
+				res.setHeader('Content-Type', 'application/json');
+				res.status(GroupInviteLink.status).json({
+					"Status": GroupInviteLink
+				});
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
 }); //getGroupInviteLink
 //
 // ------------------------------------------------------------------------------------------------//
 //
-router.post("/createGroup", upload.single('participants'), verifyToken.verify, async (req, res, next) => {
-  //
-  // Criar grupo (título, participantes a adicionar)
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      //
-      var folderName = fs.mkdtempSync(path.join(os.tmpdir(), 'baileys-' + req.body.SessionName.trim() + '-'));
-      var filePath = path.join(folderName, req.file.originalname);
-      fs.writeFileSync(filePath, req.file.buffer.toString('base64'), 'base64');
-      console.log("- File:", filePath);
-      //
-      var arrayNumbers = fs.readFileSync(filePath, 'utf-8').toString().split(/\r?\n/);
-      //
-      var contactlistValid = [];
-      var contactlistInvalid = [];
-      //
-      for (var i in arrayNumbers) {
-        //console.log(arrayNumbers[i]);
-        var numero = soNumeros(arrayNumbers[i]);
-        //
-        if (numero.length !== 0) {
-          //
-          var checkNumberStatus = await Sessions.checkNumberStatus(
-            req.body.SessionName.trim(),
-            numero + '@c.us'
-          );
-          //
-          if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-            //
-            contactlistValid.push(checkNumberStatus.number);
-          } else {
-            contactlistInvalid.push(numero + '@s.whatsapp.net');
-          }
-          //
-        }
-        //
-        await sleep(1000);
-      }
-      //
-      var createGroup = await Sessions.createGroup(
-        req.body.SessionName.trim(),
-        req.body.title,
-        contactlistValid,
-        contactlistInvalid
-      );
-      //
-      await deletaArquivosTemp(filePath);
-      //
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": createGroup
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //createGroup
-//
-// ------------------------------------------------------------------------------------------------//
-//
-// Criar grupo (título, participantes a adicionar)
-router.post("/createCountGroup", upload.single('participants'), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var createCountGroup = [];
-      var createGroup = [];
-      //
-      var folderName = fs.mkdtempSync(path.join(os.tmpdir(), 'baileys-' + req.body.SessionName.trim() + '-'));
-      var filePath = path.join(folderName, req.file.originalname);
-      fs.writeFileSync(filePath, req.file.buffer.toString('base64'), 'base64');
-      console.log("- File:", filePath);
-      //
-      var arrayNumbers = fs.readFileSync(filePath, 'utf-8').toString().split(/\r?\n/);
-      //
-      var contactlistValid = [];
-      var contactlistInvalid = [];
-      //
-      for (var i in arrayNumbers) {
-        //console.log(arrayNumbers[i]);
-        var numero = soNumeros(arrayNumbers[i]);
-        //
-        if (numero.length !== 0) {
-          //
-
-          var checkNumberStatus = await Sessions.checkNumberStatus(
-            req.body.SessionName.trim(),
-            numero + '@c.us'
-          );
-          //
-          if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-            //
-            contactlistValid.push(checkNumberStatus.number);
-          } else {
-            contactlistInvalid.push(numero + '@s.whatsapp.net');
-          }
-          //
-        }
-        //
-        await sleep(1000);
-      }
-      //
-      for (count = 1; count <= req.body.count; count++) {
-        var resCreateGroup = await Sessions.createGroup(
-          req.body.SessionName.trim(),
-          req.body.title + "-" + count,
-          contactlistValid,
-          contactlistInvalid
-        );
-        //
-        await sleep(5000);
-        //
-        createCountGroup.push(resCreateGroup);
-        //
-        createGroup.push({
-          "createGroup": createCountGroup
-        });
-        //
-      }
-      //
-      await deletaArquivosTemp(filePath);
-      //
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": createGroup
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //createCountGroup
-//
-// ------------------------------------------------------------------------------------------------//
-//
-// Criar grupo (título, participantes a adicionar)
-router.post("/createGroupSetAdminMembers", upload.single('participants'), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var createGroupSetAdminMembers = [];
-      //
-      var folderName = fs.mkdtempSync(path.join(os.tmpdir(), 'baileys-' + req.body.SessionName.trim() + '-'));
-      var filePath = path.join(folderName, req.file.originalname);
-      fs.writeFileSync(filePath, req.file.buffer.toString('base64'), 'base64');
-      console.log("- File:", filePath);
-      //
-      var arrayNumbers = fs.readFileSync(filePath, 'utf-8').toString().split(/\r?\n/);
-      //
-      var contactlistValid = [];
-      var contactlistInvalid = [];
-      //
-      for (var i in arrayNumbers) {
-        //console.log(arrayNumbers[i]);
-        var numero = soNumeros(arrayNumbers[i]);
-        //
-        if (numero.length !== 0) {
-          //
-
-          var checkNumberStatus = await Sessions.checkNumberStatus(
-            req.body.SessionName.trim(),
-            numero + '@c.us'
-          );
-          //
-          if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-            //
-            contactlistValid.push(checkNumberStatus.number);
-          } else {
-            contactlistInvalid.push(numero + '@s.whatsapp.net');
-          }
-
-          //
-        }
-        //
-        await sleep(2000);
-      }
-      //
-      let createGroup = await Sessions.createGroup(
-        req.body.SessionName.trim(),
-        req.body.title,
-        contactlistValid,
-        contactlistInvalid
-      );
-      //
-      createGroupSetAdminMembers.push(createGroup);
-      //
-      await sleep(10000);
-      //
-      if (createGroup.erro == false && createGroup.status == 200) {
-        //
-        var promoteParticipant = await Sessions.promoteParticipant(
-          req.body.SessionName.trim(),
-          createGroup.groupId + '@g.us',
-          contactlistValid
-        );
-        //
-        createGroupSetAdminMembers.push(promoteParticipant);
-        //
-      } else {
-        var createGroupSetAdminMembers = createGroup;
-      }
-      //
-      await deletaArquivosTemp(filePath);
-      //
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": createGroupSetAdminMembers
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //createGroupSetAdminMembers
-//
-// ------------------------------------------------------------------------------------------------//
-//
-// Criar grupo (título, participantes a adicionar)
-router.post("/createCountGroupSetAdminMembers", upload.single('participants'), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var createCountGroupSetAdminMembers = [];
-      var createGroup = [];
-      //
-      var folderName = fs.mkdtempSync(path.join(os.tmpdir(), 'baileys-' + req.body.SessionName.trim() + '-'));
-      var filePath = path.join(folderName, req.file.originalname);
-      fs.writeFileSync(filePath, req.file.buffer.toString('base64'), 'base64');
-      console.log("- File:", filePath);
-      //
-      var arrayNumbers = fs.readFileSync(filePath, 'utf-8').toString().split(/\r?\n/);
-      //
-      var contactlistValid = [];
-      var contactlistInvalid = [];
-      //
-      for (var i in arrayNumbers) {
-        //console.log(arrayNumbers[i]);
-        var numero = soNumeros(arrayNumbers[i]);
-        //
-        if (numero.length !== 0) {
-          //
-
-          var checkNumberStatus = await Sessions.checkNumberStatus(
-            req.body.SessionName.trim(),
-            numero + '@c.us'
-          );
-          //
-          if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-            //
-            contactlistValid.push(checkNumberStatus.number);
-          } else {
-            contactlistInvalid.push(numero + '@s.whatsapp.net');
-          }
-
-          //
-        }
-        //
-        await sleep(2000);
-      }
-      //
-      for (count = 1; count <= req.body.count; count++) {
-        var createGroup = await Sessions.createGroup(
-          req.body.SessionName.trim(),
-          req.body.title + "-" + count,
-          contactlistValid,
-          contactlistInvalid
-        );
-        //
-        createCountGroupSetAdminMembers.push(createGroup);
-        //
-        await sleep(10000);
-        //
-        if (createGroup.erro == false && createGroup.status == 200) {
-          //
-          var promoteParticipant = await Sessions.promoteParticipant(
-            req.body.SessionName.trim(),
-            createGroup.groupId + '@g.us',
-            contactlistValid
-          );
-          //
-          createCountGroupSetAdminMembers.push(promoteParticipant);
-          //
-          //
-        } else {
-          var createCountGroupSetAdminMembers = resCreateGroup;
-        }
-        //
-        createGroup.push({
-          "createGroup": createCountGroupSetAdminMembers
-        });
-        //
-      }
-      //
-      await deletaArquivosTemp(filePath);
-      //
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": createGroup
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //createCountGroupSetAdminMembers
+// Gerar link de url de convite de grupo
+router.post("/getGroupRevokeInviteLink", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId) {
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+				var GroupInviteLink = await session.process.add(async () => await Sessions.getGroupRevokeInviteLink(
+					removeWithspace(req.body.SessionName),
+					req.body.groupId + '@g.us'
+				));
+				res.setHeader('Content-Type', 'application/json');
+				res.status(GroupInviteLink.status).json({
+					"Status": GroupInviteLink
+				});
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+}); //getGroupRevokeInviteLink
 //
 // ------------------------------------------------------------------------------------------------//
 //
 router.post("/removeParticipant", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  //
-  // Remove participante
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      var checkNumberStatus = await Sessions.checkNumberStatus(
-        req.body.SessionName.trim(),
-        soNumeros(req.body.phonefull).trim() + '@c.us'
-      );
-      //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-        //
-        var removeParticipant = await Sessions.removeParticipant(
-          req.body.SessionName.trim(),
-          req.body.groupId.trim() + '@g.us',
-          [checkNumberStatus.number]
-        );
-        //
-      } else {
-        var removeParticipant = checkNumberStatus;
-      }
-      //
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": removeParticipant
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.participants) {
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+					//
+					//
+					var contactlistValid = [];
+					var contactlistInvalid = [];
+					//
+					var arrayNumbers = req.body.participants;
+					//
+					for (var i in arrayNumbers) {
+						//console.log(arrayNumbers[i]);
+						var numero = soNumeros(arrayNumbers[i]);
+						//
+						if (numero.length !== 0) {
+							//
+							var checkNumberStatus = await Sessions.checkNumberStatus(
+								removeWithspace(req.body.SessionName),
+								soNumeros(numero) + '@s.whatsapp.net'
+							);
+							//
+							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+								//
+								contactlistValid.push(checkNumberStatus.number + '@s.whatsapp.net');
+							} else {
+								contactlistInvalid.push(numero + '@s.whatsapp.net');
+							}
+							//
+						}
+						//
+					}
+					//
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					var removeParticipant = await session.process.add(async () => await Sessions.removeParticipant(
+						removeWithspace(req.body.SessionName),
+						req.body.groupId + '@g.us',
+						contactlistValid,
+						contactlistInvalid
+					));
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(removeParticipant.status).json({
+						"Status": removeParticipant
+					});
+					//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+	//
 }); //removeParticipant
 //
 // ------------------------------------------------------------------------------------------------//
 //
+// Adicionar participante
 router.post("/addParticipant", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  //
-  // Adicionar participante
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var checkNumberStatus = await Sessions.checkNumberStatus(
-        req.body.SessionName.trim(),
-        soNumeros(req.body.phonefull) + '@c.us'
-      );
-      //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-        //
-        var addParticipant = await Sessions.addParticipant(
-          req.body.SessionName.trim(),
-          req.body.groupId.trim() + '@g.us',
-          [checkNumberStatus.number]
-        );
-        //
-      } else {
-        var addParticipant = checkNumberStatus;
-      }
-      //
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": addParticipant
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.participants) {
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+					//
+					//
+					var contactlistValid = [];
+					var contactlistInvalid = [];
+					//
+					var arrayNumbers = req.body.participants;
+					//
+					for (var i in arrayNumbers) {
+						//console.log(arrayNumbers[i]);
+						var numero = soNumeros(arrayNumbers[i]);
+						//
+						if (numero.length !== 0) {
+							//
+							var checkNumberStatus = await Sessions.checkNumberStatus(
+								removeWithspace(req.body.SessionName),
+								soNumeros(numero) + '@s.whatsapp.net'
+							);
+							//
+							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+								//
+								contactlistValid.push(checkNumberStatus.number + '@s.whatsapp.net');
+							} else {
+								contactlistInvalid.push(numero + '@s.whatsapp.net');
+							}
+							//
+						}
+						//
+					}
+					//
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					var addParticipant = await session.process.add(async () => await Sessions.addParticipant(
+						removeWithspace(req.body.SessionName),
+						req.body.groupId + '@g.us',
+						contactlistValid,
+						contactlistInvalid
+					));
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(addParticipant.status).json({
+						"Status": addParticipant
+					});
+					//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+	//
 }); //addParticipant
 //
 // ------------------------------------------------------------------------------------------------//
 //
+// Promote participant (Give admin privileges)
 router.post("/promoteParticipant", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  //
-  // Promote participant (Give admin privileges)
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var checkNumberStatus = await Sessions.checkNumberStatus(
-        req.body.SessionName.trim(),
-        soNumeros(req.body.phonefull) + '@c.us'
-      );
-      //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-        //
-        var promoteParticipant = await Sessions.promoteParticipant(
-          req.body.SessionName.trim(),
-          req.body.groupId.trim() + '@g.us',
-          [checkNumberStatus.number]
-        );
-        //
-      } else {
-        var promoteParticipant = checkNumberStatus;
-      }
-      //
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": promoteParticipant
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.participants) {
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+					//
+					//
+					var contactlistValid = [];
+					var contactlistInvalid = [];
+					//
+					var arrayNumbers = req.body.participants;
+					//
+					for (var i in arrayNumbers) {
+						//console.log(arrayNumbers[i]);
+						var numero = soNumeros(arrayNumbers[i]);
+						//
+						if (numero.length !== 0) {
+							//
+							var checkNumberStatus = await Sessions.checkNumberStatus(
+								removeWithspace(req.body.SessionName),
+								soNumeros(numero) + '@s.whatsapp.net'
+							);
+							//
+							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+								//
+								contactlistValid.push(checkNumberStatus.number + '@s.whatsapp.net');
+							} else {
+								contactlistInvalid.push(numero + '@s.whatsapp.net');
+							}
+							//
+						}
+						//
+					}
+					//
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					var promoteParticipant = await session.process.add(async () => await Sessions.promoteParticipant(
+						removeWithspace(req.body.SessionName),
+						req.body.groupId + '@g.us',
+						contactlistValid,
+						contactlistInvalid
+					));
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(promoteParticipant.status).json({
+						"Status": promoteParticipant
+					});
+					//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+	//
 }); //promoteParticipant
 //
 // ------------------------------------------------------------------------------------------------//
 //
 // Depromote participant (Give admin privileges)
 router.post("/demoteParticipant", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'isLogged':
-      //
-      var checkNumberStatus = await Sessions.checkNumberStatus(
-        req.body.SessionName.trim(),
-        soNumeros(req.body.phonefull) + '@c.us'
-      );
-      //
-      if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-        //
-        var demoteParticipant = await Sessions.demoteParticipant(
-          req.body.SessionName.trim(),
-          req.body.groupId.trim() + '@g.us',
-          [checkNumberStatus.number]
-        );
-        //
-      } else {
-        var demoteParticipant = checkNumberStatus;
-      }
-      //
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": demoteParticipant
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.participants) {
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+					//
+					//
+					var contactlistValid = [];
+					var contactlistInvalid = [];
+					//
+					var arrayNumbers = req.body.participants;
+					//
+					for (var i in arrayNumbers) {
+						//console.log(arrayNumbers[i]);
+						var numero = soNumeros(arrayNumbers[i]);
+						//
+						if (numero.length !== 0) {
+							//
+							var checkNumberStatus = await Sessions.checkNumberStatus(
+								removeWithspace(req.body.SessionName),
+								soNumeros(numero) + '@s.whatsapp.net'
+							);
+							//
+							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+								//
+								contactlistValid.push(checkNumberStatus.number + '@s.whatsapp.net');
+							} else {
+								contactlistInvalid.push(numero + '@s.whatsapp.net');
+							}
+							//
+						}
+						//
+					}
+					//
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					var demoteParticipant = await session.process.add(async () => await Sessions.demoteParticipant(
+						removeWithspace(req.body.SessionName),
+						req.body.groupId + '@g.us',
+						contactlistValid,
+						contactlistInvalid
+					));
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(demoteParticipant.status).json({
+						"Status": demoteParticipant
+					});
+					//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+	//
 }); //demoteParticipant
 //
 // ------------------------------------------------------------------------------------------------//
 //
 // Retorna o status do grupo, jid, descrição do link de convite
 router.post("/getGroupInfoFromInviteLink", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      var getGroupInfoFromInviteLink = await Sessions.getGroupInfoFromInviteLink(
-        req.body.SessionName.trim(),
-        req.body.InviteCode
-      );
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        getGroupInfoFromInviteLink
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "getGroupInfoFromInviteLink": sessionStatus
-      });
-  }
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.inviteCode) {
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+				var getGroupInfoFromInviteLink = await session.process.add(async () => await Sessions.getGroupInfoFromInviteLink(
+					removeWithspace(req.body.SessionName),
+					req.body.inviteCode
+				));
+				res.setHeader('Content-Type', 'application/json');
+				res.status(getGroupInfoFromInviteLink.status).json({
+					"Status": getGroupInfoFromInviteLink
+				});
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
 }); //getGroupInfoFromInviteLink
 //
 // ------------------------------------------------------------------------------------------------//
 //
+// Junte-se a um grupo usando o código de convite do grupo
 router.post("/joinGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  //
-  // Junte-se a um grupo usando o código de convite do grupo
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      var joinGroup = await Sessions.joinGroup(
-        req.body.SessionName.trim(),
-        req.body.InviteCode
-      );
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": joinGroup
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.inviteCode) {
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+				var getGroupInfoFromInviteLink = await session.process.add(async () => await Sessions.joinGroup(
+					removeWithspace(req.body.SessionName),
+					req.body.inviteCode
+				));
+				res.setHeader('Content-Type', 'application/json');
+				res.status(getGroupInfoFromInviteLink.status).json({
+					"Status": getGroupInfoFromInviteLink
+				});
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
 }); //joinGroup
-//
-// ------------------------------------------------------------------------------------------------//
-//
-router.post("/onlyAdminsMessagesGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  //
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      var onlyAdminsMessagesGroup = await Sessions.onlyAdminsMessagesGroup(
-        req.body.SessionName.trim(),
-        req.body.groupId + '@g.us'
-      );
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": onlyAdminsMessagesGroup
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //onlyAdminsMessagesGroup
-//
-// ------------------------------------------------------------------------------------------------//
-//
-router.post("/everyoneMessagesGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  //
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      var everyoneMessagesGroup = await Sessions.everyoneMessagesGroup(
-        req.body.SessionName.trim(),
-        req.body.groupId + '@g.us'
-      );
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": everyoneMessagesGroup
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //everyoneMessagesGroup
-//
-// ------------------------------------------------------------------------------------------------//
-//
-router.post("/everyoneModifySettingsGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  //
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      var everyoneModifySettingsGroup = await Sessions.everyoneModifySettingsGroup(
-        req.body.SessionName.trim(),
-        req.body.groupId + '@g.us',
-        req.body.change
-      );
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": everyoneModifySettingsGroup
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //everyoneModifySettingsGroup
-//
-// ------------------------------------------------------------------------------------------------//
-//
-router.post("/everyoneAdminsModifySettingsGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  //
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      var everyoneModifySettingsGroup = await Sessions.everyoneAdminsModifySettingsGroup(
-        req.body.SessionName.trim(),
-        req.body.groupId + '@g.us'
-      );
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": everyoneModifySettingsGroup
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //everyoneModifySettingsGroup
 //
 // ------------------------------------------------------------------------------------------------//
 //
@@ -2443,99 +4650,185 @@ router.post("/everyoneAdminsModifySettingsGroup", upload.none(''), verifyToken.v
 ╠═╝├┬┘│ │├┤ ││  ├┤   ╠╣ │ │││││   │ ││ ││││└─┐           
 ╩  ┴└─└─┘└  ┴┴─┘└─┘  ╚  └─┘┘└┘└─┘ ┴ ┴└─┘┘└┘└─┘           
 */
+// Recuperar status de contato
+router.post("/getPerfilStatus", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.phonefull) {
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+		//
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+				var checkNumberStatus = await Sessions.checkNumberStatus(
+					removeWithspace(req.body.SessionName),
+					soNumeros(req.body.phonefull).trim()
+				);
+				//
+				if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+					//
+					var getStatus = await session.process.add(async () => await Sessions.getPerfilStatus(
+						removeWithspace(req.body.SessionName),
+						checkNumberStatus.number + '@s.whatsapp.net'
+					));
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(getStatus.status).json({
+						"Status": getStatus
+					});
+					//
+				} else {
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(checkNumberStatus.status).json({
+						"Status": checkNumberStatus
+					});
+					//
+				}
+				//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+}); //getStatus
 //
+//
+// ------------------------------------------------------------------------------------------------//
+//
+// Set client status
 router.post("/setProfileStatus", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  //
-  // Set client status
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      var setProfileStatus = await Sessions.setProfileStatus(
-        req.body.SessionName.trim(),
-        req.body.ProfileStatus
-      );
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": setProfileStatus
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.ProfileStatus) {
+		var validate = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(validate.status).json({
+			"Status": validate
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+				var setProfileStatus = await session.process.add(async () => await Sessions.setProfileStatus(
+					removeWithspace(req.body.SessionName),
+					req.body.ProfileStatus
+				));
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(setProfileStatus.status).json({
+					"Status": setProfileStatus
+				});
+				//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
 }); //setProfileStatus
 //
 // ------------------------------------------------------------------------------------------------//
 //
+// Set client profile name
 router.post("/setProfileName", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  //
-  // Set client profile name
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      var setProfileName = await Sessions.setProfileName(
-        req.body.SessionName.trim(),
-        req.body.ProfileName
-      );
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": setProfileName
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.ProfileName) {
+		var validate = {
+			result: "info",
+			state: 'FAILURE',
+			status: 'notProvided',
+			message: 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(400).json({
+			"Status": validate
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+				var setProfileName = await session.process.add(async () => await Sessions.setProfileName(
+					removeWithspace(req.body.SessionName),
+					req.body.ProfileName
+				));
+				res.setHeader('Content-Type', 'application/json');
+				res.status(200).json({
+					"Status": setProfileName
+				});
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
 }); //setProfileName
-//
-// ------------------------------------------------------------------------------------------------//
-//
-router.post("/setProfilePic", upload.single('fileimg'), verifyToken.verify, async (req, res, next) => {
-  //
-
-  //
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      //
-      var folderName = fs.mkdtempSync(path.join(os.tmpdir(), 'baileys-' + req.body.SessionName.trim() + '-'));
-      var filePath = path.join(folderName, req.file.originalname);
-      fs.writeFileSync(filePath, req.file.buffer.toString('base64'), 'base64');
-      console.log("- File", filePath);
-      //
-      var setProfilePic = await Sessions.setProfilePic(
-        req.body.SessionName.trim(),
-        filePath
-      );
-      //
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": setProfilePic
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //setProfilePic
 //
 // ------------------------------------------------------------------------------------------------//
 //
@@ -2545,432 +4838,14 @@ router.post("/setProfilePic", upload.single('fileimg'), verifyToken.verify, asyn
 ═╩╝└─┘ └┘ ┴└─┘└─┘  ╚  └─┘┘└┘└─┘ ┴ ┴└─┘┘└┘└─┘             
 */
 //
-// Delete the Service Worker
-router.post("/killServiceWorker", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      var killServiceWorker = await Sessions.killServiceWorker(req.body.SessionName.trim());
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": killServiceWorker
-      });
-      //
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //killServiceWorker
-//
 // ------------------------------------------------------------------------------------------------//
 //
-// Load the service again
-router.post("/restartService", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      var restartService = await Sessions.restartService(req.body.SessionName.trim());
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": restartService
-      });
-      //
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //restartService
-//
-// ------------------------------------------------------------------------------------------------//
-//
-// Reload do whatsapp web
-router.post("/reloadService", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-    case 'notLogged':
-    case 'deviceNotConnected':
-    case 'desconnectedMobile':
-    case 'qrReadFail':
-    case 'deleteToken':
-    case 'DISCONNECTED':
-      //
-      try {
-        var killServiceWorker = await Sessions.killServiceWorker(req.body.SessionName.trim());
-        //
-        if (killServiceWorker.erro === false && killServiceWorker.status === 200) {
-          //
-          var restartService = await Sessions.restartService(req.body.SessionName.trim());
-          //
-          if (restartService.erro === false && restartService.status === 200) {
-            //
-            var reload = restartService;
-            //
-            //await deletaToken(session.tokenPatch + "/" + req.body.SessionName + ".data.json");
-            //
-            res.setHeader('Content-Type', 'application/json');
-            res.status(200).json({
-              "Status": reload
-            });
-            //
-          } else {
-            //
-            var reload = restartService;
-            //
-            res.setHeader('Content-Type', 'application/json');
-            res.status(400).json({
-              "Status": reload
-            });
-            //
-          }
-          //
-        } else {
-          //
-          var reload = killServiceWorker;
-          //
-          res.setHeader('Content-Type', 'application/json');
-          res.status(400).json({
-            "Status": reload
-          });
-          //
-        }
-      } catch (error) {
-        //
-        res.setHeader('Content-Type', 'application/json');
-        res.status(404).json({
-          "reloadService": {
-            "erro": true,
-            "status": 404,
-            "message": "Sessão não iniciada.",
-            "restartService": false
-          }
-        });
-        //
-      }
-      //
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //reloadService
-//
-// ------------------------------------------------------------------------------------------------//
-//
-// Get device info
-router.post("/getHostDevice", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      var getHostDevice = await Sessions.getHostDevice(req.body.SessionName.trim());
-      //
-      //console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": getHostDevice
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //getHostDevice
-//
-// ------------------------------------------------------------------------------------------------//
-//
-// Get connection state
-router.post("/getConnectionState", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      var getConnectionState = await Sessions.getConnectionState(req.body.SessionName.trim());
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": getConnectionState
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //getConnectionState
-//
-// ------------------------------------------------------------------------------------------------//
-//
-// Get battery level
-router.post("/getBatteryLevel", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      var getBatteryLevel = await Sessions.getBatteryLevel(req.body.SessionName.trim());
-      //
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": getBatteryLevel
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //getBatteryLevel
-//
-// ------------------------------------------------------------------------------------------------//
-//
-// Is Connected
-router.post("/isConnected", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      var isConnected = await Sessions.isConnected(req.body.SessionName.trim());
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": isConnected
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //isConnected
-//
-// ------------------------------------------------------------------------------------------------//
-//
-// Obter versão da web do Whatsapp
-router.post("/getWAVersion", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      var getWAVersion = await Sessions.getWAVersion(req.body.SessionName.trim());
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": getWAVersion
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //getWAVersion
-//
-// ------------------------------------------------------------------------------------------------//
-//
-// Inicia a verificação de conexão do telefone
-router.post("/startPhoneWatchdog", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      var startPhoneWatchdog = await Sessions.startPhoneWatchdog(
-        req.body.SessionName.trim(),
-        req.body.interval
-      );
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": startPhoneWatchdog
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //startPhoneWatchdog
-//
-// ------------------------------------------------------------------------------------------------//
-//
-// Para a verificação de conexão do telefone
-router.post("/stopPhoneWatchdog", upload.none(''), verifyToken.verify, async (req, res, next) => {
-  var sessionStatus = await Sessions.ApiStatus(req.body.SessionName.trim());
-  switch (sessionStatus.status) {
-    case 'inChat':
-    case 'qrReadSuccess':
-    case 'isLogged':
-    case 'chatsAvailable':
-      //
-      var stopPhoneWatchdog = await Sessions.stopPhoneWatchdog(req.body.SessionName.trim());
-      res.setHeader('Content-Type', 'application/json');
-      res.status(200).json({
-        "Status": stopPhoneWatchdog
-      });
-      break;
-    default:
-      res.setHeader('Content-Type', 'application/json');
-      res.status(400).json({
-        "Status": sessionStatus
-      });
-  }
-}); //stopPhoneWatchdog
-//
-// ------------------------------------------------------------------------------------------------//
-//
+
 /*
 ╔╦╗┌─┐┌─┐┌┬┐┌─┐┌─┐  ┌┬┐┌─┐  ╦═╗┌─┐┌┬┐┌─┐┌─┐
  ║ ├┤ └─┐ │ ├┤ └─┐   ││├┤   ╠╦╝│ │ │ ├─┤└─┐
  ╩ └─┘└─┘ ┴ └─┘└─┘  ─┴┘└─┘  ╩╚═└─┘ ┴ ┴ ┴└─┘
  */
-//
-// ------------------------------------------------------------------------------------------------//
-//
-router.post("/RotaTeste", upload.single('fileimg'), async (req, res, next) => {
-  //
-  /*
-  console.log(req.file.mimetype);
-  const mimetype = req.file.mimetype;
-  //
-  switch (mimetype) {
-    case 'image/gif':
-      //
-      res.setHeader('Content-Type', 'application/json');
-res.status(200).json({
-        error: false,
-        message: 'Arquivo imagem gif'
-      });
-      //
-      break;
-    case 'video/gif':
-      //
-      res.setHeader('Content-Type', 'application/json');
-res.status(200).json({
-        error: false,
-        message: 'Arquivo video gif'
-      });
-      //
-      break;
-    case 'image/jpeg':
-      //
-      res.setHeader('Content-Type', 'application/json');
-res.status(200).json({
-        error: false,
-        message: 'Arquivo jpeg'
-      });
-      //
-      break;
-    case 'video/mp4':
-      //
-      res.setHeader('Content-Type', 'application/json');
-res.status(200).json({
-        error: false,
-        message: 'Arquivo video mp4'
-      });
-      //
-      break;
-    case 'audio/mp4':
-      //
-      res.setHeader('Content-Type', 'application/json');
-res.status(200).json({
-        error: false,
-        message: 'Arquivo mp4Audio'
-      });
-      //
-      break;
-    case 'audio/ogg; codecs=opus':
-      //
-      res.setHeader('Content-Type', 'application/json');
-res.status(200).json({
-        error: false,
-        message: 'Arquivo ogg'
-      });
-      //
-      break;
-    case 'application/pdf':
-      //
-      res.setHeader('Content-Type', 'application/json');
-res.status(200).json({
-        error: false,
-        message: 'Arquivo pdf'
-      });
-      //
-      break;
-    case 'image/png':
-      //
-      res.setHeader('Content-Type', 'application/json');
-res.status(200).json({
-        error: false,
-        message: 'Arquivo png'
-      });
-      //
-      break;
-    case 'image/webp':
-      //
-      res.setHeader('Content-Type', 'application/json');
-res.status(200).json({
-        error: false,
-        message: 'Arquivo webp'
-      });
-      //
-      break;
-    default:
-      //
-      res.setHeader('Content-Type', 'application/json');
-res.status(200).json({
-        error: true,
-        message: 'Arquivo invalido'
-      });
-      //
-  }
-	*/
-  //
-  var resRotaTeste = await Sessions.RotaTeste(req.body.SessionName.trim());
-  //
-  res.setHeader('Content-Type', 'application/json');
-  res.status(200).json({
-    "RotaTeste": resRotaTeste
-  });
-});
 //
 // ------------------------------------------------------------------------------------------------//
 //
