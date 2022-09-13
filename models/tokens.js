@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-	const Tokens = sequelize.define('Tokens', {
+	const Tokens = sequelize.define('tokens', {
 		iduser: DataTypes.INTEGER.UNSIGNED,
 		token: DataTypes.CHAR(255),
 		sessionToken: DataTypes.TEXT,
