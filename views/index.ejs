@@ -287,6 +287,7 @@
 			//
 			jQuery.validator.addMethod("apikey", function(value, element){
 					let apikeyValue = $('#ApiKey').val();
+					console.log(apikeyValue);
 					if (!apikeyValue) {
 							return false;
 					} else {
@@ -320,7 +321,7 @@
 						required: "Por favor, Informe uma versão."
 					},
         	ApiKey: {
-            apikey: "Por favor, Informe uma apikey valida."
+            apikey: "Por favor, Informe uma setret key valida."
         }
 				},
 				errorPlacement: function (error, element) {
