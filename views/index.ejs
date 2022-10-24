@@ -287,7 +287,7 @@
 			//
 			jQuery.validator.addMethod("apikey", function(value, element){
 					let apikeyValue = $('#ApiKey').val();
-					if (apikeyValue) {
+					if (!apikeyValue) {
 							return false;
 					} else {
 							return true;
