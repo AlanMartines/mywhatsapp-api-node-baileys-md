@@ -106,24 +106,6 @@
 							</div>
 
 							<div class="form-group col-md-12">
-								<label for="MultiDevice" class="col-form-label">Multi-Device</label>
-								<span class="r">*</span>
-								<div class="input-group">
-									<div class="input-group-append">
-										<span class="input-group-text">
-											<i class="fas fa-mobile-alt"></i>
-										</span>
-									</div>
-									<select class="rounded form-control" name="MultiDevice" id="MultiDevice">
-										<option value="" selected="selected">-- Selecione --</option>
-										<option value="true">true</option>
-										<option value="false">false</option>
-									</select>
-								</div>
-
-							</div>
-
-							<div class="form-group col-md-12">
 								<label for="whatsappVersion" class="col-form-label">Whatsapp Version</label>
 								<div class="input-group">
 									<div class="input-group-append">
@@ -271,6 +253,7 @@
 		let host_ssl = '<%=host_ssl %>';
 		let port = '<%=port %>';
 		url = host_ssl == '' ? `http://${host}:${port}` : `https://${host_ssl}`;
+		let secret_key = '<%=secret_key %>';
 		let validate_mysql = '<%=validate_mysql %>';
 		let d = new Date();
 		let year = d.getFullYear();
@@ -301,9 +284,6 @@
 					SessionName: {
 						required: true
 					},
-					MultiDevice: {
-						required: true
-					},
 					whatsappVersion: {
 						required: false
 					}
@@ -314,9 +294,6 @@
 					},
 					SessionName: {
 						required: "Por favor, Informe o nome da sessão."
-					},
-					MultiDevice: {
-						required: "Por favor, Selecione uma opção."
 					},
 					whatsappVersion: {
 						required: "Por favor, Informe uma versão."

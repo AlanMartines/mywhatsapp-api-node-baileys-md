@@ -260,6 +260,7 @@ CONCURRENCY=10
 					port: config.PORT,
 					host: config.HOST,
 					host_ssl: config.DOMAIN_SSL,
+					secret_key: config.SECRET_KEY,
 					validate_mysql: parseInt(config.VALIDATE_MYSQL),
 				});
 			});
