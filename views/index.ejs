@@ -285,6 +285,15 @@
 			//
 			$("#description").html("Sistema não iniciado");
 			//
+			jQuery.validator.addMethod("apikey", function(value, element){
+					let apikeyValue = $('#ApiKey').val();
+					if (apikeyValue) {
+							return false;
+					} else {
+							return true;
+					};
+			}, "Por favor, Informe uma apikey valida.");
+			//
 			$("#start-form").validate({
 				rules: {
 					AuthorizationToken: {
@@ -295,7 +304,10 @@
 					},
 					whatsappVersion: {
 						required: false
-					}
+					},
+        	ApiKey: {
+            apikey: true
+        }
 				},
 				messages: {
 					AuthorizationToken: {
@@ -306,7 +318,10 @@
 					},
 					whatsappVersion: {
 						required: "Por favor, Informe uma versão."
-					}
+					},
+        	ApiKey: {
+            apikey: "Por favor, Informe uma apikey valida."
+        }
 				},
 				errorPlacement: function (error, element) {
 					$(element).closest('.form-group').find('.help-block').html(error.html());
