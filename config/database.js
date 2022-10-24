@@ -17,8 +17,10 @@ module.exports = {
 		collate: 'utf8_general_ci'
 	},
 	pool: {
-		max: 5,
-		min: 0,
-		idle: 10000
+		max: 15,
+		min: 5,
+		idle: 20000,
+		evict: 15000,
+		acquire: 30000
 	}
 }

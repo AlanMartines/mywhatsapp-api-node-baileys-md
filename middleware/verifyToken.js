@@ -3,6 +3,7 @@ moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
 const config = require('../config.global');
 const { Tokens } = require('../models');
+const { logger } = require("../utils/logger");
 //
 //
 const todayDate = moment(new Date())?.format('YYYY-MM-DD');
@@ -26,7 +27,7 @@ exports.verify = async (req, res, next) => {
 			try {
 				//
 				if (theTokenAuth) {
-					console.log("- AuthorizationToken:", theTokenAuth);
+					console?.log("- SessionName:", theTokenAuth);
 				} else {
 					res.setHeader('Content-Type', 'application/json');
 					res.status(422).json({
@@ -47,7 +48,7 @@ exports.verify = async (req, res, next) => {
 				}).then(async function (entries) {
 					return entries;
 				}).catch(async (err) => {
-					console.log('- Error:', err);
+					console?.log('- Error:', err);
 					return false;
 				});
 				//
@@ -93,7 +94,7 @@ exports.verify = async (req, res, next) => {
 					});
 				}
 			} catch (err) {
-				console.log("- Error:", err);
+				console?.log("- Error:", err);
 				res.setHeader('Content-Type', 'application/json');
 				return res.status(400).json({
 					"Status": {

@@ -1,5 +1,6 @@
 'use strict';
 //
+const os = require('os');
 const fs = require('fs-extra');
 const express = require('express');
 require('express-async-errors');
@@ -7,6 +8,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const cors = require('cors');
 const path = require('path');
+const { logger } = require("./utils/logger");
 //
 const http = require('http').Server(app);
 // https://www.scaleway.com/en/docs/tutorials/socket-io/
@@ -34,9 +36,30 @@ yo('My-WhatsApp', {
 //
 // ------------------------------------------------------------------------------------------------//
 //
+async function osplatform() {
+	//
+	var opsys = process.platform;
+	if (opsys == "darwin") {
+		opsys = "MacOS";
+	} else if (opsys == "win32" || opsys == "win64") {
+		opsys = "Windows";
+	} else if (opsys == "linux") {
+		opsys = "Linux";
+	}
+	//
+	console.log("- Sistema operacional", opsys) // I don't know what linux is.
+	console.log("-", os.type());
+	console.log("-", os.release());
+	console.log("-", os.platform());
+	//
+	return opsys;
+}
+//
+// ------------------------------------------------------------------------------------------------//
+//
 fs.access(".env", fs.constants.F_OK, async (err) => {
 	if (err && err.code === 'ENOENT') {
-		console.error('- Arquivo ".env');
+		console.error('- Arquivo ".env"');
 		var modelo = `
 NODE_EN=production
 #
@@ -63,14 +86,25 @@ DOMAIN_SSL=
 # Define se o qrcode vai ser mostrado no terminal
 VIEW_QRCODE_TERMINAL=0
 #
+# Define a pasta para os tokens
+PATCH_TOKENS=
+#
 # Device name
 DEVICE_NAME='My-Whatsapp'
 #
+# Defina a versão do whatsapp a ser usada.
+# CASO DE NÃO SER CONFIGURADO UM VERSÂO MATENHA A VARIAVEL WA_VERSION VAZIA
+# Exemplos:
+# WA_VERSION='2, 2204, 13'
+# WA_VERSION=
+#
+WA_VERSION=
+#
 # Auto close
-AUTO_CLOSE=60000
+AUTO_CLOSE=10
 #
 # Chave de segurança para validação no JWT
-JWT_SECRET=09f26e402586e2faa8da4c98a35f1b20d6b033c60
+SECRET_KEY=09f26e402586e2faa8da4c98a35f1b20d6b033c60
 #
 # Validate in terminal false or true
 VALIDATE_MYSQL=0
@@ -105,9 +139,6 @@ TZ='America/Sao_Paulo'
 # Gag image
 TAG=1.0.0
 #
-# browserWSEndpoint Ex.: ws://127.0.0.1:3000
-BROWSER_WSENDPOINT=
-#
 # Default 1
 MAX_CONCURRENT_SESSIONS=1
 #
@@ -127,6 +158,9 @@ FORCE_CONNECTION_USE_HERE=0
 SPEECH_TO_TEXT_IAM_APIKEY=X4rbi8vwZmKpXfowaS3GAsA7vdy17Qh7km5D6EzKLHL2
 #
 SPEECH_TO_TEXT_URL=https://api.us-east.speech-to-text.watson.cloud.ibm.com
+#
+# Concurrency limit.
+CONCURRENCY=10
 `;
 		console.log("- Modelo do arquivo de configuração:\n", modelo);
 		process.exit(1);
@@ -250,6 +284,9 @@ SPEECH_TO_TEXT_URL=https://api.us-east.speech-to-text.watson.cloud.ibm.com
 					let result = await startAll.startAllSessions();
 				}
 			});
+			//
+			//await osplatform();
+			//
 		} catch (error) {
 			console.log('- Não foi fossivel iniciar o sistema');
 			console.log(error.message);

@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { Sequelize, DataTypes } = require('sequelize');
 const config = require('../config/database');
+const { logger } = require("../utils/logger");
 //
 const db = {};
 const sequelize = new Sequelize(config);
@@ -10,7 +11,7 @@ const initApp = async () => {
 	await sequelize.authenticate().then(async () => {
 		console.log('- Connection has been established successfully');
 	}).catch(async (error) => {
-		console.error('- Unable to connect to the database: ', error);
+		console.log('- Unable to connect to the database: ', error);
 	});
 };
 //

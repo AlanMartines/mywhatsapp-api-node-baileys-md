@@ -21,6 +21,7 @@ config.MYSQL_DATABASE = process.env.MYSQL_DATABASE || '';
 config.MYSQL_TIMEZONE = process.env.MYSQL_TIMEZONE || '-04:00';
 config.START_ALL_SESSIONS = process.env.START_ALL_SESSIONS || 0;
 config.USE_HERE = process.env.FORCE_CONNECTION_USE_HERE || 0;
+config.CONCURRENCY = process.env.CONCURRENCY || 1;
 //
 config.tokenPatch = "/usr/local/tokens";
 //

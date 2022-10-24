@@ -2,12 +2,13 @@ const Sessions = require("../sessions.js");
 const superagent = require('superagent');
 require('superagent-queue');
 require('dotenv').config();
+const { logger } = require("../utils/logger");
 
 module.exports = class Webhooks {
 
 	static async wh_messages(data, response) {
 		//let data = Sessions?.getSession(session);
-		//console.log(response);
+		//console?.log(response);
 		try {
 			if (data?.wh_message != undefined && data?.wh_message != null && data?.wh_message != '') {
 				await superagent
@@ -25,7 +26,7 @@ module.exports = class Webhooks {
 				console?.log('- Webhook no defined');
 			}
 		} catch (error) {
-			console?.log(error)
+			console?.log('- Error:', error);
 		}
 	}
 
@@ -56,7 +57,7 @@ module.exports = class Webhooks {
 				console?.log('- Webhook no defined');
 			}
 		} catch (error) {
-			console?.log(error)
+			console?.log('- Error:', error);
 		}
 
 	}
@@ -79,7 +80,7 @@ module.exports = class Webhooks {
 				console?.log('- Webhook no defined');
 			}
 		} catch (error) {
-			console?.log(error)
+			console?.log('- Error:', error);
 		}
 	}
 
@@ -110,7 +111,7 @@ module.exports = class Webhooks {
 				console?.log('- Webhook no defined');
 			}
 		} catch (error) {
-			console?.log(error);
+			console?.log('- Error:', error);;
 		}
 	}
 }

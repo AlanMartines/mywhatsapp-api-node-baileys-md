@@ -7,6 +7,7 @@ const mime = require('mime-types');
 const moment = require('moment');
 moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
+const transcription = require('../utils/transcription');
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
@@ -117,6 +118,7 @@ module.exports = class Events {
 					// }
 					//
 					console?.log(`- Type message: ${type}`);
+					let phone = await client?.user?.id.split(":")[0];
 					//
 					switch (type) {
 						case 'text':
@@ -128,7 +130,8 @@ module.exports = class Events {
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
 								"name": msg?.pushName || msg?.verifiedBizName || null,
-								"remoteJid": msg?.key?.remoteJid?.split('@')[0],
+								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"content": msg?.message?.conversation,
 								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
@@ -147,7 +150,8 @@ module.exports = class Events {
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
 								"name": msg?.pushName || msg?.verifiedBizName || null,
-								"remoteJid": msg?.key?.remoteJid?.split('@')[0],
+								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"caption": msg?.message?.imageMessage?.caption != undefined ? msg?.message?.imageMessage?.caption : null,
 								"mimetype": msg?.message?.imageMessage?.mimetype != undefined ? msg?.message?.imageMessage?.mimetype : null,
@@ -172,7 +176,8 @@ module.exports = class Events {
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
 								"name": msg?.pushName || msg?.verifiedBizName || null,
-								"remoteJid": msg?.key?.remoteJid?.split('@')[0],
+								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"caption": msg?.message?.stickerMessage?.caption != undefined ? msg?.message?.stickerMessage?.caption : null,
 								"mimetype": msg?.message?.stickerMessage?.mimetype != undefined ? msg?.message?.stickerMessage?.mimetype : null,
@@ -197,7 +202,10 @@ module.exports = class Events {
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
 								"name": msg?.pushName || msg?.verifiedBizName || null,
-								"remoteJid": msg?.key?.remoteJid?.split('@')[0],
+								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"mimetype": msg?.message?.audioMessage?.mimetype != undefined ? msg?.message?.audioMessage?.mimetype : null,
 								"fileLength": await convertBytes(msg?.message?.audioMessage?.fileLength),
@@ -207,6 +215,8 @@ module.exports = class Events {
 								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
+							//
+							//await transcription.transAudio(response?.mimetype, response?.base64);
 							//
 							break;
 						case 'video':
@@ -221,7 +231,8 @@ module.exports = class Events {
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
 								"name": msg?.pushName || msg?.verifiedBizName || null,
-								"remoteJid": msg?.key?.remoteJid?.split('@')[0],
+								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"caption": msg?.message?.videoMessage?.caption != undefined ? msg?.message?.videoMessage?.caption : null,
 								"mimetype": msg?.message?.videoMessage?.mimetype != undefined ? msg?.message?.videoMessage?.mimetype : null,
@@ -240,7 +251,8 @@ module.exports = class Events {
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
 								"name": msg?.pushName || msg?.verifiedBizName || null,
-								"remoteJid": msg?.key?.remoteJid?.split('@')[0],
+								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"loc": msg?.message?.locationMessage?.degreesLatitude,
 								"lat": msg?.message?.locationMessage?.degreesLongitude,
@@ -257,7 +269,8 @@ module.exports = class Events {
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
 								"name": msg?.pushName || msg?.verifiedBizName || null,
-								"remoteJid": msg?.key?.remoteJid?.split('@')[0],
+								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"loc": msg?.message?.liveLocationMessage?.degreesLatitude,
 								"lat": msg?.message?.liveLocationMessage?.degreesLongitude,
@@ -279,7 +292,8 @@ module.exports = class Events {
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
 								"name": msg?.pushName || msg?.verifiedBizName || null,
-								"remoteJid": msg?.key?.remoteJid?.split('@')[0],
+								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"caption": msg?.message?.documentMessage?.caption != undefined ? msg?.message?.documentMessage?.caption : null,
 								"mimetype": msg?.message?.documentMessage?.mimetype != undefined ? msg?.message?.documentMessage?.mimetype : null,
@@ -297,7 +311,8 @@ module.exports = class Events {
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
 								"name": msg?.pushName || msg?.verifiedBizName || null,
-								"remoteJid": msg?.key?.remoteJid?.split('@')[0],
+								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"displayName": msg?.message?.contactMessage?.displayName,
 								"vcard": msg?.message?.contactMessage?.vcard,
@@ -312,7 +327,8 @@ module.exports = class Events {
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
 								"name": msg?.pushName || msg?.verifiedBizName || null,
-								"remoteJid": msg?.key?.remoteJid?.split('@')[0],
+								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"buttonsMessage": msg?.message?.viewOnceMessage?.message?.buttonsMessage,
 								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
@@ -326,7 +342,8 @@ module.exports = class Events {
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
 								"name": msg?.pushName || msg?.verifiedBizName || null,
-								"from": msg?.key?.remoteJid?.split('@')[0],
+								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"selectedButtonId": msg?.message?.buttonsResponseMessage.selectedButtonId,
 								"selectedDisplayText": msg?.message?.buttonsResponseMessage.selectedDisplayText,
 								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
@@ -340,7 +357,8 @@ module.exports = class Events {
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
 								"name": msg?.pushName || msg?.verifiedBizName || null,
-								"remoteJid": msg?.key?.remoteJid?.split('@')[0],
+								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"templateMessage": msg?.message?.templateMessage?.hydratedTemplate?.hydratedButtons,
 								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
@@ -354,7 +372,8 @@ module.exports = class Events {
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
 								"name": msg?.pushName || msg?.verifiedBizName || null,
-								"remoteJid": msg?.key?.remoteJid?.split('@')[0],
+								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"selectedId": msg?.message?.templateButtonReplyMessage?.selectedId,
 								"selectedDisplayText": msg?.message?.templateButtonReplyMessage?.selectedDisplayText,
@@ -369,7 +388,8 @@ module.exports = class Events {
 									"fromMe": msg?.key?.fromMe,
 									"id": msg?.key?.id,
 									"name": msg?.pushName || msg?.verifiedBizName || null,
-									"remoteJid": msg?.key?.remoteJid?.split('@')[0],
+									"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+									"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 									"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 									"listMessage": msg?.message?.viewOnceMessage?.message?.listMessage,
 									"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
@@ -383,7 +403,8 @@ module.exports = class Events {
 										"fromMe": msg?.key?.fromMe,
 										"id": msg?.key?.id,
 										"name": msg?.pushName || msg?.verifiedBizName || null,
-										"remoteJid": msg?.key?.remoteJid?.split('@')[0],
+										"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+										"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 										"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 										"listResponseMessage": msg?.message?.listResponseMessage,
 										"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
@@ -398,7 +419,8 @@ module.exports = class Events {
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
 								"name": msg?.pushName || msg?.verifiedBizName || null,
-								"remoteJid": msg?.key?.remoteJid?.split('@')[0],
+								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"content": msg?.message?.extendedTextMessage?.text,
 								"matchedText": msg?.message?.extendedTextMessage?.matchedText,
@@ -419,7 +441,8 @@ module.exports = class Events {
 									"fromMe": msg?.key?.fromMe,
 									"id": msg?.key?.id,
 									"name": msg?.pushName || msg?.verifiedBizName || null,
-									"remoteJid": msg?.key?.remoteJid?.split('@')[0],
+									"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+									"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 									"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
@@ -435,7 +458,8 @@ module.exports = class Events {
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
 								"name": msg?.pushName || msg?.verifiedBizName || null,
-								"remoteJid": msg?.key?.remoteJid?.split('@')[0],
+								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
@@ -459,7 +483,9 @@ module.exports = class Events {
 				console.log("- AuthorizationToken:", session.AuthorizationToken);
 				//console.log(`- Messages update: ${JSON.stringify(message, null, 2)}`);
 				// logic of your application...
+				let phone = await client?.user?.id.split(":")[0];
 				let onAck = message[0]?.update?.status;
+				console.log(`- onAck: ${onAck}`);
 				let status;
 				switch (onAck) {
 					case 4:
@@ -477,7 +503,8 @@ module.exports = class Events {
 					"wook": 'MESSAGE_STATUS',
 					"status": status,
 					"id": message[0]?.key?.id,
-					"to": message[0]?.remoteJid?.split('@')[0],
+					"from": message[0]?.key?.fromMe == true ? phone : message[0]?.key?.remoteJid?.split(':')[0].split('@')[0],
+					"to": message[0]?.key?.fromMe == false ? phone : message[0]?.key?.remoteJid?.split(':')[0].split('@')[0],
 					"dateTime": moment(new Date())?.format('YYYY-MM-DD HH:mm:ss')
 				}
 				//data.funcoesSocket.ack(session, response);

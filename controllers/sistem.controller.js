@@ -2,11 +2,7 @@
 //
 // Configuração dos módulos
 const os = require('os');
-const {
-	forEach
-} = require('p-iteration');
 const fs = require('fs-extra');
-const path = require('path');
 const express = require("express");
 const multer = require('multer');
 const validUrl = require('valid-url');
@@ -14,14 +10,13 @@ const mime = require('mime-types');
 const moment = require('moment');
 moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
-// https://stackoverflow.com/questions/60408575/how-to-validate-file-extension-with-multer-middleware
-// https://www.edivaldobrito.com.br/como-instalar-o-ffmpeg-4-4-via-ppa-no-ubuntu-20-04-18-04-e-21-04/
 const upload = multer({});
 const router = express.Router();
 const Sessions = require("../sessions.js");
 const config = require('../config.global');
 const verifyToken = require("../middleware/verifyToken");
 const { Tokens } = require('../models');
+const { logger } = require("../utils/logger");
 //
 // ------------------------------------------------------------------------------------------------//
 //
@@ -30,7 +25,7 @@ async function deletaArquivosTemp(filePath) {
 	const cacheExists = await fs.pathExists(filePath);
 	if (cacheExists) {
 		fs.remove(filePath);
-		console.log(`- O arquivo "${filePath}" removido`);
+		console?.log(`- O arquivo "${filePath}" removido`);
 	}
 	//
 }
@@ -169,32 +164,30 @@ router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next
 							const row = await Tokens.findOne({
 								limit: 1,
 								attributes: [
+									'webhook', 
 									'wh_status', 
 									'wh_message', 
 									'wh_qrcode', 
 									'wh_connect'
 								],
 								where: {
-									sessionname: removeWithspace(req.body.SessionName)
+									token: removeWithspace(req.body.SessionName)
 								}
 							}).then(async function (entries) {
 								return entries;
 							}).catch(async (err) => {
-								console.log('- Error:', err);
+								console?.log('- Error:', err);
 								return false;
 							});
 							//
-							if (row) {
+							if (row.webhook) {
 								//
-								const wh_status = row.wh_status;
-								const wh_message = row.wh_message;
-								const wh_qrcode = row.wh_qrcode;
-								const wh_connect = row.wh_connect;
+								const webHook = row.webhook;
 								//
-									session.wh_status = wh_status;
-									session.wh_message = wh_message;
-									session.wh_qrcode = wh_qrcode;
-									session.wh_connect = wh_connect;
+									session.wh_status = webHook;
+									session.wh_message = webHook;
+									session.wh_qrcode = webHook;
+									session.wh_connect = webHook;
 									//
 							} else {
 								session.wh_status = req.body.wh_status;
@@ -203,7 +196,7 @@ router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next
 								session.wh_connect = req.body.wh_connect;
 							}
 						} catch (err) {
-							console.log("- erro:", err);
+							console?.log("- erro:", err);
 						}
 					} else {
 						session.wh_status = req.body.wh_status;
@@ -239,7 +232,7 @@ router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next
 			}
 		}
 	} catch (error) {
-		console.log(error);
+		console?.log(error);
 		//
 		var resultRes = {
 			"erro": true,
@@ -259,7 +252,7 @@ router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next
 //
 router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	console.log("- Status");
+	console?.log("- Status");
 	try {
 		if (!removeWithspace(req.body.SessionName)) {
 			var resultRes = {
@@ -284,7 +277,7 @@ router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, nex
 				});
 				//
 			} catch (erro) {
-				console.log("- Erro ao obter status:", erro);
+				console?.log("- Erro ao obter status:", erro);
 				var resultRes = {
 					"erro": true,
 					"status": 400,
@@ -299,7 +292,7 @@ router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, nex
 			}
 		}
 	} catch (error) {
-		console.log(error);
+		console?.log(error);
 		//
 		var resultRes = {
 			"erro": true,
@@ -369,11 +362,11 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 					//
 				}
 			} catch (erro) {
-				console.log("- Erro ao fechar navegador:", erro);
+				console?.log("- Erro ao fechar navegador\n", erro);
 				var resultRes = {
 					"erro": true,
 					"status": 400,
-					"message": 'Erro ao fechar navegador'
+					"message": 'Erro ao fechar navegador, verifique e tente novamente'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
@@ -384,7 +377,7 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 			}
 		}
 	} catch (error) {
-		console.log(error);
+		console?.log(error);
 		//
 		var resultRes = {
 			"erro": true,
@@ -452,7 +445,7 @@ router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, nex
 			}
 		}
 	} catch (error) {
-		console.log(error);
+		console?.log(error);
 		//
 		var resultRes = {
 			"erro": true,
@@ -496,7 +489,7 @@ router.post("/restartToken", verifyToken.verify, upload.none(''), async (req, re
 			//
 		}
 	} catch (error) {
-		console.log(error);
+		console?.log(error);
 		//
 		var resultRes = {
 			"erro": true,
@@ -516,7 +509,7 @@ router.post("/restartToken", verifyToken.verify, upload.none(''), async (req, re
 //
 // Gera o QR-Code
 router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, next) => {
-	console.log("- getQRCode");
+	console?.log("- getQRCode");
 	//
 	try {
 		if (!removeWithspace(req.body.SessionName)) {
@@ -610,7 +603,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 			}
 		}
 	} catch (error) {
-		console.log(error);
+		console?.log(error);
 		//
 		var resultRes = {
 			"erro": true,
@@ -654,7 +647,7 @@ router.post("/getSession", upload.none(''), verifyToken.verify, async (req, res,
 			});
 		}
 	} catch (error) {
-		console.log(error);
+		console?.log(error);
 		//
 		var resultRes = {
 			"erro": true,
@@ -718,7 +711,7 @@ router.post("/getSessions", upload.none(''), verifyToken.verify, async (req, res
 //
 // Dados de memoria e uptime
 router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res, next) => {
-	console.log("- getHardWare");
+	console?.log("- getHardWare");
 	//
 	try {
 		var resultRes = {
@@ -749,7 +742,7 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 		//
 	} catch (error) {
 		//
-		console.log(error);
+		console?.log(error);
 		var resultRes = {
 			"erro": true,
 			"status": 403,
@@ -843,7 +836,7 @@ router.post("/sendContactVcard", upload.none(''), verifyToken.verify, async (req
 		}
 	} catch (error) {
 		//
-		console.log(error);
+		console?.log(error);
 		var resultRes = {
 			"erro": true,
 			"status": 403,
@@ -883,7 +876,7 @@ router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req,
 			//let ext = path.extname(file.originalname);
 			//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
 			//let ext = path.parse(req.file.originalname).ext;
-			//console.log("- acceptedTypes:", req.file.mimetype);
+			//console?.log("- acceptedTypes:", req.file.mimetype);
 			let acceptedTypes = req.file.mimetype.split('/')[0];
 			if (acceptedTypes !== "audio") {
 				//
@@ -956,7 +949,7 @@ router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req,
 		}
 	} catch (error) {
 		//
-		console.log(error);
+		console?.log(error);
 		var resultRes = {
 			"erro": true,
 			"status": 403,
@@ -1049,7 +1042,7 @@ router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req,
 		}
 	} catch (error) {
 		//
-		console.log(error);
+		console?.log(error);
 		var resultRes = {
 			"erro": true,
 			"status": 403,
@@ -1087,7 +1080,7 @@ router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (
 			//let ext = path.extname(file.originalname);
 			//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
 			//let ext = path.parse(req.file.originalname).ext;
-			//console.log("- acceptedTypes:", req.file.mimetype);
+			//console?.log("- acceptedTypes:", req.file.mimetype);
 			let acceptedTypes = req.body.mimetype.split('/')[0];
 			if (acceptedTypes !== "audio") {
 				//
@@ -1159,7 +1152,7 @@ router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (
 		}
 	} catch (error) {
 		//
-		console.log(error);
+		console?.log(error);
 		var resultRes = {
 			"erro": true,
 			"status": 403,
@@ -1247,7 +1240,7 @@ router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, n
 		}
 	} catch (error) {
 		//
-		console.log(error);
+		console?.log(error);
 		var resultRes = {
 			"erro": true,
 			"status": 403,
@@ -1306,7 +1299,7 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
 							req.body.local
 						));
 						//
-						//console.log(result);
+						//console?.log(result);
 						res.setHeader('Content-Type', 'application/json');
 						res.status(sendLocation.status).json({
 							"Status": sendLocation
@@ -1314,7 +1307,7 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
 						//
 					} else {
 						//
-						//console.log(result);
+						//console?.log(result);
 						res.setHeader('Content-Type', 'application/json');
 						res.status(checkNumberStatus.status).json({
 							"Status": checkNumberStatus
@@ -1339,7 +1332,7 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
 		}
 	} catch (error) {
 		//
-		console.log(error);
+		console?.log(error);
 		var resultRes = {
 			"erro": true,
 			"status": 403,
@@ -1480,7 +1473,7 @@ router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req,
 			//let ext = path.extname(file.originalname);
 			//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
 			//let ext = path.parse(req.file.originalname).ext;
-			//console.log("- acceptedTypes:", req.file.mimetype);
+			//console?.log("- acceptedTypes:", req.file.mimetype);
 			let acceptedTypes = req.file.mimetype.split('/')[0];
 			if (acceptedTypes !== "image") {
 				//
@@ -1554,7 +1547,7 @@ router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req,
 		}
 	} catch (error) {
 		//
-		console.log(error);
+		console?.log(error);
 		var resultRes = {
 			"erro": true,
 			"status": 403,
@@ -1592,7 +1585,7 @@ router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req,
 		//let ext = path.extname(file.originalname);
 		//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
 		//let ext = path.parse(req.file.originalname).ext;
-		//console.log("- acceptedTypes:", req.file.mimetype);
+		//console?.log("- acceptedTypes:", req.file.mimetype);
 		var mimeType = mime.lookup(req.body.originalname);
 		let acceptedTypes = mimeType.split('/')[0];
 		if (acceptedTypes !== "image") {
@@ -1688,7 +1681,7 @@ router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (
 		//let ext = path.extname(file.originalname);
 		//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
 		//let ext = path.parse(req.file.originalname).ext;
-		//console.log("- acceptedTypes:", req.file.mimetype);
+		//console?.log("- acceptedTypes:", req.file.mimetype);
 		var mimeType = req.body.mimetype;
 		let acceptedTypes = mimeType.split('/')[0];
 		if (acceptedTypes !== "image") {
@@ -1807,13 +1800,13 @@ router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, 
 							req.body.caption
 						));
 						//
-						//console.log(result);
+						//console?.log(result);
 						res.setHeader('Content-Type', 'application/json');
 						res.status(sendFile.status).json({
 							"Status": sendFile
 						});
 					} else {
-						//console.log(result);
+						//console?.log(result);
 						res.setHeader('Content-Type', 'application/json');
 						res.status(checkNumberStatus.status).json({
 							"Status": checkNumberStatus
@@ -1882,13 +1875,13 @@ router.post("/sendFileUrl", upload.none(''), verifyToken.verify, async (req, res
 							req.body.caption
 						));
 						//
-						//console.log(result);
+						//console?.log(result);
 						res.setHeader('Content-Type', 'application/json');
 						res.status(sendFile.status).json({
 							"Status": sendFile
 						});
 					} else {
-						//console.log(result);
+						//console?.log(result);
 						res.setHeader('Content-Type', 'application/json');
 						res.status(checkNumberStatus.status).json({
 							"Status": checkNumberStatus
@@ -1945,7 +1938,7 @@ router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, 
 					//var base64Data = req.body.base64.replace(/^data:([A-Za-z-+/]+);base64,/,'');
 					var mimeType = mime.lookup(req.body.originalname);
 					//fs.writeFileSync(filePath, base64Data,  {encoding: 'base64'});
-					//console.log("- File", filePath);
+					//console?.log("- File", filePath);
 					//
 					var checkNumberStatus = await Sessions.checkNumberStatus(
 						removeWithspace(req.body.SessionName),
@@ -2294,6 +2287,77 @@ router.post("/sendListMessage", upload.none(''), verifyToken.verify, async (req,
 ╩╚═└─┘ ┴ ┴└─┴└─┘ └┘ ┴┘└┘└─┘  ═╩╝┴ ┴ ┴ ┴ ┴                
 */
 //
+// Recuperar status do contatos
+router.post("/getStatus", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	if (!removeWithspace(req.body.SessionName) || !req.body.phonefull) {
+		var validate = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		res.status(validate.status).json({
+			"Status": validate
+		});
+		//
+	} else {
+		//
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+				var checkNumberStatus = await Sessions.checkNumberStatus(
+					removeWithspace(req.body.SessionName),
+					soNumeros(req.body.phonefull).trim()
+				);
+				//
+				if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+					//
+					var getStatus = await session.process.add(async () => await Sessions.getStatus(
+						removeWithspace(req.body.SessionName),
+						checkNumberStatus.number + '@s.whatsapp.net'
+					));
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(getStatus.status).json({
+						"Status": getStatus
+					});
+					//
+				} else {
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(checkNumberStatus.status).json({
+						"Status": checkNumberStatus
+					});
+					//
+				}
+				//
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+}); //getStatus
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
 // Recuperar contatos
 router.post("/getAllContacts", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
@@ -2601,7 +2665,7 @@ router.post("/sendContactVcardGrupo", upload.none(''), verifyToken.verify, async
 		}
 	} catch (error) {
 		//
-		console.log(error);
+		console?.log(error);
 		var resultRes = {
 			"erro": true,
 			"status": 403,
@@ -2641,7 +2705,7 @@ router.post("/sendVoiceGrupo", upload.single('file'), verifyToken.verify, async 
 			//let ext = path.extname(file.originalname);
 			//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
 			//let ext = path.parse(req.file.originalname).ext;
-			//console.log("- acceptedTypes:", req.file.mimetype);
+			//console?.log("- acceptedTypes:", req.file.mimetype);
 			let acceptedTypes = req.file.mimetype.split('/')[0];
 			if (acceptedTypes !== "audio") {
 				//
@@ -2698,7 +2762,7 @@ router.post("/sendVoiceGrupo", upload.single('file'), verifyToken.verify, async 
 		}
 	} catch (error) {
 		//
-		console.log(error);
+		console?.log(error);
 		var resultRes = {
 			"erro": true,
 			"status": 403,
@@ -2775,7 +2839,7 @@ router.post("/sendVoiceBase64Grupo", upload.none(''), verifyToken.verify, async 
 		}
 	} catch (error) {
 		//
-		console.log(error);
+		console?.log(error);
 		var resultRes = {
 			"erro": true,
 			"status": 403,
@@ -2813,7 +2877,7 @@ router.post("/sendVoiceFromBase64Grupo", upload.none(''), verifyToken.verify, as
 			//let ext = path.extname(file.originalname);
 			//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
 			//let ext = path.parse(req.file.originalname).ext;
-			//console.log("- acceptedTypes:", req.file.mimetype);
+			//console?.log("- acceptedTypes:", req.file.mimetype);
 			let acceptedTypes = req.body.mimetype.split('/')[0];
 			if (acceptedTypes !== "audio") {
 				//
@@ -2869,7 +2933,7 @@ router.post("/sendVoiceFromBase64Grupo", upload.none(''), verifyToken.verify, as
 		}
 	} catch (error) {
 		//
-		console.log(error);
+		console?.log(error);
 		var resultRes = {
 			"erro": true,
 			"status": 403,
@@ -2917,7 +2981,7 @@ router.post("/sendTextGrupo", upload.none(''), verifyToken.verify, async (req, r
 					req.body.msg
 				));
 				//
-				//console.log(result);
+				//console?.log(result);
 				res.setHeader('Content-Type', 'application/json');
 				res.status(sendTextGrupo.status).json({
 					"Status": sendTextGrupo
@@ -2977,7 +3041,7 @@ router.post("/sendLocationGrupo", upload.none(''), verifyToken.verify, async (re
 					req.body.local
 				));
 				//
-				//console.log(result);
+				//console?.log(result);
 				res.setHeader('Content-Type', 'application/json');
 				res.status(sendLocationGroup.status).json({
 					"Status": sendLocationGroup
@@ -3110,7 +3174,7 @@ router.post("/sendImageGrupo", upload.single('file'), verifyToken.verify, async 
 				//let ext = path.extname(file.originalname);
 				//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
 				//let ext = path.parse(req.file.originalname).ext;
-				//console.log("- acceptedTypes:", req.file.mimetype);
+				//console?.log("- acceptedTypes:", req.file.mimetype);
 				let acceptedTypes = req.file.mimetype.split('/')[0];
 				if (acceptedTypes !== "image") {
 					//
@@ -3168,7 +3232,7 @@ router.post("/sendImageGrupo", upload.single('file'), verifyToken.verify, async 
 			}
 		} catch (error) {
 			//
-			console.log(error);
+			console?.log(error);
 			var resultRes = {
 				"erro": true,
 				"status": 403,
@@ -3206,7 +3270,7 @@ router.post("/sendImageBase64Grupo", upload.none(''), verifyToken.verify, async 
 		//let ext = path.extname(file.originalname);
 		//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
 		//let ext = path.parse(req.file.originalname).ext;
-		//console.log("- acceptedTypes:", req.file.mimetype);
+		//console?.log("- acceptedTypes:", req.file.mimetype);
 		var mimeType = mime.lookup(req.body.originalname);
 		let acceptedTypes = mimeType.split('/')[0];
 		if (acceptedTypes !== "image") {
@@ -3287,7 +3351,7 @@ router.post("/sendImageFromBase64Grupo", upload.none(''), verifyToken.verify, as
 		//let ext = path.extname(file.originalname);
 		//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
 		//let ext = path.parse(req.file.originalname).ext;
-		//console.log("- acceptedTypes:", req.file.mimetype);
+		//console?.log("- acceptedTypes:", req.file.mimetype);
 		var mimeType = req.body.mimetype;
 		let acceptedTypes = mimeType.split('/')[0];
 		if (acceptedTypes !== "image") {
@@ -3383,7 +3447,7 @@ router.post("/sendFileGrupo", upload.single('file'), verifyToken.verify, async (
 								req.body.caption
 							));
 							//
-							//console.log(result);
+							//console?.log(result);
 							res.setHeader('Content-Type', 'application/json');
 							res.status(sendFile.status).json({
 								"Status": sendFile
@@ -3444,7 +3508,7 @@ router.post("/sendFileUrlGrupo", upload.none(''), verifyToken.verify, async (req
 							req.body.caption
 						));
 						//
-						//console.log(result);
+						//console?.log(result);
 						res.setHeader('Content-Type', 'application/json');
 						res.status(sendFile.status).json({
 							"Status": sendFile
@@ -3857,7 +3921,7 @@ router.post("/createGroup", upload.none(''), verifyToken.verify, async (req, res
 					var arrayNumbers = req.body.participants;
 					//
 					for (var i in arrayNumbers) {
-						//console.log(arrayNumbers[i]);
+						//console?.log(arrayNumbers[i]);
 						var numero = soNumeros(arrayNumbers[i]);
 						//
 						if (numero.length !== 0) {
@@ -4230,7 +4294,7 @@ router.post("/removeParticipant", upload.none(''), verifyToken.verify, async (re
 					var arrayNumbers = req.body.participants;
 					//
 					for (var i in arrayNumbers) {
-						//console.log(arrayNumbers[i]);
+						//console?.log(arrayNumbers[i]);
 						var numero = soNumeros(arrayNumbers[i]);
 						//
 						if (numero.length !== 0) {
@@ -4316,7 +4380,7 @@ router.post("/addParticipant", upload.none(''), verifyToken.verify, async (req, 
 					var arrayNumbers = req.body.participants;
 					//
 					for (var i in arrayNumbers) {
-						//console.log(arrayNumbers[i]);
+						//console?.log(arrayNumbers[i]);
 						var numero = soNumeros(arrayNumbers[i]);
 						//
 						if (numero.length !== 0) {
@@ -4402,7 +4466,7 @@ router.post("/promoteParticipant", upload.none(''), verifyToken.verify, async (r
 					var arrayNumbers = req.body.participants;
 					//
 					for (var i in arrayNumbers) {
-						//console.log(arrayNumbers[i]);
+						//console?.log(arrayNumbers[i]);
 						var numero = soNumeros(arrayNumbers[i]);
 						//
 						if (numero.length !== 0) {
@@ -4488,7 +4552,7 @@ router.post("/demoteParticipant", upload.none(''), verifyToken.verify, async (re
 					var arrayNumbers = req.body.participants;
 					//
 					for (var i in arrayNumbers) {
-						//console.log(arrayNumbers[i]);
+						//console?.log(arrayNumbers[i]);
 						var numero = soNumeros(arrayNumbers[i]);
 						//
 						if (numero.length !== 0) {
