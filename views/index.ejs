@@ -77,7 +77,7 @@
 						<div class="col-md-6 text-center mx-auto">
 
 							<div class="form-group col-md-12">
-								<label for="AuthorizationToken" class="col-form-label">Authorization Token</label>
+								<label for="AuthorizationToken" class="col-form-label">Authorization Token/Secret Key</label>
 								<span class="r">*</span>
 								<div class="input-group">
 									<div class="input-group-append">
@@ -124,8 +124,8 @@
 								<div class="input-group">
 									<input type="text" class="rounded form-control" id="ApiKey" name="ApiKey"/>
 								</div>
+								<span class="help-block r" id="error"></span>
 							</div>
-							<span class="help-block r" id="error"></span>
 						</div>
 
 						<div class="col-md-6 text-center mx-auto">
@@ -288,8 +288,7 @@
 			jQuery.validator.addMethod("apikey", function(value, element){
 					if(validate_mysql != true){
 					let apikeyValue = $('#ApiKey').val();
-					console.log(apikeyValue);
-					if (apikeyValue == secret_key) {
+					if (apikeyValue != secret_key) {
 							return false;
 					} else {
 							return true;
