@@ -6,7 +6,7 @@
 
 Este projeto usa como base o [Baileys](https://github.com/adiwajshing/Baileys "Baileys"), um navegador virtual sem interface gráfica que abre o whatsapp web e executa todos os comandos via código possibilitando assim a automação de todas as funções.
 
-![](https://img.shields.io/github/stars/AlanMartines/connectzap-api-node-baileys-md.svg) ![](https://img.shields.io/github/tag/AlanMartines/connectzap-api-node-baileys-md.svg) ![](https://img.shields.io/github/v/release/AlanMartines/connectzap-api-node-baileys-md.svg) ![](https://img.shields.io/github/issues/AlanMartines/connectzap-api-node-baileys-md.svg) ![](https://img.shields.io/badge/express-v4.17.2-green.svg) ![](https://img.shields.io/badge/node-v14.0-green.svg) ![](https://img.shields.io/badge/npm-v8.3.2-green.svg) ![](https://img.shields.io/github/license/AlanMartines/connectzap-api-node-baileys-md) ![](https://img.shields.io/github/downloads/AlanMartines/connectzap-api-node-baileys-md/total) ![](https://img.shields.io/github/forks/AlanMartines/connectzap-api-node-baileys-md)
+![](https://img.shields.io/github/stars/AlanMartines/mywhatsapp-api-node-baileys-md.svg) ![](https://img.shields.io/github/tag/AlanMartines/mywhatsapp-api-node-baileys-md.svg) ![](https://img.shields.io/github/v/release/AlanMartines/mywhatsapp-api-node-baileys-md.svg) ![](https://img.shields.io/github/issues/AlanMartines/mywhatsapp-api-node-baileys-md.svg) ![](https://img.shields.io/badge/express-v4.17.2-green.svg) ![](https://img.shields.io/badge/node-v14.0-green.svg) ![](https://img.shields.io/badge/npm-v8.3.2-green.svg) ![](https://img.shields.io/github/license/AlanMartines/mywhatsapp-api-node-baileys-md) ![](https://img.shields.io/github/downloads/AlanMartines/mywhatsapp-api-node-baileys-md/total) ![](https://img.shields.io/github/forks/AlanMartines/mywhatsapp-api-node-baileys-md)
 
 ## Nota
 
@@ -73,8 +73,7 @@ libgbm1 \
 libgcc1 \
 build-essential \
 nodejs \
-libappindicator1 \
-sudo
+libappindicator1
 ```
 
 #### Dependências CentOS 7/8 64bits (Validar)
@@ -134,7 +133,7 @@ cd ~
 curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -
 
 # Instalar o pacote Node.js
-sudo apt install -y git nodejs yarn gcc g++ make vim curl python python3
+sudo apt install -y git nodejs yarn gcc g++ make vim curl python3
 
 # Remover pacotes que não são mais necessários
 sudo apt autoremove -y
@@ -228,7 +227,7 @@ mysql_secure_installation
 cd ~
 
 # Clone este repositório
-git clone https://github.com/AlanMartines/connectzap-api-node-baileys-md.git ApiBaileysMd
+git clone https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md.git ApiBaileysMd
 
 # Acesse a pasta do projeto no terminal/cmd
 cd ApiBaileysMd
@@ -415,15 +414,15 @@ CREATE TABLE IF NOT EXISTS `tokens` (
 
 ## Rotas
 
-> As rota se encontra no arquivo [Insomnia.json](https://github.com/AlanMartines/connectzap-api-node-baileys-md/blob/master/Insomnia.json "Insomnia.json"), importe para seu Insomnia e desfrute da API.
-> As rota se encontra no arquivo [Postman.json](https://github.com/AlanMartines/connectzap-api-node-baileys-md/blob/master/Postman.json "Postman.json"), importe para seu Postman e desfrute da API.
+> As rota se encontra no arquivo [Insomnia.json](https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md/blob/master/Insomnia.json "Insomnia.json"), importe para seu Insomnia e desfrute da API.
+> As rota se encontra no arquivo [Postman.json](https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md/blob/master/Postman.json "Postman.json"), importe para seu Postman e desfrute da API.
 
 #### Json (POST)
 
 ```json
 {
   "AuthorizationToken": "a56ad842-c707-4446-871c-e570240cd730",
-  "SessionName": "a56ad842-c707-4446-871c-e570240cd730"
+  "SessionName": "Teste"
 	...
 }
 ```
@@ -523,7 +522,7 @@ mkdir /usr/local/tokens
 chmod -R 777 /usr/local/tokens
 
 # Clone este repositório
-git clone https://github.com/AlanMartines/connectzap-api-node-baileys-md.git ApiBaileysMd
+git clone https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md.git ApiBaileysMd
 
 # Acesse a pasta do projeto no terminal/cmd
 cd ApiBaileysMd
@@ -551,7 +550,7 @@ mkdir /usr/local/tokens
 chmod -R 777 /usr/local/tokens
 
 # Clone este repositório
-git clone https://github.com/AlanMartines/connectzap-api-node-baileys-md.git ApiBaileysMd
+git clone https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md.git ApiBaileysMd
 
 # Acesse a pasta do projeto no terminal/cmd
 cd ApiBaileysMd
@@ -563,7 +562,7 @@ npm install --allow-root --unsafe-perm=true
 cp .env-example .env
 
 # Processando o arquivo Dockerfile
-docker build -t alanmartines/connectzap-api-node-baileys-md:1.0.0 -f Dockerfile.backend .
+docker build -t alanmartines/mywhatsapp-api-node-baileys-md:1.0.0 -f Dockerfile.backend .
 
 # Criar contêiner
 docker run -d -p 9001:9001 --name ApiWPPconnect \
@@ -591,7 +590,7 @@ docker run -d -p 9001:9001 --name ApiWPPconnect \
 	-e BROWSER_WSENDPOINT= \
 	-e START_ALL_SESSIONS=0 \
 	-e FORCE_CONNECTION_USE_HERE=0 \
-  alanmartines/connectzap-api-node-baileys-md:1.0.0
+  alanmartines/mywhatsapp-api-node-baileys-md:1.0.0
 ```
 
 ## Instalar o certbot Debian (e.g. Ubuntu) 64bits
