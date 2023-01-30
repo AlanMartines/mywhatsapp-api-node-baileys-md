@@ -568,7 +568,7 @@ module.exports = class Sessions {
 					/** Fails the connection if the socket times out in this interval */
 					connectTimeoutMs: 30000,
 					/** Default timeout for queries, undefined for no timeout */
-					defaultQueryTimeoutMs: undefined,
+					defaultQueryTimeoutMs: 0,
 					/** ping-pong interval for WS connection */
 					keepAliveIntervalMs: 5000,
 					/** proxy agent */
@@ -664,7 +664,7 @@ module.exports = class Sessions {
 					version,
 					logger: pino({level: 'info'}),
 					printQRInTerminal: parseInt(config.VIEW_QRCODE_TERMINAL),
-    			defaultQueryTimeoutMs: undefined,
+    			defaultQueryTimeoutMs: 0,
 					generateHighQualityLinkPreview: true,
 					browser: [`${config.DEVICE_NAME}`, 'Chrome', release()],
 					syncFullHistory: true,
