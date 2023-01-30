@@ -145,21 +145,6 @@ async function updateUserConDb(userconnected, AuthorizationToken) {
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
-async function deletaToken(filePath, filename) {
-	//
-	fs.unlink(`${filePath}/${filename}`, function (err) {
-		if (err && err.code == 'ENOENT') {
-			// file doens't exist
-			logger?.info(`- Arquivo "${filePath}/${filename}" não encontado`);
-		} else if (err) {
-			// other errors, e.g. maybe we don't have enough permission
-			logger?.info(`- Erro ao remover arquivo "${filePath}/${filename}"`);
-		} else {
-			logger?.info(`- Arquivo "${filePath}/${filename}" removido com sucesso`);
-		}
-	});
-}
-//
 async function deletaPastaToken(filePath, filename) {
 	//
 	await rmfr(`${filePath}/${filename}`).then(async (result) => {
@@ -168,10 +153,34 @@ async function deletaPastaToken(filePath, filename) {
 		//
 	}).catch((erro) => {
 		//
-		logger?.info(`- Erro ao remover pasta "${filePath}/${filename}"`);
+		logger?.error(`- Erro ao remover pasta "${filePath}/${filename}"`);
 		//
 	});
 	//
+}
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
+async function deletaToken(filePath, filename) {
+	//
+	fs.unlink(`${filePath}/${filename}`, async function (err) {
+		if (err && err.code == 'ENOENT') {
+			// file doens't exist
+			logger?.info(`- Arquivo "${filePath}/${filename}" não encontado`);
+		} else {
+			//
+			await rmfr(`${filePath}/${filename}`, { glob: true }).then(async (result) => {
+				//
+				logger?.info(`- Arquivo "${filename}" removido com sucesso`);
+				//
+			}).catch((erro) => {
+				//
+				logger?.error(`- Erro ao remover arquivo "${filename}"`);
+				//
+			});
+			//
+		}
+	});
 }
 //
 // ------------------------------------------------------------------------------------------------------- //
@@ -822,6 +831,10 @@ module.exports = class Sessions {
 								}
 								//
 								attempts = 1;
+								//
+								await deletaToken(`${tokenPatch}`, `${SessionName}.data.json/app-*.json`);
+								await deletaToken(`${tokenPatch}`, `${SessionName}.data.json/pre-*.json`);
+								await deletaToken(`${tokenPatch}`, `${SessionName}.data.json/sender-*.json`);
 								//
 							} else if (connection === 'close') {
 								//
