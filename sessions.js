@@ -163,24 +163,16 @@ async function deletaPastaToken(filePath, filename) {
 //
 async function deletaToken(filePath, filename) {
 	//
-	fs.unlink(`${filePath}/${filename}`, async function (err) {
-		if (err && err.code == 'ENOENT') {
-			// file doens't exist
-			logger?.info(`- Arquivo "${filePath}/${filename}" não encontado`);
-		} else {
-			//
-			await rmfr(`${filePath}/${filename}`, { glob: true }).then(async (result) => {
-				//
-				logger?.info(`- Arquivo "${filename}" removido com sucesso`);
-				//
-			}).catch((erro) => {
-				//
-				logger?.error(`- Erro ao remover arquivo "${filename}"`);
-				//
-			});
-			//
-		}
+	await rmfr(`${filePath}/${filename}`, { glob: true }).then(async (result) => {
+		//
+		logger?.info(`- Arquivo "${filename}" removido com sucesso`);
+		//
+	}).catch((erro) => {
+		//
+		logger?.error(`- Erro ao remover arquivo "${filename}"`);
+		//
 	});
+	//
 }
 //
 // ------------------------------------------------------------------------------------------------------- //
