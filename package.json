@@ -1,5 +1,5 @@
 {
-  "name": "connectzap-api-node-baileys-md",
+  "name": "mywhatsapp-api-node-baileys-md",
   "version": "1.0.1",
   "description": "Este projeto usa como base o Venom e/ou WPPConnect, um navegador virtual sem interface gráfica que abre o whatsapp web e executa todos os comandos via código possibilitando assim a automação de todas as funções.",
   "main": "index.js",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/AlanMartines/connectzap-api-node-baileys-md.git"
+    "url": "https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md.git"
   },
   "keywords": [
     "whatsapp",
@@ -31,12 +31,11 @@
   "author": "Alan Martines <alancpmartines@hotmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/AlanMartines/connectzap-api-node-baileys-md/issues"
+    "url": "https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md/issues"
   },
-  "homepage": "https://github.com/AlanMartines/connectzap-api-node-baileys-md#readme",
+  "homepage": "https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md#readme",
   "dependencies": {
     "@adiwajshing/baileys": "github:adiwajshing/baileys",
-    "baileys": "^6.0.7",
     "@adiwajshing/keyed-db": "^0.2.4",
     "@hapi/boom": "^10.0.0",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
