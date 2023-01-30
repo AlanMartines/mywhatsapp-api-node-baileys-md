@@ -35,6 +35,10 @@ yo('My-WhatsApp', {
 //
 // ------------------------------------------------------------------------------------------------//
 //
+if (!fs.existsSync(config.PATCH_TOKENS)){
+    fs.mkdirSync(config.PATCH_TOKENS);
+}
+//
 fs.access(".env", fs.constants.F_OK, async (err) => {
 	if (err && err.code === 'ENOENT') {
 		logger.error('- Arquivo ".env"');
