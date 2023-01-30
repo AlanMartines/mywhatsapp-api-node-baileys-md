@@ -679,7 +679,7 @@ module.exports = class Sessions {
 					browser: [`${config.DEVICE_NAME}`, 'Chrome', release()],
 					syncFullHistory: true,
 					keepAliveIntervalMs: 5000,
-					markOnlineOnConnect: setOnline,
+					markOnlineOnConnect: parseInt(setOnline),
 					patchMessageBeforeSending: (message) => {
 						const requiresPatch = !!(
 							message.buttonsMessage ||
