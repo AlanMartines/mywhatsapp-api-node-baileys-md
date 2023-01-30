@@ -835,6 +835,7 @@ module.exports = class Sessions {
 								await deletaToken(`${tokenPatch}`, `${SessionName}.data.json/app-*.json`);
 								await deletaToken(`${tokenPatch}`, `${SessionName}.data.json/pre-*.json`);
 								await deletaToken(`${tokenPatch}`, `${SessionName}.data.json/sender-*.json`);
+								await deletaToken(`${tokenPatch}`, `${SessionName}.data.json/session-*.json`);
 								//
 							} else if (connection === 'close') {
 								//
