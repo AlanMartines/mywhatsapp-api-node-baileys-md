@@ -568,7 +568,7 @@ module.exports = class Sessions {
 					/** Fails the connection if the socket times out in this interval */
 					connectTimeoutMs: 30000,
 					/** Default timeout for queries, undefined for no timeout */
-					defaultQueryTimeoutMs: 0,
+					defaultQueryTimeoutMs: undefined,
 					/** ping-pong interval for WS connection */
 					keepAliveIntervalMs: 5000,
 					/** proxy agent */
@@ -576,7 +576,7 @@ module.exports = class Sessions {
 					/** pino logger */
 					logger: loggerPino,
 					/** version to connect with */
-					version: undefined,
+					version: version || undefined,
 					/** override browser config */
 					browser: [`${config.DEVICE_NAME}`, 'Chrome', release()],
 					/** agent used for fetch requests -- uploading/downloading media */
@@ -673,52 +673,9 @@ module.exports = class Sessions {
 				//
 				// ------------------------------------------------------------------------------------------------------- //
 				//
-				const connectionOptions = {
-					/*
-					auth: {
-						creds: state.creds,
-						keys: makeCacheableSignalKeyStore(
-							state.keys,
-							loggerPino,
-						),
-					},
-					*/
-					auth: state,
-					version,
-					logger: pino({level: 'info'}),
-					printQRInTerminal: parseInt(config.VIEW_QRCODE_TERMINAL),
-    			defaultQueryTimeoutMs: 0,
-					generateHighQualityLinkPreview: true,
-					browser: [`${config.DEVICE_NAME}`, 'Chrome', release()],
-					syncFullHistory: true,
-					markOnlineOnConnect: parseInt(setOnline),
-					patchMessageBeforeSending: (message) => {
-						const requiresPatch = !!(
-							message.buttonsMessage ||
-							message.templateMessage ||
-							message.listMessage
-						);
-						if (requiresPatch) {
-							message = {
-								viewOnceMessage: {
-									message: {
-										messageContextInfo: {
-											deviceListMetadataVersion: 2,
-											deviceListMetadata: {},
-										},
-										...message,
-									},
-								},
-							};
-						}
-
-						return message;
-					},
-				};
-				//
 				const client = makeWASocket(
 					//
-					connectionOptions
+					SocketConfig
 					//
 				);
 				//
