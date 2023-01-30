@@ -559,17 +559,12 @@ module.exports = class Sessions {
 				// fetch latest version of WA Web
 				const { version, isLatest } = await fetchLatestBaileysVersion();
 				logger?.info(`- Using WA v${version.join('.')}, isLatest: ${isLatest}`)
+					//
+				const AxiosRequestConfig = {};
 				//
 				const SocketConfig = {
-					/** provide an auth state object to maintain the auth state */
-					//auth: state,
-					auth: {
-						creds: state.creds,
-						//caching makes the store faster to send/recv messages
-						keys: makeCacheableSignalKeyStore(state.keys, loggerPino),
-					},
 					/** the WS url to connect to WA */
-					//waWebSocketUrl: undefined,
+					//waWebSocketUrl: undefined
 					/** Fails the connection if the socket times out in this interval */
 					connectTimeoutMs: 30000,
 					/** Default timeout for queries, undefined for no timeout */
@@ -581,13 +576,11 @@ module.exports = class Sessions {
 					/** pino logger */
 					logger: loggerPino,
 					/** version to connect with */
-					//version: undefined,
+					version: undefined,
 					/** override browser config */
 					browser: [`${config.DEVICE_NAME}`, 'Chrome', release()],
 					/** agent used for fetch requests -- uploading/downloading media */
 					fetchAgent: undefined,
-					/** By default true, should history messages be downloaded and processed */
-					downloadHistory: true,
 					/** should the QR be printed in the terminal */
 					printQRInTerminal: parseInt(config.VIEW_QRCODE_TERMINAL),
 					/** should events be emitted for actions done by this socket connection */
@@ -600,6 +593,13 @@ module.exports = class Sessions {
 					retryRequestDelayMs: 5000,
 					/** time to wait for the generation of the next QR in ms */
 					qrTimeout: 15000,
+					/** provide an auth state object to maintain the auth state */
+					//auth: state,
+					auth: {
+						creds: state.creds,
+						//caching makes the store faster to send/recv messages
+						keys: makeCacheableSignalKeyStore(state.keys, loggerPino),
+					},
 					/** manage history processing with this control; by default will sync up everything */
 					//shouldSyncHistoryMessage: boolean,
 					/** transaction capability options for SignalKeyStore */
@@ -623,9 +623,17 @@ module.exports = class Sessions {
 					 * entails uploading the jpegThumbnail to WA
 					 * */
 					generateHighQualityLinkPreview: true,
+					/** options for axios */
+					//options: AxiosRequestConfig || undefined,
 					// ignore all broadcast messages -- to receive the same
 					// comment the line below out
 					shouldIgnoreJid: jid => isJidBroadcast(jid),
+					/** By default true, should history messages be downloaded and processed */
+					downloadHistory: true,
+					/**
+					 * fetch a message from your store
+					 * implement this so that messages failed to send (solves the "this message can take a while" issue) can be retried
+					 * */
 					// implement to handle retries
 					getMessage: async (key) => {
 						if (store) {
@@ -638,31 +646,7 @@ module.exports = class Sessions {
 							conversation: 'hello'
 						}
 					},
-					//   for fix button, template list message 
-					patchMessageBeforeSending: (message) => {
-						const requiresPatch = !!(
-							message.buttonsMessage ||
-							message.templateMessage ||
-							message.listMessage
-						);
-						if (requiresPatch) {
-							message = {
-								viewOnceMessage: {
-									message: {
-										messageContextInfo: {
-											deviceListMetadataVersion: 2,
-											deviceListMetadata: {},
-										},
-										...message,
-									},
-								},
-							};
-						}
-
-						return message;
-					},
-					//
-				}
+				};
 				//
 				// ------------------------------------------------------------------------------------------------------- //
 				//
