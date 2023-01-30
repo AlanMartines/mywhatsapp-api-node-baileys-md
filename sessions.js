@@ -667,7 +667,7 @@ module.exports = class Sessions {
 				// ------------------------------------------------------------------------------------------------------- //
 				//
 				const connectionOptions = {
-					printQRInTerminal: parseInt(config.VIEW_QRCODE_TERMINAL),
+					/*
 					auth: {
 						creds: state.creds,
 						keys: makeCacheableSignalKeyStore(
@@ -675,10 +675,15 @@ module.exports = class Sessions {
 							loggerPino,
 						),
 					},
+					*/
+					auth: state,
+					version,
+					logger: pino({level: 'info'}),
+					printQRInTerminal: parseInt(config.VIEW_QRCODE_TERMINAL),
+    			defaultQueryTimeoutMs: undefined,
 					generateHighQualityLinkPreview: true,
 					browser: [`${config.DEVICE_NAME}`, 'Chrome', release()],
 					syncFullHistory: true,
-					keepAliveIntervalMs: 5000,
 					markOnlineOnConnect: parseInt(setOnline),
 					patchMessageBeforeSending: (message) => {
 						const requiresPatch = !!(
