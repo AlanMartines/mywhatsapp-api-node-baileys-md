@@ -75,19 +75,16 @@ const convertBytes = function (bytes) {
 */
 //
 router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
-			var resTokenAuth = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
-			var resTokenAuth = theTokenAuth;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -269,19 +266,16 @@ router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next
 router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
 	logger?.info("- Obtendo status");
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -343,19 +337,16 @@ router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, nex
 //
 // Fecha a sessão
 router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -447,9 +438,9 @@ router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, nex
 	const theSessionName = removeWithspace(req?.body?.SessionName)
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
 	}
 	//
 	try {
@@ -518,19 +509,16 @@ router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, nex
 // ------------------------------------------------------------------------------------------------//
 //
 router.post("/restartToken", verifyToken.verify, upload.none(''), async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -579,19 +567,16 @@ router.post("/restartToken", verifyToken.verify, upload.none(''), async (req, re
 // Gera o QR-Code
 router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	logger?.info(`- getQRCode`);
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -705,19 +690,16 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 // ------------------------------------------------------------------------------------------------//
 //
 router.post("/getSession", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -763,19 +745,16 @@ router.post("/getSession", upload.none(''), verifyToken.verify, async (req, res,
 // ------------------------------------------------------------------------------------------------//
 //
 router.post("/getSessions", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName) {
@@ -828,9 +807,9 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 	const theSessionName = removeWithspace(req?.body?.SessionName)
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
 	}
 	//
 	try {
@@ -887,19 +866,16 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 //
 // Enviar Contato
 router.post("/sendContactVcard", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -993,19 +969,16 @@ router.post("/sendContactVcard", upload.none(''), verifyToken.verify, async (req
 // https://www.mpi.nl/corpus/html/lamus2/apa.html
 //
 router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -1120,19 +1093,16 @@ router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req,
 //
 // Enviar audio
 router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -1228,19 +1198,16 @@ router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req,
 //
 // Enviar audio
 router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -1354,19 +1321,16 @@ router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (
 //
 //Enviar Texto
 router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -1458,19 +1422,16 @@ router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, n
 //
 //Enviar localização
 router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -1567,19 +1528,16 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
 //
 //Enviar links com preview
 router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -1686,19 +1644,16 @@ router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, n
 //
 //Enviar Imagem
 router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -1815,19 +1770,16 @@ router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req,
 //
 // Enviar arquivo/documento
 router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.base64 || !req.body.originalname || !req.body.caption) {
@@ -1927,19 +1879,16 @@ router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req,
 //
 // Enviar arquivo/documento
 router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.base64 || !req.body.mimetype || !req.body.originalname || !req.body.caption) {
@@ -2041,19 +1990,16 @@ router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (
 //
 // Enviar arquivo/documento
 router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.caption || !req.file) {
@@ -2132,19 +2078,16 @@ router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, 
 //
 // Enviar arquivo/documento
 router.post("/sendFileUrl", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.url || !req.body.caption) {
@@ -2222,19 +2165,16 @@ router.post("/sendFileUrl", upload.none(''), verifyToken.verify, async (req, res
 //
 // Enviar arquivo/documento
 router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.base64 || !req.body.originalname || !req.body.caption) {
@@ -2319,19 +2259,16 @@ router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, 
 //
 // Enviar arquivo/documento
 router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.base64 || !req.body.mimetype || !req.body.originalname || !req.body.caption) {
@@ -2411,19 +2348,16 @@ router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (r
 //
 //Enviar button
 router.post("/sendButton", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.buttonMessage) {
@@ -2499,19 +2433,16 @@ router.post("/sendButton", upload.none(''), verifyToken.verify, async (req, res,
 //
 //Enviar template
 router.post("/sendTemplate", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.templateMessage) {
@@ -2587,19 +2518,16 @@ router.post("/sendTemplate", upload.none(''), verifyToken.verify, async (req, re
 //
 //Enviar lista
 router.post("/sendListMessage", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.listMessage) {
@@ -2681,19 +2609,16 @@ router.post("/sendListMessage", upload.none(''), verifyToken.verify, async (req,
 //
 // Recuperar status do contatos
 router.post("/getStatus", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.phonefull) {
@@ -2768,19 +2693,16 @@ router.post("/getStatus", upload.none(''), verifyToken.verify, async (req, res, 
 //
 // Recuperar contatos
 router.post("/getAllContacts", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName) {
@@ -2838,19 +2760,16 @@ router.post("/getAllContacts", upload.none(''), verifyToken.verify, async (req, 
 //
 // Recuperar chats
 router.post("/getAllChats", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName) {
@@ -2908,19 +2827,16 @@ router.post("/getAllChats", upload.none(''), verifyToken.verify, async (req, res
 //
 // Recuperar mensagens
 router.post("/getAllMessage", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName) {
@@ -2978,19 +2894,16 @@ router.post("/getAllMessage", upload.none(''), verifyToken.verify, async (req, r
 //
 // Recuperar grupos
 router.post("/getAllGroups", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName) {
@@ -3048,19 +2961,16 @@ router.post("/getAllGroups", upload.none(''), verifyToken.verify, async (req, re
 //
 // Obter o perfil do número
 router.post("/getProfilePicFromServer", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.phonefull) {
@@ -3135,19 +3045,16 @@ router.post("/getProfilePicFromServer", upload.none(''), verifyToken.verify, asy
 //
 // Verificar o status do número
 router.post("/checkNumberStatus", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.phonefull) {
@@ -3223,19 +3130,16 @@ router.post("/checkNumberStatus", upload.none(''), verifyToken.verify, async (re
 //
 // Enviar Contato
 router.post("/sendContactVcardGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -3314,19 +3218,16 @@ router.post("/sendContactVcardGrupo", upload.none(''), verifyToken.verify, async
 // https://www.mpi.nl/corpus/html/lamus2/apa.html
 //
 router.post("/sendVoiceGrupo", upload.single('file'), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -3426,19 +3327,16 @@ router.post("/sendVoiceGrupo", upload.single('file'), verifyToken.verify, async 
 //
 // Enviar audio
 router.post("/sendVoiceBase64Grupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -3518,19 +3416,16 @@ router.post("/sendVoiceBase64Grupo", upload.none(''), verifyToken.verify, async 
 //
 // Enviar audio
 router.post("/sendVoiceFromBase64Grupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -3628,19 +3523,16 @@ router.post("/sendVoiceFromBase64Grupo", upload.none(''), verifyToken.verify, as
 //
 //Enviar Texto em Grupo
 router.post("/sendTextGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.msg) {
@@ -3701,19 +3593,16 @@ router.post("/sendTextGrupo", upload.none(''), verifyToken.verify, async (req, r
 //
 //Enviar localização no grupo
 router.post("/sendLocationGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.lat || !req.body.long || !req.body.local) {
@@ -3776,19 +3665,16 @@ router.post("/sendLocationGrupo", upload.none(''), verifyToken.verify, async (re
 //
 //Enviar links com preview
 router.post("/sendLinkGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -3879,19 +3765,16 @@ router.post("/sendLinkGrupo", upload.none(''), verifyToken.verify, async (req, r
 //
 // Enviar imagen no grupo
 router.post("/sendImageGrupo", upload.single('file'), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -3992,19 +3875,16 @@ router.post("/sendImageGrupo", upload.single('file'), verifyToken.verify, async 
 //
 // Enviar arquivo/documento
 router.post("/sendImageBase64Grupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.base64 || !req.body.originalname || !req.body.caption) {
@@ -4089,19 +3969,16 @@ router.post("/sendImageBase64Grupo", upload.none(''), verifyToken.verify, async 
 //
 // Enviar arquivo/documento
 router.post("/sendImageFromBase64Grupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.base64 || !req.body.mimetype || !req.body.originalname || !req.body.caption) {
@@ -4187,19 +4064,16 @@ router.post("/sendImageFromBase64Grupo", upload.none(''), verifyToken.verify, as
 //
 // Enviar arquivo/documento
 router.post("/sendFileGrupo", upload.single('file'), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.caption || !req.file) {
@@ -4264,19 +4138,16 @@ router.post("/sendFileGrupo", upload.single('file'), verifyToken.verify, async (
 //
 // Enviar arquivo/documento
 router.post("/sendFileUrlGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.url || !req.body.caption) {
@@ -4340,19 +4211,16 @@ router.post("/sendFileUrlGrupo", upload.none(''), verifyToken.verify, async (req
 //
 // Enviar arquivo/documento
 router.post("/sendFileBase64Grupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.base64 || !req.body.originalname || !req.body.caption) {
@@ -4416,19 +4284,16 @@ router.post("/sendFileBase64Grupo", upload.none(''), verifyToken.verify, async (
 //
 // Enviar arquivo/documento
 router.post("/sendFileFromBase64Grupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.base64 || !req.body.mimetype || !req.body.originalname || !req.body.caption) {
@@ -4492,19 +4357,16 @@ router.post("/sendFileFromBase64Grupo", upload.none(''), verifyToken.verify, asy
 //
 //Enviar button
 router.post("/sendButtonGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.buttonMessage) {
@@ -4564,19 +4426,16 @@ router.post("/sendButtonGrupo", upload.none(''), verifyToken.verify, async (req,
 //
 //Enviar template
 router.post("/sendTemplateGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.templateMessage) {
@@ -4636,19 +4495,16 @@ router.post("/sendTemplateGrupo", upload.none(''), verifyToken.verify, async (re
 //
 //Enviar lista
 router.post("/sendListMessageGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.listMessage) {
@@ -4708,19 +4564,16 @@ router.post("/sendListMessageGrupo", upload.none(''), verifyToken.verify, async 
 //
 //Deixar o grupo
 router.post("/leaveGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.groupId) {
@@ -4777,19 +4630,16 @@ router.post("/leaveGroup", upload.none(''), verifyToken.verify, async (req, res,
 //
 // Criar grupo (título, participantes a adicionar)
 router.post("/createGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.title || !req.body.participants) {
@@ -4891,19 +4741,16 @@ router.post("/createGroup", upload.none(''), verifyToken.verify, async (req, res
 //
 // update Group Title
 router.post("/updateGroupTitle", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.title) {
@@ -4977,19 +4824,16 @@ router.post("/updateGroupTitle", upload.none(''), verifyToken.verify, async (req
 //
 // update Group desc
 router.post("/updateGroupDesc", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.desc) {
@@ -5049,19 +4893,16 @@ router.post("/updateGroupDesc", upload.none(''), verifyToken.verify, async (req,
 //
 // Obtenha membros do grupo
 router.post("/getGroupMembers", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.groupId) {
@@ -5120,19 +4961,16 @@ router.post("/getGroupMembers", upload.none(''), verifyToken.verify, async (req,
 //
 // Gerar link de url de convite de grupo
 router.post("/getGroupInviteLink", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.groupId) {
@@ -5189,19 +5027,16 @@ router.post("/getGroupInviteLink", upload.none(''), verifyToken.verify, async (r
 //
 // Gerar link de url de convite de grupo
 router.post("/getGroupRevokeInviteLink", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.groupId) {
@@ -5257,19 +5092,16 @@ router.post("/getGroupRevokeInviteLink", upload.none(''), verifyToken.verify, as
 // ------------------------------------------------------------------------------------------------//
 //
 router.post("/removeParticipant", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.participants) {
@@ -5358,19 +5190,16 @@ router.post("/removeParticipant", upload.none(''), verifyToken.verify, async (re
 //
 // Adicionar participante
 router.post("/addParticipant", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.participants) {
@@ -5459,19 +5288,16 @@ router.post("/addParticipant", upload.none(''), verifyToken.verify, async (req, 
 //
 // Promote participant (Give admin privileges)
 router.post("/promoteParticipant", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.participants) {
@@ -5560,19 +5386,16 @@ router.post("/promoteParticipant", upload.none(''), verifyToken.verify, async (r
 //
 // Depromote participant (Give admin privileges)
 router.post("/demoteParticipant", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.participants) {
@@ -5661,19 +5484,16 @@ router.post("/demoteParticipant", upload.none(''), verifyToken.verify, async (re
 //
 // Retorna o status do grupo, jid, descrição do link de convite
 router.post("/getGroupInfoFromInviteLink", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.inviteCode) {
@@ -5729,19 +5549,16 @@ router.post("/getGroupInfoFromInviteLink", upload.none(''), verifyToken.verify, 
 //
 // Junte-se a um grupo usando o código de convite do grupo
 router.post("/joinGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.inviteCode) {
@@ -5802,19 +5619,16 @@ router.post("/joinGroup", upload.none(''), verifyToken.verify, async (req, res, 
 */
 // Recuperar status de contato
 router.post("/getPerfilStatus", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.phonefull) {
@@ -5891,19 +5705,16 @@ router.post("/getPerfilStatus", upload.none(''), verifyToken.verify, async (req,
 //
 // Set client status
 router.post("/setProfileStatus", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.ProfileStatus) {
@@ -5962,19 +5773,16 @@ router.post("/setProfileStatus", upload.none(''), verifyToken.verify, async (req
 //
 // Set client profile name
 router.post("/setProfileName", upload.none(''), verifyToken.verify, async (req, res, next) => {
-		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
+	//
+	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	const theSessionName = removeWithspace(req?.body?.SessionName)
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var resSessionName = theTokenAuth;
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
 	} else {
-			var resSessionName = theSessionName;
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.ProfileName) {
