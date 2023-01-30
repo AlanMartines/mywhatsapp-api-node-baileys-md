@@ -9,6 +9,8 @@ const app = express();
 const cors = require('cors');
 const path = require('path');
 const { logger } = require("./utils/logger");
+const AllSessions = require('./startup');
+const config = require('./config.global');
 //
 const http = require('http').Server(app);
 // https://www.scaleway.com/en/docs/tutorials/socket-io/
@@ -26,9 +28,6 @@ const {
 	yo
 } = require('yoo-hoo');
 //
-const config = require('./config.global');
-const startAll = require("./middleware/startup.js");
-//
 yo('My-WhatsApp', {
 	color: 'rainbow',
 	spacing: 1,
@@ -36,31 +35,11 @@ yo('My-WhatsApp', {
 //
 // ------------------------------------------------------------------------------------------------//
 //
-async function osplatform() {
-	//
-	var opsys = process.platform;
-	if (opsys == "darwin") {
-		opsys = "MacOS";
-	} else if (opsys == "win32" || opsys == "win64") {
-		opsys = "Windows";
-	} else if (opsys == "linux") {
-		opsys = "Linux";
-	}
-	//
-	console.log("- Sistema operacional", opsys) // I don't know what linux is.
-	console.log("-", os.type());
-	console.log("-", os.release());
-	console.log("-", os.platform());
-	//
-	return opsys;
-}
-//
-// ------------------------------------------------------------------------------------------------//
-//
 fs.access(".env", fs.constants.F_OK, async (err) => {
 	if (err && err.code === 'ENOENT') {
-		console.error('- Arquivo ".env"');
+		logger.error('- Arquivo ".env"');
 		var modelo = `
+#
 NODE_EN=production
 #
 # Defina o HOST aqui caso voce utilize uma VPS deve ser colocado o IP da VPS
@@ -71,7 +50,7 @@ NODE_EN=production
 HOST=localhost
 #
 # Defina o numero da porta a ser usada pela API.
-PORT=9001
+PORT=9009
 #
 # Redis config => NÃO MEXER NA VARIAVEL REDIS_URL
 REDIS_URL=redis://localhost:6379
@@ -87,7 +66,7 @@ DOMAIN_SSL=
 VIEW_QRCODE_TERMINAL=0
 #
 # Define a pasta para os tokens
-PATCH_TOKENS=
+PATCH_TOKENS=/usr/local/tokens
 #
 # Device name
 DEVICE_NAME='My-Whatsapp'
@@ -95,7 +74,7 @@ DEVICE_NAME='My-Whatsapp'
 # Defina a versão do whatsapp a ser usada.
 # CASO DE NÃO SER CONFIGURADO UM VERSÂO MATENHA A VARIAVEL WA_VERSION VAZIA
 # Exemplos:
-# WA_VERSION='2, 2204, 13'
+# WA_VERSION='2.2204.13'
 # WA_VERSION=
 #
 WA_VERSION=
@@ -103,11 +82,13 @@ WA_VERSION=
 # Auto close
 AUTO_CLOSE=10
 #
-# Chave de segurança para validação no JWT
-SECRET_KEY=09f26e402586e2faa8da4c98a35f1b20d6b033c60
+# Chave de segurança para validação
+SECRET_KEY=096e402586e2faa8db20d6b033c60
 #
 # Validate in terminal false or true
-VALIDATE_MYSQL=0
+VALIDATE_MYSQL=1
+#
+CONCURRENCY=5
 #
 # mysql ou mariabd
 MYSQL_ENGINE=mysql
@@ -122,10 +103,10 @@ MYSQL_HOST=localhost
 MYSQL_PORT=3306
 #
 # Um usuário do banco. Ex: user
-MYSQL_USER=mywhatsappapi
+MYSQL_USER=root
 #
 # A senha do usuário do banco. Ex: user123
-MYSQL_PASSWORD=TuUep8KkjCtAA@
+MYSQL_PASSWORD='aG3JirkjCtAA@'
 #
 # A base de dados a qual a aplicação irá se conectar. Ex: node_mysql
 MYSQL_DATABASE=mywhatsapp-api
@@ -139,30 +120,31 @@ TZ='America/Sao_Paulo'
 # Gag image
 TAG=1.0.0
 #
+# browserWSEndpoint Ex.: ws://127.0.0.1:3000
+BROWSER_WSENDPOINT=
+#
 # Default 1
 MAX_CONCURRENT_SESSIONS=1
 #
 # Set name instace for use ecosystem.config.js
-NAME_INSTANCES=ApiWPPConnectClus
+NAME_INSTANCES=ApiWPPConnectCluster
 #
 # Set count instace for use ecosystem.config.js
-INSTANCES=1
+INSTANCES=max
 #
 # Caso queira que ao iniciar a API todas as sessões salvas sejam inicializadas automaticamente
-START_ALL_SESSIONS=0
+START_ALL_SESSIONS=1
 #
 # Caso queira forçar a reconexão da API em caso de desconexão do WhatsApp defina true
 FORCE_CONNECTION_USE_HERE=0
 #
 # IBM Watson Speech to Text
-SPEECH_TO_TEXT_IAM_APIKEY=X4rbi8vwZmKpXfowaS3GAsA7vdy17Qh7km5D6EzKLHL2
+SPEECH_TO_TEXT_IAM_APIKEY=gwYQBqYIJT4c7uNLFon0Vy5o_lzqEBTA65r
 #
-SPEECH_TO_TEXT_URL=https://api.us-east.speech-to-text.watson.cloud.ibm.com
+SPEECH_TO_TEXT_URL=https://api.us-south.speech-to-text.watson.cloud.ibm.com/instances/c84a5015-ce89-445b-a500
 #
-# Concurrency limit.
-CONCURRENCY=10
 `;
-		console.log("- Modelo do arquivo de configuração:\n", modelo);
+		logger?.info(`- Modelo do arquivo de configuração:\n ${modelo}`);
 		process.exit(1);
 	} else {
 		//
@@ -170,7 +152,7 @@ CONCURRENCY=10
 		//
 		try {
 			//
-			const sistem = require("./controllers/sistem.controller");
+			const sistem = require("./router/sistem.controller");
 			//
 			// Body Parser
 			app.use(cors());
@@ -178,6 +160,7 @@ CONCURRENCY=10
 				limit: '50mb',
 				type: 'application/json'
 			}));
+			//
 			app.use(bodyParser.urlencoded({
 				extended: true
 			}));
@@ -200,7 +183,6 @@ CONCURRENCY=10
 			//app.use(express.static('./public'));
 			//app.use('./public', express.static('public'));
 			app.use(express.static(__dirname + '/public'));
-
 			//
 			app.use((req, res, next) => {
 				req.io = io;
@@ -229,7 +211,7 @@ CONCURRENCY=10
 			});
 			//
 			//
-			app.get('/', function (req, res) {
+			app.get('/', (req, res) => {
 				//res.status(200).send('Server WPPConnect is running API. https://github.com/AlanMartines/mywhatsapp-api-node-wppconnect');
 				res.sendFile(path.join(__dirname, './views/index.html'));
 			});
@@ -243,15 +225,15 @@ CONCURRENCY=10
 			io.on('connection', (socket) => {
 				//adiciona todas os id's do socket na variavel sockets
 				sockets[socket.id] = socket;
-				console.log('- Abriu conexão');
-				console.log('- Socketid ' + socket.id);
+				logger?.info('- Abriu conexão');
+				logger?.info(`- Socketid ${socket.id}`);
 			});
 			//
 			//socket
 			io.on('connection', (socket) => {
 				socket.on('disconnect', function () {
-					console.log('- Fechou conexão');
-					console.log('- Socketid ' + socket.id);
+					logger?.info('- Fechou conexão');
+					logger?.info(`- Socketid ${socket.id}`);
 				});
 			});
 			//
@@ -260,37 +242,54 @@ CONCURRENCY=10
 					port: config.PORT,
 					host: config.HOST,
 					host_ssl: config.DOMAIN_SSL,
-					secret_key: config.SECRET_KEY,
 					validate_mysql: parseInt(config.VALIDATE_MYSQL),
 				});
 			});
 			//
+			// rota url erro
+			app.all('*', (req, res) => {
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 404,
+					"message": 'Não foi possivel executar a ação, verifique a url informada.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+				//
+			});
 			//
 			// ------------------------------------------------------------------------------------------------//
 			//
 			http.listen(config.PORT, config.HOST, async function (err) {
 				if (err) {
-					console.log(err);
+					logger?.error(err);
 				} else {
 					const host = http.address().address;
 					const port = http.address().port;
-					if(config.DOMAIN_SSL){
-						console.log(`- HTTP Server running on: https://${config.DOMAIN_SSL}`);
-					}else{
-						console.log(`- HTTP Server running on: http://${host}:${port}`);
+					if (config.DOMAIN_SSL) {
+						logger?.info(`- HTTP Server running on: https://${config.DOMAIN_SSL}`);
+					} else {
+						logger?.info(`- HTTP Server running on: http://${host}:${port}`);
 					}
 				}
 
 				if (parseInt(config.START_ALL_SESSIONS) == true) {
-					let result = await startAll.startAllSessions();
+					let result = await AllSessions.startAllSessions();
+					if (result != undefined) {
+						//logger.error(result);
+						logger?.info(` - AllSessions:\n ${result}`);
+					}
 				}
+
 			});
 			//
-			//await osplatform();
-			//
 		} catch (error) {
-			console.log('- Não foi fossivel iniciar o sistema');
-			console.log(error.message);
+			logger?.error('- Não foi fossivel iniciar o sistema');
+			logger?.error(error);
 			process.exit(1);
 		}
 		//
@@ -304,11 +303,11 @@ process.stdin.resume(); //so the program will not close instantly
 async function exitHandler(options, exitCode) {
 
 	if (options.cleanup) {
-		console.log("- Cleanup");
+		logger?.info("- Cleanup");
 	}
 
 	if (exitCode || exitCode === 0) {
-		console.log(exitCode);
+		logger?.info(exitCode);
 	}
 	//
 	if (options.exit) {
@@ -321,22 +320,22 @@ async function exitHandler(options, exitCode) {
 //
 //do something when sistema is closing
 process.on('exit', exitHandler.bind(null, {
-  cleanup: true
+	cleanup: true
 }));
 //catches ctrl+c event
 process.on('SIGINT', exitHandler.bind(null, {
-  exit: true
+	exit: true
 }));
 // catches "kill pid" (for example: nodemon restart)
 process.on('SIGUSR1', exitHandler.bind(null, {
-  exit: true
+	exit: true
 }));
 process.on('SIGUSR2', exitHandler.bind(null, {
-  exit: true
+	exit: true
 }));
 //catches uncaught exceptions
 process.on('uncaughtException', exitHandler.bind(null, {
-  exit: true
+	exit: true
 }));
 //
 // ------------------------------------------------------------------------------------------------//

@@ -4,31 +4,31 @@
 
 ```sh
 # Comando para criar o arquivo de configuração
-sudo vim /etc/nginx/conf.d/wppconnect.conf
+sudo vim /etc/nginx/conf.d/bailyes.conf
 ```
 
 ```
 # Arquivo de configuração nginx
 #
-upstream serverwppconnect {
+upstream serverbailyes {
 	server 127.0.0.1:9001 max_fails=3 fail_timeout=30s;
 }
 #
 server {
 	listen 80;
 	listen [::]:80;
-	server_name wppconnect.seudominio.com.br;
+	server_name bailyes.seudominio.com.br;
 	return 301 https://$host$request_uri;
 }
 #
 server {
 	listen 443 ssl;
 	listen [::]:443 ssl;
-	server_name wppconnect.seudominio.com.br;
+	server_name bailyes.seudominio.com.br;
 	#
 	# Configuração do certificado gerado pelo letsencrypt (cerbot)
-	ssl_certificate /etc/letsencrypt/live/wppconnect.seudominio.com.br/fullchain.pem;
-	ssl_certificate_key /etc/letsencrypt/live/wppconnect.seudominio.com.br/privkey.pem;
+	ssl_certificate /etc/letsencrypt/live/bailyes.seudominio.com.br/fullchain.pem;
+	ssl_certificate_key /etc/letsencrypt/live/bailyes.seudominio.com.br/privkey.pem;
 	#
 	ssl_protocols TLSv1.3;
 	ssl_prefer_server_ciphers on;
@@ -48,10 +48,10 @@ server {
 	add_header X-Content-Type-Options nosniff;
 	add_header X-XSS-Protection "1; mode=block";
 	#
-	access_log /var/log/nginx/wppconnect.access.log;
+	access_log /var/log/nginx/bailyes.access.log;
 	#
 	location / {
-		proxy_pass http://serverwppconnect;
+		proxy_pass http://serverbailyes;
 		proxy_set_header Host $host;
 		proxy_set_header X-Real-IP $remote_addr;
 		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -65,7 +65,7 @@ server {
 	}
 	#
 	location /socket.io/ {
-		proxy_pass http://serverwppconnect;
+		proxy_pass http://serverbailyes;
 		proxy_redirect off;
 		proxy_http_version 1.1;
 		proxy_set_header Upgrade $http_upgrade;
@@ -89,31 +89,31 @@ sudo htpasswd -c /etc/nginx/.htpasswd <usuario>
 
 ```sh
 # Comando para criar o arquivo de configuração
-sudo vim /etc/nginx/conf.d/authwppconnect.conf
+sudo vim /etc/nginx/conf.d/authbailyes.conf
 ```
 
 ```
 # Arquivo de configuração nginx
 #
-upstream serverwppconnect {
+upstream serverbailyes {
 	server 127.0.0.1:9001 max_fails=3 fail_timeout=30s;
 }
 #
 server {
 	listen 80;
 	listen [::]:80;
-	server_name wppconnect.seudominio.com.br;
+	server_name bailyes.seudominio.com.br;
 	return 301 https://$host$request_uri;
 }
 #
 server {
 	listen 443 ssl;
 	listen [::]:443 ssl;
-	server_name wppconnect.seudominio.com.br;
+	server_name bailyes.seudominio.com.br;
 	#
 	# Configuração do certificado gerado pelo letsencrypt (cerbot)
-	ssl_certificate /etc/letsencrypt/live/wppconnect.seudominio.com.br/fullchain.pem;
-	ssl_certificate_key /etc/letsencrypt/live/wppconnect.seudominio.com.br/privkey.pem;
+	ssl_certificate /etc/letsencrypt/live/bailyes.seudominio.com.br/fullchain.pem;
+	ssl_certificate_key /etc/letsencrypt/live/bailyes.seudominio.com.br/privkey.pem;
 	#
 	ssl_protocols TLSv1.3;
 	ssl_prefer_server_ciphers on;
@@ -133,10 +133,10 @@ server {
 	add_header X-Content-Type-Options nosniff;
 	add_header X-XSS-Protection "1; mode=block";
 	#
-	access_log /var/log/nginx/wppconnect.access.log;
+	access_log /var/log/nginx/bailyes.access.log;
 	#
 	location / {
-		proxy_pass http://serverwppconnect;
+		proxy_pass http://serverbailyes;
 		proxy_set_header Host $host;
 		proxy_set_header X-Real-IP $remote_addr;
 		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -152,7 +152,7 @@ server {
 	location /start {
 		auth_basic "Restricted Content";
 		auth_basic_user_file /etc/nginx/.htpasswd;
-		proxy_pass http://serverwppconnect;
+		proxy_pass http://serverbailyes;
 		proxy_set_header Host $host;
 		proxy_set_header X-Real-IP $remote_addr;
 		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -166,7 +166,7 @@ server {
 	}
 	#
 	location /socket.io/ {
-		proxy_pass http://serverwppconnect;
+		proxy_pass http://serverbailyes;
 		proxy_redirect off;
 		proxy_http_version 1.1;
 		proxy_set_header Upgrade $http_upgrade;

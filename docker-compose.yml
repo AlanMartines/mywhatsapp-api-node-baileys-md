@@ -1,23 +1,18 @@
 version: "3.9"
 
-networks:
-  mywhatsapp-api:
-
 services:
 
   backend:
-    container_name: ApiWPPconnect
-    hostname: ApiWPPconnect
-    #network_mode: bridge
-    image: alanmartines/mywhatsapp-api-node-wppconnect:${TAG}
+    container_name: ApiBaileysMd
+    hostname: ApiBaileysMd
+    network_mode: bridge
+    image: alanmartines/mywhatsapp-api-node-api-baileys-md:${TAG}
     build:
       context: .
       dockerfile: Dockerfile.backend
     restart: always
-    networks:
-      - mywhatsapp-api
     volumes:
-      - .:/home/ApiWPPConnect
+      - .:/home/ApiBaileysMd
       - /usr/local/tokens:/usr/local/tokens
     environment:
       NODE_ENV: production
@@ -28,8 +23,8 @@ services:
       DEVICE_NAME: ${DEVICE_NAME:-'My-Whatsapp'}
       WA_VERSION: ${WA_VERSION:-}
       PATCH_TOKENS: ${PATCH_TOKENS:-/usr/local/tokens}
-      AUTO_CLOSE: ${AUTO_CLOSE:-60000}
-      JWT_SECRET: ${JWT_SECRET:-09f26e402586e2faa8da4c98a35f1b20d6b033c60}
+      AUTO_CLOSE: ${AUTO_CLOSE:-10}
+      SECRET_KEY: ${SECRET_KEY:-09f26e402586e2faa8da4c98a35f1b20d6b033c60}
       VALIDATE_MYSQL: ${VALIDATE_MYSQL:-0}
       MYSQL_HOST: ${MYSQL_HOST:-mysql}
       MYSQL_PORT: ${MYSQL_PORT:-3306}
@@ -42,7 +37,7 @@ services:
       START_ALL_SESSIONS: ${START_ALL_SESSIONS:-0}
       FORCE_CONNECTION_USE_HERE: ${FORCE_CONNECTION_USE_HERE:-0}
     ports:
-      - ${PORT:-9001}:9001
+      - ${PORT:-1000}:9001
 
 #mysql:
 #    container_name: ApiDatabase
@@ -62,3 +57,6 @@ services:
 #    restart: always
 #    networks:
 #      - mywhatsapp-api
+
+# Criar um contêiner
+# docker compose -f docker-compose.yml up --build -d

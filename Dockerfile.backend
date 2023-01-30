@@ -9,6 +9,7 @@ RUN chmod -R 777 /usr/local/tokens/
 RUN apt-get update && \
 	apt-get upgrade -y && \
 	apt-get install -y \
+	iputils-ping \
 	git \
 	curl \
 	yarn \
@@ -61,15 +62,11 @@ RUN apt-get update && \
 	libgcc1 \
 	build-essential \
 	nodejs \
+	ffmpeg \
 	sudo && \
 	apt-get autoremove -y
 
-RUN apt-get update \
-	&& apt-get upgrade -y
-
-RUN npm install -g npm@latest
-
-WORKDIR /home/ApiWPPConnect
+WORKDIR /home/ApiBaileysMd
 
 EXPOSE 9001/tcp
 
@@ -95,3 +92,6 @@ CMD [ "node", "--trace-warnings", "server.js" ]
 ## Como obter o endereço IP de um contêiner Docker do host
 # https://stack.desenvolvedor.expert/appendix/docker/rede.html
 # docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <IMAGE ID>
+
+# Criar um contêiner
+# docker compose -f docker-compose.yml up --build -d

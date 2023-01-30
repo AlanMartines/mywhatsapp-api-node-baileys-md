@@ -3,34 +3,13 @@ const { downloadMediaMessage } = require('@adiwajshing/baileys');
 //
 const webhooks = require('./webhooks');
 const Sessions = require('./sessions');
+const { logger } = require("../utils/logger");
+const config = require('../config.global');
 const mime = require('mime-types');
+const fs = require('fs-extra');
 const moment = require('moment');
 moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
-const transcription = require('../utils/transcription');
-//
-// ------------------------------------------------------------------------------------------------------- //
-//
-async function saudacao() {
-	//
-	var data = new Date();
-	var hr = data.getHours();
-	//
-	if (hr >= 0 && hr < 12) {
-		var saudacao = "Bom dia";
-		//
-	} else if (hr >= 12 && hr < 18) {
-		var saudacao = "Boa tarde";
-		//
-	} else if (hr >= 18 && hr < 23) {
-		var saudacao = "Boa noite";
-		//
-	} else {
-		var saudacao = "---";
-		//
-	}
-	return saudacao;
-}
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
@@ -63,12 +42,117 @@ function convertHMS(value) {
 // ------------------------------------------------------------------------------------------------------- //
 //
 module.exports = class Events {
-	static async receiveMessage(session, client, socket) {
+	//
+	static async statusConnection(session, client, socket, events) {
+		if (events['connection.update']) {
+			const conn = events['connection.update'];
+			//
+			const {
+				connection,
+				lastDisconnect,
+				isNewLogin,
+				qr,
+				receivedPendingNotifications
+			} = conn;
+			//
+		}
+	}
+	//
+	static async statusMessage(session, client, socket, events) {
+		let data = Sessions.getSession(session);
 		try {
-			await client?.ev.on('messages.upsert', async (m) => {
+			if (events['messages.update']) {
+				const message = events['messages.update'];
+				logger?.info(`- SessionName: ${session.name}`);
+				//logger?.info(`- Messages update: ${JSON.stringify(message, null, 2)}`);
+				// logic of your application...
+				let phone = await client?.user?.id.split(":")[0];
+				let onAck = message[0]?.update?.status;
+				logger?.info(`- onAck: ${onAck}`);
+				let status;
+				switch (onAck) {
+					case 4:
+						status = 'READ'
+						break;
+					case 3:
+						status = 'RECEIVED'
+						break;
+					case 2:
+						status = 'SENT'
+						break;
+				}
+				logger?.info("- Listen to ack", onAck, "for status", status);
+				let response = {
+					"wook": 'MESSAGE_STATUS',
+					"status": status,
+					"id": message[0]?.key?.id,
+					"from": message[0]?.key?.fromMe == true ? phone : message[0]?.key?.remoteJid?.split(':')[0].split('@')[0],
+					"to": message[0]?.key?.fromMe == false ? phone : message[0]?.key?.remoteJid?.split(':')[0].split('@')[0],
+					"dateTime": moment(new Date())?.format('YYYY-MM-DD HH:mm:ss')
+				}
+				//data.funcoesSocket.ack(session, response);
+				await webhooks?.wh_status(session, response);
+				//
+			}
+		} catch (error) {
+			logger?.info(`- SessionName: ${session.name}`);
+			logger?.error(`- Error onAck ${error}`);
+		}
+	}
+	//
+	static async contactsEvents(session, client, socket, events) {
+		//
+		try {
+			if (events['contacts.upsert']) {
+				const contacts = JSON.parse(events['contacts.upsert']);
+				//logger?.info(`- Contacts upsert: ${JSON.stringify(contacts, null, 2)}`);
+				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- Contacts upsert`);
+				//
+				try {
+					fs.writeJson(`${config.PATCH_TOKENS}/${session.name}.contacts.json`, `${JSON.stringify(contacts, null, 2)}`, (err) => {
+						if (err) {
+							logger?.error(`- Erro: ${err}`);
+						} else {
+							logger?.info('- Success create contacts file');
+						}
+					});
+				} catch (error) {
+					logger?.error(`- Error create contacts file: ${error}`);
+				}
+				//
+			}
+		} catch (error) {
+			logger?.info(`- SessionName: ${session.name}`);
+			logger?.error(`- Error message-receipt update event ${error}`);
+		}
+		//
+		try {
+			if (events['contacts.update']) {
+				const contacts = events['contacts.update'];
+				for (const contact of contacts) {
+					if (typeof contact.imgUrl !== 'undefined') {
+						const newUrl = contact.imgUrl === null ? null : await client?.profilePictureUrl(contact.id).catch(() => null);
+						//logger?.info(` - Contact ${contact.id} has a new profile pic: ${newUrl}`,);
+					}
+				}
+				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- Contacts update`);
+			}
+		} catch (error) {
+			logger?.info(`- SessionName: ${session.name}`);
+			logger?.error(`- Error message-receipt update event ${error}`);
+		}
+		//
+	}
+	//
+	static async messagesEvents(session, client, socket, events) {
+		try {
+			if (events['messages.upsert']) {
+				const m = events['messages.upsert'];
 				//
 				const msg = m?.messages[0];
-				//console?.log(`- receiveMessage\n ${JSON.stringify(msg, null, 2)}`);
+				//logger?.info(`- receiveMessage\n ${JSON.stringify(msg, null, 2)}`);
 				//
 				let type = null;
 				let response = [];
@@ -117,13 +201,13 @@ module.exports = class Events {
 					//
 					// }
 					//
-					console?.log(`- Type message: ${type}`);
+					logger?.info(`- Type message: ${type}`);
 					let phone = await client?.user?.id.split(":")[0];
 					//
 					switch (type) {
 						case 'text':
 							//
-							console.log('- Message text');
+							logger?.info('- Message text');
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 								"type": 'text',
@@ -139,7 +223,7 @@ module.exports = class Events {
 							}
 							break;
 						case 'image':
-							console.log('- Message image');
+							logger?.info('- Message image');
 							//
 							var buffer = await downloadMediaMessage(msg, 'buffer');
 							var string64 = buffer.toString('base64');
@@ -165,7 +249,7 @@ module.exports = class Events {
 							//
 							break;
 						case 'sticker':
-							console.log('- Message sticker');
+							logger?.info('- Message sticker');
 							//
 							var buffer = await downloadMediaMessage(msg, 'buffer');
 							var string64 = buffer.toString('base64');
@@ -191,7 +275,7 @@ module.exports = class Events {
 							//
 							break;
 						case 'audio':
-							console.log('- Message audio');
+							logger?.info('- Message audio');
 							//
 							var buffer = await downloadMediaMessage(msg, 'buffer');
 							var string64 = buffer.toString('base64');
@@ -220,7 +304,7 @@ module.exports = class Events {
 							//
 							break;
 						case 'video':
-							console.log('- Message video');
+							logger?.info('- Message video');
 							//
 							var buffer = await downloadMediaMessage(msg, 'buffer');
 							var string64 = buffer.toString('base64');
@@ -244,7 +328,7 @@ module.exports = class Events {
 							//
 							break;
 						case 'location':
-							console.log('- Message location');
+							logger?.info('- Message location');
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 								"type": 'location',
@@ -262,7 +346,7 @@ module.exports = class Events {
 							}
 							break;
 						case 'liveLocation':
-							console.log('- Message liveLocation');
+							logger?.info('- Message liveLocation');
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 								"type": 'liveLocation',
@@ -281,7 +365,7 @@ module.exports = class Events {
 							}
 							break;
 						case 'document':
-							console.log('- Message document');
+							logger?.info('- Message document');
 							//
 							var buffer = await downloadMediaMessage(msg, 'buffer');
 							var string64 = buffer.toString('base64');
@@ -304,7 +388,7 @@ module.exports = class Events {
 							//
 							break;
 						case 'vcard':
-							console.log('- Message vcard');
+							logger?.info('- Message vcard');
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 								"type": 'vcard',
@@ -381,38 +465,38 @@ module.exports = class Events {
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							break;
-							case 'listMessage':
-								response = {
-									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
-									"type": 'listMessage',
-									"fromMe": msg?.key?.fromMe,
-									"id": msg?.key?.id,
-									"name": msg?.pushName || msg?.verifiedBizName || null,
-									"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
-									"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
-									"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
-									"listMessage": msg?.message?.viewOnceMessage?.message?.listMessage,
-									"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
-									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
-								}
-								break;
-								case 'listResponseMessage':
-									response = {
-										"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
-										"type": 'listResponseMessage',
-										"fromMe": msg?.key?.fromMe,
-										"id": msg?.key?.id,
-										"name": msg?.pushName || msg?.verifiedBizName || null,
-										"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
-										"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
-										"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
-										"listResponseMessage": msg?.message?.listResponseMessage,
-										"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
-										"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
-									}
-									break;
+						case 'listMessage':
+							response = {
+								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+								"type": 'listMessage',
+								"fromMe": msg?.key?.fromMe,
+								"id": msg?.key?.id,
+								"name": msg?.pushName || msg?.verifiedBizName || null,
+								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
+								"listMessage": msg?.message?.viewOnceMessage?.message?.listMessage,
+								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
+								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
+							}
+							break;
+						case 'listResponseMessage':
+							response = {
+								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+								"type": 'listResponseMessage',
+								"fromMe": msg?.key?.fromMe,
+								"id": msg?.key?.id,
+								"name": msg?.pushName || msg?.verifiedBizName || null,
+								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
+								"listResponseMessage": msg?.message?.listResponseMessage,
+								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
+								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
+							}
+							break;
 						case 'extended':
-							console.log('- Message extended');
+							logger?.info('- Message extended');
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 								"type": 'extended',
@@ -433,25 +517,24 @@ module.exports = class Events {
 							}
 							break;
 						case 'historySync':
-								console.log('- Message historySync');
-								//
-								response = {
-									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
-									"type": 'historySync',
-									"fromMe": msg?.key?.fromMe,
-									"id": msg?.key?.id,
-									"name": msg?.pushName || msg?.verifiedBizName || null,
-									"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
-									"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
-									"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
-									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
-								}
-								//
+							logger?.info('- Message historySync');
+							//
+							response = {
+								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+								"type": 'historySync',
+								"fromMe": msg?.key?.fromMe,
+								"id": msg?.key?.id,
+								"name": msg?.pushName || msg?.verifiedBizName || null,
+								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
+								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
+							}
+							//
 							break;
 						default:
-							console.log("- Desculpe, estamos sem nenhuma resposta.");
+							logger?.info("- Desculpe, estamos sem nenhuma resposta.");
 							//
-							console.log('- Message text');
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 								"type": 'undefined',
@@ -466,108 +549,223 @@ module.exports = class Events {
 							}
 					}
 					//
-					msg?.key?.fromMe == true ? socket?.emit('send-message', await response, true) : socket?.emit('received-message', await response, true);
+					msg?.key?.fromMe == true ? socket?.emit('send-message', response, true) : socket?.emit('received-message', response, true);
 					webhooks?.wh_messages(session, response);
 					//
 				}
-			});
+			}
 		} catch (error) {
-			console?.log('- Nome da sessão:', session.name);
-			console?.log("- Error onAnyMessage:", error);
+			logger?.info(`- SessionName: ${session.name}`);
+			logger?.error(`- Error onAnyMessage: ${error}`);
 		}
-	}
-	static statusMessage(session, client, socket) {
-		let data = Sessions.getSession(session);
+		//
 		try {
-			client.ev.on('messages.update', async (message) => {
-				console.log("- AuthorizationToken:", session.AuthorizationToken);
-				//console.log(`- Messages update: ${JSON.stringify(message, null, 2)}`);
-				// logic of your application...
-				let phone = await client?.user?.id.split(":")[0];
-				let onAck = message[0]?.update?.status;
-				console.log(`- onAck: ${onAck}`);
-				let status;
-				switch (onAck) {
-					case 4:
-						status = 'READ'
-						break;
-					case 3:
-						status = 'RECEIVED'
-						break;
-					case 2:
-						status = 'SENT'
-						break;
-				}
-				console?.log("- Listen to ack", onAck, "for status", status);
-				let response = {
-					"wook": 'MESSAGE_STATUS',
-					"status": status,
-					"id": message[0]?.key?.id,
-					"from": message[0]?.key?.fromMe == true ? phone : message[0]?.key?.remoteJid?.split(':')[0].split('@')[0],
-					"to": message[0]?.key?.fromMe == false ? phone : message[0]?.key?.remoteJid?.split(':')[0].split('@')[0],
-					"dateTime": moment(new Date())?.format('YYYY-MM-DD HH:mm:ss')
-				}
-				//data.funcoesSocket.ack(session, response);
-				await webhooks?.wh_status(session, response);
-				//
-			});
+			if (events['messages.delete']) {
+				const messagesdelete = events['messages.delete'];
+				//logger?.info(`- Message delete: ${JSON.stringify(messagesdelete, null, 2)}`);
+				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- Message delete`);
+			}
 		} catch (error) {
-			console?.log('- Nome da sessão:', session.name);
-			console?.log("- Error onAck:", error);
+			logger?.info(`- SessionName: ${session.name}`);
+			logger?.error(`- Error message delete event ${error}`);
 		}
-	}
-	static statusConnection(session, client, socket) {
 		//
-		//
-	}
-	static extraEvents(session, client, socket) {
-		//
-		/*
-		// function to detect incoming call
 		try {
-			/*
-			client.ws.on('CB:call', async (json) => {
-				console?.log('- Nome da sessão:', session.name);
-				console?.log('- onIncomingCall: ', call?.peerJid);
-				console.log(json);
-				const callerId = json.content[0].attrs['call-creator']
-				const idCall = json.content[0].attrs['call-id']
-				const Id = json.attrs.id
-				const T = json.attrs.t
-				client.sendNode({
-					tag: 'call',
-					attrs: {
-						from: client.user.id,
-						id: Id,
-						t: T
-					},
-					content: [{
-						tag: 'reject',
-						attrs: {
-							'call-creator': callerId,
-							'call-id': idCall,
-							count: '0'
-						},
-						content: null
-					}]
-				});
-			});
+			if (events['message.update']) {
+				const messageupdate = events['message.update'];
+				//logger?.info(`- Message update: ${JSON.stringify(messageupdate, null, 2)}`);
+				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- Message update`);
+			}
 		} catch (error) {
-			console?.log('- Nome da sessão:', session.name);
-			console?.log("- Error onIncomingCall:", error);
+			logger?.info(`- SessionName: ${session.name}`);
+			logger?.error(`- Error message update event ${error}`);
 		}
-		*/
+		//
+		try {
+			if (events['messages.media-update']) {
+				const messagesmedia = events['messages.media-update'];
+				//logger?.info(`- Message-media update: ${JSON.stringify(messagesmedia, null, 2)}`);
+				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- Message-media update`);
+			}
+		} catch (error) {
+			logger?.info(`- SessionName: ${session.name}`);
+			logger?.error(`- Error message-media update event ${error}`);
+		}
+		//
+		try {
+			if (events['messages.reaction']) {
+				const reaction = events['messages.reaction'];
+				//logger?.info(`- Messages reaction: ${JSON.stringify(receipt, null, 2)}`);
+				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- Messages reaction`);
+			}
+		} catch (error) {
+			logger?.info(`- SessionName: ${session.name}`);
+			logger?.error(`- Error messages reaction event ${error}`);
+		}
+		//
+		try {
+			// history received
+			if (events['message-receipt.update']) {
+				const messagereceipt = events['message-receipt.update'];
+				//logger?.info(`- Messages receipt: ${JSON.stringify(messagereceipt, null, 2)}`);
+				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- Messages receipt`);
+			}
+		} catch (error) {
+			logger?.info(`- SessionName: ${session.name}`);
+			logger?.error(`- Error messages receipt event ${error}`);
+		}
+		//
+		try {
+			// history received
+			if (events['messaging-history.set']) {
+				const { chats, contacts, messages, isLatest } = events['messaging-history.set'];
+				//logger?.info(`- Recv ${chats.length} chats, ${contacts.length} contacts, ${messages.length} msgs (is latest: ${isLatest})`);
+				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- Messaging History recv ${chats.length} chats, ${contacts.length} contacts, ${messages.length} msgs (is latest: ${isLatest})`);
+			}
+		} catch (error) {
+			logger?.info(`- SessionName: ${session.name}`);
+			logger?.error(`- Error history received event ${error}`);
+		}
+		//
+	}
+	//
+	static async chatsEvents(session, client, socket, events) {
+		//
+		try {
+			if (events['chats.upsert']) {
+				const chatsUpsert = events['chats.upsert'];
+				//logger?.info(`- Chats upsert: ${JSON.stringify(chatsUpsert, null, 2)}`);
+				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- Chats upsert`);
+			}
+		} catch (error) {
+			logger?.info(`- SessionName: ${session.name}`);
+			logger?.error(`- Error chats upsert event ${error}`);
+		}
+		//
+		try {
+			if (events['chats.update']) {
+				const chatsUpdate = events['chats.update'];
+				//logger?.info(`- Chats update: ${JSON.stringify(chatsUpdate, null, 2)}`);
+				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- Chats update`);
+			}
+		} catch (error) {
+			logger?.info(`- SessionName: ${session.name}`);
+			logger?.error(`- Error chats update event ${error}`);
+		}
+		//
+		try {
+			if (events['chats.delete']) {
+				const chatsDelete = events['chats.delete'];
+				//logger?.info(`- Chats deleted: ${JSON.stringify(chatsDelete, null, 2)}`);
+				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- Chats deleted`);
+			}
+		} catch (error) {
+			logger?.info(`- SessionName: ${session.name}`);
+			logger?.error(`- Error chats deleted event ${error}`);
+		}
+		//
+	}
+	//
+	static async blocklistEvents(session, client, socket, events) {
+		//
+		try {
+			if (events['blocklist.set']) {
+				const blocklistSet = events['blocklist.set'];
+				//logger?.info(`- Chats update: ${JSON.stringify(blocklistSet, null, 2)}`);
+				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- Blocklist set`);
+			}
+		} catch (error) {
+			logger?.info(`- SessionName: ${session.name}`);
+			logger?.error(`- Error blocklist set event ${error}`);
+		}
+		//
+		try {
+			if (events['blocklist.update']) {
+				const blocklistUpdate = events['blocklist.update'];
+				//logger?.info(`- Blocklist update: ${JSON.stringify(blocklistUpdate, null, 2)}`);
+				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- Blocklist update`);
+			}
+		} catch (error) {
+			logger?.info(`- SessionName: ${session.name}`);
+			logger?.error(`- Error chats deleted event ${error}`);
+		}
+		//
+	}
+	//
+	static async groupsEvents(session, client, socket, events) {
+		//
+		try {
+			if (events['groups.upsert']) {
+				const groupsUpsert = events['groups.upsert'];
+				//logger?.info(`- Groups upsert: ${JSON.stringify(groupsUpsert, null, 2)}`);
+				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- Groups upsert`);
+			}
+		} catch (error) {
+			logger?.info(`- SessionName: ${session.name}`);
+			logger?.error(`- Error blocklist set event ${error}`);
+		}
+		//
+		try {
+			if (events['groups.update']) {
+				const groupsUpdate = events['groups.update'];
+				//logger?.info(`- Groups update: ${JSON.stringify(groupsUpdate, null, 2)}`);
+				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- Groups update`);
+			}
+		} catch (error) {
+			logger?.info(`- SessionName: ${session.name}`);
+			logger?.error(`- Error chats deleted event ${error}`);
+		}
+		//
+		try {
+			if (events['group-participants.update']) {
+				const participantsUpdate = events['group-participants.update'];
+				//logger?.info(`- Proup-participants update: ${JSON.stringify(participantsUpdate, null, 2)}`);
+				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- Proup-participants update`);
+			}
+		} catch (error) {
+			logger?.info(`- SessionName: ${session.name}`);
+			logger?.error(`- Error chats deleted event ${error}`);
+		}
+		//
+	}
+	//
+	static async extraEvents(session, client, socket, events) {
+		try {
+			if (events['presence.update']) {
+				const presenceUpdate = events['presence.update'];
+				//logger?.info(`- Presence update: ${JSON.stringify(presenceUpdate, null, 2)}`);
+				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- Presence update`);
+			}
+		} catch (error) {
+			logger?.info(`- SessionName: ${session.name}`);
+			logger?.error(`- Error presence update event ${error}`);
+		}
 		//
 		try {
 			// Listen when client has been added to a group
-			client?.onAddedToGroup(async (chatEvent) => {
-				console?.log('- Nome da sessão:', session.name);
-				console?.log('- Listen when client has been added to a group:', chatEvent.name);
-			});
+			if (events.call) {
+				//logger?.info(`- Call: ${JSON.stringify(events.call, null, 2)}`);
+				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- Call event`);
+			}
 		} catch (error) {
-			console?.log('- Nome da sessão:', session.name);
-			console?.log("- Error onAddedToGroup:", error);
+			logger?.info(`- SessionName: ${session.name}`);
+			logger?.error(`- Error recv call event ${error}`);
 		}
-		//
 	}
 }

@@ -1,10 +1,11 @@
 'use strict';
 // Configuração dos módulos
 const config = require('./config.global');
-const events = require('./controllers/events');
+const eventsSend = require('./controllers/events');
 const webhooks = require('./controllers/webhooks.js');
 const fnSocket = require('./controllers/fnSockets');
 const fs = require('fs-extra');
+const rmfr = require('rmfr');
 const {
 	forEach
 } = require('p-iteration');
@@ -19,6 +20,7 @@ const { default: pQueue } = require('p-queue');
 const { release } = require('os');
 const { Tokens } = require('./models');
 const { logger } = require("./utils/logger");
+const MAIN_LOGGER = require("./utils/loggerinstance");
 //
 const {
 	default: makeWASocket,
@@ -52,7 +54,9 @@ const {
 	prepareWAMessageMedia,
 	WAUrlInfo,
 	useMultiFileAuthState,
-	makeCacheableSignalKeyStore
+	makeCacheableSignalKeyStore,
+	isJidBroadcast,
+	MessageRetryMap
 } = require('@adiwajshing/baileys');
 //
 const tokenPatch = config.PATCH_TOKENS;
@@ -85,10 +89,10 @@ async function saudacao() {
 async function updateStateDb(state, status, AuthorizationToken) {
 	//
 	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
-	console?.log("- Date:", date_now);
+	logger?.info(`- Date: ${date_now}`);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		console?.log('- Atualizando status');
+		logger?.info('- Atualizando status');
 		//
 		const updatedRows = await Tokens.update(
 			{
@@ -102,9 +106,9 @@ async function updateStateDb(state, status, AuthorizationToken) {
 		);
 		//
 		if (updatedRows) {
-			console?.log('- Status atualizado');
+			logger?.info('- Status atualizado');
 		} else {
-			console?.log('- Status não atualizado');
+			logger?.info('- Status não atualizado');
 		}
 	}
 	//
@@ -115,10 +119,10 @@ async function updateStateDb(state, status, AuthorizationToken) {
 async function updateUserConDb(userconnected, AuthorizationToken) {
 	//
 	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
-	console?.log("- Date:", date_now);
+	logger?.info(`- Date: ${date_now}`);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		console?.log('- Atualizando User Connected');
+		logger?.info('- Atualizando User Connected');
 		//
 		const updatedRows = await Tokens.update(
 			{
@@ -131,9 +135,9 @@ async function updateUserConDb(userconnected, AuthorizationToken) {
 		);
 		//
 		if (updatedRows) {
-			console?.log('- User connection atualizado');
+			logger?.info('- User connection atualizado');
 		} else {
-			console?.log('- User connection não atualizado');
+			logger?.info('- User connection não atualizado');
 		}
 	}
 	//
@@ -146,14 +150,28 @@ async function deletaToken(filePath, filename) {
 	fs.unlink(`${filePath}/${filename}`, function (err) {
 		if (err && err.code == 'ENOENT') {
 			// file doens't exist
-			console?.log(`- Arquivo "${filePath}/${filename}" não encontado`);
+			logger?.info(`- Arquivo "${filePath}/${filename}" não encontado`);
 		} else if (err) {
 			// other errors, e.g. maybe we don't have enough permission
-			console?.log(`- Erro ao remover arquivo "${filePath}/${filename}"`);
+			logger?.info(`- Erro ao remover arquivo "${filePath}/${filename}"`);
 		} else {
-			console?.log(`- Arquivo "${filePath}/${filename}" removido com sucesso`);
+			logger?.info(`- Arquivo "${filePath}/${filename}" removido com sucesso`);
 		}
 	});
+}
+//
+async function deletaPastaToken(filePath, filename) {
+	//
+	await rmfr(`${filePath}/${filename}`).then(async (result) => {
+		//
+		logger?.info(`- Pasta "${filePath}/${filename}" removida com sucesso`);
+		//
+	}).catch((erro) => {
+		//
+		logger?.info(`- Erro ao remover pasta "${filePath}/${filename}"`);
+		//
+	});
+	//
 }
 //
 // ------------------------------------------------------------------------------------------------------- //
@@ -162,7 +180,8 @@ module.exports = class Sessions {
 	//
 	static async ApiStatus(SessionName) {
 		var session = Sessions.getSession(SessionName);
-		if (session) { //só adiciona se não existir
+		if (session) {
+			//só adiciona se não existir
 			if (session.state == "CONNECTED") {
 				return {
 					state: "CONNECTED",
@@ -358,65 +377,65 @@ module.exports = class Sessions {
 	//
 	// ------------------------------------------------------------------------------------------------//
 	//
-	static async Start(socket, SessionName, AuthorizationToken, whatsappVersion) {
+	static async Start(socket, SessionName, AuthorizationToken, setOnline) {
 		Sessions.sessions = Sessions.sessions || []; //start array
 		var session = Sessions.getSession(SessionName);
 		//
 		if (session == false) {
 			//create new session
-			session = await Sessions.addSesssion(socket, SessionName, AuthorizationToken, whatsappVersion);
+			session = await Sessions.addSesssion(socket, SessionName, AuthorizationToken, setOnline);
 			//
 		} else if (["CLOSED"].includes(session.state)) {
-			//restart session
-			console?.log("- State: CLOSED");
+			//
+			logger?.info("- State: CLOSED");
 			session.state = "STARTING";
 			session.status = "notLogged";
 			session.qrcode = null;
 			session.message = "Sistema iniciando e indisponivel para uso";
 			session.prossesid = null;
 			//
-			console?.log('- Nome da sessão:', session.name);
-			console?.log('- State do sistema:', session.state);
-			console?.log('- Status da sessão:', session.status);
+			logger?.info(`- Nome da sessão: ${session.name}`);
+			logger?.info(`- State do sistema: ${session.state}`);
+			logger?.info(`- Status da sessão: ${session.status}`);
 			//
-			session.client = await Sessions.initSession(socket, SessionName, AuthorizationToken, whatsappVersion);
+			session.client = await Sessions.initSession(socket, SessionName, AuthorizationToken, setOnline);
 			//
 		} else if (["DISCONNECTED"].includes(session.state)) {
 			//
-			console?.log("- State: DISCONNECTED");
+			logger?.info("- State: DISCONNECTED");
 			session.state = "STARTING";
 			session.status = "notLogged";
 			session.qrcode = null;
 			session.message = 'Sistema desconectado';
 			session.prossesid = null;
 			//
-			console?.log('- Nome da sessão:', session.name);
-			console?.log('- State do sistema:', session.state);
-			console?.log('- Status da sessão:', session.status);
+			logger?.info(`- Nome da sessão: ${session.name}`);
+			logger?.info(`- State do sistema: ${session.state}`);
+			logger?.info(`- Status da sessão: ${session.status}`);
 			//
-			session.client = await Sessions.initSession(socket, SessionName, AuthorizationToken, whatsappVersion);
+			session.client = await Sessions.initSession(socket, SessionName, AuthorizationToken, setOnline);
 			//
 		} else if (["NOTFOUND"].includes(session.state)) {
 			//
-			console?.log("- State: NOTFOUND");
+			logger?.info("- State: NOTFOUND");
 			session.state = "STARTING";
 			session.status = "notLogged";
 			session.qrcode = null;
 			session.message = 'Sistema desconectado';
 			session.prossesid = null;
 			//
-			console?.log('- Nome da sessão:', session.name);
-			console?.log('- State do sistema:', session.state);
-			console?.log('- Status da sessão:', session.status);
+			logger?.info(`- Nome da sessão: ${session.name}`);
+			logger?.info(`- State do sistema: ${session.state}`);
+			logger?.info(`- Status da sessão: ${session.status}`);
 			//
-			session = await Sessions.addSesssion(socket, SessionName, AuthorizationToken, whatsappVersion);
+			session = await Sessions.addSesssion(socket, SessionName, AuthorizationToken);
 			//
 		} else {
 			//
-			console?.log("- State: OTHER");
-			console?.log('- Nome da sessão:', session.name);
-			console?.log('- State do sistema:', session.state);
-			console?.log('- Status da sessão:', session.status);
+			logger?.info("- State: OTHER");
+			logger?.info(`- Nome da sessão: ${session.name}`);
+			logger?.info(`- State do sistema: ${session.state}`);
+			logger?.info(`- Status da sessão: ${session.status}`);
 			//
 		}
 		//
@@ -427,21 +446,19 @@ module.exports = class Sessions {
 	//
 	// ------------------------------------------------------------------------------------------------------- //
 	//
-	static async addSesssion(socket, SessionName, AuthorizationToken, whatsappVersion) {
-		console?.log("- Adicionando sessão");
+	static async addSesssion(socket, SessionName, AuthorizationToken, setOnline) {
+		logger?.info("- Adicionando sessão");
 		var newSession = {
 			AuthorizationToken: AuthorizationToken,
 			name: SessionName,
-			process: null,
+			waqueue: null,
 			qrcode: null,
 			client: false,
-			result: null,
-			tokenPatch: null,
+			tokenPatch: config.PATCH_TOKENS,
 			state: null,
 			status: null,
 			message: null,
 			attempts: 1,
-			funcoesSocket: null,
 			wh_status: null,
 			wh_message: null,
 			wh_qrcode: null,
@@ -450,7 +467,7 @@ module.exports = class Sessions {
 		//
 		Sessions.sessions.push(newSession);
 		//setup session
-		newSession.client = Sessions.initSession(socket, SessionName, AuthorizationToken, whatsappVersion);
+		newSession.client = Sessions.initSession(socket, SessionName, AuthorizationToken, setOnline);
 		//
 		return newSession;
 	} //addSession
@@ -458,7 +475,7 @@ module.exports = class Sessions {
 	// ------------------------------------------------------------------------------------------------//
 	//
 	static getSession(SessionName) {
-		//console?.log("- getSession");
+		//logger?.info("- getSession");
 		var foundSession = false;
 		if (Sessions.sessions)
 			Sessions.sessions.forEach(session => {
@@ -472,7 +489,7 @@ module.exports = class Sessions {
 	// ------------------------------------------------------------------------------------------------//
 	//
 	static getSessions() {
-		//console?.log("- getSessions");
+		//logger?.info("- getSessions");
 		if (Sessions.sessions) {
 			return Sessions.sessions;
 		} else {
@@ -482,15 +499,15 @@ module.exports = class Sessions {
 	//
 	// ------------------------------------------------------------------------------------------------------- //
 	//
-	static async initSession(socket, SessionName, AuthorizationToken, whatsappVersion) {
+	static async initSession(socket, SessionName, AuthorizationToken, setOnline) {
 		//
-		console?.log("- Iniciando sessão");
+		logger?.info("- Iniciando sessão");
 		var session = Sessions.getSession(SessionName);
 		session.AuthorizationToken = AuthorizationToken;
 		session.state = 'STARTING';
 		session.status = 'notLogged';
 		//
-		session.process = new pQueue({ concurrency: parseInt(config.CONCURRENCY) });
+		session.waqueue = new pQueue({ concurrency: parseInt(config.CONCURRENCY) });
 		//
 		//
 		/*
@@ -499,24 +516,41 @@ module.exports = class Sessions {
 			╚═╝┴   ┴ ┴└─┘┘└┘┴ ┴┴─┘  ╚═╝┴└─└─┘┴ ┴ ┴ └─┘  ╩  ┴ ┴┴└─┴ ┴┴ ┴└─┘ ┴ └─┘┴└─└─┘
 	 */
 		//
-		const store = makeInMemoryStore({
-			logger: pino().child({
-				level: 'debug',
-				stream: 'store'
-			})
-		});
+		//const loggerPino = pino({ level: 'trace' });
+		const loggerPino = pino({ level: 'silent' });
 		//
-		store.readFromFile(`${tokenPatch}/${SessionName}.store.json`);
-		const contactsList = store.contacts;
+		const useStore = !process.argv.includes('--no-store');
+		const doReplies = !process.argv.includes('--no-reply');
+		//
+		// external map to store retry counts of messages when decryption/encryption fails
+		// keep this out of the socket itself, so as to prevent a message decryption/encryption loop across socket restarts
+		//const MessageRetryMap = {};
+		//
+		const store = useStore ? makeInMemoryStore({ loggerPino }) : undefined;
+		//
+		try {
+			//
+			store?.readFromFile(`${tokenPatch}/${SessionName}.store.json`);
+			//
+		} catch (error) {
+			logger?.error(`- Error read store file: ${error}`);
+		};
+		//
 		// save every 10s
-		setInterval(() => {
-			store.writeToFile(`${tokenPatch}/${SessionName}.store.json`);
+		setInterval(async () => {
+			try {
+				//
+				store?.writeToFile(`${tokenPatch}/${SessionName}.store.json`);
+				//
+			} catch (error) {
+				logger?.error(`- Error write store file: ${error}`);
+			};
+			//
 		}, 10000);
 		//
-		const {
-			state,
-			saveState
-		} = useSingleFileAuthState(`${tokenPatch}/${SessionName}.data.json`);
+		//const { state, saveState } = await useSingleFileAuthState(`${tokenPatch}/${SessionName}.data.json`);
+		//
+		const { state, saveCreds } = await useMultiFileAuthState(`${tokenPatch}/${SessionName}.data.json`);
 		//
 		try {
 			//
@@ -524,313 +558,554 @@ module.exports = class Sessions {
 				//
 				// fetch latest version of WA Web
 				const { version, isLatest } = await fetchLatestBaileysVersion();
-				console?.log(`- Using WA v${version.join('.')}, isLatest: ${isLatest}`.yellow)
+				logger?.info(`- Using WA v${version.join('.')}, isLatest: ${isLatest}`)
 				//
-				const client = makeWASocket({
-					// provide an auth state object to maintain the auth state
-					auth: state,
-					// version to connect with
-					//version: [`${config.WA_VERSION}`],
-					// override browser config
-					browser: [`${config.DEVICE_NAME}`, 'Chrome', release()],
-					// the WS url to connect to WA
-					//waWebSocketUrl: 'wss://web.whatsapp.com/ws/chat',
-					// Fails the connection if the connection times out in this time interval or no data is received
+				const SocketConfig = {
+					/** provide an auth state object to maintain the auth state */
+					//auth: state,
+					auth: {
+						creds: state.creds,
+						//caching makes the store faster to send/recv messages
+						keys: makeCacheableSignalKeyStore(state.keys, loggerPino),
+					},
+					/** the WS url to connect to WA */
+					//waWebSocketUrl: undefined,
+					/** Fails the connection if the socket times out in this interval */
 					connectTimeoutMs: 30000,
-					// ping-pong interval for WS connection
-					keepAliveIntervalMs: 25000,
-					// pino logger
-					logger: pino({
-						level: 'silent'
-					}),
-					// should the QR be printed in the terminal
-					printQRInTerminal: parseInt(config.VIEW_QRCODE_TERMINAL),
-					//
-					emitOwnEvents: true,
-					// Default timeout for queries, undefined for no timeout
+					/** Default timeout for queries, undefined for no timeout */
 					defaultQueryTimeoutMs: undefined,
-					// proxy agent
+					/** ping-pong interval for WS connection */
+					keepAliveIntervalMs: 5000,
+					/** proxy agent */
 					agent: undefined,
-					// agent used for fetch requests -- uploading/downloading media
+					/** pino logger */
+					logger: loggerPino,
+					/** version to connect with */
+					//version: undefined,
+					/** override browser config */
+					browser: [`${config.DEVICE_NAME}`, 'Chrome', release()],
+					/** agent used for fetch requests -- uploading/downloading media */
 					fetchAgent: undefined,
-					//
-					//fetch a message from your store
-					//implement this so that messages failed to send (solves the "this message can take a while" issue) can be retried
-					getMessage: undefined,
-					//
 					/** By default true, should history messages be downloaded and processed */
 					downloadHistory: true,
+					/** should the QR be printed in the terminal */
+					printQRInTerminal: parseInt(config.VIEW_QRCODE_TERMINAL),
+					/** should events be emitted for actions done by this socket connection */
+					emitOwnEvents: true,
+					/** provide a cache to store media, so does not have to be re-uploaded */
+					//mediaCache: NodeCache,
+					/** custom upload hosts to upload media to */
+					//customUploadHosts: MediaConnInfo['hosts'],
+					/** time to wait between sending new retry requests */
+					retryRequestDelayMs: 5000,
+					/** time to wait for the generation of the next QR in ms */
+					qrTimeout: 15000,
+					/** manage history processing with this control; by default will sync up everything */
+					//shouldSyncHistoryMessage: boolean,
+					/** transaction capability options for SignalKeyStore */
+					//transactionOpts: TransactionCapabilityOptions,
+					/** provide a cache to store a user's device list */
+					//userDevicesCache: NodeCache,
 					/** marks the client as online whenever the socket successfully connects */
-					markOnlineOnConnect: true,
+					markOnlineOnConnect: setOnline,
+					/**
+					 * map to store the retry counts for failed messages;
+					 * used to determine whether to retry a message or not */
+					msgRetryCounterMap: MessageRetryMap,
 					/** width for link preview images */
 					linkPreviewImageThumbnailWidth: 192,
 					/** Should Baileys ask the phone for full history, will be received async */
 					syncFullHistory: true,
-					/** link preview images */
-					generateHighQualityLinkPreview: true
-				});
+					/** Should baileys fire init queries automatically, default true */
+					fireInitQueries: true,
+					/**
+					 * generate a high quality link preview,
+					 * entails uploading the jpegThumbnail to WA
+					 * */
+					generateHighQualityLinkPreview: true,
+					// ignore all broadcast messages -- to receive the same
+					// comment the line below out
+					shouldIgnoreJid: jid => isJidBroadcast(jid),
+					// implement to handle retries
+					getMessage: async (key) => {
+						if (store) {
+							const msg = await store?.loadMessage(key?.remoteJid, key?.id);
+							return msg?.message || undefined;
+						}
+						//
+						// only if store is present
+						return {
+							conversation: 'hello'
+						}
+					},
+					//   for fix button, template list message 
+					patchMessageBeforeSending: (message) => {
+						const requiresPatch = !!(
+							message.buttonsMessage ||
+							message.templateMessage ||
+							message.listMessage
+						);
+						if (requiresPatch) {
+							message = {
+								viewOnceMessage: {
+									message: {
+										messageContextInfo: {
+											deviceListMetadataVersion: 2,
+											deviceListMetadata: {},
+										},
+										...message,
+									},
+								},
+							};
+						}
+
+						return message;
+					},
+					//
+				}
 				//
-				store.bind(client.ev);
+				// ------------------------------------------------------------------------------------------------------- //
 				//
-				let relaunchSemaphore = 0;
-				let relaunchError = 0;
+				const connectionOptions = {
+					printQRInTerminal: parseInt(config.VIEW_QRCODE_TERMINAL),
+					auth: {
+						creds: state.creds,
+						keys: makeCacheableSignalKeyStore(
+							state.keys,
+							loggerPino,
+						),
+					},
+					generateHighQualityLinkPreview: true,
+					browser: [`${config.DEVICE_NAME}`, 'Chrome', release()],
+					syncFullHistory: true,
+					keepAliveIntervalMs: 5000,
+					markOnlineOnConnect: setOnline,
+					patchMessageBeforeSending: (message) => {
+						const requiresPatch = !!(
+							message.buttonsMessage ||
+							message.templateMessage ||
+							message.listMessage
+						);
+						if (requiresPatch) {
+							message = {
+								viewOnceMessage: {
+									message: {
+										messageContextInfo: {
+											deviceListMetadataVersion: 2,
+											deviceListMetadata: {},
+										},
+										...message,
+									},
+								},
+							};
+						}
+
+						return message;
+					},
+				};
+				//
+				const client = makeWASocket(
+					//
+					connectionOptions
+					//
+				);
+				//
+				store?.bind(client.ev);
+				//
 				let attempts = 1;
 				//
-				client.ev.on('connection.update', async (conn) => {
-					console?.log('- SessionName:', SessionName);
-					//
-					const {
-						connection,
-						lastDisconnect,
-						isNewLogin,
-						qr,
-						receivedPendingNotifications
-					} = conn;
-					//
-					console?.log("- Connection update".blue);
-					//
-					//
-					if (qr) {
-						//
-						console?.log('- QR Generated'.green);
-						//
-						const readQRCode = await QRCode.toDataURL(qr);
-						const base64Code = readQRCode.replace('data:image/png;base64,', '');
-						//
-						console?.log('- Número de tentativas de ler o qr-code:', attempts);
-						//
-						console?.log("- Captura do QR-Code");
-						//
-						webhooks?.wh_qrcode(Sessions.getSession(SessionName), readQRCode, qr);
-						this.exportQR(socket, readQRCode, SessionName, attempts);
-						//
-						session.state = "QRCODE";
-						session.status = "qrRead";
-						session.CodeurlCode = qr;
-						session.qrcode = readQRCode;
-						session.message = "Sistema aguardando leitura do QR-Code";
-						//
-						await updateStateDb(session.state, session.status, session.AuthorizationToken);
-						//
-						if (attempts >= 5) {
+				// the process function lets you process all events that just occurred
+				// efficiently in a batch
+				client.ev.process(
+					async (events) => {
+						// something about the connection changed
+						// maybe it closed, or we received all offline message or connection opened
+						if (events['connection.update']) {
+							const conn = events['connection.update'];
 							//
-							// close WebSocket connection
-							client.ws.close();
-							// remove all events
-							client.ev.removeAllListeners();
+							const {
+								connection,
+								lastDisconnect,
+								isNewLogin,
+								qr,
+								receivedPendingNotifications
+							} = conn;
 							//
-							attempts = 1;
+							logger?.info(`- Connection update`.green);
 							//
-							session.client = false;
-							session.state = "CLOSED";
-							session.status = "notLogged";
-							session.message = 'Sistema desconectado';
+							/*
+							logger?.info(`- Output: \n ${JSON.stringify(lastDisconnect?.error?.output, null, 2)}`);
+							logger?.info(`- Data: \n ${JSON.stringify(lastDisconnect?.error?.data, null, 2)}`);
+							logger?.info(`- loggedOut: \n ${JSON.stringify(DisconnectReason?.loggedOut, null, 2)}`);
+							*/
 							//
-							await deletaToken(`${tokenPatch}`, `${SessionName}.data.json`);
-							await deletaToken(`${tokenPatch}`, `${SessionName}.store.json`);
-							//
-							console?.log("- Navegador fechado automaticamente");
-							//
-							await updateStateDb(session.state, session.status, session.AuthorizationToken);
-						}
-						//
-						attempts++;
-						//
-					}
-					//
-					if (connection === 'connecting') {
-						//
-						console?.log(`- Connection ${connection}`.green);
-						//
-					} else if (connection === 'open') {
-						//
-						console?.log('- Connected to WhatsApp'.green);
-
-						//
-						session.state = "CONNECTED";
-						session.status = "inChat";
-						session.qrcode = null;
-						session.CodeurlCode = null;
-						session.message = "Sistema iniciado e disponivel para uso";
-						//
-						attempts = 1;
-						relaunchError = 0;
-						//
-						let phone = await client?.user?.id.split(":")[0];
-						await updateStateDb(session.state, session.status, session.AuthorizationToken);
-						webhooks?.wh_connect(Sessions.getSession(SessionName), 'CONNECTED', phone);
-						//
-						console?.log("- Sessão criada com sucesso");
-						console?.log("- Telefone conectado:", phone?.split("@")[0]);
-						//
-						socket.emit('status',
-							{
-								status: session.status,
-								SessionName: SessionName
-							}
-						);
-						//
-						if (phone) {
-							await updateUserConDb(phone, session.AuthorizationToken);
-						}
-						//
-						attempts = 1;
-						relaunchError = 0;
-						//
-					} else if (connection === 'close') {
-						//
-						console?.log("- Connection close".red);
-						//
-						console?.log(`- Output: \n ${JSON.stringify(lastDisconnect?.error?.output, null, 2)}`);
-						console?.log(`- Data: \n ${JSON.stringify(lastDisconnect?.error?.data, null, 2)}`);
-						console?.log(`- loggedOut: \n ${JSON.stringify(DisconnectReason?.loggedOut, null, 2)}`);
-						//
-						// reconnect if not logged out
-						if (lastDisconnect?.error?.output?.statusCode !== DisconnectReason?.loggedOut) {
-							//
-							if (lastDisconnect?.error?.output?.payload?.error == 'Forbidden') {
+							if (qr) {
 								//
-								relaunchError++;
+								logger?.info('- Reading to WhatsApp'.blue);
+								logger?.info(`- Connection status: ${connection}`.blue);
 								//
-								if (relaunchError >= 5) {
-									// remove all events
-									await client.ev.removeAllListeners();
-									//
-									session.client = false;
-									session.state = "DISCONNECTED";
-									session.status = "notLogged";
-									session.message = 'Dispositivo desconectado';
-									//
-									await deletaToken(`${tokenPatch}`, `${SessionName}.data.json`);
-									await deletaToken(`${tokenPatch}`, `${SessionName}.store.json`);
-									//
-									await updateStateDb(session.state, session.status, session.AuthorizationToken);
-									//
-									relaunchSemaphore = 0;
-									//
-									console?.log('- Restarting connection');
-									console?.log('- SessionName:', SessionName);
-									setTimeout(async function () {
-										return await startSock(SessionName).then(async (result) => {
-											session.client = result;
-											return result;
-										}).catch(async (erro) => {
-											console?.log(erro);
-										});
-									}, 500);
-									//
-								}
-							}
-							//
-							relaunchSemaphore++;
-							//
-							if (relaunchSemaphore >= 1) {
-								console?.log('- Restarting connection');
-								console?.log('- SessionName:', SessionName);
-								setTimeout(async function () {
-									return await startSock(SessionName).then(async (result) => {
-										session.client = result;
-										return result;
-									}).catch(async (erro) => {
-										console?.log(erro);
-									});
-								}, 500);
-							}
-							//
-						} else if (lastDisconnect?.error?.output?.statusCode === DisconnectReason?.loggedOut) {
-							//
-							try {
-								if (lastDisconnect?.error?.data?.content[0]?.attrs?.type == 'device_removed') {
-									//
-									console.log("- Dispositivo desconetado");
+								logger?.info('- QR Generated'.green);
+								//
+								const readQRCode = await QRCode.toDataURL(qr);
+								const base64Code = readQRCode.replace('data:image/png;base64,', '');
+								//
+								logger?.info(`- Número de tentativas de ler o qr-code: ${attempts}`);
+								//
+								logger?.info("- Captura do QR-Code");
+								//
+								webhooks?.wh_qrcode(Sessions.getSession(SessionName), readQRCode, qr);
+								this.exportQR(socket, readQRCode, SessionName, attempts);
+								//
+								session.state = "QRCODE";
+								session.status = "qrRead";
+								session.CodeurlCode = qr;
+								session.qrcode = readQRCode;
+								session.message = "Sistema aguardando leitura do QR-Code";
+								//
+								await updateStateDb(session.state, session.status, session.AuthorizationToken);
+								//
+								if (attempts >= 5) {
 									//
 									// close WebSocket connection
-									await client.ws.close();
+									client.ws.close();
 									// remove all events
-									await client.ev.removeAllListeners();
+									client.ev.removeAllListeners();
+									//
+									attempts = 1;
 									//
 									session.client = false;
-									session.state = "DISCONNECTED";
+									session.state = "CLOSED";
 									session.status = "notLogged";
-									session.message = 'Dispositivo desconectado';
+									session.message = 'Sistema desconectado';
 									//
+									await deletaPastaToken(`${tokenPatch}`, `${SessionName}.data.json`);
 									await deletaToken(`${tokenPatch}`, `${SessionName}.data.json`);
 									await deletaToken(`${tokenPatch}`, `${SessionName}.store.json`);
+									await deletaToken(`${tokenPatch}`, `${SessionName}.startup.json`);
+									await deletaToken(`${tokenPatch}`, `${SessionName}.contacts.json`);
+									//
+									socket.emit('status',
+										{
+										SessionName: SessionName,
+										status: session.status
+										}
+									);
+									//
+									logger?.info("- Navegador fechado automaticamente");
 									//
 									await updateStateDb(session.state, session.status, session.AuthorizationToken);
-									//
 								}
 								//
-							} catch (error) {
-								console?.log("- Error when device_removed:", error); //return object error
-							};
+								attempts++;
+								//
+							}
 							//
-							try {
-								if (lastDisconnect?.error?.output?.payload?.error?.message == 'Connection Failure') {
-									//
-									console.log("- Dispositivo desconetado");
-									//
-									// close WebSocket connection
-									await client.ws.close();
-									// remove all events
-									await client.ev.removeAllListeners();
-									//
-									session.client = false;
-									session.state = "DISCONNECTED";
-									session.status = "notLogged";
-									session.message = 'Dispositivo desconectado';
-									//
-									await deletaToken(`${tokenPatch}`, `${SessionName}.data.json`);
-									await deletaToken(`${tokenPatch}`, `${SessionName}.store.json`);
-									//
-									await updateStateDb(session.state, session.status, session.AuthorizationToken);
-									setTimeout(async function () {
-										return await startSock(SessionName).then(async (result) => {
-											session.client = result;
-											return result;
-										}).catch(async (erro) => {
-											console?.log(erro);
-										});
-									}, 500);
+							if (connection === 'connecting') {
+								//
+								logger?.info('- Connecting to WhatsApp'.yellow);
+								logger?.info(`- Connection status: ${connection}`.yellow);
+								//
+								session.state = "CONNECTING";
+								session.status = "notLogged";
+								session.message = 'Dispositivo conectando';
+								//
+								socket.emit('status',
+									{
+										SessionName: SessionName,
+										status: session.status
+									}
+								);
+								//
+							} else if (connection === 'open') {
+								//
+								logger?.info('- Connected to WhatsApp'.green);
+								logger?.info(`- Connection status: ${connection}`.green);
+								//
+								// Wait 5 seg for linked qr process to whatsapp
+								await delay(5);
+								logger?.info(`- Started using WA v${version.join('.')}, isLatest: ${isLatest}`.green);
+								//
+								session.client = client;
+								session.state = "CONNECTED";
+								session.status = "inChat";
+								session.qrcode = null;
+								session.CodeurlCode = null;
+								session.message = "Sistema iniciado e disponivel para uso";
+								//
+								attempts = 1;
+								//
+								let phone = await client?.user?.id.split(":")[0];
+								await updateStateDb(session.state, session.status, session.AuthorizationToken);
+								webhooks?.wh_connect(Sessions.getSession(SessionName), 'CONNECTED', phone);
+								//
+								logger?.info("- Sessão criada com sucesso");
+								logger?.info(`- Telefone conectado: ${phone?.split("@")[0]}`);
+								//
+								socket.emit('status',
+									{
+										SessionName: SessionName,
+										status: session.status
+									}
+								);
+								//
+								if (phone) {
+									await updateUserConDb(phone, session.AuthorizationToken);
 								}
 								//
-							} catch (error) {
-								console?.log("- Error when Connection Failure", error); //return object error
-							};
-							//
-						} else {
-							//
-
+								attempts = 1;
+								//
+							} else if (connection === 'close') {
+								//
+								let resDisconnectReason = {
+									loggedOut: 401,
+									timedOut: 408,
+									connectionLost: 408,
+									multideviceMismatch: 411,
+									connectionClosed: 428,
+									connectionReplaced: 440,
+									badSession: 500,
+									restartRequired: 515,
+								};
+								//
+								const statusCode = lastDisconnect.error ? lastDisconnect.error?.output?.statusCode : 0;
+								switch (statusCode) {
+									case resDisconnectReason.loggedOut:
+										// Device Logged Out, Deleting Session
+										logger?.info(`- SessionName: ${SessionName}`);
+										logger?.info('- Connection loggedOut'.red);
+										//
+										// close WebSocket connection
+										await client.ws.close();
+										// remove all events
+										await client.ev.removeAllListeners();
+										//
+										session.client = false;
+										session.state = "DISCONNECTED";
+										session.status = "notLogged";
+										session.message = 'Dispositivo desconectado';
+										//
+										await deletaPastaToken(`${tokenPatch}`, `${SessionName}.data.json`);
+										await deletaToken(`${tokenPatch}`, `${SessionName}.data.json`);
+										await deletaToken(`${tokenPatch}`, `${SessionName}.store.json`);
+										await deletaToken(`${tokenPatch}`, `${SessionName}.startup.json`);
+										//
+										await updateStateDb(session.state, session.status, session.AuthorizationToken);
+										//
+										socket.emit('status',
+											{
+												SessionName: SessionName,
+												status: session.status
+											}
+										);
+										//
+										setTimeout(async function () {
+											return await startSock(SessionName).then(async (result) => {
+												session.client = result;
+												return result;
+											}).catch(async (erro) => {
+												logger?.error(`- Error reconnecting connection: ${erro}`);
+											});
+										}, 500);
+										//
+										break;
+									case resDisconnectReason.timedOut:
+										//
+										logger?.info(`- SessionName: ${SessionName}`);
+										logger?.info('- Connection TimedOut'.yellow);
+										//
+										session.state = "CONNECTING";
+										session.status = "desconnectedMobile";
+										session.message = 'Dispositivo conectando';
+										//
+										await updateStateDb(session.state, session.status, session.AuthorizationToken);
+										//
+										socket.emit('status',
+											{
+												SessionName: SessionName,
+												status: session.status
+											}
+										);
+										//
+										setTimeout(async function () {
+											return await startSock(SessionName).then(async (result) => {
+												session.client = result;
+												return result;
+											}).catch(async (erro) => {
+												logger?.error(`- Error reconnecting connection: ${erro}`);
+											});
+										}, 500);
+										//
+										break;
+									case resDisconnectReason.connectionLost:
+										//
+										logger?.info(`- SessionName: ${SessionName}`);
+										logger?.info(`- Connection Los`.red);
+										//
+										/*
+										//
+										session.state = "CONNECTING";
+										session.status = "desconnectedMobile";
+										session.message = 'Dispositivo conectando';
+										//
+										setTimeout(async function () {
+											return await startSock(SessionName).then(async (result) => {
+												session.client = result;
+												return result;
+											}).catch(async (erro) => {
+												logger?.error(`- Error reconnecting connection: ${erro}`);
+											});
+										}, 500);
+										*/
+										//
+										break;
+									case resDisconnectReason.multideviceMismatch:
+										//
+										logger?.info(`- SessionName: ${SessionName}`);
+										logger?.info('- Connection multideviceMismatch'.blue);
+										//
+										break;
+									case resDisconnectReason.connectionClosed:
+										//
+										logger?.info(`- SessionName: ${SessionName}`);
+										logger?.info(`- Connection connectionClosed`.red);
+										//
+										/*
+										setTimeout(async function () {
+											return await startSock(SessionName).then(async (result) => {
+												session.client = result;
+												return result;
+											}).catch(async (erro) => {
+												logger?.error(`- Error reconnecting connection: ${erro}`);
+											});
+										}, 500);
+										*/
+										//
+										break;
+									case resDisconnectReason.connectionReplaced:
+										//
+										// Connection Replaced, Another New Session Opened, Please Close Current Session First
+										logger?.info(`- SessionName: ${SessionName}`);
+										logger?.info(`- Connection connectionReplaced`.yellow);
+										//
+										// close WebSocket connection
+										await client.ws.close();
+										// remove all events
+										await client.ev.removeAllListeners();
+										//
+										session.client = false;
+										session.state = "DISCONNECTED";
+										session.status = "notLogged";
+										session.message = 'Dispositivo desconectado';
+										//
+										await deletaPastaToken(`${tokenPatch}`, `${SessionName}.data.json`);
+										await deletaToken(`${tokenPatch}`, `${SessionName}.data.json`);
+										await deletaToken(`${tokenPatch}`, `${SessionName}.store.json`);
+										await deletaToken(`${tokenPatch}`, `${SessionName}.startup.json`);
+										//
+										await updateStateDb(session.state, session.status, session.AuthorizationToken);
+										//
+										socket.emit('status',
+											{
+												SessionName: SessionName,
+												status: session.status
+											}
+										);
+										//
+										setTimeout(async function () {
+											return await startSock(SessionName).then(async (result) => {
+												session.client = result;
+												return result;
+											}).catch(async (erro) => {
+												logger?.error(`- Error reconnecting connection: ${erro}`);
+											});
+										}, 500);
+										//
+										break;
+									case resDisconnectReason.badSession:
+										//
+										// Bad session file, delete and run again
+										logger?.info(`- SessionName: ${SessionName}`);
+										logger?.info(`- Connection badSession`.red);
+										//
+										// close WebSocket connection
+										await client.ws.close();
+										// remove all events
+										await client.ev.removeAllListeners();
+										//
+										session.client = false;
+										session.state = "DISCONNECTED";
+										session.status = "notLogged";
+										session.message = 'Dispositivo desconectado';
+										//
+										await deletaPastaToken(`${tokenPatch}`, `${SessionName}.data.json`);
+										await deletaToken(`${tokenPatch}`, `${SessionName}.data.json`);
+										await deletaToken(`${tokenPatch}`, `${SessionName}.store.json`);
+										await deletaToken(`${tokenPatch}`, `${SessionName}.startup.json`);
+										//
+										await updateStateDb(session.state, session.status, session.AuthorizationToken);
+										//
+										socket.emit('status',
+											{
+												SessionName: SessionName,
+												status: session.status
+											}
+										);
+										//
+										setTimeout(async function () {
+											return await startSock(SessionName).then(async (result) => {
+												session.client = result;
+												return result;
+											}).catch(async (erro) => {
+												logger?.error(`- Error reconnecting connection: ${erro}`);
+											});
+										}, 500);
+										//
+										break;
+									case resDisconnectReason.restartRequired:
+										//
+										logger?.info(`- SessionName: ${SessionName}`);
+										logger?.info('- Connection restartRequired');
+										setTimeout(async function () {
+											return await startSock(SessionName).then(async (result) => {
+												session.client = result;
+												return result;
+											}).catch(async (erro) => {
+												logger?.error(`- Error reconnecting connection: ${erro}`);
+											});
+										}, 500);
+										//
+										break;
+									default:
+									// code block
+									logger?.info(`- lastDisconnect: ${lastDisconnect?.error}`);
+								}
+								//
+							} else if (typeof connection === undefined) {
+								//
+								logger?.info(`- SessionName: ${SessionName}`);
+								logger?.error(`- Connection undefined`.yellow);
+								//
+							}
 							//
 						}
 						//
-						attempts = 1;
+						// auto save dos dados da sessão
+						// credentials updated -- save them
+						if (events['creds.update']) {
+							await saveCreds();
+						}
 						//
-					} else if (typeof connection === undefined) {
-						console?.log("- Connection undefined".red);
+						eventsSend?.statusConnection(Sessions.getSession(SessionName), client, socket, events);
+						eventsSend?.statusMessage(Sessions.getSession(SessionName), client, socket, events);
+						eventsSend?.contactsEvents(Sessions.getSession(SessionName), client, socket, events);
+						eventsSend?.messagesEvents(Sessions.getSession(SessionName), client, socket, events);
+						eventsSend?.chatsEvents(Sessions.getSession(SessionName), client, socket, events);
+						eventsSend?.blocklistEvents(Sessions.getSession(SessionName), client, socket, events);
+						eventsSend?.groupsEvents(Sessions.getSession(SessionName), client, socket, events);
+						eventsSend?.extraEvents(Sessions.getSession(SessionName), client, socket, events);
+						//
 					}
-					//
-				});
-				//
-				client.ev.on('contacts.upsert', async (contacts) => {
-					//console?.log(`- Contacts upsert: ${JSON.stringify(contacts, null, 2)}`);
-				});
-				//
-				client.ev.on('contacts.update', async (contacts) => {
-					//console?.log(`- Contacts update: ${JSON.stringify(contacts, null, 2)}`);
-				});
-				//
-				client.ev.on('messages.update', async (message) => {
-					//console?.log(`- Messages update: ${JSON.stringify(message, null, 2)}`);
-				});
-				//
-				// auto save dos dados da sessão
-				client.ev.on("creds.update", saveState);
-				//
-				events?.receiveMessage(Sessions.getSession(SessionName), client, socket);
-				events?.statusMessage(Sessions.getSession(SessionName), client, socket);
-				//events?.statusConnection(Sessions.getSession(SessionName), client, socket);
-				//
+				);
 				return client;
 				//
 			}
@@ -839,23 +1114,24 @@ module.exports = class Sessions {
 				session.client = result;
 				return result;
 			}).catch(async (erro) => {
-				console?.log(erro);
+				logger?.error(`- startSock ${erro}`);
 			});
 			//
 		} catch (error) {
-			console?.log("- SessionName:", AuthorizationToken);
+			logger?.info(`- SessionName: ${AuthorizationToken}`);
 			session.state = "NOTFOUND";
 			session.status = "notLogged";
 			session.qrcode = null;
 			session.message = 'Sistema desconectado';
-			console?.log("- Instância não criada:", error.message);
+			logger?.error(`- Instância não criada: ${error.message}`);
 			//
 			socket.emit('status',
 				{
-					status: session.state,
+					status: session.status,
 					SessionName: SessionName
 				}
 			);
+			//
 		}
 		//
 	} //initSession
@@ -885,8 +1161,8 @@ module.exports = class Sessions {
 	//
 	static async restartToken(socket, SessionName, AuthorizationToken, whatsappVersion) {
 		//
-		console?.log("- Resetando sessão");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Resetando sessão");
+		logger?.info(`- SessionName: ${SessionName}`);
 		var session = Sessions.getSession(SessionName);
 		//
 		if (session) {
@@ -898,8 +1174,11 @@ module.exports = class Sessions {
 				// remove all events
 				await session.client.ev.removeAllListeners();
 				//
+				await deletaPastaToken(`${tokenPatch}`, `${SessionName}.data.json`);
 				await deletaToken(`${tokenPatch}`, `${SessionName}.data.json`);
 				await deletaToken(`${tokenPatch}`, `${SessionName}.store.json`);
+				await deletaToken(`${tokenPatch}`, `${SessionName}.startup.json`);
+				await deletaToken(`${tokenPatch}`, `${SessionName}.contacts.json`);
 				//
 				session.qrcode = null;
 				session.qrRetry = null;
@@ -918,7 +1197,7 @@ module.exports = class Sessions {
 				};
 				//
 			} catch (error) {
-				console?.log("Error when:", error); //return object error
+				logger?.error(`- Error when: ${error}`);
 				//
 				session.client = false;
 				//
@@ -943,8 +1222,8 @@ module.exports = class Sessions {
 	//
 	static async closeSession(SessionName) {
 		//
-		console?.log("- Fechando navegador");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Fechando navegador");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		try {
@@ -958,7 +1237,7 @@ module.exports = class Sessions {
 			session.status = "notLogged";
 			session.client = false;
 			session.qrcode = null;
-			console?.log("- Sessão fechada");
+			logger?.info("- Sessão fechada");
 			//
 			webhooks?.wh_connect(Sessions.getSession(SessionName), 'CLOSE', null);
 			//
@@ -974,7 +1253,7 @@ module.exports = class Sessions {
 			//
 		} catch (error) {
 			//
-			console?.log("- Erro ao fechar navegador", error);
+			logger?.error(`- Erro ao fechar navegador ${error}`);
 			//
 			let result = {
 				"erro": true,
@@ -992,8 +1271,8 @@ module.exports = class Sessions {
 	//
 	static async logoutSession(SessionName) {
 		//
-		console?.log("- Desconetando sessão");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Desconetando sessão");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		try {
@@ -1008,7 +1287,7 @@ module.exports = class Sessions {
 			session.status = "notLogged";
 			session.client = false;
 			session.qrcode = null;
-			console?.log("- Sessão desconetada");
+			logger?.info("- Sessão desconetada");
 			//
 			webhooks?.wh_connect(Sessions.getSession(SessionName), 'DISCONNECTED', null);
 			//
@@ -1018,15 +1297,18 @@ module.exports = class Sessions {
 				"message": "Sessão desconetada com sucesso"
 			};
 			//
+			await deletaPastaToken(`${tokenPatch}`, `${SessionName}.data.json`);
 			await deletaToken(`${tokenPatch}`, `${SessionName}.data.json`);
 			await deletaToken(`${tokenPatch}`, `${SessionName}.store.json`);
+			await deletaToken(`${tokenPatch}`, `${SessionName}.startup.json`);
+			await deletaToken(`${tokenPatch}`, `${SessionName}.contacts.json`);
 			//
 			await updateStateDb(session.state, session.status, session.AuthorizationToken);
 			//
 			return result;
 			//
 		} catch (error) {
-			console?.log("- Erro ao desconetar sessão:", error);
+			logger?.error(`- Error ao desconetar sessão: ${error}`);
 			//
 			let result = {
 				"erro": true,
@@ -1056,8 +1338,8 @@ module.exports = class Sessions {
 		namecontact
 	) {
 		//
-		console?.log("- Enviando contato.");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Enviando contato.");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		// send a contact!
@@ -1077,7 +1359,7 @@ module.exports = class Sessions {
 				}
 			}
 		).then(async (result) => {
-			//console?.log('Result: ', result); //return object success
+			//logger?.info('Result: ', result); //return object success
 			//
 			var result = {
 				"erro": false,
@@ -1088,7 +1370,7 @@ module.exports = class Sessions {
 			return result;
 			//
 		}).catch((erro) => {
-			console?.log("-Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//
 			var result = {
 				"erro": true,
@@ -1111,8 +1393,8 @@ module.exports = class Sessions {
 		buffer,
 		mimetype
 	) {
-		console?.log("- Enviando audio.");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Enviando audio.");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		// Send audio
@@ -1123,7 +1405,7 @@ module.exports = class Sessions {
 			mimetype: mimetype,
 			ptt: true
 		}).then(async (result) => {
-			//console?.log("Result: ", result); //return object success
+			//logger?.info("Result: ", result); //return object success
 			//
 			let returnResult = {
 				"erro": false,
@@ -1136,7 +1418,7 @@ module.exports = class Sessions {
 			//
 		}).catch(async (erro) => {
 			await session.client.sendPresenceUpdate('available', number);
-			console?.log("Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//return { result: 'error', state: session.state, message: "Erro ao enviar menssagem" };
 			//return (erro);
 			//
@@ -1160,8 +1442,8 @@ module.exports = class Sessions {
 		buffer,
 		mimetype
 	) {
-		console?.log("- Enviando audio.");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Enviando audio.");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		// Send audio
@@ -1172,7 +1454,7 @@ module.exports = class Sessions {
 			mp3: true,
 			ptt: true
 		}).then(async (result) => {
-			//console?.log("Result: ", result); //return object success
+			//logger?.info("Result: ", result); //return object success
 			//
 			let returnResult = {
 				"erro": false,
@@ -1186,7 +1468,7 @@ module.exports = class Sessions {
 			//
 		}).catch(async (erro) => {
 			await session.client.sendPresenceUpdate('available', number);
-			console?.log("Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//return { result: 'error', state: session.state, message: "Erro ao enviar menssagem" };
 			//return (erro);
 			//
@@ -1209,8 +1491,8 @@ module.exports = class Sessions {
 		number,
 		msg
 	) {
-		console?.log("- Enviando menssagem de texto.");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Enviando menssagem de texto.");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		// Send basic text
@@ -1218,16 +1500,16 @@ module.exports = class Sessions {
 			number,
 			{ text: msg }
 		).then(async (result) => {
-			//console?.log("Result: ", result); //return object success
+			//logger?.info("Result: ", result); //return object success
 			//
 			return {
 				"erro": false,
 				"status": 200,
-				"message": "Menssagem envida com sucesso."
+				"message": "Mensagem enviada com sucesso."
 			};
 			//
 		}).catch((erro) => {
-			console?.log("Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
 				"erro": true,
@@ -1249,8 +1531,8 @@ module.exports = class Sessions {
 		long,
 		local
 	) {
-		console?.log("- Enviando localização.");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Enviando localização.");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		// Send basic text
@@ -1264,20 +1546,20 @@ module.exports = class Sessions {
 				}
 			}
 		).then(async (result) => {
-			//console?.log("Result: ", result); //return object success
+			//logger?.info("Result: ", result); //return object success
 			//return { result: "success", state: session.state, message: "Sucesso ao enviar menssagem" };
 			//return (result);
 			//
 			let returnResult = {
 				"erro": false,
 				"status": 200,
-				"message": "Localização envida com sucesso."
+				"message": "Localização enviada com sucesso."
 			};
 			//
 			return returnResult;
 			//
 		}).catch((erro) => {
-			console?.log("- Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//return { result: 'error', state: session.state, message: "Erro ao enviar menssagem" };
 			//return (erro);
 			//
@@ -1301,8 +1583,8 @@ module.exports = class Sessions {
 		link,
 		detail
 	) {
-		console?.log("- Enviando link.");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Enviando link.");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		// Send basic text
@@ -1314,16 +1596,16 @@ module.exports = class Sessions {
 				detectLinks: true
 			}
 		).then(async (result) => {
-			//console?.log("Result: ", result); //return object success
+			//logger?.info("Result: ", result); //return object success
 			//
 			return {
 				"erro": false,
 				"status": 200,
-				"message": "Menssagem envida com sucesso."
+				"message": "Mensagem enviada com sucesso."
 			};
 			//
 		}).catch((erro) => {
-			console?.log("Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
 				"erro": true,
@@ -1346,8 +1628,8 @@ module.exports = class Sessions {
 		originalname,
 		caption
 	) {
-		console?.log("- Enviando menssagem com imagem.");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Enviando menssagem com imagem.");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		return await session.client.sendMessage(
@@ -1357,19 +1639,19 @@ module.exports = class Sessions {
 			mimetype: mimetype,
 			caption: caption
 		}).then(async (result) => {
-			//console?.log('Result: ', result); //return object success
+			//logger?.info('Result: ', result); //return object success
 			//return (result);
 			//
 			let returnResult = {
 				"erro": false,
 				"status": 200,
-				"message": "Menssagem envida com sucesso."
+				"message": "Mensagem enviada com sucesso."
 			};
 			//
 			return returnResult;
 			//
 		}).catch((erro) => {
-			console?.log("Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//return (erro);
 			//
 			let returnResult = {
@@ -1394,8 +1676,8 @@ module.exports = class Sessions {
 		mimetype,
 		caption
 	) {
-		console?.log("- Enviando arquivo.");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Enviando arquivo.");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		//
@@ -1411,7 +1693,7 @@ module.exports = class Sessions {
 					fileName: originalname,
 					caption: caption
 				}).then((result) => {
-					//console?.log('Result: ', result); //return object success
+					//logger?.info('Result: ', result); //return object success
 					//return (result);
 					//
 					return {
@@ -1421,7 +1703,7 @@ module.exports = class Sessions {
 					};
 					//
 				}).catch((erro) => {
-					console.error('Error when sending: ', erro); //return object error
+					logger?.error('- Error when sending: ', erro);
 					//return (erro);
 					//
 					return {
@@ -1441,7 +1723,7 @@ module.exports = class Sessions {
 					caption: caption,
 					ptt: mime.split("/")[0] === 'audio' ? true : false
 				}).then((result) => {
-					//console?.log('Result: ', result); //return object success
+					//logger?.info('Result: ', result); //return object success
 					//return (result);
 					//
 					return {
@@ -1451,7 +1733,7 @@ module.exports = class Sessions {
 					};
 					//
 				}).catch((erro) => {
-					console.error('Error when sending: ', erro); //return object error
+					logger?.error('- Error when sending: ', erro);
 					//return (erro);
 					//
 					return {
@@ -1475,7 +1757,7 @@ module.exports = class Sessions {
 							fileName: originalname,
 							caption: caption
 						}).then((result) => {
-							//console?.log('Result: ', result); //return object success
+							//logger?.info('Result: ', result); //return object success
 							//return (result);
 							//
 							return {
@@ -1485,7 +1767,7 @@ module.exports = class Sessions {
 							};
 							//
 						}).catch((erro) => {
-							console.error('Error when sending: ', erro); //return object error
+							logger?.error('- Error when sending: ', erro);
 							//return (erro);
 							//
 							return {
@@ -1507,7 +1789,7 @@ module.exports = class Sessions {
 							fileName: originalname,
 							caption: caption
 						}).then((result) => {
-							//console?.log('Result: ', result); //return object success
+							//logger?.info('Result: ', result); //return object success
 							//return (result);
 							//
 							return {
@@ -1517,7 +1799,7 @@ module.exports = class Sessions {
 							};
 							//
 						}).catch((erro) => {
-							console.error('Error when sending: ', erro); //return object error
+							logger?.error('- Error when sending: ', erro);
 							//return (erro);
 							//
 							return {
@@ -1540,7 +1822,7 @@ module.exports = class Sessions {
 							fileName: originalname,
 							caption: caption
 						}).then((result) => {
-							//console?.log('Result: ', result); //return object success
+							//logger?.info('Result: ', result); //return object success
 							//return (result);
 							//
 							return {
@@ -1550,7 +1832,7 @@ module.exports = class Sessions {
 							};
 							//
 						}).catch((erro) => {
-							console.error('Error when sending: ', erro); //return object error
+							logger?.error('- Error when sending: ', erro);
 							//return (erro);
 							//
 							return {
@@ -1572,7 +1854,7 @@ module.exports = class Sessions {
 							fileName: originalname,
 							caption: caption
 						}).then((result) => {
-							//console?.log('Result: ', result); //return object success
+							//logger?.info('Result: ', result); //return object success
 							//return (result);
 							//
 							return {
@@ -1582,7 +1864,7 @@ module.exports = class Sessions {
 							};
 							//
 						}).catch((erro) => {
-							console.error('Error when sending: ', erro); //return object error
+							logger?.error('- Error when sending: ', erro);
 							//return (erro);
 							//
 							return {
@@ -1604,7 +1886,7 @@ module.exports = class Sessions {
 							fileName: originalname,
 							caption: caption
 						}).then((result) => {
-							//console?.log('Result: ', result); //return object success
+							//logger?.info('Result: ', result); //return object success
 							//return (result);
 							//
 							return {
@@ -1614,7 +1896,7 @@ module.exports = class Sessions {
 							};
 							//
 						}).catch((erro) => {
-							console.error('Error when sending: ', erro); //return object error
+							logger?.error('- Error when sending: ', erro);
 							//return (erro);
 							//
 							return {
@@ -1636,7 +1918,7 @@ module.exports = class Sessions {
 							fileName: originalname,
 							caption: caption
 						}).then((result) => {
-							//console?.log('Result: ', result); //return object success
+							//logger?.info('Result: ', result); //return object success
 							//return (result);
 							//
 							return {
@@ -1646,7 +1928,7 @@ module.exports = class Sessions {
 							};
 							//
 						}).catch((erro) => {
-							console.error('Error when sending: ', erro); //return object error
+							logger?.error('- Error when sending: ', erro);
 							//return (erro);
 							//
 							return {
@@ -1666,7 +1948,7 @@ module.exports = class Sessions {
 							fileName: originalname,
 							caption: caption
 						}).then((result) => {
-							//console?.log('Result: ', result); //return object success
+							//logger?.info('Result: ', result); //return object success
 							//return (result);
 							//
 							return {
@@ -1676,7 +1958,7 @@ module.exports = class Sessions {
 							};
 							//
 						}).catch((erro) => {
-							console.error('Error when sending: ', erro); //return object error
+							logger?.error('- Error when sending: ', erro);
 							//return (erro);
 							//
 							return {
@@ -1705,8 +1987,8 @@ module.exports = class Sessions {
 		mimetype,
 		caption
 	) {
-		console?.log("- Enviando arquivo.");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Enviando arquivo.");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		return await session.client.sendMessage(
@@ -1718,7 +2000,7 @@ module.exports = class Sessions {
 			mimetype: mimetype,
 			caption: caption
 		}).then(async (result) => {
-			//console?.log('Result: ', result); //return object success
+			//logger?.info('Result: ', result); //return object success
 			//return (result);
 			//
 			return {
@@ -1728,7 +2010,7 @@ module.exports = class Sessions {
 			};
 			//
 		}).catch((erro) => {
-			console?.log("Error when:", erro.output); //return object error
+			logger?.error(`- Error when: ${erro.output}`);
 			//return (erro);
 			//
 			return {
@@ -1748,8 +2030,8 @@ module.exports = class Sessions {
 		number,
 		buttonMessage
 	) {
-		console?.log("- Enviando button.");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Enviando button.");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		// Send basic text
@@ -1757,18 +2039,18 @@ module.exports = class Sessions {
 			number,
 			buttonMessage
 		).then(async (result) => {
-			//console?.log("Result: ", result); //return object success
+			//logger?.info("Result: ", result); //return object success
 			//
 			let returnResult = {
 				"erro": false,
 				"status": 200,
-				"message": "Menssagem envida com sucesso."
+				"message": "Mensagem enviada com sucesso."
 			};
 			//
 			return returnResult;
 			//
 		}).catch((erro) => {
-			console?.log("Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//return { result: 'error', state: session.state, message: "Erro ao enviar menssagem" };
 			//return (erro);
 			//
@@ -1791,8 +2073,8 @@ module.exports = class Sessions {
 		number,
 		templateMessage
 	) {
-		console?.log("- Enviando button.");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Enviando button.");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		// Send basic text
@@ -1800,18 +2082,18 @@ module.exports = class Sessions {
 			number,
 			templateMessage
 		).then(async (result) => {
-			//console?.log("Result: ", result); //return object success
+			//logger?.info("Result: ", result); //return object success
 			//
 			let returnResult = {
 				"erro": false,
 				"status": 200,
-				"message": "Menssagem envida com sucesso."
+				"message": "Mensagem enviada com sucesso."
 			};
 			//
 			return returnResult;
 			//
 		}).catch((erro) => {
-			console?.log("Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//return { result: 'error', state: session.state, message: "Erro ao enviar menssagem" };
 			//return (erro);
 			//
@@ -1834,8 +2116,8 @@ module.exports = class Sessions {
 		number,
 		listMessage
 	) {
-		console?.log("- Enviando lista.");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Enviando lista.");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		// Send basic text
@@ -1843,18 +2125,18 @@ module.exports = class Sessions {
 			number,
 			listMessage
 		).then(async (result) => {
-			//console?.log("Result: ", result); //return object success
+			//logger?.info("Result: ", result); //return object success
 			//
 			var result = {
 				"erro": false,
 				"status": 200,
-				"message": "Menssagem envida com sucesso."
+				"message": "Mensagem enviada com sucesso."
 			};
 			//
 			return result;
 			//
 		}).catch((erro) => {
-			console?.log("Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//return { result: 'error', state: session.state, message: "Erro ao enviar menssagem" };
 			//return (erro);
 			//
@@ -1882,12 +2164,12 @@ module.exports = class Sessions {
 		SessionName,
 		number
 	) {
-		console?.log("- Validando numero");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Validando numero");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		return await session.client.fetchStatus(number).then(async (result) => {
-			//console?.log('Result: ', result); //return object success
+			//logger?.info('Result: ', result); //return object success
 			//
 			return {
 				"erro": true,
@@ -1899,11 +2181,11 @@ module.exports = class Sessions {
 			//
 			//
 		}).catch((erro) => {
-			console?.log("Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
 				"erro": true,
-				"status": 200,
+				"status": 404,
 				"number": number,
 				"message": "Erro ao verificar status do número informado"
 			};
@@ -1917,36 +2199,79 @@ module.exports = class Sessions {
 	static async getAllContacts(
 		SessionName
 	) {
-		console?.log("- Obtendo todos os contatos!");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Obtendo todos os contatos!");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		//
 		try {
-			var contacts = [];
+			var contactsList = [];
 			//
-			if (fs.existsSync(`${tokenPatch}/${SessionName}.store.json`)) {
+			if (fs.existsSync(`${tokenPatch}/${SessionName}.contacts.json`)) {
+				//let result = require(`${tokenPatch}/${SessionName}.contacts.json`);
+				let result = JSON.parse(fs.readFileSync(`${tokenPatch}/${SessionName}.contacts.json`, 'utf-8'));
+				//let result = fs.readFileSync(`${tokenPatch}/${SessionName}.contacts.json`, 'utf-8');
+				//
+				const resContacts = Object.values(result);
+				//
+				resContacts.forEach((contact) => {
+					//
+					if (contact?.id.includes('s.whatsapp.net') || contact?.id?.split("@")[1] == 's.whatsapp.net') {
+						contactsList.push({
+							"user": contact?.id?.split("@")[0],
+							"name": contact?.name || null,
+							"notify": contact?.notify || null
+						});
+					}
+					//
+				});
+				//
+				//
+				if (!contactsList.length) {
+					//
+					let returnResult = {
+						"erro": true,
+						"status": 400,
+						"message": "Nenhum contato recuperado"
+					};
+					//
+					return returnResult;
+					//
+				}
+			} else if (fs.existsSync(`${tokenPatch}/${SessionName}.store.json`)) {
 				let result = require(`${tokenPatch}/${SessionName}.store.json`);
 				//
 				const resContacts = Object.values(result.contacts);
 				//
-				for (let contact of resContacts) {
+				resContacts.forEach((contact) => {
 					//
 					if (contact?.id.includes('s.whatsapp.net') || contact?.id?.split("@")[1] == 's.whatsapp.net') {
-						contacts.push({
+						contactsList.push({
 							"user": contact?.id?.split("@")[0],
-							"name": contact?.notify,
-							"notify": contact?.notify
+							"name": contact?.name || null,
+							"notify": contact?.notify || null
 						});
 					}
+					//
+				});
+				//
+				if (!contactsList.length) {
+					//
+					let returnResult = {
+						"erro": true,
+						"status": 400,
+						"message": "Nenhum contato recuperado"
+					};
+					//
+					return returnResult;
 					//
 				}
 			} else {
 				//
 				let returnResult = {
 					"erro": true,
-					"status": 404,
-					"message": "Erro ao recuperar contatos"
+					"status": 400,
+					"message": "Nenhum contato recuperado"
 				};
 				//
 				return returnResult;
@@ -1956,13 +2281,13 @@ module.exports = class Sessions {
 			let returnResult = {
 				"erro": false,
 				"status": 200,
-				"getAllContacts": contacts
+				"getAllContacts": contactsList
 			};
 			//
 			return returnResult;
 			//
 		} catch (erro) {
-			console?.log("Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//
 			let returnResult = {
 				"erro": true,
@@ -1978,21 +2303,164 @@ module.exports = class Sessions {
 	//
 	// ------------------------------------------------------------------------------------------------//
 	//
+	// Recuperar chats
+	static async getAllChats(
+		SessionName
+	) {
+		logger?.info("- Obtendo todos os chats!");
+		logger?.info(`- SessionName: ${SessionName}`);
+		//
+		var session = Sessions.getSession(SessionName);
+		//
+		try {
+			var allchat = [];
+			//
+			if (fs.existsSync(`${tokenPatch}/${SessionName}.store.json`)) {
+				//let result = require(`${tokenPatch}/${SessionName}.store.json`);
+				let result = JSON.parse(fs.readFileSync(`${tokenPatch}/${SessionName}.store.json`, 'utf-8'));
+				//
+				//
+				const resChats = Object.values(result.chats);
+				//
+				/*
+				for (let chat of resChats) {
+					//
+					if (chat?.id.includes('s.whatsapp.net') || chat?.id?.split("@")[1] == 's.whatsapp.net') {
+						allchat.push({
+							"user": chat?.id?.split("@")[0],
+							"name": chat?.notify,
+							"notify": chat?.notify
+						});
+					}
+					//
+				}
+				*/
+				//
+				allchat.push({ "chats": result.chats });
+				//
+			} else {
+				//
+				let returnResult = {
+					"erro": true,
+					"status": 404,
+					"message": "Erro ao recuperar contatos"
+				};
+				//
+				return returnResult;
+				//
+			}
+			//
+			let returnResult = {
+				"erro": false,
+				"status": 200,
+				"getAllChats": allchat
+			};
+			//
+			return returnResult;
+			//
+		} catch (erro) {
+			logger?.error(`- Error when: ${erro}`);
+			//
+			let returnResult = {
+				"erro": true,
+				"status": 404,
+				"message": "Erro ao recuperar chats"
+			};
+			//
+			return returnResult;
+			//
+		};
+		//
+	} //getAllChats
+	//
+	// ------------------------------------------------------------------------------------------------//
+	//
+	// Recuperar mensagem
+	static async getAllMessage(
+		SessionName
+	) {
+		logger?.info("- Obtendo todas as mensagens!");
+		logger?.info(`- SessionName: ${SessionName}`);
+		//
+		var session = Sessions.getSession(SessionName);
+		//
+		try {
+			var allmessages = [];
+			//
+			if (fs.existsSync(`${tokenPatch}/${SessionName}.store.json`)) {
+				//let result = require(`${tokenPatch}/${SessionName}.store.json`);
+				let result = JSON.parse(fs.readFileSync(`${tokenPatch}/${SessionName}.store.json`, 'utf-8'));
+				//
+				const resMessages = Object.values(result.messages);
+				//
+				/*
+				for (let chat of resChats) {
+					//
+					if (chat?.id.includes('s.whatsapp.net') || chat?.id?.split("@")[1] == 's.whatsapp.net') {
+						allmessages.push({
+							"user": chat?.id?.split("@")[0],
+							"name": chat?.notify,
+							"notify": chat?.notify
+						});
+					}
+					//
+				}
+				*/
+				//
+				allmessages.push({ "messages": result.messages });
+				//
+			} else {
+				//
+				let returnResult = {
+					"erro": true,
+					"status": 400,
+					"message": "Erro ao recuperar mensagens"
+				};
+				//
+				return returnResult;
+				//
+			}
+			//
+			let returnResult = {
+				"erro": false,
+				"status": 200,
+				"getAllMessage": allmessages
+			};
+			//
+			return returnResult;
+			//
+		} catch (erro) {
+			logger?.error(`- Error when: ${erro}`);
+			//
+			let returnResult = {
+				"erro": true,
+				"status": 404,
+				"message": "Erro ao recuperar contatos"
+			};
+			//
+			return returnResult;
+			//
+		};
+		//
+	} //getAllMessage
+	//
+	// ------------------------------------------------------------------------------------------------//
+	//
 	// Recuperar grupos
 	static async getAllGroups(
 		SessionName
 	) {
-		console?.log("- Obtendo todos os grupos!");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Obtendo todos os grupos!");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		return await session.client.groupFetchAllParticipating().then(async (result) => {
-			//console?.log('Result:\n', result); //return object success
+			//logger?.info('Result:\n', result); //return object success
 			//
 			var getAllGroups = [];
 			//
 			//const resGroup = JSON.stringify(result, null, 2);
-			//console?.log(JSON.stringify(result));
+			//logger?.info(JSON.stringify(result));
 			const resGroup = Object.values(result);
 			//
 			for (let group of resGroup) {
@@ -2037,7 +2505,7 @@ module.exports = class Sessions {
 			return returnResult;
 			//
 		}).catch((erro) => {
-			console?.log('Error when sending: ', erro); //return object error
+			logger?.info('Error when sending: ', erro);
 			//
 			let returnResult = {
 				"erro": true,
@@ -2058,19 +2526,19 @@ module.exports = class Sessions {
 		SessionName,
 		number
 	) {
-		console?.log("- Validando numero");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Validando numero");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		return await session.client.onWhatsApp(number).then(([result]) => {
-			//console?.log('Result: ', result); //return object success
+			//logger?.info('Result: ', result); //return object success
 			//
 			if (result?.exists == true) {
 				//
 				return {
 					"erro": false,
 					"status": 200,
-					"number": result?.jid?.split("@")[0],
+					"number": result?.jid,
 					"message": "O número informado pode receber mensagens via whatsapp"
 				};
 				//
@@ -2078,7 +2546,7 @@ module.exports = class Sessions {
 				//
 				return {
 					"erro": false,
-					"status": 404,
+					"status": 400,
 					"number": number,
 					"message": "O número informado não pode receber mensagens via whatsapp"
 				};
@@ -2086,11 +2554,11 @@ module.exports = class Sessions {
 			}
 			//
 		}).catch((erro) => {
-			console?.log("Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
 				"erro": true,
-				"status": 200,
+				"status": 404,
 				"number": number,
 				"message": "Erro ao verificar número informado"
 			};
@@ -2105,12 +2573,12 @@ module.exports = class Sessions {
 		SessionName,
 		number
 	) {
-		console?.log("- Obtendo a foto do perfil do servidor!");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Obtendo a foto do perfil do servidor!");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		return await session.client.profilePictureUrl(number, 'image').then(async (result) => {
-			//console?.log('Result: ', result); //return object success
+			//logger?.info('Result: ', result); //return object success
 			//
 			let returnResult = {
 				"erro": false,
@@ -2122,7 +2590,7 @@ module.exports = class Sessions {
 			return returnResult;
 			//
 		}).catch((erro) => {
-			console?.log("- Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
 				"erro": true,
@@ -2147,12 +2615,12 @@ module.exports = class Sessions {
 		SessionName,
 		groupId
 	) {
-		console?.log("- Deixando o grupo");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Deixando o grupo");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		return await session.client.groupLeave(groupId).then(async (result) => {
-			//console?.log('Result: ', result); //return object success
+			//logger?.info('Result: ', result); //return object success
 			//
 			return {
 				"erro": false,
@@ -2161,7 +2629,7 @@ module.exports = class Sessions {
 			};
 			//
 		}).catch((erro) => {
-			console?.log("Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
 				"erro": true,
@@ -2181,12 +2649,12 @@ module.exports = class Sessions {
 		contactlistValid,
 		contactlistInvalid
 	) {
-		console?.log("- Criando grupo");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Criando grupo");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		return await session.client.groupCreate(title, contactlistValid).then(async (result) => {
-			//console?.log('Result: ', result); //return object success
+			//logger?.info('Result: ', result); //return object success
 			//
 			if (result?.id) {
 				return {
@@ -2201,7 +2669,7 @@ module.exports = class Sessions {
 				//
 				return {
 					"erro": true,
-					"status": 404,
+					"status": 400,
 					"groupId": null,
 					"contactlistValid": contactlistValid,
 					"contactlistInvalid": contactlistInvalid,
@@ -2211,11 +2679,11 @@ module.exports = class Sessions {
 			}
 			//
 		}).catch((erro) => {
-			console?.log("Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
 				"erro": true,
-				"status": 400,
+				"status": 404,
 				"groupId": null,
 				"contactlistValid": contactlistValid,
 				"contactlistInvalid": contactlistInvalid,
@@ -2233,12 +2701,12 @@ module.exports = class Sessions {
 		groupId,
 		title
 	) {
-		console?.log("- Atualizando titulo do grupo");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Atualizando titulo do grupo");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		return await session.client.groupUpdateSubject(groupId, title).then(async (result) => {
-			//console?.log('Result: ', result); //return object success
+			//logger?.info('Result: ', result); //return object success
 			//
 			return {
 				"erro": false,
@@ -2247,11 +2715,11 @@ module.exports = class Sessions {
 			};
 			//
 		}).catch((erro) => {
-			console?.log("Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
 				"erro": true,
-				"status": 400,
+				"status": 404,
 				"message": "Erro ao atualizar titulo do grupo"
 			};
 			//
@@ -2266,12 +2734,12 @@ module.exports = class Sessions {
 		groupId,
 		desc
 	) {
-		console?.log("- Atualizando descrição do grupo");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Atualizando descrição do grupo");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		return await session.client.groupUpdateDescription(groupId, desc).then(async (result) => {
-			//console?.log('Result: ', result); //return object success
+			//logger?.info('Result: ', result); //return object success
 			//
 			return {
 				"erro": false,
@@ -2280,11 +2748,11 @@ module.exports = class Sessions {
 			};
 			//
 		}).catch((erro) => {
-			console?.log("Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
 				"erro": true,
-				"status": 400,
+				"status": 404,
 				"message": "Erro ao atualizar descrição do grupo"
 			};
 			//
@@ -2298,12 +2766,12 @@ module.exports = class Sessions {
 		SessionName,
 		groupId
 	) {
-		console?.log("- Obtendo membros do grupo");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Obtendo membros do grupo");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		return await session.client.groupMetadata(groupId).then(async (result) => {
-			//console?.log('Result: ', result); //return object success
+			//logger?.info('Result: ', result); //return object success
 			//
 			var groupMembers = [];
 			//
@@ -2327,7 +2795,7 @@ module.exports = class Sessions {
 			return resultRes;
 			//
 		}).catch((erro) => {
-			console?.log("Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
 				"erro": true,
@@ -2346,12 +2814,12 @@ module.exports = class Sessions {
 		SessionName,
 		groupId
 	) {
-		console?.log("- Gerar link de convite do grupo");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Gerar link de convite do grupo");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		return await session.client.groupInviteCode(groupId).then(async (result) => {
-			//console?.log('Result: ', result); //return object success
+			//logger?.info('Result: ', result); //return object success
 			//
 			return {
 				"erro": false,
@@ -2362,7 +2830,7 @@ module.exports = class Sessions {
 			};
 			//
 		}).catch((erro) => {
-			console?.log("Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
 				"erro": true,
@@ -2382,12 +2850,12 @@ module.exports = class Sessions {
 		SessionName,
 		groupId
 	) {
-		console?.log("- Gerar link de convite do grupo");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Gerar link de convite do grupo");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		return await session.client.groupRevokeInvite(groupId).then(async (result) => {
-			//console?.log('Result: ', result); //return object success
+			//logger?.info('Result: ', result); //return object success
 			//
 			return {
 				"erro": false,
@@ -2398,7 +2866,7 @@ module.exports = class Sessions {
 			};
 			//
 		}).catch((erro) => {
-			console?.log("Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
 				"erro": true,
@@ -2420,8 +2888,8 @@ module.exports = class Sessions {
 		contactlistValid,
 		contactlistInvalid
 	) {
-		console?.log("- Removendo participante(s)");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Removendo participante(s)");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		return await session.client.groupParticipantsUpdate(
@@ -2429,7 +2897,7 @@ module.exports = class Sessions {
 			contactlistValid,
 			"remove"
 		).then(async ([result]) => {
-			//console?.log('Result: ', result); //return object success
+			//logger?.info('Result: ', result); //return object success
 			//
 			if (result?.status == 200) {
 				return {
@@ -2443,7 +2911,7 @@ module.exports = class Sessions {
 				//
 				return {
 					"erro": true,
-					"status": 404,
+					"status": 400,
 					"contactlistValid": contactlistValid,
 					"contactlistInvalid": contactlistInvalid,
 					"message": "Erro ao remover participante(s) da lista valida"
@@ -2452,11 +2920,11 @@ module.exports = class Sessions {
 			}
 			//
 		}).catch((erro) => {
-			console?.log("- Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
 				"erro": true,
-				"status": 400,
+				"status": 404,
 				"contactlistValid": contactlistValid,
 				"contactlistInvalid": contactlistInvalid,
 				"message": "Erro ao remover participante(s)"
@@ -2474,8 +2942,8 @@ module.exports = class Sessions {
 		contactlistValid,
 		contactlistInvalid
 	) {
-		console?.log("- Adicionando participante(s)");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Adicionando participante(s)");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		return await session.client.groupParticipantsUpdate(
@@ -2483,7 +2951,7 @@ module.exports = class Sessions {
 			contactlistValid,
 			"add"
 		).then(async ([result]) => {
-			//console?.log('Result: ', result); //return object success
+			//logger?.info('Result: ', result); //return object success
 			//
 			if (result?.status == 200) {
 				return {
@@ -2497,7 +2965,7 @@ module.exports = class Sessions {
 				//
 				return {
 					"erro": true,
-					"status": 404,
+					"status": 400,
 					"contactlistValid": contactlistValid,
 					"contactlistInvalid": contactlistInvalid,
 					"message": "Erro ao adicionar participante(s) da lista valida"
@@ -2506,11 +2974,11 @@ module.exports = class Sessions {
 			}
 			//
 		}).catch((erro) => {
-			console?.log("- Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
 				"erro": true,
-				"status": 400,
+				"status": 404,
 				"contactlistValid": contactlistValid,
 				"contactlistInvalid": contactlistInvalid,
 				"message": "Erro ao adicionar participante(s)"
@@ -2528,8 +2996,8 @@ module.exports = class Sessions {
 		contactlistValid,
 		contactlistInvalid
 	) {
-		console?.log("- Promovendo participante(s)");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Promovendo participante(s)");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		return await session.client.groupParticipantsUpdate(
@@ -2537,7 +3005,7 @@ module.exports = class Sessions {
 			contactlistValid,
 			"promote"
 		).then(async ([result]) => {
-			//console?.log('Result: ', result); //return object success
+			//logger?.info('Result: ', result); //return object success
 			//
 			if (result?.status == 200) {
 				return {
@@ -2551,7 +3019,7 @@ module.exports = class Sessions {
 				//
 				return {
 					"erro": true,
-					"status": 404,
+					"status": 400,
 					"contactlistValid": contactlistValid,
 					"contactlistInvalid": contactlistInvalid,
 					"message": "Erro ao promover participante(s) da lista valida"
@@ -2560,11 +3028,11 @@ module.exports = class Sessions {
 			}
 			//
 		}).catch((erro) => {
-			console?.log("- Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
 				"erro": true,
-				"status": 400,
+				"status": 404,
 				"contactlistValid": contactlistValid,
 				"contactlistInvalid": contactlistInvalid,
 				"message": "Erro ao promover particitante(s)"
@@ -2583,8 +3051,8 @@ module.exports = class Sessions {
 		contactlistValid,
 		contactlistInvalid
 	) {
-		console?.log("- Promovendo participante(s)");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Promovendo participante(s)");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		return await session.client.groupParticipantsUpdate(
@@ -2592,7 +3060,7 @@ module.exports = class Sessions {
 			contactlistValid,
 			"demote"
 		).then(async ([result]) => {
-			//console?.log('Result: ', result); //return object success
+			//logger?.info('Result: ', result); //return object success
 			//
 			if (result?.status == 200) {
 				return {
@@ -2606,7 +3074,7 @@ module.exports = class Sessions {
 				//
 				return {
 					"erro": true,
-					"status": 404,
+					"status": 400,
 					"contactlistValid": contactlistValid,
 					"contactlistInvalid": contactlistInvalid,
 					"message": "Erro ao depromote participante(s) da lista valida"
@@ -2615,11 +3083,11 @@ module.exports = class Sessions {
 			}
 			//
 		}).catch((erro) => {
-			console?.log("- Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
 				"erro": true,
-				"status": 400,
+				"status": 404,
 				"contactlistValid": contactlistValid,
 				"contactlistInvalid": contactlistInvalid,
 				"message": "Erro ao depromote particitante(s)"
@@ -2635,12 +3103,12 @@ module.exports = class Sessions {
 		SessionName,
 		inviteCode
 	) {
-		console?.log("- Obtendo status do grupo via link de convite");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Obtendo status do grupo via link de convite");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		return await session.client.groupGetInviteInfo(inviteCode).then(async (result) => {
-			//console?.log('Result: ', result); //return object success
+			//logger?.info('Result: ', result); //return object success
 			return {
 				"erro": false,
 				"status": 200,
@@ -2649,7 +3117,7 @@ module.exports = class Sessions {
 			};
 			//
 		}).catch((erro) => {
-			console?.log("Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			return {
 				"erro": true,
 				"status": 404,
@@ -2666,12 +3134,12 @@ module.exports = class Sessions {
 		SessionName,
 		inviteCode
 	) {
-		console?.log("- Join grupo via link de convite");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Join grupo via link de convite");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		return await session.client.groupAcceptInvite(inviteCode).then(async (result) => {
-			//console?.log('Result: ', result); //return object success
+			//logger?.info('Result: ', result); //return object success
 			return {
 				"erro": false,
 				"status": 200,
@@ -2679,7 +3147,7 @@ module.exports = class Sessions {
 			};
 			//
 		}).catch((erro) => {
-			console?.log("Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			return {
 				"erro": true,
 				"status": 404,
@@ -2702,12 +3170,12 @@ module.exports = class Sessions {
 		SessionName,
 		number
 	) {
-		console?.log("- Obtendo status do perfil");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Obtendo status do perfil");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		return await session.client.fetchStatus(number).then(async (result) => {
-			//console?.log('Result: ', result); //return object success
+			//logger?.info('Result: ', result); //return object success
 			//
 			let returnResult = {
 				"erro": false,
@@ -2719,7 +3187,7 @@ module.exports = class Sessions {
 			return returnResult;
 			//
 		}).catch((erro) => {
-			console?.log("- Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
 				"erro": true,
@@ -2738,12 +3206,12 @@ module.exports = class Sessions {
 		SessionName,
 		ProfileStatus
 	) {
-		console?.log("- Mudando o estatus");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Mudando o estatus");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		return await session.client.updateProfileStatus(ProfileStatus).then(async (result) => {
-			//console?.log('Result: ', result); //return object success
+			//logger?.info('Result: ', result); //return object success
 			//
 			return {
 				"erro": false,
@@ -2752,7 +3220,7 @@ module.exports = class Sessions {
 			};
 			//
 		}).catch((erro) => {
-			console?.log("- Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//return erro;
 			return {
 				"erro": true,
@@ -2770,12 +3238,12 @@ module.exports = class Sessions {
 		SessionName,
 		ProfileName
 	) {
-		console?.log("- Mudando profile name");
-		console?.log("- SessionName:", SessionName);
+		logger?.info("- Mudando profile name");
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = Sessions.getSession(SessionName);
 		return await session.client.updateProfileName(ProfileName).then(async (result) => {
-			//console?.log('Result: ', result); //return object success
+			//logger?.info('Result: ', result); //return object success
 			//
 			return {
 				"erro": false,
@@ -2784,7 +3252,7 @@ module.exports = class Sessions {
 			};
 			//
 		}).catch((erro) => {
-			console?.log("Error when:", erro); //return object error
+			logger?.error(`- Error when: ${erro}`);
 			//return erro;
 			return {
 				"erro": true,
@@ -2794,30 +3262,6 @@ module.exports = class Sessions {
 			//
 		});
 	} //setProfileName
-	//
-	// ------------------------------------------------------------------------------------------------//
-	//
-	/*
-	╔╦╗┌─┐┬  ┬┬┌─┐┌─┐  ╔═╗┬ ┬┌┐┌┌─┐┌┬┐┬┌─┐┌┐┌┌─┐
-	 ║║├┤ └┐┌┘││  ├┤   ╠╣ │ │││││   │ ││ ││││└─┐
-	═╩╝└─┘ └┘ ┴└─┘└─┘  ╚  └─┘┘└┘└─┘ ┴ ┴└─┘┘└┘└─┘
-	*/
-	//
-	// ------------------------------------------------------------------------------------------------//
-	//
-
-	//
-	// ------------------------------------------------------------------------------------------------//
-	//
-	/*
-	╔╦╗┌─┐┌─┐┌┬┐┌─┐┌─┐  ┌┬┐┌─┐  ╦═╗┌─┐┌┬┐┌─┐┌─┐
-	 ║ ├┤ └─┐ │ ├┤ └─┐   ││├┤   ╠╦╝│ │ │ ├─┤└─┐
-	 ╩ └─┘└─┘ ┴ └─┘└─┘  ─┴┘└─┘  ╩╚═└─┘ ┴ ┴ ┴└─┘
-	 */
-	//
-	// ------------------------------------------------------------------------------------------------//
-	//
-
 	//
 	// ------------------------------------------------------------------------------------------------//
 	//

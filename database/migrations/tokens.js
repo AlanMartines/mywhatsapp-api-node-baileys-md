@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, DataTypes) => {
-    return queryInterface.createTable('tokens', {
+    return queryInterface.createTable('Tokens', {
       ID: {
         allowNull: false,
         autoIncrement: true,
@@ -12,9 +12,21 @@ module.exports = {
         allowNull: false,
         type: DataTypes.INTEGER.UNSIGNED,
       },
-      sessionname: {
+      token: {
         allowNull: false,
         type: DataTypes.CHAR(255),
+      },
+      sessionToken: {
+        allowNull: true,
+        type: DataTypes.TEXT,
+      },
+      datainicial: {
+        allowNull: false,
+        type: DataTypes.DATE,
+      },
+      datafinal: {
+        allowNull: false,
+        type: DataTypes.DATE,
       },
       active: {
         allowNull: false,
@@ -31,9 +43,26 @@ module.exports = {
         type: DataTypes.CHAR(20),
 				defaultValue: "notLogged",
       },
+      processid: {
+        allowNull: true,
+        type: DataTypes.INTEGER.UNSIGNED,
+      },
       userconnected: {
         allowNull: true,
         type: DataTypes.CHAR(20),
+      },
+      vencimento: {
+        allowNull: true,
+        type: DataTypes.INTEGER.UNSIGNED,
+				defaultValue: "10",
+      },
+      emailcob: {
+        allowNull: true,
+        type: DataTypes.CHAR(100),
+      },
+      webhook: {
+        allowNull: true,
+        type: DataTypes.STRING(255),
       },
       wh_status: {
         allowNull: true,
@@ -50,6 +79,19 @@ module.exports = {
       wh_connect: {
         allowNull: true,
         type: DataTypes.STRING(255),
+      },
+      tptoken: {
+        allowNull: true,
+        type: DataTypes.INTEGER.UNSIGNED,
+				defaultValue: "2",
+      },
+      descricao: {
+        allowNull: true,
+        type: DataTypes.CHAR(20),
+      },
+      valor: {
+        allowNull: true,
+        type: DataTypes.CHAR(20),
       },
       lastactivit: {
         allowNull: true,
@@ -69,6 +111,6 @@ module.exports = {
   },
 
   down: (queryInterface) => {
-    return queryInterface.dropTable('tokens');
+    return queryInterface.dropTable('Tokens');
   }
 };

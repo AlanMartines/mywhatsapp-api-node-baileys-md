@@ -1,21 +1,24 @@
 const fs = require('fs');
 const path = require('path');
 const { Sequelize, DataTypes } = require('sequelize');
-const config = require('../config/database');
+const config = require('../config.global');
+const configDb = require('../config/database');
 const { logger } = require("../utils/logger");
 //
 const db = {};
-const sequelize = new Sequelize(config);
+const sequelize = new Sequelize(configDb);
 //
 const initApp = async () => {
 	await sequelize.authenticate().then(async () => {
-		console.log('- Connection has been established successfully');
+		logger.info(`- Connection has been established successfully`);
 	}).catch(async (error) => {
-		console.log('- Unable to connect to the database: ', error);
+		logger.error(`- Unable to connect to the database: ${error}`);
 	});
 };
 //
-initApp();
+if (parseInt(config.VALIDATE_MYSQL) == true) {
+	initApp();
+}
 //
 fs.readdirSync(__dirname)
 	.filter(file => (file.indexOf('.') !== 0) && (file !== path.basename(__filename)) && (file.slice(-3) === '.js'))

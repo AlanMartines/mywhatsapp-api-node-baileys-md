@@ -6,7 +6,7 @@
 
 Este projeto usa como base o [Baileys](https://github.com/adiwajshing/Baileys "Baileys"), um navegador virtual sem interface gráfica que abre o whatsapp web e executa todos os comandos via código possibilitando assim a automação de todas as funções.
 
-![](https://img.shields.io/github/stars/AlanMartines/mywhatsapp-api-node-baileys-md.svg) ![](https://img.shields.io/github/tag/AlanMartines/mywhatsapp-api-node-baileys-md.svg) ![](https://img.shields.io/github/v/release/AlanMartines/mywhatsapp-api-node-baileys-md.svg) ![](https://img.shields.io/github/issues/AlanMartines/mywhatsapp-api-node-baileys-md.svg) ![](https://img.shields.io/badge/express-v4.17.2-green.svg) ![](https://img.shields.io/badge/node-v14.0-green.svg) ![](https://img.shields.io/badge/npm-v8.3.2-green.svg) ![](https://img.shields.io/github/license/AlanMartines/mywhatsapp-api-node-baileys-md) ![](https://img.shields.io/github/downloads/AlanMartines/mywhatsapp-api-node-baileys-md/total) ![](https://img.shields.io/github/forks/AlanMartines/mywhatsapp-api-node-baileys-md)
+![](https://img.shields.io/github/stars/AlanMartines/connectzap-api-node-baileys-md.svg) ![](https://img.shields.io/github/tag/AlanMartines/connectzap-api-node-baileys-md.svg) ![](https://img.shields.io/github/v/release/AlanMartines/connectzap-api-node-baileys-md.svg) ![](https://img.shields.io/github/issues/AlanMartines/connectzap-api-node-baileys-md.svg) ![](https://img.shields.io/badge/express-v4.17.2-green.svg) ![](https://img.shields.io/badge/node-v14.0-green.svg) ![](https://img.shields.io/badge/npm-v8.3.2-green.svg) ![](https://img.shields.io/github/license/AlanMartines/connectzap-api-node-baileys-md) ![](https://img.shields.io/github/downloads/AlanMartines/connectzap-api-node-baileys-md/total) ![](https://img.shields.io/github/forks/AlanMartines/connectzap-api-node-baileys-md)
 
 ## Nota
 
@@ -118,31 +118,8 @@ apk update && \
 apk upgrade && \
 apk add --update --no-cache dumb-init curl make gcc g++ linux-headers binutils-gold gnupg \
 libstdc++ nss chromium chromium-chromedriver git vim curl yarn nodejs nodejs-npm npm python \
-python3 dpkg wget
-ffmpeg \
-sox
-```
-
-#### Instale o Google Chrome Debian (e.g. Ubuntu) 64bits
-
-```bash
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-
-sudo apt install ./google-chrome-stable_current_amd64.deb
-```
-
-#### Instale o Google Chrome CentOS 7/8 64bits
-
-```bash
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
-
-sudo yum install ./google-chrome-stable_current_*.rpm
-```
-
-#### Instale o Google Chrome Alpine 64bits
-
-```bash
-apk add chromium chromium-chromedriver
+python3 dpkg wget \
+ffmpeg sox
 ```
 
 #### Instale o NodeJs Debian (e.g. Ubuntu)
@@ -251,7 +228,7 @@ mysql_secure_installation
 cd ~
 
 # Clone este repositório
-git clone https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md.git ApiBaileysMd
+git clone https://github.com/AlanMartines/connectzap-api-node-baileys-md.git ApiBaileysMd
 
 # Acesse a pasta do projeto no terminal/cmd
 cd ApiBaileysMd
@@ -303,6 +280,7 @@ chmod -R 777 /usr/local/tokens
 ## Configuração inicial do arquivo ".env-example"
 
 ```sh
+#
 NODE_EN=production
 #
 # Defina o HOST aqui caso voce utilize uma VPS deve ser colocado o IP da VPS
@@ -313,7 +291,7 @@ NODE_EN=production
 HOST=localhost
 #
 # Defina o numero da porta a ser usada pela API.
-PORT=9001
+PORT=9009
 #
 # Redis config => NÃO MEXER NA VARIAVEL REDIS_URL
 REDIS_URL=redis://localhost:6379
@@ -329,7 +307,7 @@ DOMAIN_SSL=
 VIEW_QRCODE_TERMINAL=0
 #
 # Define a pasta para os tokens
-PATCH_TOKENS=
+PATCH_TOKENS=/usr/local/tokens
 #
 # Device name
 DEVICE_NAME='My-Whatsapp'
@@ -345,11 +323,13 @@ WA_VERSION=
 # Auto close
 AUTO_CLOSE=10
 #
-# Chave de segurança para validação no JWT
-SECRET_KEY=09f26e402586e2faa8da4c98a35f1b20d6b033c60
+# Chave de segurança para validação
+SECRET_KEY=096e402586e2faa8db20d6b033c60
 #
 # Validate in terminal false or true
-VALIDATE_MYSQL=0
+VALIDATE_MYSQL=1
+#
+CONCURRENCY=5
 #
 # mysql ou mariabd
 MYSQL_ENGINE=mysql
@@ -364,10 +344,10 @@ MYSQL_HOST=localhost
 MYSQL_PORT=3306
 #
 # Um usuário do banco. Ex: user
-MYSQL_USER=mywhatsappapi
+MYSQL_USER=root
 #
 # A senha do usuário do banco. Ex: user123
-MYSQL_PASSWORD=TuUep8KkjCtAA@
+MYSQL_PASSWORD='aG3JirkjCtAA@'
 #
 # A base de dados a qual a aplicação irá se conectar. Ex: node_mysql
 MYSQL_DATABASE=mywhatsapp-api
@@ -388,47 +368,55 @@ BROWSER_WSENDPOINT=
 MAX_CONCURRENT_SESSIONS=1
 #
 # Set name instace for use ecosystem.config.js
-NAME_INSTANCES=ApiBaileysMdClus
+NAME_INSTANCES=ApiWPPConnectCluster
 #
 # Set count instace for use ecosystem.config.js
-INSTANCES=1
+INSTANCES=max
 #
 # Caso queira que ao iniciar a API todas as sessões salvas sejam inicializadas automaticamente
-START_ALL_SESSIONS=0
+START_ALL_SESSIONS=1
 #
 # Caso queira forçar a reconexão da API em caso de desconexão do WhatsApp defina true
 FORCE_CONNECTION_USE_HERE=0
 #
 # IBM Watson Speech to Text
-SPEECH_TO_TEXT_IAM_APIKEY=X4rbi8vwZmKpXfowaS3GAsA7vdy17Qh7km5D6EzKLHL2
+SPEECH_TO_TEXT_IAM_APIKEY=gwYQBqYIJT4c7uNLFon0Vy5o_lzqEBTA65r
 #
-SPEECH_TO_TEXT_URL=https://api.us-east.speech-to-text.watson.cloud.ibm.com
+SPEECH_TO_TEXT_URL=https://api.us-south.speech-to-text.watson.cloud.ibm.com/instances/c84a5015-ce89-445b-a500
+#
 ```
 
 ## Create MySQL DATABASE/TABLE
 
 ```sql
 -- Copiando estrutura do banco de dados para mywhatsapp-api
-CREATE DATABASE IF NOT EXISTS `mywhatsapp-api`;
+CREATE DATABASE IF NOT EXISTS `mywhatsapp-api` /*!40100 DEFAULT CHARACTER SET utf8mb3 */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `mywhatsapp-api`;
 
 -- Copiando estrutura para tabela mywhatsapp-api.tokens
 CREATE TABLE IF NOT EXISTS `tokens` (
   `ID` int unsigned NOT NULL AUTO_INCREMENT,
   `token` char(255) NOT NULL,
-	`sessionToken` text DEFAULT NULL,
-	`webhook` char(255) DEFAULT NULL,
-  `status` char(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'false',
-  `state` char(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'false',
+  `active` char(5) NOT NULL DEFAULT 'true',
+  `state` char(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT 'DISCONNECTED',
+  `status` char(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT 'notLogged',
+  `webhook` varchar(255) DEFAULT NULL,
+  `wh_status` varchar(255) DEFAULT NULL,
+  `wh_message` varchar(255) DEFAULT NULL,
+  `wh_qrcode` varchar(255) DEFAULT NULL,
+  `wh_connect` varchar(255) DEFAULT NULL,
+  `lastactivit` timestamp NULL DEFAULT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `lastactivit` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb3;
+  `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `ID` (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=908 DEFAULT CHARSET=utf8mb3;
 ```
 
 ## Rotas
 
-> As rota se encontra no arquivo [Insomnia.json](https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md/blob/master/Insomnia.json "Insomnia.json"), importe para seu Insomnia e desfrute da API.
+> As rota se encontra no arquivo [Insomnia.json](https://github.com/AlanMartines/connectzap-api-node-baileys-md/blob/master/Insomnia.json "Insomnia.json"), importe para seu Insomnia e desfrute da API.
+> As rota se encontra no arquivo [Postman.json](https://github.com/AlanMartines/connectzap-api-node-baileys-md/blob/master/Postman.json "Postman.json"), importe para seu Postman e desfrute da API.
 
 #### Json (POST)
 
@@ -535,7 +523,7 @@ mkdir /usr/local/tokens
 chmod -R 777 /usr/local/tokens
 
 # Clone este repositório
-git clone https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md.git ApiBaileysMd
+git clone https://github.com/AlanMartines/connectzap-api-node-baileys-md.git ApiBaileysMd
 
 # Acesse a pasta do projeto no terminal/cmd
 cd ApiBaileysMd
@@ -547,7 +535,7 @@ npm install --allow-root --unsafe-perm=true
 cp .env-example .env
 
 # Criar um contêiner
-docker-compose -f docker-compose.yml up --build -d
+docker compose -f docker-compose.yml up --build -d
 ```
 
 ## Dockerfile
@@ -563,7 +551,7 @@ mkdir /usr/local/tokens
 chmod -R 777 /usr/local/tokens
 
 # Clone este repositório
-git clone https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md.git ApiBaileysMd
+git clone https://github.com/AlanMartines/connectzap-api-node-baileys-md.git ApiBaileysMd
 
 # Acesse a pasta do projeto no terminal/cmd
 cd ApiBaileysMd
@@ -575,7 +563,7 @@ npm install --allow-root --unsafe-perm=true
 cp .env-example .env
 
 # Processando o arquivo Dockerfile
-docker build -t alanmartines/mywhatsapp-api-node-baileys-md:1.0.0 -f Dockerfile.backend .
+docker build -t alanmartines/connectzap-api-node-baileys-md:1.0.0 -f Dockerfile.backend .
 
 # Criar contêiner
 docker run -d -p 9001:9001 --name ApiWPPconnect \
@@ -603,7 +591,7 @@ docker run -d -p 9001:9001 --name ApiWPPconnect \
 	-e BROWSER_WSENDPOINT= \
 	-e START_ALL_SESSIONS=0 \
 	-e FORCE_CONNECTION_USE_HERE=0 \
-  alanmartines/mywhatsapp-api-node-baileys-md:1.0.0
+  alanmartines/connectzap-api-node-baileys-md:1.0.0
 ```
 
 ## Instalar o certbot Debian (e.g. Ubuntu) 64bits

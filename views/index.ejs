@@ -75,9 +75,8 @@
 					<div class="row justify-content-center align-items-center">
 
 						<div class="col-md-6 text-center mx-auto">
-
 							<div class="form-group col-md-12">
-								<label for="AuthorizationToken" class="col-form-label">Authorization Token/Secret Key</label>
+								<label for="AuthorizationToken" class="col-form-label">Authorization Token</label>
 								<span class="r">*</span>
 								<div class="input-group">
 									<div class="input-group-append">
@@ -107,25 +106,22 @@
 							</div>
 
 							<div class="form-group col-md-12">
-								<label for="whatsappVersion" class="col-form-label">Whatsapp Version</label>
+								<label for="whatsappVersion" class="col-form-label">Staus On Connect</label>
 								<div class="input-group">
 									<div class="input-group-append">
 										<span class="input-group-text">
-											<i class="fas fa-code-branch"></i>
+											<i class="fas fa-globe"></i>
 										</span>
 									</div>
-									<input type="text" class="rounded form-control" id="whatsappVersion" name="whatsappVersion"
-										placeholder="Whatsapp Version Ex.: 2.2204.13" />
+									<select class="custom-select" id="setOnline" name="setOnline">
+										<option selected value="">--- Escolha ----</option>
+										<option value="1">Online</option>
+										<option value="0">Off-line</option>
+									</select>
 								</div>
 								<span class="help-block r" id="error"></span>
 							</div>
 
-							<div class="form-group col-md-12">
-								<div class="input-group">
-									<input type="hidden" class="rounded form-control" id="ApiKey" name="ApiKey"/>
-								</div>
-								<span class="help-block r" id="error"></span>
-							</div>
 						</div>
 
 						<div class="col-md-6 text-center mx-auto">
@@ -197,7 +193,10 @@
 										<i>Campos de preenchimento obrigat&oacute;rio</i>
 									</span>
 									</p>
+									<div name="wa_status" id="wa_status" class="btn btn-success">Status</div>
 									<button type="submit" name="send_form" id="send_form" class="btn btn-primary">Iniciar</button>
+									<div name="wa_close" id="wa_close" class="btn btn-warning">Close</div>
+									<div name="wa_logout" id="wa_logout" class="btn btn-danger">Logout</div>
 								</div>
 							</div>
 						</div>
@@ -239,6 +238,7 @@
 	<!--- --------------------------------------------------------------------------------------------------------------------------- --->
 	<!-- Primeiro o jQuery, depois o Popper.js, e depois o Bootstrap JS -->
 	<script type="text/javascript" src="/jquery/jquery-3.5.1.js"></script>
+	<script type="text/javascript" src="/jquery/jquery.serializejson.min.js"></script>
 	<script type="text/javascript" src="/popper/popper.min.js"></script>
 	<script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
 	<!-- Inclusão do Plugin jQuery Validation-->
@@ -255,48 +255,91 @@
 	<script type="text/javascript" src="/page/js/start.js"></script>
 	<script type="text/javascript">
 		//
+		//---------------------------------------------------------------------------------------------------------------------------------------------------//
+		//
+		//
 		let url;
 		let host = '<%=host %>';
 		let host_ssl = '<%=host_ssl %>';
 		let port = '<%=port %>';
 		url = host_ssl == '' ? `http://${host}:${port}` : `https://${host_ssl}`;
-		let secret_key = '<%=secret_key %>';
 		let validate_mysql = '<%=validate_mysql %>';
 		let d = new Date();
 		let year = d.getFullYear();
 		$("#year").text(year);
 		//
-		$(document).ready(function () {
+		//---------------------------------------------------------------------------------------------------------------------------------------------------//
+		//
+		//
+		$('document').ready(function () {
 			//
-			$('#ApiKey').val(secret_key);
-			//
-			if(validate_mysql == true){
+			if (validate_mysql == true) {
 				$('#SessionName').prop('readonly', true);
 			}
 			//
-    $('#AuthorizationToken').keyup(function() {   
-			if(validate_mysql == true){
-        let inputValue = $('#AuthorizationToken').val();
-				$('#SessionName').val(inputValue);
-			}
-    });
+			$('#AuthorizationToken').keyup(function () {
+				if (validate_mysql == true) {
+					let inputValue = $('#AuthorizationToken').val();
+					$('#SessionName').val(inputValue);
+				}
+			});
 			//
-			const socket = io(url + '/', { transports: ['websocket'] });
+			//
+			//---------------------------------------------------------------------------------------------------------------------------------------------------//
+			//
+			//
+			const socket = io(`${url}/`, { transports: ['websocket'] });
 			//
 			$("#description").html("Sistema não iniciado");
 			//
-			jQuery.validator.addMethod("apikey", function(value, element){
-					if(validate_mysql != true){
-					let apikeyValue = $('#ApiKey').val();
-					if (apikeyValue != secret_key) {
-							return false;
-					} else {
-							return true;
+			socket.on('qrCode', (qrCode) => {
+				let SessionName = $('#SessionName').val();
+				if (SessionName === qrCode.SessionName) {
+					$("#description").html("Por favor, efetue a leitura do qr code informado, tentativa " + qrCode.attempts);
+					$('#imageQrcode').attr("src", qrCode.data);
+				}
+			});
+			//
+			socket.on('status', (update) => {
+				let SessionName = $('#SessionName').val();
+				//
+				if (SessionName == update.SessionName) {
+					if (update.status == 'isLogged' || update.status == 'qrReadSuccess' || update.status == 'chatsAvailable' || update.status == 'inChat') {
+						//
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-on.png');
+						$("#description").html("Sistema iniciado com sucesso.");
+						//
+					} else if (update.status == 'qrReadError') {
+						//
+						$('#imageQrcode').attr("src", '/imagens/body/error.png');
+						$("#description").html("Erro ao efetuar leitura do qr code ou não lido.");
+						//
+					} else if (update.status == 'autocloseCalled' || update.status == 'browserClose') {
+						//
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-close.png');
+						$("#description").html("Erro ao efetuar leitura do qr code, navegador fechado.");
+						//
+					} else if (update.status == 'desconnectedMobile') {
+						//
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-off.png');
+						$("#description").html("Dispositivo desconectado.");
+						//
+					} else if (update.status == 'notLogged') {
+						//
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-close.png');
+						$("#description").html("Dispositivo desconectado.");
+						//
 					}
-					}else{
-							return true;
-					}
-			}, "Por favor, Informe uma apikey valida.");
+				}
+				//
+			});
+			//
+			//---------------------------------------------------------------------------------------------------------------------------------------------------//
+			//
+			//
+			jQuery.validator.addMethod("noSpace", function (value, element) {
+				return value.indexOf(" ") < 0 && value != "";
+			}, "Espaço não é permitido");
 			//
 			$("#start-form").validate({
 				rules: {
@@ -304,28 +347,24 @@
 						required: true
 					},
 					SessionName: {
+						required: true,
+						noSpace: true
+					},
+					setOnline: {
 						required: true
-					},
-					whatsappVersion: {
-						required: false
-					},
-        	ApiKey: {
-            apikey: true
-        }
+					}
 				},
 				messages: {
 					AuthorizationToken: {
 						required: "Por favor, Informe seu token."
 					},
 					SessionName: {
-						required: "Por favor, Informe o nome da sessão."
+						required: "Por favor, Informe o nome da sessão.",
+						noSpace: "Espaço não é permitido"
 					},
-					whatsappVersion: {
-						required: "Por favor, Informe uma versão."
-					},
-        	ApiKey: {
-            apikey: "Por favor, Informe uma setret key valida."
-        }
+					setOnline: {
+						required: "Por favor, Informe uma opção."
+					}
 				},
 				errorPlacement: function (error, element) {
 					$(element).closest('.form-group').find('.help-block').html(error.html());
@@ -341,115 +380,321 @@
 				},
 				submitHandler: function () {
 					event.preventDefault();
-					let data = $("#start-form").serialize();
-					/*
-					let formData = $("#start-form").serializeObject();
-					console.log(formData);
-					console.log(data);
-					try {
-					axios.post(`${url}/sistema/Start`, {
-						firstName: 'Fred',
-						lastName: 'Flintstone'
-					})
-						.then(function (response) {
-							console.log(response);
-						})
-						.catch(function (error) {
-							console.log(error);
-						});
-						} catch (error) {
-							// handle error
-						}
-					*/
 					//
-					$.ajax({
-						type: 'POST',
-						url: url + '/sistema/Start',
-						data: data,
-						dataType: 'json',
-						beforeSend: function () {
-							$("#send_form").html('<i class="fas fa-spinner fa-spin"></i> Iniciando ...');
-							$('#imageQrcode').attr("src", '/imagens/body/loading.gif');
+					//let data = $("#start-form").serialize();
+					let jsonData = JSON.stringify($("#start-form").serializeJSON(), null, 2);
+					//
+					axios.post(`${url}/sistema/Start`, jsonData, {
+						headers: {
+							// Overwrite Axios's automatically set Content-Type
+							'Content-Type': 'application/json'
+						}
+					}).then(function (response) {
+						console.log(response.data);
+						let Status = response.data.Status;
+						if (Status.state == 'CONNECTED') {
+							$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-on.png');
+							$("#description").html("Sistema iniciado com sucesso.");
+
+							window.scrollTo(0, 0);
+						} else if (Status.state == 'DISCONNECTED') {
+							$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-off.png');
+							$("#description").html("Sistema desconectado");
+
+							window.scrollTo(0, 0);
+						} else if (Status.state == 'STARTING') {
+							$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-start.png');
 							$("#description").html("Por favor aguarde, sistema iniciando.");
-						},
-						success: function (response) {
-							console.log(response);
-							$("#send_form").html('Iniciar');
-							if (response.state == 'CONNECTED') {
-								$('#imageQrcode').attr("src", '/imagens/body/ok.png');
-								$("#description").html("Sistema iniciado com sucesso.");
 
-								window.scrollTo(0, 0);
-							} else if (response.state == 'DISCONNECTED') {
-								$('#imageQrcode').attr("src", '/imagens/body/error.png');
-								$("#description").html("Sistema desconectado");
+							window.scrollTo(0, 0);
+						} else if (Status.state == 'QRCODE') {
+							$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-qrcode.png');
+							$("#description").html("Sistema aguardando leitura do QR-Code");
 
-								window.scrollTo(0, 0);
-							} else if (response.state == 'STARTING') {
-								$('#imageQrcode').attr("src", '/imagens/body/loading.gif');
-								$("#description").html("Por favor aguarde, sistema iniciando.");
+							window.scrollTo(0, 0);
+						} else if (Status.state == 'CLOSE') {
+							$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-close.png');
+							$("#description").html("Navegador interno fechado");
 
-								window.scrollTo(0, 0);
-							}
-						},
-						error: function (XMLHttpRequest, textStatus, errorThrown) {
-							$("#send_form").html('Iniciar');
+							window.scrollTo(0, 0);
+						} else if (Status.state == 'NOTFOUND') {
 							$('#imageQrcode').attr("src", '/imagens/body/error.png');
-							$("#description").html("Sistema não iniciado");
+							$("#description").html("Sistema Off-line");
 
 							window.scrollTo(0, 0);
 						}
-					}).fail(function (jqXHR, textStatus, error) {
-						$("#send_form").html('Iniciar');
-						$('#imageQrcode').attr("src", '/imagens/body/error.png');
-						$("#description").html("Sistema não iniciado");
+					}).catch(function (error) {
+					console.log(error.response.status);
+					let Status = error.response.data.Status;
+					if (Status.status == 422) {
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-on.png');
+						$("#description").html(Status.message);
 
 						window.scrollTo(0, 0);
-					});
-				}
-			});
-			//
-			socket.on('qrCode', (qrCode) => {
-				let SessionName = $('#SessionName').val();
-				if (SessionName === qrCode.SessionName) {
-					$("#description").html("Por favor, efetue a leitura do qr code informado, tentativa " + qrCode.attempts);
-					$('#imageQrcode').attr("src", qrCode.data);
-				}
-			});
-			//
-			socket.on('status', (update) => {
-				let SessionName = $('#SessionName').val();
-				//
-				console.log(update);
-				//
-				if (SessionName == update.SessionName) {
-					if (update.status == 'isLogged' || update.status == 'qrReadSuccess' || update.status == 'chatsAvailable' || update.status == 'inChat') {
-						//
-						$('#imageQrcode').attr("src", '/imagens/body/ok.png');
-						$("#description").html("Sistema iniciado com sucesso.");
-						//
-					} else if (update.status == 'qrReadError') {
-						//
-						$('#imageQrcode').attr("src", '/imagens/body/error.png');
-						$("#description").html("Erro ao efetuar leitura do qr code ou não lido.");
-						//
-					} else if (update.status == 'autocloseCalled' || update.status == 'browserClose') {
-						//
-						$('#imageQrcode').attr("src", '/imagens/body/error.png');
-						$("#description").html("Erro ao efetuar leitura do qr code, navegador fechado.");
-						//
-					} else if (update.status == 'desconnectedMobile') {
-						//
-						$('#imageQrcode').attr("src", '/imagens/body/error.png');
-						$("#description").html("Dispositivo desconectado.");
-						//
-					} else if (update.status == 'notLogged') {
-						//
-						$('#imageQrcode').attr("src", '/imagens/body/error.png');
-						$("#description").html("Dispositivo desconectado.");
-						//
+					} else if (Status.status == 401) {
+						$('#imageQrcode').attr("src", '/imagens/body/impressao-digital.png');
+						$("#description").html(Status.message);
+
+						window.scrollTo(0, 0);
+					} else if (Status.status == 408) {
+						$('#imageQrcode').attr("src", '/imagens/body/impressao-digital.png');
+						$("#description").html(Status.message);
+
+						window.scrollTo(0, 0);
+					} else if (Status.status == 404) {
+						$('#imageQrcode').attr("src", '/imagens/body/not-found.png');
+						$("#description").html(Status.message);
+
+						window.scrollTo(0, 0);
+					} else if (Status.status == 400) {
+						$('#imageQrcode').attr("src", '/imagens/body/not-found.png');
+						$("#description").html(Status.message);
+
+						window.scrollTo(0, 0);
+					} else {
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-travado.png');
+						$("#description").html("Não foi possivel verificar o status");
 					}
+				});
+				//
 				}
+			});
+			//
+			//---------------------------------------------------------------------------------------------------------------------------------------------------//
+			//
+			//
+			$("#wa_status").on("click", function () {
+				event.preventDefault();
+				//let data = $("#start-form").serialize();
+				let jsonData = JSON.stringify($("#start-form").serializeJSON(), null, 2);
+				//
+				axios.post(`${url}/sistema/Status`, jsonData, {
+					headers: {
+						// Overwrite Axios's automatically set Content-Type
+						'Content-Type': 'application/json'
+					}
+				}).then(function (response) {
+					console.log(response.data);
+					let Status = response.data.Status;
+					if (Status.state == 'CONNECTED') {
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-on.png');
+						$("#description").html("Sistema iniciado com sucesso.");
+
+						window.scrollTo(0, 0);
+					} else if (Status.state == 'DISCONNECTED') {
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-off.png');
+						$("#description").html("Sistema desconectado");
+
+						window.scrollTo(0, 0);
+					} else if (Status.state == 'STARTING') {
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-start.png');
+						$("#description").html("Por favor aguarde, sistema iniciando.");
+
+						window.scrollTo(0, 0);
+					} else if (Status.state == 'QRCODE') {
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-qrcode.png');
+						$("#description").html("Sistema aguardando leitura do QR-Code");
+
+						window.scrollTo(0, 0);
+					} else if (Status.state == 'CLOSE') {
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-close.png');
+						$("#description").html("Navegador interno fechado");
+
+						window.scrollTo(0, 0);
+					} else if (Status.state == 'NOTFOUND') {
+						$('#imageQrcode').attr("src", '/imagens/body/error.png');
+						$("#description").html("Sistema Off-line");
+
+						window.scrollTo(0, 0);
+					}
+				}).catch(function (error) {
+					console.log(error.response.status);
+					let Status = error.response.data.Status;
+					if (Status.status == 422) {
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-on.png');
+						$("#description").html(Status.message);
+
+						window.scrollTo(0, 0);
+					} else if (Status.status == 401) {
+						$('#imageQrcode').attr("src", '/imagens/body/impressao-digital.png');
+						$("#description").html(Status.message);
+
+						window.scrollTo(0, 0);
+					} else if (Status.status == 408) {
+						$('#imageQrcode').attr("src", '/imagens/body/impressao-digital.png');
+						$("#description").html(Status.message);
+
+						window.scrollTo(0, 0);
+					} else if (Status.status == 404) {
+						$('#imageQrcode').attr("src", '/imagens/body/not-found.png');
+						$("#description").html(Status.message);
+
+						window.scrollTo(0, 0);
+					} else if (Status.status == 400) {
+						$('#imageQrcode').attr("src", '/imagens/body/not-found.png');
+						$("#description").html(Status.message);
+
+						window.scrollTo(0, 0);
+					} else {
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-travado.png');
+						$("#description").html("Não foi possivel verificar o status");
+					}
+				});
+				//
+			});
+			//
+			$("#wa_close").on("click", function () {
+				event.preventDefault();
+				//
+				let jsonData = JSON.stringify($("#start-form").serializeJSON(), null, 2);
+				//
+				axios.post(`${url}/sistema/Close`, jsonData, {
+					headers: {
+						// Overwrite Axios's automatically set Content-Type
+						'Content-Type': 'application/json'
+					}
+				}).then(function (response) {
+					console.log(response.data);
+					let Status = response.data.Status;
+					if (Status.state == 'DISCONNECTED') {
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-off.png');
+						$("#description").html("Sistema desconectado");
+
+						window.scrollTo(0, 0);
+					} else if (Status.state == 'STARTING') {
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-start.png');
+						$("#description").html("Por favor aguarde, sistema iniciando.");
+
+						window.scrollTo(0, 0);
+					} else if (Status.state == 'QRCODE') {
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-qrcode.png');
+						$("#description").html("Sistema aguardando leitura do QR-Code");
+
+						window.scrollTo(0, 0);
+					} else if (Status.state == 'NOTFOUND') {
+						$('#imageQrcode').attr("src", '/imagens/body/error.png');
+						$("#description").html("Sistema Off-line");
+
+						window.scrollTo(0, 0);
+					} else if (Status.status == 200) {
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-close.png');
+						$("#description").html(Status.message);
+
+						window.scrollTo(0, 0);
+					}
+				}).catch(function (error) {
+					console.log(error.response.status);
+					let Status = error.response.data.Status;
+					if (Status.status == 422) {
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-on.png');
+						$("#description").html(Status.message);
+
+						window.scrollTo(0, 0);
+					} else if (Status.status == 401) {
+						$('#imageQrcode').attr("src", '/imagens/body/impressao-digital.png');
+						$("#description").html(Status.message);
+
+						window.scrollTo(0, 0);
+					} else if (Status.status == 408) {
+						$('#imageQrcode').attr("src", '/imagens/body/impressao-digital.png');
+						$("#description").html(Status.message);
+
+						window.scrollTo(0, 0);
+					} else if (Status.status == 404) {
+						$('#imageQrcode').attr("src", '/imagens/body/not-found.png');
+						$("#description").html(Status.message);
+
+						window.scrollTo(0, 0);
+					} else if (Status.status == 400) {
+						$('#imageQrcode').attr("src", '/imagens/body/not-found.png');
+						$("#description").html(Status.message);
+
+						window.scrollTo(0, 0);
+					} else {
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-travado.png');
+						$("#description").html("Não foi possivel fechar a sessão");
+					}
+				});
+				//
+			});
+			//
+			$("#wa_logout").on("click", function () {
+				event.preventDefault();
+				//let data = $("#start-form").serialize();
+				let jsonData = JSON.stringify($("#start-form").serializeJSON(), null, 2);
+				//
+				axios.post(`${url}/sistema/Logout`, jsonData, {
+					headers: {
+						// Overwrite Axios's automatically set Content-Type
+						'Content-Type': 'application/json'
+					}
+				}).then(function (response) {
+					console.log(response.data);
+					let Status = response.data.Status;
+					if (Status.state == 'CONNECTED') {
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-on.png');
+						$("#description").html("Sistema iniciado com sucesso.");
+
+						window.scrollTo(0, 0);
+					} else if (Status.state == 'DISCONNECTED') {
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-off.png');
+						$("#description").html("Sistema desconectado");
+
+						window.scrollTo(0, 0);
+					} else if (Status.state == 'STARTING') {
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-start.png');
+						$("#description").html("Por favor aguarde, sistema iniciando.");
+
+						window.scrollTo(0, 0);
+					} else if (Status.state == 'QRCODE') {
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-qrcode.png');
+						$("#description").html("Sistema aguardando leitura do QR-Code");
+
+						window.scrollTo(0, 0);
+					} else if (Status.state == 'CLOSE') {
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-close.png');
+						$("#description").html("Navegador interno fechado");
+
+						window.scrollTo(0, 0);
+					} else if (Status.state == 'NOTFOUND') {
+						$('#imageQrcode').attr("src", '/imagens/body/error.png');
+						$("#description").html("Sistema Off-line");
+
+						window.scrollTo(0, 0);
+					}
+				}).catch(function (error) {
+					console.log(error.response.status);
+					let Status = error.response.data.Status;
+					if (Status.status == 422) {
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-on.png');
+						$("#description").html(Status.message);
+
+						window.scrollTo(0, 0);
+					} else if (Status.status == 401) {
+						$('#imageQrcode').attr("src", '/imagens/body/impressao-digital.png');
+						$("#description").html(Status.message);
+
+						window.scrollTo(0, 0);
+					} else if (Status.status == 408) {
+						$('#imageQrcode').attr("src", '/imagens/body/impressao-digital.png');
+						$("#description").html(Status.message);
+
+						window.scrollTo(0, 0);
+					} else if (Status.status == 404) {
+						$('#imageQrcode').attr("src", '/imagens/body/not-found.png');
+						$("#description").html(Status.message);
+
+						window.scrollTo(0, 0);
+					} else if (Status.status == 400) {
+						$('#imageQrcode').attr("src", '/imagens/body/not-found.png');
+						$("#description").html(Status.message);
+
+						window.scrollTo(0, 0);
+					} else {
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-travado.png');
+						$("#description").html("Não foi possivel encerrar a sessão");
+					}
+				});
 				//
 			});
 		});
