@@ -18,28 +18,38 @@ function removeWithspace(string) {
 //
 exports.verify = async (req, res, next) => {
 	//
+	let theTokenAuth;
+	let theSessionName;
+	//
+	if (!req?.body?.AuthorizationToken) {
+		res.setHeader('Content-Type', 'application/json');
+		res.status(422).json({
+			"Status": {
+				"erro": true,
+				"status": 422,
+				"message": "Token não informado, verifique e tente novamente"
+			}
+		});
+	} else {
+		theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+	}
+	//
+	if (!req?.body?.SessionName) {
+		res.setHeader('Content-Type', 'application/json');
+		res.status(422).json({
+			"Status": {
+				"erro": true,
+				"status": 422,
+				"message": "SessionName não informado, verifique e tente novamente"
+			}
+		});
+	} else {
+		theSessionName = removeWithspace(req?.body?.SessionName)
+	}
+	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
 		try {
-			//
-			if (!theTokenAuth) {
-				//	logger?.info("- SessionName:", theTokenAuth);
-				//} else {
-				res.setHeader('Content-Type', 'application/json');
-				res.status(422).json({
-					"Status": {
-						"erro": true,
-						"status": 422,
-						"message": "Token não informado, verifique e tente novamente"
-					}
-				});
-			}
 			//
 			const row = await Tokens.findOne({
 				limit: 1,
@@ -108,36 +118,6 @@ exports.verify = async (req, res, next) => {
 		}
 	} else {
 		//
-		if (req?.body?.AuthorizationToken) {
-			var theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-		} else {
-			var theTokenAuth = removeWithspace(req?.body?.SessionName)
-		}
-		//
-		var theSessionName = removeWithspace(req?.body?.SessionName)
-		//
-		if (!theTokenAuth) {
-			res.setHeader('Content-Type', 'application/json');
-			res.status(422).json({
-				"Status": {
-					"erro": true,
-					"status": 422,
-					"message": "Token não informado, verifique e tente novamente"
-				}
-			});
-		}
-		//
-		if (!theSessionName) {
-			res.setHeader('Content-Type', 'application/json');
-			res.status(422).json({
-				"Status": {
-					"erro": true,
-					"status": 422,
-					"message": "SessionName não informado, verifique e tente novamente"
-				}
-			});
-		}
-		//
 		if (config.SECRET_KEY != theTokenAuth) {
 			res.setHeader('Content-Type', 'application/json');
 			return res.status(408).json({
@@ -148,6 +128,7 @@ exports.verify = async (req, res, next) => {
 				}
 			});
 		}
+		//
 		next();
 	}
 }
