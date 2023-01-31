@@ -824,10 +824,10 @@ module.exports = class Sessions {
 								//
 								attempts = 1;
 								//
-								await deletaToken(`${tokenPatch}`, `${SessionName}.data.json/app-*.json`);
-								await deletaToken(`${tokenPatch}`, `${SessionName}.data.json/pre-*.json`);
-								await deletaToken(`${tokenPatch}`, `${SessionName}.data.json/sender-*.json`);
-								await deletaToken(`${tokenPatch}`, `${SessionName}.data.json/session-*.json`);
+								await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `app-*.json`);
+								await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `pre-*.json`);
+								await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `sender-*.json`);
+								await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `session-*.json`);
 								//
 							} else if (connection === 'close') {
 								//
@@ -863,6 +863,7 @@ module.exports = class Sessions {
 										await deletaToken(`${tokenPatch}`, `${SessionName}.data.json`);
 										await deletaToken(`${tokenPatch}`, `${SessionName}.store.json`);
 										await deletaToken(`${tokenPatch}`, `${SessionName}.startup.json`);
+										await deletaToken(`${tokenPatch}`, `${SessionName}.contacts.json`);
 										//
 										await updateStateDb(session.state, session.status, session.AuthorizationToken);
 										//
@@ -976,6 +977,7 @@ module.exports = class Sessions {
 										await deletaToken(`${tokenPatch}`, `${SessionName}.data.json`);
 										await deletaToken(`${tokenPatch}`, `${SessionName}.store.json`);
 										await deletaToken(`${tokenPatch}`, `${SessionName}.startup.json`);
+										await deletaToken(`${tokenPatch}`, `${SessionName}.contacts.json`);
 										//
 										await updateStateDb(session.state, session.status, session.AuthorizationToken);
 										//
@@ -1016,6 +1018,7 @@ module.exports = class Sessions {
 										await deletaToken(`${tokenPatch}`, `${SessionName}.data.json`);
 										await deletaToken(`${tokenPatch}`, `${SessionName}.store.json`);
 										await deletaToken(`${tokenPatch}`, `${SessionName}.startup.json`);
+										await deletaToken(`${tokenPatch}`, `${SessionName}.contacts.json`);
 										//
 										await updateStateDb(session.state, session.status, session.AuthorizationToken);
 										//
