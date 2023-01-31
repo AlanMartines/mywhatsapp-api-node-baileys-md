@@ -2196,11 +2196,14 @@ module.exports = class Sessions {
 				//
 				resContacts.forEach((contact) => {
 					//
-					if (contact?.id.includes('s.whatsapp.net') || contact?.id?.split("@")[1] == 's.whatsapp.net') {
+					if (contact?.id?.includes('s.whatsapp.net') || contact?.id?.split("@")[1] == 's.whatsapp.net') {
 						contactsList.push({
 							"user": contact?.id?.split("@")[0],
 							"name": contact?.name || null,
-							"notify": contact?.notify || null
+							"notify": contact?.notify || null,
+							"verifiedName": contact?.verifiedName || null,
+							"imgUrl": contact?.imgUrl || null,
+							"status": contact?.status || null
 						});
 					}
 					//
@@ -2225,11 +2228,14 @@ module.exports = class Sessions {
 				//
 				resContacts.forEach((contact) => {
 					//
-					if (contact?.id.includes('s.whatsapp.net') || contact?.id?.split("@")[1] == 's.whatsapp.net') {
+					if (contact?.id?.includes('s.whatsapp.net') || contact?.id?.split("@")[1] == 's.whatsapp.net') {
 						contactsList.push({
 							"user": contact?.id?.split("@")[0],
 							"name": contact?.name || null,
-							"notify": contact?.notify || null
+							"notify": contact?.notify || null,
+							"verifiedName": contact?.verifiedName || null,
+							"imgUrl": contact?.imgUrl || null,
+							"status": contact?.status || null
 						});
 					}
 					//
