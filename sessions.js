@@ -851,10 +851,10 @@ module.exports = class Sessions {
 										//
 										// close WebSocket connection
 										await client.ws.close();
-										// remove all events
-										await client.ev.removeAllListeners();
 										// End WebSocket connection
 										await client.ws.end();
+										// remove all events
+										await client.ev.removeAllListeners();
 										//
 										session.client = false;
 										session.state = "DISCONNECTED";
