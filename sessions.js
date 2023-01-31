@@ -853,6 +853,8 @@ module.exports = class Sessions {
 										await client.ws.close();
 										// remove all events
 										await client.ev.removeAllListeners();
+										// End WebSocket connection
+										await client.ws.end();
 										//
 										session.client = false;
 										session.state = "DISCONNECTED";
