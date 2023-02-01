@@ -752,10 +752,26 @@ module.exports = class Sessions {
 								//
 								if (attempts >= 5) {
 									//
-									// close WebSocket connection
-									client.ws.close();
-									// remove all events
-									client.ev.removeAllListeners();
+									try {
+										// close WebSocket connection
+										await client.ws.close();
+									} catch (erro) {
+										logger?.error(`- Error close: ${erro}`);
+									}
+									//
+									try {
+										// End WebSocket connection
+										//await client.ws.end();
+									} catch (erro) {
+										logger?.error(`- Error end: ${erro}`);
+									}
+									//
+									try {
+										// remove all events
+										await client.ev.removeAllListeners();
+									} catch (erro) {
+										logger?.error(`- Error removeAllListeners: ${erro}`);
+									}
 									//
 									attempts = 1;
 									//
@@ -865,12 +881,26 @@ module.exports = class Sessions {
 										logger?.info(`- SessionName: ${SessionName}`);
 										logger?.info('- Connection loggedOut'.red);
 										//
-										// close WebSocket connection
-										await client.ws.close();
-										// End WebSocket connection
-										//await client.ws.end();
-										// remove all events
-										await client.ev.removeAllListeners();
+										try {
+											// close WebSocket connection
+											await client.ws.close();
+										} catch (erro) {
+											logger?.error(`- Error close: ${erro}`);
+										}
+										//
+										try {
+											// End WebSocket connection
+											//await client.ws.end();
+										} catch (erro) {
+											logger?.error(`- Error end: ${erro}`);
+										}
+										//
+										try {
+											// remove all events
+											await client.ev.removeAllListeners();
+										} catch (erro) {
+											logger?.error(`- Error removeAllListeners: ${erro}`);
+										}
 										//
 										session.client = false;
 										session.state = "DISCONNECTED";
@@ -981,10 +1011,26 @@ module.exports = class Sessions {
 										logger?.info(`- SessionName: ${SessionName}`);
 										logger?.info(`- Connection connectionReplaced`.yellow);
 										//
-										// close WebSocket connection
-										await client.ws.close();
-										// remove all events
-										await client.ev.removeAllListeners();
+										try {
+											// close WebSocket connection
+											await client.ws.close();
+										} catch (erro) {
+											logger?.error(`- Error close: ${erro}`);
+										}
+										//
+										try {
+											// End WebSocket connection
+											//await client.ws.end();
+										} catch (erro) {
+											logger?.error(`- Error end: ${erro}`);
+										}
+										//
+										try {
+											// remove all events
+											await client.ev.removeAllListeners();
+										} catch (erro) {
+											logger?.error(`- Error removeAllListeners: ${erro}`);
+										}
 										//
 										session.client = false;
 										session.state = "DISCONNECTED";
