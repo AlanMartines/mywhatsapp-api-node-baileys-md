@@ -539,13 +539,21 @@ module.exports = class Sessions {
 		//
 		// save every 10s
 		setInterval(async () => {
+			//
+			store?.writeToFile(`${tokenPatch}/${SessionName}.store.json`);
+			//
+			logger?.info(`- SessionName: ${SessionName}`);
 			try {
-				//
-				store?.writeToFile(`${tokenPatch}/${SessionName}.store.json`);
-				//
+				fs.writeJson(`${config.PATCH_TOKENS}/${SessionName}.contacts.json`, `${JSON.stringify(store?.contacts, null, 2)}`, (err) => {
+					if (err) {
+						logger?.error(`- Erro: ${err}`);
+					} else {
+						logger?.info('- Success create contacts file');
+					}
+				});
 			} catch (error) {
-				logger?.error(`- Error write store file: ${error}`);
-			};
+				logger?.error(`- Error create contacts file: ${error}`);
+			}
 			//
 		}, 10000);
 		//
@@ -560,7 +568,7 @@ module.exports = class Sessions {
 				// fetch latest version of WA Web
 				const { version, isLatest } = await fetchLatestBaileysVersion();
 				logger?.info(`- Using WA v${version.join('.')}, isLatest: ${isLatest}`)
-					//
+				//
 				const AxiosRequestConfig = {};
 				//
 				const SocketConfig = {
@@ -756,8 +764,8 @@ module.exports = class Sessions {
 									//
 									socket.emit('status',
 										{
-										SessionName: SessionName,
-										status: session.status
+											SessionName: SessionName,
+											status: session.status
 										}
 									);
 									//
@@ -1056,8 +1064,8 @@ module.exports = class Sessions {
 										//
 										break;
 									default:
-									// code block
-									logger?.info(`- lastDisconnect: ${lastDisconnect?.error}`);
+										// code block
+										logger?.info(`- lastDisconnect: ${lastDisconnect?.error}`);
 								}
 								//
 							} else if (typeof connection === undefined) {
@@ -2188,58 +2196,25 @@ module.exports = class Sessions {
 			var contactsList = [];
 			//
 			if (fs.existsSync(`${tokenPatch}/${SessionName}.contacts.json`)) {
-				//let result = require(`${tokenPatch}/${SessionName}.contacts.json`);
-				let result = JSON.parse(fs.readFileSync(`${tokenPatch}/${SessionName}.contacts.json`, 'utf-8'));
-				//let result = fs.readFileSync(`${tokenPatch}/${SessionName}.contacts.json`, 'utf-8');
+				//let result = JSON.parse(fs.readFileSync(`${tokenPatch}/${SessionName}.contacts.json`, 'utf-8'));
+				let result = require(`${tokenPatch}/${SessionName}.contacts.json`);
 				//
-				const resContacts = Object.values(result);
+				const resContacts = Object.values(JSON.parse(result));
 				//
-				resContacts.forEach((contact) => {
+				for (var contact in resContacts) {
 					//
-					if (contact?.id?.includes('s.whatsapp.net') || contact?.id?.split("@")[1] == 's.whatsapp.net') {
+					if (resContacts[contact]?.id?.includes('s.whatsapp.net') || resContacts[contact]?.id?.split("@")[1] == 's.whatsapp.net') {
 						contactsList.push({
-							"user": contact?.id?.split("@")[0],
-							"name": contact?.name || null,
-							"notify": contact?.notify || null,
-							"verifiedName": contact?.verifiedName || null,
-							"imgUrl": contact?.imgUrl || null,
-							"status": contact?.status || null
+							"user": resContacts[contact]?.id?.split("@")[0],
+							"name": resContacts[contact]?.name || null,
+							"notify": resContacts[contact]?.notify || null,
+							"verifiedName": resContacts[contact]?.verifiedName || null,
+							"imgUrl": resContacts[contact]?.imgUrl || null,
+							"status": resContacts[contact]?.status || null
 						});
 					}
-					//
-				});
-				//
-				//
-				if (!contactsList.length) {
-					//
-					let returnResult = {
-						"erro": true,
-						"status": 400,
-						"message": "Nenhum contato recuperado"
-					};
-					//
-					return returnResult;
 					//
 				}
-			} else if (fs.existsSync(`${tokenPatch}/${SessionName}.store.json`)) {
-				let result = require(`${tokenPatch}/${SessionName}.store.json`);
-				//
-				const resContacts = Object.values(result.contacts);
-				//
-				resContacts.forEach((contact) => {
-					//
-					if (contact?.id?.includes('s.whatsapp.net') || contact?.id?.split("@")[1] == 's.whatsapp.net') {
-						contactsList.push({
-							"user": contact?.id?.split("@")[0],
-							"name": contact?.name || null,
-							"notify": contact?.notify || null,
-							"verifiedName": contact?.verifiedName || null,
-							"imgUrl": contact?.imgUrl || null,
-							"status": contact?.status || null
-						});
-					}
-					//
-				});
 				//
 				if (!contactsList.length) {
 					//
