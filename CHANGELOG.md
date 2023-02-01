@@ -2,10 +2,15 @@
 
 _Todas as mudanças notáveis ​​neste projeto serão documentadas neste arquivo. As datas são exibidas em UTC -04:00._
 
-**1.0.2**
+**1.0.3**
 (01 Fevereiro 2023)
 
 - Fix getAllContacts
+
+**1.0.2**
+(30 Janeiro 2023)
+
+- Fix bugs
 
 **1.0.1**
 (12 Setembro 2022)
