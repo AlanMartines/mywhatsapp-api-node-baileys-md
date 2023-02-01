@@ -177,6 +177,25 @@ async function deletaToken(filePath, filename) {
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
+async function resContacts(SessionName, contacts) {
+	//
+	logger?.info(`- SessionName: ${SessionName}`);
+	try {
+		fs.writeJson(`${config.PATCH_TOKENS}/${SessionName}.contacts.json`, `${JSON.stringify(contacts, null, 2)}`, (err) => {
+			if (err) {
+				logger?.error(`- Erro: ${err}`);
+			} else {
+				logger?.info('- Success create contacts file');
+			}
+		});
+	} catch (error) {
+		logger?.error(`- Error create contacts file: ${error}`);
+	}
+	//
+}
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
 module.exports = class Sessions {
 	//
 	static async ApiStatus(SessionName) {
@@ -542,19 +561,6 @@ module.exports = class Sessions {
 			//
 			store?.writeToFile(`${tokenPatch}/${SessionName}.store.json`);
 			//
-			logger?.info(`- SessionName: ${SessionName}`);
-			try {
-				fs.writeJson(`${config.PATCH_TOKENS}/${SessionName}.contacts.json`, `${JSON.stringify(store?.contacts, null, 2)}`, (err) => {
-					if (err) {
-						logger?.error(`- Erro: ${err}`);
-					} else {
-						logger?.info('- Success create contacts file');
-					}
-				});
-			} catch (error) {
-				logger?.error(`- Error create contacts file: ${error}`);
-			}
-			//
 		}, 10000);
 		//
 		//const { state, saveState } = await useSingleFileAuthState(`${tokenPatch}/${SessionName}.data.json`);
@@ -836,6 +842,8 @@ module.exports = class Sessions {
 								await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `pre-*.json`);
 								await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `sender-*.json`);
 								await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `session-*.json`);
+								//
+								await resContacts(SessionName, store?.contacts);
 								//
 							} else if (connection === 'close') {
 								//
