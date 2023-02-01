@@ -561,6 +561,8 @@ module.exports = class Sessions {
 			//
 			store?.writeToFile(`${tokenPatch}/${SessionName}.store.json`);
 			//
+			await resContacts(SessionName, store?.contacts);
+			//
 		}, 10000);
 		//
 		//const { state, saveState } = await useSingleFileAuthState(`${tokenPatch}/${SessionName}.data.json`);
@@ -843,8 +845,6 @@ module.exports = class Sessions {
 								await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `sender-*.json`);
 								await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `session-*.json`);
 								//
-								await resContacts(SessionName, store?.contacts);
-								//
 							} else if (connection === 'close') {
 								//
 								let resDisconnectReason = {
@@ -868,7 +868,7 @@ module.exports = class Sessions {
 										// close WebSocket connection
 										await client.ws.close();
 										// End WebSocket connection
-										await client.ws.end();
+										//await client.ws.end();
 										// remove all events
 										await client.ev.removeAllListeners();
 										//
