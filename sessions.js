@@ -1321,9 +1321,9 @@ module.exports = class Sessions {
 			//
 			await session.client.logout();
 			// close WebSocket connection
-			await session.client.ws.close();
+			//await session.client.ws.close();
 			// remove all events
-			await session.client.ev.removeAllListeners();
+			//await session.client.ev.removeAllListeners();
 			//
 			session.state = "DISCONNECTED";
 			session.status = "notLogged";
