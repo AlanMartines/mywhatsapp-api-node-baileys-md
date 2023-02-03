@@ -8,10 +8,11 @@ const bodyParser = require('body-parser');
 const app = express();
 const cors = require('cors');
 const path = require('path');
+const swaggerUi = require('swagger-ui-express')
 const { logger } = require("./utils/logger");
 const AllSessions = require('./startup');
 const config = require('./config.global');
-//
+const swaggerDocument = require('./swagger');//
 const http = require('http').Server(app);
 // https://www.scaleway.com/en/docs/tutorials/socket-io/
 const io = require('socket.io')(http, {
@@ -34,10 +35,6 @@ yo('My-WhatsApp', {
 });
 //
 // ------------------------------------------------------------------------------------------------//
-//
-if (!fs.existsSync(config.PATCH_TOKENS)){
-    fs.mkdirSync(config.PATCH_TOKENS);
-}
 //
 fs.access(".env", fs.constants.F_OK, async (err) => {
 	if (err && err.code === 'ENOENT') {
@@ -250,6 +247,8 @@ SPEECH_TO_TEXT_URL=https://api.us-south.speech-to-text.watson.cloud.ibm.com/inst
 				});
 			});
 			//
+			app.use('/api-doc', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+			//
 			// rota url erro
 			app.all('*', (req, res) => {
 				//
@@ -275,9 +274,13 @@ SPEECH_TO_TEXT_URL=https://api.us-south.speech-to-text.watson.cloud.ibm.com/inst
 					const host = http.address().address;
 					const port = http.address().port;
 					if (config.DOMAIN_SSL) {
-						logger?.info(`- HTTP Server running on: https://${config.DOMAIN_SSL}`);
+						logger?.info(`- HTTP Server running on`);
+						logger?.info(`- To start: https://${config.DOMAIN_SSL}/Start`);
+						logger?.info(`- To doc: https://${config.DOMAIN_SSL}/api-doc`);
 					} else {
-						logger?.info(`- HTTP Server running on: http://${host}:${port}`);
+						logger?.info(`- HTTP Server running on`);
+						logger?.info(`- To start: https://${config.DOMAIN_SSL}/Start`);
+						logger?.info(`- To doc: https://${config.DOMAIN_SSL}/api-doc`);
 					}
 				}
 
