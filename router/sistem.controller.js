@@ -92,7 +92,7 @@ router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next
 			var resultRes = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -283,7 +283,7 @@ router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, nex
 			var resultRes = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -354,7 +354,7 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 			var resultRes = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -448,7 +448,7 @@ router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, nex
 			var resultRes = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -526,7 +526,7 @@ router.post("/restartToken", verifyToken.verify, upload.none(''), async (req, re
 			var resultRes = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -584,7 +584,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 			var resultRes = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -707,7 +707,7 @@ router.post("/getSession", upload.none(''), verifyToken.verify, async (req, res,
 			var resultRes = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -761,7 +761,7 @@ router.post("/getSessions", upload.none(''), verifyToken.verify, async (req, res
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -883,7 +883,7 @@ router.post("/sendContactVcard", upload.none(''), verifyToken.verify, async (req
 			var resultRes = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -986,7 +986,7 @@ router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req,
 			var validate = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -1110,7 +1110,7 @@ router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req,
 			var validate = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -1215,7 +1215,7 @@ router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (
 			var validate = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -1338,7 +1338,7 @@ router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, n
 			var validate = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -1440,7 +1440,7 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
 			var validate = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -1546,7 +1546,7 @@ router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, n
 			var validate = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -1569,7 +1569,7 @@ router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, n
 							var validate = {
 								"erro": true,
 								"status": 401,
-								"message": 'O link informado é invalido, corrija e tente novamente.'
+								"message": 'O link informado é invalido, verifique e tente novamente.'
 							};
 							//
 							res.setHeader('Content-Type', 'application/json');
@@ -1661,7 +1661,7 @@ router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req,
 			var validate = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -1786,7 +1786,7 @@ router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req,
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -1895,7 +1895,7 @@ router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -2006,7 +2006,7 @@ router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, 
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -2094,7 +2094,7 @@ router.post("/sendFileUrl", upload.none(''), verifyToken.verify, async (req, res
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -2181,7 +2181,7 @@ router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, 
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -2275,7 +2275,7 @@ router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (r
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -2364,7 +2364,7 @@ router.post("/sendButton", upload.none(''), verifyToken.verify, async (req, res,
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -2449,7 +2449,7 @@ router.post("/sendTemplate", upload.none(''), verifyToken.verify, async (req, re
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -2534,7 +2534,7 @@ router.post("/sendListMessage", upload.none(''), verifyToken.verify, async (req,
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -2625,7 +2625,7 @@ router.post("/getStatus", upload.none(''), verifyToken.verify, async (req, res, 
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -2709,7 +2709,7 @@ router.post("/getAllContacts", upload.none(''), verifyToken.verify, async (req, 
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -2776,7 +2776,7 @@ router.post("/getAllChats", upload.none(''), verifyToken.verify, async (req, res
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -2843,7 +2843,7 @@ router.post("/getAllMessage", upload.none(''), verifyToken.verify, async (req, r
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -2910,7 +2910,7 @@ router.post("/getAllGroups", upload.none(''), verifyToken.verify, async (req, re
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -2977,7 +2977,7 @@ router.post("/getProfilePicFromServer", upload.none(''), verifyToken.verify, asy
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -3061,7 +3061,7 @@ router.post("/checkNumberStatus", upload.none(''), verifyToken.verify, async (re
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -3147,7 +3147,7 @@ router.post("/sendContactVcardGrupo", upload.none(''), verifyToken.verify, async
 			var resultRes = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -3235,7 +3235,7 @@ router.post("/sendVoiceGrupo", upload.single('file'), verifyToken.verify, async 
 			var validate = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -3344,7 +3344,7 @@ router.post("/sendVoiceBase64Grupo", upload.none(''), verifyToken.verify, async 
 			var validate = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -3433,7 +3433,7 @@ router.post("/sendVoiceFromBase64Grupo", upload.none(''), verifyToken.verify, as
 			var validate = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -3539,7 +3539,7 @@ router.post("/sendTextGrupo", upload.none(''), verifyToken.verify, async (req, r
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -3610,7 +3610,7 @@ router.post("/sendLocationGrupo", upload.none(''), verifyToken.verify, async (re
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -3683,7 +3683,7 @@ router.post("/sendLinkGrupo", upload.none(''), verifyToken.verify, async (req, r
 			var validate = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -3706,7 +3706,7 @@ router.post("/sendLinkGrupo", upload.none(''), verifyToken.verify, async (req, r
 							var validate = {
 								"erro": true,
 								"status": 401,
-								"message": 'O link informado é invalido, corrija e tente novamente.'
+								"message": 'O link informado é invalido, verifique e tente novamente.'
 							};
 							//
 							res.setHeader('Content-Type', 'application/json');
@@ -3782,7 +3782,7 @@ router.post("/sendImageGrupo", upload.single('file'), verifyToken.verify, async 
 			var validate = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -3891,7 +3891,7 @@ router.post("/sendImageBase64Grupo", upload.none(''), verifyToken.verify, async 
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -3985,7 +3985,7 @@ router.post("/sendImageFromBase64Grupo", upload.none(''), verifyToken.verify, as
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -4080,7 +4080,7 @@ router.post("/sendFileGrupo", upload.single('file'), verifyToken.verify, async (
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -4154,7 +4154,7 @@ router.post("/sendFileUrlGrupo", upload.none(''), verifyToken.verify, async (req
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -4227,7 +4227,7 @@ router.post("/sendFileBase64Grupo", upload.none(''), verifyToken.verify, async (
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -4300,7 +4300,7 @@ router.post("/sendFileFromBase64Grupo", upload.none(''), verifyToken.verify, asy
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -4373,7 +4373,7 @@ router.post("/sendButtonGrupo", upload.none(''), verifyToken.verify, async (req,
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -4442,7 +4442,7 @@ router.post("/sendTemplateGrupo", upload.none(''), verifyToken.verify, async (re
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -4511,7 +4511,7 @@ router.post("/sendListMessageGrupo", upload.none(''), verifyToken.verify, async 
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -4580,7 +4580,7 @@ router.post("/leaveGroup", upload.none(''), verifyToken.verify, async (req, res,
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -4646,7 +4646,7 @@ router.post("/createGroup", upload.none(''), verifyToken.verify, async (req, res
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -4757,7 +4757,7 @@ router.post("/updateGroupTitle", upload.none(''), verifyToken.verify, async (req
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -4840,7 +4840,7 @@ router.post("/updateGroupDesc", upload.none(''), verifyToken.verify, async (req,
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -4909,7 +4909,7 @@ router.post("/getGroupMembers", upload.none(''), verifyToken.verify, async (req,
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -4977,7 +4977,7 @@ router.post("/getGroupInviteLink", upload.none(''), verifyToken.verify, async (r
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -5043,7 +5043,7 @@ router.post("/getGroupRevokeInviteLink", upload.none(''), verifyToken.verify, as
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -5108,7 +5108,7 @@ router.post("/removeParticipant", upload.none(''), verifyToken.verify, async (re
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -5206,7 +5206,7 @@ router.post("/addParticipant", upload.none(''), verifyToken.verify, async (req, 
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -5304,7 +5304,7 @@ router.post("/promoteParticipant", upload.none(''), verifyToken.verify, async (r
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -5402,7 +5402,7 @@ router.post("/demoteParticipant", upload.none(''), verifyToken.verify, async (re
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -5500,7 +5500,7 @@ router.post("/getGroupInfoFromInviteLink", upload.none(''), verifyToken.verify, 
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -5565,7 +5565,7 @@ router.post("/joinGroup", upload.none(''), verifyToken.verify, async (req, res, 
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -5635,7 +5635,7 @@ router.post("/getPerfilStatus", upload.none(''), verifyToken.verify, async (req,
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -5721,7 +5721,7 @@ router.post("/setProfileStatus", upload.none(''), verifyToken.verify, async (req
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -5790,7 +5790,7 @@ router.post("/setProfileName", upload.none(''), verifyToken.verify, async (req, 
 			result: "info",
 			state: 'FAILURE',
 			status: 'notProvided',
-			message: 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			message: 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
