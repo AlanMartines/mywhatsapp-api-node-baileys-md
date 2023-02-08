@@ -58,6 +58,7 @@
     "got": "^12.5.3",
     "ibm-watson": "^7.1.2",
     "json-file-validator": "^0.0.4",
+		"link-preview-js":"^3.0.4",
     "mime-types": "^2.1.35",
     "moment": "^2.29.4",
     "multer": "^1.4.4",
