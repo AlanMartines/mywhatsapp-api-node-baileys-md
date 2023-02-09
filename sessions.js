@@ -185,7 +185,7 @@ async function resContacts(SessionName, contacts) {
 			if (err) {
 				logger?.error(`- Erro: ${err}`);
 			} else {
-				logger?.info('- Success create contacts file');
+				//logger?.info('- Success create contacts file');
 			}
 		});
 	} catch (error) {
