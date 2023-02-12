@@ -2485,28 +2485,32 @@ module.exports = class Sessions {
 					getAllGroups.push({
 						"user": group?.id.split("@")[0],
 						"name": group?.subject,
-						"formattedName": group?.subject,
+						"size": group?.size,
 						"creation": moment(group?.creation * 1000).format("YYYY-MM-DD HH:mm:ss"),
+						"desc": group?.desc,
 						"restrict": group?.restrict,
+						"announce": group?.announce,
 						"participants": group?.participants
 					});
+					//
 				}
 				//
 			}
 			//
 			/*
 			await forEach(resGroup, async (value) => {
-				//
-					if(isJidGroup(group?.id) === true){
-						getAllGroups.push({
-							"groupId": group?.id.split("@")[0],
-							"name": group?.subject,
-							"creation": moment(group?.creation*1000).format("YYYY-MM-DD HH:mm:ss"),
-							"restrict": group?.restrict,
-							"participants": group?.participants
-						});
-						}
-				//
+					//
+					getAllGroups.push({
+						"user": group?.id.split("@")[0],
+						"name": group?.subject,
+						"size": group?.size,
+						"creation": moment(group?.creation * 1000).format("YYYY-MM-DD HH:mm:ss"),
+						"desc": group?.desc,
+						"restrict": group?.restrict,
+						"announce": group?.announce,
+						"participants": group?.participants
+					});
+					//
 			});
 			*/
 			//
