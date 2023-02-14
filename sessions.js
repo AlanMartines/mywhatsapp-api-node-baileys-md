@@ -579,8 +579,6 @@ module.exports = class Sessions {
 				//
 				const AxiosRequestConfig = {};
 				//
-				const AxiosRequestConfig = {};
-				//
 				const SocketConfig = {
 					/** the WS url to connect to WA */
 					//waWebSocketUrl: undefined
