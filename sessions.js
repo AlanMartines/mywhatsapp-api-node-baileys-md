@@ -579,11 +579,13 @@ module.exports = class Sessions {
 				//
 				const AxiosRequestConfig = {};
 				//
+				const AxiosRequestConfig = {};
+				//
 				const SocketConfig = {
 					/** the WS url to connect to WA */
 					//waWebSocketUrl: undefined
 					/** Fails the connection if the socket times out in this interval */
-					connectTimeoutMs: 30000,
+					connectTimeoutMs: 60000,
 					/** Default timeout for queries, undefined for no timeout */
 					defaultQueryTimeoutMs: undefined,
 					/** ping-pong interval for WS connection */
@@ -591,7 +593,7 @@ module.exports = class Sessions {
 					/** proxy agent */
 					agent: undefined,
 					/** pino logger */
-					logger: loggerPino,
+					logger: pino({ level: 'error' }),
 					/** version to connect with */
 					version: version || undefined,
 					/** override browser config */
@@ -601,7 +603,7 @@ module.exports = class Sessions {
 					/** should the QR be printed in the terminal */
 					printQRInTerminal: parseInt(config.VIEW_QRCODE_TERMINAL),
 					/** should events be emitted for actions done by this socket connection */
-					emitOwnEvents: true,
+					emitOwnEvents: false,
 					/** provide a cache to store media, so does not have to be re-uploaded */
 					//mediaCache: NodeCache,
 					/** custom upload hosts to upload media to */
