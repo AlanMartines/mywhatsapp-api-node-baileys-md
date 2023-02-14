@@ -71,6 +71,9 @@ module.exports = class Events {
 				logger?.info(`- onAck: ${onAck}`);
 				let status;
 				switch (onAck) {
+					case 5:
+						status = 'PLAYED'
+						break;
 					case 4:
 						status = 'READ'
 						break;
@@ -79,6 +82,12 @@ module.exports = class Events {
 						break;
 					case 2:
 						status = 'SENT'
+						break;
+					case 1:
+						status = 'PENDING'
+						break;
+					case 0:
+						status = 'ERROR'
 						break;
 				}
 				logger?.info("- Listen to ack", onAck, "for status", status);
