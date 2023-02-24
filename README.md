@@ -566,7 +566,7 @@ docker build -t alanmartines/mywhatsapp-api-node-baileys-md:1.0.0 -f Dockerfile.
 
 # Criar contêiner
 docker run -d -p 9001:9001 --name ApiWPPconnect \
-  --restart=always \
+  --restart=unless-stopped \
 	-v ${PWD}:/home/ApiBaileysMd \
 	-v /usr/local/tokens:/usr/local/tokens \
 	-e NODE_EN=production \
@@ -576,7 +576,7 @@ docker run -d -p 9001:9001 --name ApiWPPconnect \
 	-e VIEW_QRCODE_TERMINAL=0 \
 	-e DEVICE_NAME='My-Whatsapp' \
 	-e WA_VERSION= \
-	-e PATCH_TOKENS= '/usr/local/tokens'\
+	-e PATCH_TOKENS= '/usr/local/tokens' \
 	-e AUTO_CLOSE=60000 \
 	-e SECRET_KEY=09f26e402586e2faa8da4c98a35f1b20d6b033c60 \
 	-e VALIDATE_MYSQL=0 \
@@ -585,11 +585,14 @@ docker run -d -p 9001:9001 --name ApiWPPconnect \
 	-e MYSQL_USER=mywhatsappapi \
 	-e MYSQL_PASSWORD=TuUep8KkjCtAA@ \
 	-e MYSQL_DATABASE=mywhatsapp-api \
+	-e MYSQL_DATABASE_QUEUE=mywhatsapp-api-gueue \
 	-e MYSQL_DIALECT=mysql \
 	-e MYSQL_TIMEZONE='-04:00' \
 	-e BROWSER_WSENDPOINT= \
 	-e START_ALL_SESSIONS=0 \
 	-e FORCE_CONNECTION_USE_HERE=0 \
+	-e CONCURRENCY=5 \
+	-e INDOCKER=1 \
   alanmartines/mywhatsapp-api-node-baileys-md:1.0.0
 ```
 
