@@ -181,7 +181,7 @@ async function resContacts(SessionName, contacts) {
 	//
 	logger?.info(`- SessionName: ${SessionName}`);
 	try {
-		fs.writeJson(`${config.PATCH_TOKENS}/${SessionName}.contacts.json`, `${JSON.stringify(contacts, null, 2)}`, (err) => {
+		fs.writeJson(`${tokenPatch}/${SessionName}.contacts.json`, `${JSON.stringify(contacts, null, 2)}`, (err) => {
 			if (err) {
 				logger?.error(`- Erro: ${err}`);
 			} else {
@@ -474,7 +474,7 @@ module.exports = class Sessions {
 			waqueue: null,
 			qrcode: null,
 			client: false,
-			tokenPatch: config.PATCH_TOKENS,
+			tokenPatch: tokenPatch,
 			state: null,
 			status: null,
 			message: null,
