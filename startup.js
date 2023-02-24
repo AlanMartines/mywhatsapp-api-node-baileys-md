@@ -2,12 +2,32 @@ const config = require('./config.global');
 const { logger } = require("./utils/logger");
 const fs = require('fs-extra');
 const request = require('request-promise');
-
+//
+let tokenPatch;
+if (parseInt(config.INDOCKER)) {
+	//
+	const containerHostname = os.hostname();
+  tokenPatch = `${config.PATCH_TOKENS}/${containerHostname}`;
+	//
+} else {
+	//
+  tokenPatch = `${config.PATCH_TOKENS}`;
+	//
+}
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
+  if (!fs.existsSync(tokenPatch)) { // verifica se o diretório já existe
+    fs.mkdirSync(tokenPatch, { recursive: true }); // cria o diretório recursivamente
+  }
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
 module.exports = class AllSessions {
 	static async getAllSessions() {
 		let startup = [];
 		try {
-			fs.readdirSync(config.PATCH_TOKENS).forEach(file => {
+			fs.readdirSync(tokenPatch).forEach(file => {
 				//
 				if (file.includes('.data.json') || file.includes('.store.json')) {
 					startup.push(file.split(".")[0]);
@@ -32,8 +52,8 @@ module.exports = class AllSessions {
 				setTimeout(async () => {
 					//
 					try {
-						if (fs.existsSync(`${config.PATCH_TOKENS}/${item}.startup.json`)) {
-							let result = JSON.parse(fs.readFileSync(`${config.PATCH_TOKENS}/${item}.startup.json`, 'utf-8'));
+						if (fs.existsSync(`${tokenPatch}/${item}.startup.json`)) {
+							let result = JSON.parse(fs.readFileSync(`${tokenPatch}/${item}.startup.json`, 'utf-8'));
 							//
 							let resBody = {
 								"AuthorizationToken": item,
@@ -85,7 +105,7 @@ module.exports = class AllSessions {
 							//
 						}
 					} catch (err) {
-						logger?.error(`- Arquivo ${config.PATCH_TOKENS}/${item}.startup.json não existe`);
+						logger?.error(`- Arquivo ${tokenPatch}/${item}.startup.json não existe`);
 					}
 				}, 3000);
 			});
