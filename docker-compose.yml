@@ -3,17 +3,16 @@ version: "3.9"
 services:
 
   backend:
-    container_name: ApiBaileysMd
-    hostname: ApiBaileysMd
+    container_name: ${HOST_NAME:-'ApiBaileysMd'}
+    hostname: ${HOST_NAME:-'ApiBaileysMd'}
     network_mode: bridge
     image: alanmartines/mywhatsapp-api-node-api-baileys-md:${TAG}
     build:
       context: .
       dockerfile: Dockerfile.backend
-    restart: always
-    volumes:
-      - .:/home/ApiBaileysMd
-      - /usr/local/tokens:/usr/local/tokens
+    #command: npm install --allow-root --unsafe-perm=true
+    restart: unless-stopped
+    #restart_interval: 1h
     environment:
       NODE_ENV: production
       HOST: 0.0.0.0
@@ -22,7 +21,7 @@ services:
       VIEW_QRCODE_TERMINAL: ${VIEW_QRCODE_TERMINAL:-1}
       DEVICE_NAME: ${DEVICE_NAME:-'My-Whatsapp'}
       WA_VERSION: ${WA_VERSION:-}
-      PATCH_TOKENS: ${PATCH_TOKENS:-/usr/local/tokens}
+      PATCH_TOKENS: '/usr/local/tokens'
       AUTO_CLOSE: ${AUTO_CLOSE:-10}
       SECRET_KEY: ${SECRET_KEY:-09f26e402586e2faa8da4c98a35f1b20d6b033c60}
       VALIDATE_MYSQL: ${VALIDATE_MYSQL:-0}
@@ -31,13 +30,20 @@ services:
       MYSQL_USER: ${MYSQL_USER:-root}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-strongpassword}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-mywhatsapp-api}
+      MYSQL_DATABASE_QUEUE: ${MYSQL_DATABASE_QUEUE:-mywhatsapp-api-gueue}
       MYSQL_DIALECT: ${MYSQL_DIALECT:-mysql}
       MYSQL_TIMEZONE: ${MYSQL_TIMEZONE:-'-04:00'}
       BROWSER_WSENDPOINT: ${BROWSER_WSENDPOINT:-}
       START_ALL_SESSIONS: ${START_ALL_SESSIONS:-0}
       FORCE_CONNECTION_USE_HERE: ${FORCE_CONNECTION_USE_HERE:-0}
+      CONCURRENCY: ${CONCURRENCY:-5}
+    volumes:
+      - .:/home/ApiBaileysMd
+      - ${PATCH_TOKENS:-/usr/local/tokensHomologacao}:/usr/local/tokens
     ports:
       - ${PORT:-1000}:9001
+    expose:
+      - ${PORT:-9001}
 
 #mysql:
 #    container_name: ApiDatabase
@@ -54,7 +60,7 @@ services:
 #      TZ: ${TZ:-America/Sao_Paulo}
 #    ports:
 #      - ${MYSQL_PORT:-3306}:3306
-#    restart: always
+#    restart: unless-stopped
 #    networks:
 #      - mywhatsapp-api
 

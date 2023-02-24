@@ -1,4 +1,5 @@
 require('dotenv').config();
+const { isDocker } = require("./utils/isRunningInDocker");
 const config = module.exports = {};
 //
 config.NODE_ENV = process.env.NODE_ENV || 'production';
@@ -18,11 +19,13 @@ config.MYSQL_PORT = process.env.MYSQL_PORT || '3306';
 config.MYSQL_USER = process.env.MYSQL_USER || 'root';
 config.MYSQL_PASSWORD = process.env.MYSQL_PASSWORD || '';
 config.MYSQL_DATABASE = process.env.MYSQL_DATABASE || '';
+config.MYSQL_DATABASE_QUEUE = process.env.MYSQL_DATABASE_QUEUE || '';
 config.MYSQL_TIMEZONE = process.env.MYSQL_TIMEZONE || '-04:00';
 config.TZ = process.env.TZ || 'America/Sao_Paulo';
 config.START_ALL_SESSIONS = process.env.START_ALL_SESSIONS || 0;
 config.USE_HERE = process.env.FORCE_CONNECTION_USE_HERE || 0;
 config.CONCURRENCY = process.env.CONCURRENCY || 1;
+config.INDOCKER = isDocker() || false;
 //
 config.tokenPatch = "/usr/local/tokens";
 //

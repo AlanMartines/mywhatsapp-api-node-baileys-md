@@ -1,4 +1,4 @@
-FROM node:16.14-slim
+FROM node:18.14-slim
 
 LABEL version="1.0.0" description="ApiBaileysMd" maintainer="Alan Martines<alancpmartines@hotmail.com>"
 
@@ -10,6 +10,7 @@ RUN apt-get update && \
 	apt-get upgrade -y && \
 	apt-get install -y \
 	iputils-ping \
+	vim \
 	git \
 	curl \
 	yarn \
@@ -63,10 +64,16 @@ RUN apt-get update && \
 	build-essential \
 	nodejs \
 	ffmpeg \
-	sudo && \
+	net-tools && \
 	apt-get autoremove -y
 
+RUN npm install -g npm@latest
+
 WORKDIR /home/ApiBaileysMd
+
+COPY package*.json ./
+
+RUN npm install --allow-root --unsafe-perm=true
 
 EXPOSE 9001/tcp
 
