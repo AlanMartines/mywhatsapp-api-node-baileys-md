@@ -59,7 +59,23 @@ const {
 	MessageRetryMap
 } = require('@adiwajshing/baileys');
 //
-const tokenPatch = config.PATCH_TOKENS;
+let tokenPatch;
+if (parseInt(config.INDOCKER)) {
+	//
+	const containerHostname = os.hostname();
+  tokenPatch = `${config.PATCH_TOKENS}/${containerHostname}`;
+	//
+} else {
+	//
+  tokenPatch = `${config.PATCH_TOKENS}`;
+	//
+}
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
+  if (!fs.existsSync(tokenPatch)) { // verifica se o diretório já existe
+    fs.mkdirSync(tokenPatch, { recursive: true }); // cria o diretório recursivamente
+  }
 //
 // ------------------------------------------------------------------------------------------------------- //
 //

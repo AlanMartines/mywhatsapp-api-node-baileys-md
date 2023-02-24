@@ -37,6 +37,7 @@ services:
       START_ALL_SESSIONS: ${START_ALL_SESSIONS:-0}
       FORCE_CONNECTION_USE_HERE: ${FORCE_CONNECTION_USE_HERE:-0}
       CONCURRENCY: ${CONCURRENCY:-5}
+      INDOCKER: 1
     volumes:
       - .:/home/ApiBaileysMd
       - ${PATCH_TOKENS:-/usr/local/tokensHomologacao}:/usr/local/tokens

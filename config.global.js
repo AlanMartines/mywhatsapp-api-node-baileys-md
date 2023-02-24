@@ -1,5 +1,4 @@
 require('dotenv').config();
-const { isDocker } = require("./utils/isRunningInDocker");
 const config = module.exports = {};
 //
 config.NODE_ENV = process.env.NODE_ENV || 'production';
@@ -25,7 +24,7 @@ config.TZ = process.env.TZ || 'America/Sao_Paulo';
 config.START_ALL_SESSIONS = process.env.START_ALL_SESSIONS || 0;
 config.USE_HERE = process.env.FORCE_CONNECTION_USE_HERE || 0;
 config.CONCURRENCY = process.env.CONCURRENCY || 1;
-config.INDOCKER = isDocker() || false;
+config.INDOCKER = process.env.INDOCKER || 0;
 //
 config.tokenPatch = "/usr/local/tokens";
 //
