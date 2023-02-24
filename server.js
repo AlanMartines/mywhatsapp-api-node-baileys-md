@@ -279,8 +279,8 @@ SPEECH_TO_TEXT_URL=https://api.us-south.speech-to-text.watson.cloud.ibm.com/inst
 						logger?.info(`- To doc: https://${config.DOMAIN_SSL}/api-doc`);
 					} else {
 						logger?.info(`- HTTP Server running on`);
-						logger?.info(`- To start: https://${config.DOMAIN_SSL}/Start`);
-						logger?.info(`- To doc: https://${config.DOMAIN_SSL}/api-doc`);
+						logger?.info(`- To start: http://${config.HOST}:${config.PORT}/Start`);
+						logger?.info(`- To doc: http://${config.HOST}:${config.PORT}/api-doc`);
 					}
 				}
 
