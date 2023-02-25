@@ -609,11 +609,6 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 					//
 					break;
 				//
-				case 'notLogged':
-				case 'qrReadFail':
-				case 'deviceNotConnected':
-				case 'desconnectedMobile':
-				case 'deleteToken':
 				case 'qrRead':
 					//
 					var session = Sessions.getSession(resSessionName);
@@ -653,6 +648,24 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 						});
 						//
 					}
+					//
+					break;
+				case 'notLogged':
+				case 'qrReadFail':
+				case 'deviceNotConnected':
+				case 'desconnectedMobile':
+				case 'deleteToken':
+					//
+					var resultRes = {
+						"erro": true,
+						"status": 401,
+						"message": 'Não foi possivel executar a ação, inicie o sistema'
+					};
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(resultRes.status).json({
+						"Status": resultRes
+					});
 					//
 					break;
 				default:
