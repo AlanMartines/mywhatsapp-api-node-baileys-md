@@ -622,7 +622,8 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 								'Content-Length': imageBuffer.length
 							});
 							//
-							res.status(200).end(imageBuffer);
+							res.status(200);
+							res.end(imageBuffer);
 							//
 						} else {
 							var resultRes = { "erro": true, "status_code": 400, ...Status };
