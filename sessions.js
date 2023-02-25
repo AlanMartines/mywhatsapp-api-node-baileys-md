@@ -10,6 +10,7 @@ const {
 	forEach
 } = require('p-iteration');
 const QRCode = require('qrcode');
+const qr = require('qrcode-terminal');
 const moment = require('moment');
 moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
@@ -615,7 +616,7 @@ module.exports = class Sessions {
 					/** agent used for fetch requests -- uploading/downloading media */
 					fetchAgent: undefined,
 					/** should the QR be printed in the terminal */
-					printQRInTerminal: parseInt(config.VIEW_QRCODE_TERMINAL),
+					printQRInTerminal: false,
 					/** should events be emitted for actions done by this socket connection */
 					emitOwnEvents: false,
 					/** provide a cache to store media, so does not have to be re-uploaded */
@@ -757,6 +758,10 @@ module.exports = class Sessions {
 								//
 								webhooks?.wh_qrcode(Sessions.getSession(SessionName), readQRCode, qr);
 								this.exportQR(socket, readQRCode, SessionName, attempts);
+								//
+								if(parseInt(config.VIEW_QRCODE_TERMINAL)){
+										qr.generate(qr, { small: true });
+								}
 								//
 								session.state = "QRCODE";
 								session.status = "qrRead";
