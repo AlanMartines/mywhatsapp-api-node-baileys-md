@@ -1,3 +1,4 @@
+const os = require('os');
 const config = require('./config.global');
 const { logger } = require("./utils/logger");
 const fs = require('fs-extra');
@@ -6,6 +7,7 @@ const request = require('request-promise');
 let tokenPatch;
 if (parseInt(config.INDOCKER)) {
 	//
+	const containerHostname = os.hostname();
   tokenPatch = `${config.PATCH_TOKENS}/${containerHostname}`;
 	//
 } else {
