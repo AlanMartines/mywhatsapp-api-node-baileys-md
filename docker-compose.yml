@@ -18,7 +18,7 @@ services:
       HOST: 0.0.0.0
       PORT: 9001
       DOMAIN_SSL: ${DOMAIN_SSL:-}
-      VIEW_QRCODE_TERMINAL: ${VIEW_QRCODE_TERMINAL:-1}
+      VIEW_QRCODE_TERMINAL: 1
       DEVICE_NAME: ${DEVICE_NAME:-'My-Whatsapp'}
       WA_VERSION: ${WA_VERSION:-}
       PATCH_TOKENS: '/usr/local/tokens'
