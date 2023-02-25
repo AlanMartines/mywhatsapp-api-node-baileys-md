@@ -10,7 +10,7 @@ const {
 	forEach
 } = require('p-iteration');
 const QRCode = require('qrcode');
-const qr = require('qrcode-terminal');
+const qrViewer = require('qrcode-terminal');
 const moment = require('moment');
 moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
@@ -760,7 +760,7 @@ module.exports = class Sessions {
 								this.exportQR(socket, readQRCode, SessionName, attempts);
 								//
 								if(parseInt(config.VIEW_QRCODE_TERMINAL)){
-										qr.generate(qr, { small: true });
+										qrViewer.generate(qr, { small: true });
 								}
 								//
 								session.state = "QRCODE";
