@@ -6,7 +6,6 @@ const request = require('request-promise');
 let tokenPatch;
 if (parseInt(config.INDOCKER)) {
 	//
-	const containerHostname = os.hostname();
   tokenPatch = `${config.PATCH_TOKENS}/${containerHostname}`;
 	//
 } else {
