@@ -1014,7 +1014,11 @@ module.exports = class Sessions {
 										logger?.info(`- SessionName: ${SessionName}`);
 										logger?.info(`- Connection connectionClosed`.red);
 										//
-										/*
+										session.client = false;
+										session.state = "CLOSED";
+										session.status = "notLogged";
+										session.message = 'Sistema desconectado';
+										//
 										setTimeout(async function () {
 											return await startSock(SessionName).then(async (result) => {
 												session.client = result;
@@ -1023,7 +1027,6 @@ module.exports = class Sessions {
 												logger?.error(`- Error reconnecting connection: ${erro}`);
 											});
 										}, 500);
-										*/
 										//
 										break;
 									case resDisconnectReason.connectionReplaced:
