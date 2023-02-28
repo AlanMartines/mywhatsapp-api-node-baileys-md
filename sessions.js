@@ -1019,6 +1019,8 @@ module.exports = class Sessions {
 										session.status = "notLogged";
 										session.message = 'Sistema desconectado';
 										//
+										await updateStateDb(session.state, session.status, session.AuthorizationToken);
+										//
 										setTimeout(async function () {
 											return await startSock(SessionName).then(async (result) => {
 												session.client = result;
