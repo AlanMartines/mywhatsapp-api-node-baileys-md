@@ -1146,6 +1146,16 @@ module.exports = class Sessions {
 									default:
 										// code block
 										logger?.info(`- lastDisconnect: ${lastDisconnect?.error}`);
+										//
+										setTimeout(async function () {
+											return await startSock(SessionName).then(async (result) => {
+												session.client = result;
+												return result;
+											}).catch(async (erro) => {
+												logger?.error(`- Error reconnecting connection: ${erro}`);
+											});
+										}, 500);
+										//
 								}
 								//
 							} else if (typeof connection === undefined) {
