@@ -242,9 +242,10 @@ SPEECH_TO_TEXT_URL=https://api.us-south.speech-to-text.watson.cloud.ibm.com/inst
 			});
 			//
 			app.get('/Start', function (req, res, next) {
+				let host = config.HOST == '0.0.0.0' ? '127.0.0.1' : `${config.HOST}`;
 				res.render('index', {
 					port: config.PORT,
-					host: config.HOST,
+					host: host,
 					host_ssl: config.DOMAIN_SSL,
 					validate_mysql: parseInt(config.VALIDATE_MYSQL),
 				});
@@ -274,17 +275,11 @@ SPEECH_TO_TEXT_URL=https://api.us-south.speech-to-text.watson.cloud.ibm.com/inst
 				if (err) {
 					logger?.error(err);
 				} else {
-					const host = http.address().address;
-					const port = http.address().port;
-					if (config.DOMAIN_SSL) {
-						logger?.info(`- HTTP Server running on`);
-						logger?.info(`- To start: https://${config.DOMAIN_SSL}/Start`);
-						logger?.info(`- To doc: https://${config.DOMAIN_SSL}/api-doc`);
-					} else {
-						logger?.info(`- HTTP Server running on`);
-						logger?.info(`- To start: http://${config.HOST}:${config.PORT}/Start`);
-						logger?.info(`- To doc: http://${config.HOST}:${config.PORT}/api-doc`);
-					}
+					let hostUrl = config.HOST == '0.0.0.0' ? '127.0.0.1' : `${config.HOST}`;
+					let host = config.DOMAIN_SSL == '' ? `http://${hostUrl}:${config.PORT}` : `https://${config.DOMAIN_SSL}`;
+					logger?.info(`- HTTP Server running on`);
+					logger?.info(`- To start: ${host}/Start`);
+					logger?.info(`- To doc: ${host}/api-doc`);
 				}
 
 				if (parseInt(config.START_ALL_SESSIONS) == true) {
