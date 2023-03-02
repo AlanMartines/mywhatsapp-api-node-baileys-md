@@ -125,7 +125,7 @@ async function updateStateDb(state, status, AuthorizationToken) {
 			}).catch(async (err) => {
 				logger?.error('- Status não atualizado');
 				logger?.error(`- Error: ${err}`);
-			}).finally(() => {
+			}).finally(async () => {
 				//Tokens.release();
 			});
 		//
