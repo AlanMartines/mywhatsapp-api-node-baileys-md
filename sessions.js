@@ -114,7 +114,7 @@ async function updateStateDb(state, status, AuthorizationToken) {
 		await Tokens.update({
 			state: state,
 			status: status,
-			lastactivit: date_now,
+			lastactivity: date_now,
 		},
 			{
 				where: {
@@ -145,7 +145,7 @@ async function updateUserConDb(userconnected, AuthorizationToken) {
 		//
 		await Tokens.update({
 			userconnected: userconnected,
-			lastactivit: date_now,
+			lastactivity: date_now,
 		},
 			{
 				where: {

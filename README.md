@@ -260,7 +260,7 @@ pm2 unstartup systemd
 # Pronto, escaneie o código QR-Code do Whatsapp e aproveite!
 ```
 
-## Gerar TOKEN_SECRET para uso no jwt
+## Gerar SECRET_KEY para uso local de validação
 
 ```bash
 node -e "console.log(require('crypto').randomBytes(64).toString('base64').replace(/[^a-zA-Z0-9]/g, ''));"
