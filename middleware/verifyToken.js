@@ -57,12 +57,14 @@ exports.verify = async (req, res, next) => {
 				where: {
 					token: theTokenAuth
 				}
-			}).then(async function (entries) {
+			}).then(async (entries) => {
 				return entries;
 			}).catch(async (err) => {
 				logger?.error(`- Error: ${err}`);
 				return false;
-			});
+			}).finally(() => {
+    		Tokens.release();
+  		});
 			//
 			if (row) {
 				//

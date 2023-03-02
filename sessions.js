@@ -64,19 +64,19 @@ let tokenPatch;
 if (parseInt(config.INDOCKER)) {
 	//
 	const containerHostname = os.hostname();
-  tokenPatch = `${config.PATCH_TOKENS}/${containerHostname}`;
+	tokenPatch = `${config.PATCH_TOKENS}/${containerHostname}`;
 	//
 } else {
 	//
-  tokenPatch = `${config.PATCH_TOKENS}`;
+	tokenPatch = `${config.PATCH_TOKENS}`;
 	//
 }
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
-  if (!fs.existsSync(tokenPatch)) { // verifica se o diretório já existe
-    fs.mkdirSync(tokenPatch, { recursive: true }); // cria o diretório recursivamente
-  }
+if (!fs.existsSync(tokenPatch)) { // verifica se o diretório já existe
+	fs.mkdirSync(tokenPatch, { recursive: true }); // cria o diretório recursivamente
+}
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
@@ -111,22 +111,24 @@ async function updateStateDb(state, status, AuthorizationToken) {
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		logger?.info('- Atualizando status');
 		//
-		const updatedRows = await Tokens.update(
+		await Tokens.update({
+			state: state,
+			status: status,
+			lastactivit: date_now,
+		},
 			{
-				state: state,
-				status: status,
-				lastactivit: date_now,
-			},
-			{
-				where: { token: AuthorizationToken },
-			}
-		);
+				where: {
+					token: AuthorizationToken
+				},
+			}).then(async (entries) => {
+				logger?.info('- Status atualizado');
+			}).catch(async (err) => {
+				logger?.error('- Status não atualizado');
+				logger?.error(`- Error: ${err}`);
+			}).finally(() => {
+				Tokens.release();
+			});
 		//
-		if (updatedRows) {
-			logger?.info('- Status atualizado');
-		} else {
-			logger?.info('- Status não atualizado');
-		}
 	}
 	//
 }
@@ -141,21 +143,23 @@ async function updateUserConDb(userconnected, AuthorizationToken) {
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		logger?.info('- Atualizando User Connected');
 		//
-		const updatedRows = await Tokens.update(
+		await Tokens.update({
+			userconnected: userconnected,
+			lastactivit: date_now,
+		},
 			{
-				userconnected: userconnected,
-				lastactivit: date_now,
-			},
-			{
-				where: { token: AuthorizationToken },
-			}
-		);
+				where: {
+					token: AuthorizationToken
+				},
+			}).then(async (entries) => {
+				logger?.info('- User connection atualizado');
+			}).catch(async (err) => {
+				logger?.error('- User connection não atualizado');
+				logger?.error(`- Error: ${err}`);
+			}).finally(() => {
+				Tokens.release();
+			});
 		//
-		if (updatedRows) {
-			logger?.info('- User connection atualizado');
-		} else {
-			logger?.info('- User connection não atualizado');
-		}
 	}
 	//
 }
@@ -759,8 +763,8 @@ module.exports = class Sessions {
 								webhooks?.wh_qrcode(Sessions.getSession(SessionName), readQRCode, qr);
 								this.exportQR(socket, readQRCode, SessionName, attempts);
 								//
-								if(parseInt(config.VIEW_QRCODE_TERMINAL)){
-										qrViewer.generate(qr, { small: true });
+								if (parseInt(config.VIEW_QRCODE_TERMINAL)) {
+									qrViewer.generate(qr, { small: true });
 								}
 								//
 								session.state = "QRCODE";
@@ -1155,7 +1159,7 @@ module.exports = class Sessions {
 												logger?.error(`- Error reconnecting connection: ${erro}`);
 											});
 										}, 500);
-										//
+									//
 								}
 								//
 							} else if (typeof connection === undefined) {
