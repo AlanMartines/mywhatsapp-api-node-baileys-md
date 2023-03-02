@@ -198,7 +198,7 @@ router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next
 					//
 					try {
 						var startupRes = {
-							"AuthorizationToken": resSessionName,
+							"AuthorizationToken": resTokenAuth,
 							"SessionName": resSessionName,
 							"setOnline": req.body.setOnline || true,
 							"wh_connect": wh_connect || null,
