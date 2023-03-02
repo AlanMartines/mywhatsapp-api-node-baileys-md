@@ -279,7 +279,6 @@ chmod -R 777 /usr/local/tokens
 ## Configuração inicial do arquivo ".env-example"
 
 ```sh
-#
 NODE_EN=production
 #
 # Defina o HOST aqui caso voce utilize uma VPS deve ser colocado o IP da VPS
@@ -287,13 +286,11 @@ NODE_EN=production
 # HOST=204.202.54.2 => IP da VPS, caso esteja usando virtualização via hospedagem
 # HOST=10.0.0.10 => IP da VM, caso esteja usando virtualização
 # HOST=localhost => caso esteja usando na sua proprima maquina local
+# HOST=.0.0.0.0 => caso esteja usando em um cotainer
 HOST=localhost
 #
 # Defina o numero da porta a ser usada pela API.
 PORT=9009
-#
-# Redis config => NÃO MEXER NA VARIAVEL REDIS_URL
-REDIS_URL=redis://localhost:6379
 #
 # CASO UTILIZE CERTIFICADO SSL COM REDIRECIONAMENTO DE PORTA, DEVE PREENCHER A VARIAVEL DOMAIN_SSL
 # CASO DE NÃO SER CONFIGURADO UM DOMÍNIO MATENHA A VARIAVEL DOMAIN_SSL VAZIA
@@ -310,6 +307,9 @@ PATCH_TOKENS=/usr/local/tokens
 #
 # Device name
 DEVICE_NAME='My-Whatsapp'
+#
+# Host name
+HOST_NAME='ApiBaileysMd'
 #
 # Defina a versão do whatsapp a ser usada.
 # CASO DE NÃO SER CONFIGURADO UM VERSÂO MATENHA A VARIAVEL WA_VERSION VAZIA
@@ -348,8 +348,11 @@ MYSQL_USER=root
 # A senha do usuário do banco. Ex: user123
 MYSQL_PASSWORD='aG3JirkjCtAA@'
 #
-# A base de dados a qual a aplicação irá se conectar. Ex: node_mysql
+# A base de dados a qual a p-queue irá se conectar. Ex: node_mysql
 MYSQL_DATABASE=mywhatsapp-api
+#
+# A base de dados a qual a aplicação irá se conectar. Ex: node_mysql
+MYSQL_DATABASE_QUEUE=mywhatsapp-api-queue
 #
 # Time Zone
 MYSQL_TIMEZONE='-04:00'
@@ -370,7 +373,7 @@ MAX_CONCURRENT_SESSIONS=1
 NAME_INSTANCES=ApiWPPConnectCluster
 #
 # Set count instace for use ecosystem.config.js
-INSTANCES=max
+INSTANCES=1
 #
 # Caso queira que ao iniciar a API todas as sessões salvas sejam inicializadas automaticamente
 START_ALL_SESSIONS=1
