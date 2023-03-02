@@ -8,21 +8,9 @@ module.exports = {
         unique: true,
         type: DataTypes.INTEGER.UNSIGNED,
       },
-      iduser: {
-        allowNull: false,
-        type: DataTypes.INTEGER.UNSIGNED,
-      },
       token: {
         allowNull: false,
         type: DataTypes.CHAR(255),
-      },
-      sessionToken: {
-        allowNull: true,
-        type: DataTypes.TEXT,
-      },
-      datainicial: {
-        allowNull: false,
-        type: DataTypes.DATE,
       },
       datafinal: {
         allowNull: false,
@@ -43,22 +31,9 @@ module.exports = {
         type: DataTypes.CHAR(20),
 				defaultValue: "notLogged",
       },
-      processid: {
-        allowNull: true,
-        type: DataTypes.INTEGER.UNSIGNED,
-      },
       userconnected: {
         allowNull: true,
         type: DataTypes.CHAR(20),
-      },
-      vencimento: {
-        allowNull: true,
-        type: DataTypes.INTEGER.UNSIGNED,
-				defaultValue: "10",
-      },
-      emailcob: {
-        allowNull: true,
-        type: DataTypes.CHAR(100),
       },
       webhook: {
         allowNull: true,
@@ -80,20 +55,7 @@ module.exports = {
         allowNull: true,
         type: DataTypes.STRING(255),
       },
-      tptoken: {
-        allowNull: true,
-        type: DataTypes.INTEGER.UNSIGNED,
-				defaultValue: "2",
-      },
-      descricao: {
-        allowNull: true,
-        type: DataTypes.CHAR(20),
-      },
-      valor: {
-        allowNull: true,
-        type: DataTypes.CHAR(20),
-      },
-      lastactivit: {
+      lastactivity: {
         allowNull: true,
         type: 'TIMESTAMP',
       },

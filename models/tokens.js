@@ -1,26 +1,54 @@
 module.exports = (sequelize, DataTypes) => {
 	const Tokens = sequelize.define('Tokens', {
-		iduser: DataTypes.INTEGER.UNSIGNED,
-		token: DataTypes.CHAR(255),
-		sessionToken: DataTypes.TEXT,
-		datainicial: DataTypes.DATE,
-		datafinal: DataTypes.DATE,
-		active: DataTypes.CHAR(5),
-		state: DataTypes.CHAR(20),
-		status: DataTypes.CHAR(20),
-		processid: DataTypes.INTEGER.UNSIGNED,
-		userconnected: DataTypes.CHAR(20),
-		vencimento: DataTypes.INTEGER.UNSIGNED,
-		emailcob: DataTypes.CHAR(100),
-		webhook: DataTypes.STRING(255),
-		wh_status: DataTypes.STRING(255),
-		wh_message: DataTypes.STRING(255),
-		wh_qrcode: DataTypes.STRING(255),
-		wh_connect: DataTypes.STRING(255),
-		tptoken: DataTypes.INTEGER.UNSIGNED,
-		descricao: DataTypes.CHAR(20),
-		valor: DataTypes.CHAR(20),
-		lastactivit: 'TIMESTAMP',
+    iduser: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false
+    },
+    token: {
+      type: DataTypes.CHAR(255),
+      allowNull: false
+    },
+    datafinal: {
+      type: DataTypes.DATE,
+      allowNull: false
+    },
+    active: {
+      type: DataTypes.CHAR(5),
+      allowNull: false
+    },
+    state: {
+      type: DataTypes.CHAR(20),
+      allowNull: false
+    },
+    status: {
+      type: DataTypes.CHAR(20),
+      allowNull: false
+    },
+    userconnected: {
+      type: DataTypes.CHAR(20),
+      allowNull: false
+    },
+    webhook: {
+      type: DataTypes.STRING(255),
+      allowNull: false
+    },
+    wh_status: {
+      type: DataTypes.STRING(255),
+      allowNull: false
+    },
+    wh_message: {
+      type: DataTypes.STRING(255),
+      allowNull: false
+    },
+    wh_qrcode: {
+      type: DataTypes.STRING(255),
+      allowNull: false
+    },
+    wh_connect: {
+      type: DataTypes.STRING(255),
+      allowNull: false
+    },
+		lastactivity: 'TIMESTAMP',
 		created: 'TIMESTAMP',
 		modified: 'TIMESTAMP',
 	});

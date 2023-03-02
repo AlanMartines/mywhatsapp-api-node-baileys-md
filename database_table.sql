@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS `tokens` (
   `active` char(5) NOT NULL DEFAULT 'true',
   `state` char(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT 'DISCONNECTED',
   `status` char(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT 'notLogged',
+	`userconnected` char(50) DEFAULT NULL,
   `webhook` varchar(255) DEFAULT NULL,
   `wh_status` varchar(255) DEFAULT NULL,
   `wh_message` varchar(255) DEFAULT NULL,
@@ -23,4 +24,4 @@ CREATE TABLE IF NOT EXISTS `tokens` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb3;
 
 INSERT INTO `tokens` (`ID`, `token`, `datafinal`, `active`, `state`, `status`, `webhook`, `wh_status`, `wh_message`, `wh_qrcode`, `wh_connect`, `lastactivity`, `created`, `modified`) VALUES
-	(1, 'HDFTRE88776SBHGHFGYYT', '2100-01-01', 'true', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NOW(), NOW(), NOW());
+	(1, 'HDFTRE88776SBHGHFGYYT', '2100-01-01', 'true', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NOW(), NOW(), NOW());
