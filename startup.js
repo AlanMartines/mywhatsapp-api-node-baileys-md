@@ -45,7 +45,7 @@ module.exports = class AllSessions {
 	}
 
 	static async startAllSessions() {
-		let host = config.DOMAIN_SSL == '' ? `${config.HOST}:${config.PORT}` : `https://${config.DOMAIN_SSL}`;
+		let host = config.DOMAIN_SSL == '' ? `http://${config.HOST}:${config.PORT}` : `https://${config.DOMAIN_SSL}`;
 		let dados = await this.getAllSessions();
 		//
 		if (dados != null) {
