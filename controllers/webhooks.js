@@ -1,6 +1,7 @@
 const Sessions = require("../sessions.js");
 const axios = require('axios');
 const https = require('https');
+const superagent = require('superagent');
 require('superagent-queue');
 require('dotenv').config();
 const { logger } = require("../utils/logger");
@@ -9,12 +10,11 @@ module.exports = class Webhooks {
 
 	static async wh_messages(data, object) {
 		//let data = Sessions?.getSession(session);
-		//logger.info(response);
 		try {
 			if (data?.wh_message != undefined && data?.wh_message != null && data?.wh_message != '') {
 				logger.info(`- SessionName: ${data?.name}`);
-
-				await axios.post(data?.wh_message, object, {
+				let dataJson = JSON.stringify(object, null, 2);
+				await axios.post(data?.wh_message, dataJson, {
 					httpsAgent: new https.Agent({
 						rejectUnauthorized: false,
 						keepAlive: true
@@ -23,7 +23,7 @@ module.exports = class Webhooks {
 				}).then(response => {
 					logger.info('- Webhooks receive message')
 				}).catch(error => {
-					logger?.error(`- Error receive message ${error.message}`);
+					logger?.error(`- Error receive message: ${error.message}`);
 				});
 
 			} else {
@@ -48,8 +48,8 @@ module.exports = class Webhooks {
 			}
 
 			if (data?.wh_connect != undefined && data?.wh_connect != null && data?.wh_connect != '') {
-
-				await axios.post(data?.wh_connect, object, {
+				let dataJson = JSON.stringify(object, null, 2);
+				await axios.post(data?.wh_connect, dataJson, {
 					httpsAgent: new https.Agent({
 						rejectUnauthorized: false,
 						keepAlive: true
@@ -75,8 +75,8 @@ module.exports = class Webhooks {
 		logger.info(`- SessionName: ${data?.name}`);
 		try {
 			if (data?.wh_status != undefined && data?.wh_status != null && data?.wh_status != '') {
-
-				await axios.post(data?.wh_status, object, {
+				let dataJson = JSON.stringify(object, null, 2);
+				await axios.post(data?.wh_status, dataJson, {
 					httpsAgent: new https.Agent({
 						rejectUnauthorized: false,
 						keepAlive: true
@@ -110,8 +110,8 @@ module.exports = class Webhooks {
 				'urlCode': urlCode
 			}
 			if (data?.wh_qrcode != undefined && data?.wh_qrcode != null && data?.wh_qrcode != '') {
-
-				await axios.post(data?.wh_qrcode, object, {
+				let dataJson = JSON.stringify(object, null, 2);
+				await axios.post(data?.wh_qrcode, dataJson, {
 					httpsAgent: new https.Agent({
 						rejectUnauthorized: false,
 						keepAlive: true
