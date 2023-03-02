@@ -63,7 +63,7 @@ exports.verify = async (req, res, next) => {
 				logger?.error(`- Error: ${err}`);
 				return false;
 			}).finally(() => {
-    		Tokens.release();
+    		//Tokens.release();
   		});
 			//
 			if (row) {

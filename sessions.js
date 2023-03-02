@@ -126,7 +126,7 @@ async function updateStateDb(state, status, AuthorizationToken) {
 				logger?.error('- Status não atualizado');
 				logger?.error(`- Error: ${err}`);
 			}).finally(() => {
-				Tokens.release();
+				//Tokens.release();
 			});
 		//
 	}
@@ -157,7 +157,7 @@ async function updateUserConDb(userconnected, AuthorizationToken) {
 				logger?.error('- User connection não atualizado');
 				logger?.error(`- Error: ${err}`);
 			}).finally(() => {
-				Tokens.release();
+				//Tokens.release();
 			});
 		//
 	}
