@@ -583,6 +583,7 @@ module.exports = class Events {
 							break;
 						default:
 							//
+							/*
 							logger?.info(`- Desculpe, estamos sem nenhuma resposta.`);
 							logger?.error(msg?.message);
 							//
@@ -598,6 +599,7 @@ module.exports = class Events {
 								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
+							*/
 					}
 					//
 					msg?.key?.fromMe == true ? socket?.emit('send-message', response, true) : socket?.emit('received-message', response, true);
