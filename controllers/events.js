@@ -68,7 +68,7 @@ module.exports = class Events {
 				// logic of your application...
 				let phone = await client?.user?.id.split(":")[0];
 				let onAck = message[0]?.update?.status;
-				logger?.info(`- onAck: ${onAck}`);
+				//logger?.info(`- onAck: ${onAck}`);
 				let status;
 				switch (onAck) {
 					case 5:
@@ -90,7 +90,7 @@ module.exports = class Events {
 						status = 'ERROR'
 						break;
 				}
-				logger?.info("- Listen to ack", onAck, "for status", status);
+				logger?.info(`- Listen to ack ${onAck}, status ${status}`);
 				let response = {
 					"wook": 'MESSAGE_STATUS',
 					"status": status,
@@ -112,12 +112,28 @@ module.exports = class Events {
 	static async contactsEvents(session, client, socket, events) {
 		//
 		try {
+			if (events['contacts.set']) {
+				const contacts = JSON.parse(events['contacts.set']);
+				//logger?.info(`- Contacts upsert: ${JSON.stringify(contacts, null, 2)}`);
+				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- Contacts set`);
+				//
+
+				//
+			}
+		} catch (error) {
+			logger?.info(`- SessionName: ${session.name}`);
+			logger?.error(`- Error message-receipt update event ${error}`);
+		}
+		//
+		try {
 			if (events['contacts.upsert']) {
 				const contacts = JSON.parse(events['contacts.upsert']);
 				//logger?.info(`- Contacts upsert: ${JSON.stringify(contacts, null, 2)}`);
 				logger?.info(`- SessionName: ${session.name}`);
 				logger?.info(`- Contacts upsert`);
 				//
+				/*
 				try {
 					fs.writeJson(`${config.PATCH_TOKENS}/${session.name}.contacts.json`, `${JSON.stringify(contacts, null, 2)}`, (err) => {
 						if (err) {
@@ -130,6 +146,7 @@ module.exports = class Events {
 					logger?.error(`- Error create contacts file: ${error}`);
 				}
 				//
+				*/
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${session.name}`);
@@ -169,6 +186,7 @@ module.exports = class Events {
 				if (msg?.key?.remoteJid != 'status@broadcast') {
 					//
 					//if (m.type === 'notify' || m.type === 'append') {
+					logger?.info(`- Type: ${session.name}`);
 					//
 					if (msg?.message?.locationMessage) {
 						type = 'location';
@@ -204,8 +222,14 @@ module.exports = class Events {
 						type = 'listResponseMessage';
 					} else if (msg?.message?.protocolMessage?.historySyncNotification) {
 						type = 'historySync';
+					} else if (msg?.message?.reactionMessage) {
+						type = 'reactionMessage';
 					} else {
 						type = undefined;
+							//
+							logger?.info(`- Desculpe, estamos sem nenhuma resposta.`);
+							logger?.error(msg?.message);
+							//
 					}
 					//
 					// }
@@ -215,8 +239,8 @@ module.exports = class Events {
 					//
 					switch (type) {
 						case 'text':
-							//
 							logger?.info('- Message text');
+							//
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 								"type": 'text',
@@ -541,8 +565,26 @@ module.exports = class Events {
 							}
 							//
 							break;
+						case 'reactionMessage':
+							logger?.info('- Message reactionMessage');
+							//
+							response = {
+								"wook": msg?.message?.reactionMessage?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+								"type": 'reactionMessage',
+								"fromMe": msg?.message?.reactionMessage?.key?.fromMe,
+								"id": msg?.message?.reactionMessage?.key?.id,
+								"from": msg?.message?.reactionMessage?.key?.fromMe == true ? phone : msg?.message?.reactionMessage?.key?.remoteJid?.split('@')[0],
+								"to": msg?.message?.reactionMessage?.key?.fromMe == false ? phone : msg?.message?.reactionMessage?.key?.remoteJid?.split('@')[0],
+								"content": msg?.message?.reactionMessage?.text,
+								"status": msg?.message?.reactionMessage?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
+								"datetime": moment(msg?.message?.reactionMessage?.senderTimestampMs * 1000)?.format('YYYY-MM-DD HH:mm:ss')
+							}
+							//
+							break;
 						default:
-							logger?.info("- Desculpe, estamos sem nenhuma resposta.");
+							//
+							logger?.info(`- Desculpe, estamos sem nenhuma resposta.`);
+							logger?.error(msg?.message);
 							//
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
