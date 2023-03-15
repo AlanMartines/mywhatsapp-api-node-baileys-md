@@ -19,9 +19,10 @@ const colors = require('colors');
 const { Boom } = require('@hapi/boom');
 const { default: pQueue } = require('p-queue');
 const { release } = require('os');
+const NodeCache = require('node-cache');
 const { Tokens } = require('./models');
 const { logger } = require("./utils/logger");
-const MAIN_LOGGER = require("./utils/loggerinstance");
+const msgRetryCounterCache = new NodeCache();
 //
 const {
 	default: makeWASocket,
@@ -649,7 +650,7 @@ module.exports = class Sessions {
 					/**
 					 * map to store the retry counts for failed messages;
 					 * used to determine whether to retry a message or not */
-					msgRetryCounterMap: MessageRetryMap,
+					msgRetryCounterCache: msgRetryCounterCache,
 					/** width for link preview images */
 					linkPreviewImageThumbnailWidth: 192,
 					/** Should Baileys ask the phone for full history, will be received async */
