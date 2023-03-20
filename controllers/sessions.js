@@ -1,5 +1,5 @@
 const urlExists = require("url-exists");
-const fs = require('fs');
+const fs = require('fs-extra');
 const redis = require('redis');
 const cache = redis?.createClient();
 const { fromBuffer } = require('file-type');
@@ -225,7 +225,7 @@ module.exports = class Sessions {
         const newVersionLog =
             `Há uma nova versão da ${chalk.bold(`connectzap-api-node-baileys-md`)} ${chalk.gray(current)} ➜  ${chalk.bold.green(latest)}\n` +
             `Atualize sua API executando:\n\n` +
-            `${chalk.bold('\>')} ${chalk.blueBright('npm run update')}`;
+            `${chalk.bold('\>')} ${chalk.blueBright('git pull; npm install;')}`;
         console.log(boxen(newVersionLog, { padding: 1 }));
         console.log(
             `Para mais informações visite: ${chalk.underline(
