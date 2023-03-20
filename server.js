@@ -156,6 +156,11 @@ SPEECH_TO_TEXT_URL=https://api.us-south.speech-to-text.watson.cloud.ibm.com/inst
 		//
 		try {
 			//
+			const commands = require("./router/commands");
+			const groups = require("./router/groups");
+			const instance = require("./router/instance");
+			const mensagens = require("./router/mensagens");
+			const status = require("./router//status");
 			const sistem = require("./router/sistem.controller");
 			//
 			// Body Parser
