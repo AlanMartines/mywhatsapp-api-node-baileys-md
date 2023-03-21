@@ -13,6 +13,7 @@ const { release } = require('os');
 const NodeCache = require('node-cache');
 const msgRetryCounterCache = new NodeCache();
 const { logger } = require("./utils/logger");
+const { Tokens } = require('./models');
 const Sessions = require('./controllers/sessions.js');
 const eventsSend = require('./controllers/events');
 const webhooks = require('./controllers/webhooks.js');

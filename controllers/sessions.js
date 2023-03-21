@@ -7,6 +7,7 @@ const mimeTypes = require('mime-types');
 const fileType = require('file-type');
 const axios = require('axios');
 const chalk = require('chalk');
+const { logger } = require("../utils/logger");
 
 module.exports = class Sessions {
 
@@ -40,7 +41,7 @@ module.exports = class Sessions {
         var checkFilter = this.session?.filter(order => (order?.session === name)), add = null
         if (!checkFilter?.length) {
             add = {
-                session: name,
+                SessionName: name,
             }
             this.session?.push(add)
             return true
@@ -160,7 +161,7 @@ module.exports = class Sessions {
                     resolve(`data:${(await fromBuffer(result?.data))?.mime};base64,${buffer}`);
                 })
             } catch (error) {
-                console.log(error)
+                logger?.error(error);
                 reject(error)
             }
         })
@@ -193,7 +194,7 @@ module.exports = class Sessions {
                         resolve(false);
                     }
             } catch (error) {
-                console?.log(error)
+                logger?.error(error);
                 reject(error);
             }
         })
@@ -226,8 +227,8 @@ module.exports = class Sessions {
             `Há uma nova versão da ${chalk.bold(`connectzap-api-node-baileys-md`)} ${chalk.gray(current)} ➜  ${chalk.bold.green(latest)}\n` +
             `Atualize sua API executando:\n\n` +
             `${chalk.bold('\>')} ${chalk.blueBright('git pull; npm install;')}`;
-        console.log(boxen(newVersionLog, { padding: 1 }));
-        console.log(
+        logger?.info(boxen(newVersionLog, { padding: 1 }));
+        logger?.info(
             `Para mais informações visite: ${chalk.underline(
                 'https://github.com/alanmartines/connectzap-api-node-baileys-md/releases'
             )}\n`
