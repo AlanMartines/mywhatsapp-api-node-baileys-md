@@ -33,7 +33,7 @@ exports.verify = async (req, res, next) => {
 			}
 		});
 	} else {
-		theTokenAuth = req?.headers?.authorizationtoken;
+		theTokenAuth = removeWithspace(req?.headers?.AuthorizationToken)
 	}
 	//
 	if (!req?.body?.SessionName) {
