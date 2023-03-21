@@ -10,7 +10,7 @@ module.exports = {
 	"info": {
 		"description": "Esta Api, segue os mesmos termos de serviço do WhatsApp. É importante que você leia atentamente a estes termos. Você é responsável pelo uso da ferramenta e pelas conseqüências do mau uso. Reforçamos que a API não é destinada para prática de SPAM e que o envio de mensagens indesejadas, viola os termos de serviço do WhatsApp. A violação dos termos pode acarretar no bloqueio e banimento definitivo de sua conta no WhatsApp.",
 		"version": "1.0.3",
-		"title": "API - My WhatsApp"
+		"title": "API - Connect Zap"
 	},
 	"tags": [
 		{
@@ -71,13 +71,28 @@ module.exports = {
 				"requestBody": {
 					"required": true,
 					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"SessionName": {
+										"description": "Informe seu token de acesso",
+										"type": "string",
+										"default": "",
+									}
+								},
+								"required": [
+									"SessionName"
+								]
+							}
+						},
 						"application/json": {
 							"schema": {
 								"type": "object",
 								"properties": {
 									"SessionName": {
 										"type": "string",
-										"default": "Informe o nome da sessão",
+										"default": "Informe seu token de acesso aqui",
 									}
 								},
 								"required": [
@@ -213,12 +228,12 @@ module.exports = {
 				"requestBody": {
 					"required": true,
 					"content": {
-						"application/json": {
+						"multipart/form-data": {
 							"schema": {
 								"type": "object",
 								"properties": {
 									"SessionName": {
-										"description": "Infore o nome da sessão",
+										"description": "Informe seu token se acesso",
 										"type": "string"
 									}
 								},
@@ -319,12 +334,12 @@ module.exports = {
 				"requestBody": {
 					"required": true,
 					"content": {
-						"application/json": {
+						"multipart/form-data": {
 							"schema": {
 								"type": "object",
 								"properties": {
 									"SessionName": {
-										"description": "Infore o nome da sessão",
+										"description": "Informe seu token se acesso",
 										"type": "string"
 									}
 								},
@@ -355,12 +370,12 @@ module.exports = {
 				"requestBody": {
 					"required": true,
 					"content": {
-						"application/json": {
+						"multipart/form-data": {
 							"schema": {
 								"type": "object",
 								"properties": {
 									"SessionName": {
-										"description": "Infore o nome da sessão",
+										"description": "Informe seu token se acesso",
 										"type": "string"
 									}
 								},
@@ -391,12 +406,12 @@ module.exports = {
 				"requestBody": {
 					"required": true,
 					"content": {
-						"application/json": {
+						"multipart/form-data": {
 							"schema": {
 								"type": "object",
 								"properties": {
 									"SessionName": {
-										"description": "Infore o nome da sessão",
+										"description": "Informe seu token se acesso",
 										"type": "string"
 									},
 									"View": {
