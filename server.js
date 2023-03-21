@@ -180,6 +180,7 @@ FORCE_CONNECTION_USE_HERE=0
 			}));
 			//
 			app.use(express.urlencoded({
+				origin: '*',
 				limit: '50mb',
 				extended: true,
 				parameterLimit: 50000
@@ -199,7 +200,9 @@ FORCE_CONNECTION_USE_HERE=0
 			//
 			app.use((err, req, res, next) => {
 				res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
-				res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+				res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+				res.header('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Accept');
+				res.header('Access-Control-Allow-Credentials', true);
 				//
 				if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
 					//
