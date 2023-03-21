@@ -18,7 +18,7 @@ function removeWithspace(string) {
 //
 exports.verify = async (req, res, next) => {
 	//
-	let theTokenAuth = req?.headers['AuthorizationToken'] || req?.body?.AuthorizationToken;
+	let theTokenAuth = req?.body?.AuthorizationToken;
 	let theSessionName;
 	//
 	if (!theTokenAuth) {
