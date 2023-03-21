@@ -68,6 +68,9 @@ module.exports = {
 				],
 				"summary": "Iniciar sessão",
 				"description": "Comando que inicia a sessão.",
+				"tags": [
+				"Start"
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -76,7 +79,7 @@ module.exports = {
 								"type": "object",
 								"properties": {
 									"SessionName": {
-										"description": "Informe seu token de acesso",
+										"description": "Informe o nome da sessão",
 										"type": "string",
 										"default": "",
 									}
@@ -92,7 +95,7 @@ module.exports = {
 								"properties": {
 									"SessionName": {
 										"type": "string",
-										"default": "Informe seu token de acesso aqui",
+										"default": "Informe o nome da sessão aqui",
 									}
 								},
 								"required": [
