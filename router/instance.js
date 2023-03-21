@@ -26,7 +26,6 @@ function removeWithspace(string) {
 //
 router.post("/Start", verifyToken.verify, async (req, res, next) => {
 	//
-	logger?.info(`- Iniciando instancia`);
 	try {
 		if (!removeWithspace(req.body.SessionName)) {
 			var resultRes = {
