@@ -18,10 +18,10 @@ function removeWithspace(string) {
 //
 exports.verify = async (req, res, next) => {
 	//
-	let theTokenAuth = req?.body?.AuthorizationToken;
+	let theTokenAuth;
 	let theSessionName;
 	//
-	if (!theTokenAuth) {
+	if (!req?.body?.AuthorizationToken) {
 		res.setHeader('Content-Type', 'application/json');
 		res.status(422).json({
 			"Status": {
@@ -31,7 +31,7 @@ exports.verify = async (req, res, next) => {
 			}
 		});
 	} else {
-		theTokenAuth = removeWithspace(theTokenAuth);
+		theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
 	}
 	//
 	if (!req?.body?.SessionName) {
@@ -76,7 +76,7 @@ exports.verify = async (req, res, next) => {
 				//
 				if (!tokenActive) {
 					res.setHeader('Content-Type', 'application/json');
-					res.status(401).json({
+					return res.status(401).json({
 						"Status": {
 							"erro": true,
 							"status": 401,
@@ -87,7 +87,7 @@ exports.verify = async (req, res, next) => {
 				//
 				if (todayDate > tokenEndDate) {
 					res.setHeader('Content-Type', 'application/json');
-					res.status(408).json({
+					return res.status(408).json({
 						"Status": {
 							"erro": true,
 							"status": 408,
@@ -99,7 +99,7 @@ exports.verify = async (req, res, next) => {
 				next();
 			} else {
 				res.setHeader('Content-Type', 'application/json');
-				res.status(404).json({
+				return res.status(404).json({
 					"Status": {
 						"erro": true,
 						"status": 404,
@@ -110,7 +110,7 @@ exports.verify = async (req, res, next) => {
 		} catch (err) {
 			logger?.error(`- Error: ${err}`);
 			res.setHeader('Content-Type', 'application/json');
-			res.status(400).json({
+			return res.status(400).json({
 				"Status": {
 					"erro": true,
 					"status": 400,
@@ -122,7 +122,7 @@ exports.verify = async (req, res, next) => {
 		//
 		if (config.SECRET_KEY != theTokenAuth) {
 			res.setHeader('Content-Type', 'application/json');
-			res.status(408).json({
+			return res.status(408).json({
 				"Status": {
 					"erro": true,
 					"status": 404,
