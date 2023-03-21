@@ -9,8 +9,12 @@ const app = express();
 const cors = require('cors');
 const path = require('path');
 const swaggerUi = require('swagger-ui-express')
+const latest = require('github-latest-release'); // verifica a ultima release no github
+//const latest = require('latest-version'); // verifica a ultima release no npm
+const { version } = require('./package.json');
 const { logger } = require("./utils/logger");
 const AllSessions = require('./startup');
+const Sessions = require('./controllers/sessions.js');
 const config = require('./config.global');
 const swaggerDocument = require('./swagger');//
 const http = require('http').Server(app);
@@ -280,11 +284,23 @@ SPEECH_TO_TEXT_URL=https://api.us-south.speech-to-text.watson.cloud.ibm.com/inst
 				if (err) {
 					logger?.error(err);
 				} else {
+					let repoVersion = await latest('mywhatsapp-api-node-baileys-md')
 					let hostUrl = config.HOST == '0.0.0.0' ? '127.0.0.1' : `${config.HOST}`;
 					let host = config.DOMAIN_SSL == '' ? `http://${hostUrl}:${config.PORT}` : `https://${config.DOMAIN_SSL}`;
 					logger?.info(`- HTTP Server running on`);
 					logger?.info(`- To start: ${host}/Start`);
 					logger?.info(`- To doc: ${host}/api-doc`);
+					//
+					logger?.info(`Verificando Atualizações`);
+					io.emit('version', `Verificando Atualizações`);
+					if (Sessions.upToDate(version, repoVersion)) {
+						logger?.info(`- Sua API esta Atualizada com a versão mais recente`);
+						io.emit('version', `Sua API esta Atualizada com a versão mais recente`);
+					} else {
+						logger?.info(`- Há uma nova versão disponível`);
+						io.emit('version', `Há uma nova versão disponível`);
+						Sessions.logUpdateAvailable(version, repoVersion);
+					}
 				}
 
 				if (parseInt(config.START_ALL_SESSIONS) == true) {

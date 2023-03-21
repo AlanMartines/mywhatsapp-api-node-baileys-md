@@ -52,6 +52,8 @@
     "express-validator": "^6.15.0",
 		"file-type": "^18.2.1",
 		"fs-extra": "^11.1.1",
+		"github-latest-release": "^0.1.1",
+		"latest-version": "^7.0.0",
 		"link-preview-js":"^3.0.4",
 		"moment": "^2.29.4",
 		"multer": "^1.4.5-lts.1",
