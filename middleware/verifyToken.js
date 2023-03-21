@@ -22,8 +22,8 @@ exports.verify = async (req, res, next) => {
 	let theSessionName;
 	//
 	if (!req?.headers?.authorizationtoken) {
-		//res.setHeader('Content-Type', 'application/json');
-		res.status(422).json({
+		res.setHeader('Content-Type', 'application/json');
+		return res.status(422).json({
 			"Status": {
 				"erro": true,
 				"status": 422,
@@ -36,7 +36,7 @@ exports.verify = async (req, res, next) => {
 	//
 	if (!req?.body?.SessionName) {
 		res.setHeader('Content-Type', 'application/json');
-		res.status(422).json({
+		return res.status(422).json({
 			"Status": {
 				"erro": true,
 				"status": 422,
