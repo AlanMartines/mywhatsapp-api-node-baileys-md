@@ -302,7 +302,7 @@ SPEECH_TO_TEXT_URL=https://api.us-south.speech-to-text.watson.cloud.ibm.com/inst
 						Sessions.logUpdateAvailable(version, repoVersion);
 					}
 				}
-
+				//
 				if (parseInt(config.START_ALL_SESSIONS) == true) {
 					let result = await AllSessions.startAllSessions();
 					if (result != undefined) {
