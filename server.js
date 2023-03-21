@@ -292,17 +292,20 @@ SPEECH_TO_TEXT_URL=https://api.us-south.speech-to-text.watson.cloud.ibm.com/inst
 					logger?.info(`- To doc: ${host}/api-doc`);
 					//
 					logger?.info(`Verificando Atualizações`);
-					io.emit('version', `Verificando Atualizações`);
+					io.emit('version', {
+						newVersion: undefined,
+						message: `Verificando Atualizações`
+					});
 					if (Sessions.upToDate(version, repoVersion)) {
 						logger?.info(`- Sua API esta Atualizada com a versão mais recente`);
 						io.emit('version', {
-							newversionersion: false,
+							newVersion: false,
 							message: `Sua API esta Atualizada com a versão mais recente`
 						});
 					} else {
 						logger?.info(`- Há uma nova versão disponível`);
 						io.emit('version', {
-							newversionersion: true,
+							newVersion: true,
 							message: `Há uma nova versão disponível`
 						});
 						Sessions.logUpdateAvailable(version, repoVersion);
