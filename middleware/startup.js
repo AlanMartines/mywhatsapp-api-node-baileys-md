@@ -1,12 +1,9 @@
-const fs = require('fs-extra');
 const {
 	forEach
 } = require('p-iteration');
-const request = require('request');
 const axios = require('axios');
 const config = require('../config.global');
 const rra = require('recursive-readdir-async');
-const { default: pQueue } = require('p-queue');
 const { Tokens } = require('../models');
 const tokenPatch = config.PATCH_TOKENS;
 //
@@ -14,8 +11,6 @@ const tokenPatch = config.PATCH_TOKENS;
 module.exports = class startAll {
 	//
 	static async getAllSessions() {
-		//
-		const getSessions = new pQueue({ concurrency: 1 });
 		//
 		try {
 			//
