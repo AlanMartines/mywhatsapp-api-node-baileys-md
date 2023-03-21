@@ -29,10 +29,10 @@ module.exports = class Sessions {
     static async checkPath(path) {
         urlExists(path, (error, exists) => {
             if (exists) {
-                return true
+                return true;
             }
             else {
-                return false
+                return false;
             }
         })
     }
@@ -43,19 +43,19 @@ module.exports = class Sessions {
             add = {
                 SessionName: name,
             }
-            this.session?.push(add)
-            return true
+            this.session?.push(add);
+            return true;
         }
-        return false
+        return false;
     }
 
     // checar se exite o usuario na sessão
     static async checkSession(name) {
         var checkFilter = this.session?.filter(order => (order?.session === name))
         if (checkFilter?.length) {
-            return true
+            return true;
         }
-        return false
+        return false;
     }
 
     // pegar index da sessão (chave)
@@ -63,11 +63,11 @@ module.exports = class Sessions {
         if (this.checkSession(name)) {
             for (var i in this.session) {
                 if (this.session[i]?.session === name) {
-                    return i
+                    return i;
                 }
             }
         }
-        return false
+        return false;
     }
 
     // adicionar informações a sessão 
@@ -77,11 +77,11 @@ module.exports = class Sessions {
             for (var i in this.session) {
                 if (this.session[i]?.session === name) {
                     Object?.assign(this.session[i], extend)
-                    return true
+                    return true;
                 }
             }
         }
-        return false
+        return false;
     }
 
     // Remove object na sessão
@@ -90,11 +90,11 @@ module.exports = class Sessions {
             for (var i in this.session) {
                 if (this.session[i]?.session === name) {
                     delete this.session[i][key]
-                    return true
+                    return true;
                 }
             }
         }
-        return false
+        return false;
     }
 
     // deletar sessão
@@ -102,31 +102,31 @@ module.exports = class Sessions {
         if (this.checkSession(name)) {
             var key = this.getSessionKey(name)
             delete this.session[key]
-            return true
+            return true;
         }
-        return false
+        return false;
     }
 
     // retornar sessão
     static async getSession(name) {
         if (this.checkSession(name)) {
-            var key = this.getSessionKey(name)
-            return this.session[key]
+            var key = this.getSessionKey(name);
+            return this.session[key];
         }
-        return false
+        return false;
     }
 
     // retornar todas
     static async getAll() {
-        return this.session
+        return this.session;
     }
 
     // checa o client
     static async checkClient(name) {
         if (this.getSession(name) && this.getSession(name)?.client) {
-            return true
+            return true;
         }
-        return false
+        return false;
     }
 
     static async getCache(key) {
@@ -144,9 +144,9 @@ module.exports = class Sessions {
         return new Promise((resolve, reject) => {
             cache?.set(key, value, 'EX', 3600, (error) => {
                 if (error) {
-                    reject(error)
+                    reject(error);
                 } else {
-                    resolve(true)
+                    resolve(true);
                 }
             })
         })
@@ -162,7 +162,7 @@ module.exports = class Sessions {
                 })
             } catch (error) {
                 logger?.error(error);
-                reject(error)
+                reject(error);
             }
         })
     }
