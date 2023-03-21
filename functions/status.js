@@ -1,4 +1,4 @@
-const Sessions = require('./controllers/sessions.js');
+const Sessions = require('../controllers/sessions.js');
 //
 module.exports = class Status {
 //
