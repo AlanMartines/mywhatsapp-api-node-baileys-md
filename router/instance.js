@@ -16,6 +16,15 @@ const Sessions = require('../controllers/sessions');
 ╚═╝└─┘ ┴  ┴ ┴┘└┘└─┘  └─┘ ┴ ┴ ┴┴└─ ┴ └─┘─┴┘
 */
 //
+// ------------------------------------------------------------------------------------------------//
+//
+function removeWithspace(string) {
+	var string = string.replace(/\r?\n|\r|\s+/g, ""); /* replace all newlines and with a space */
+	return string;
+}
+//
+// ------------------------------------------------------------------------------------------------//
+//
 router.post("/Start", verifyToken.verify, async (req, res, next) => {
 	//
 	try {
