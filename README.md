@@ -419,7 +419,6 @@ CREATE TABLE IF NOT EXISTS `tokens` (
 
 ```json
 {
-  "AuthorizationToken": "a56ad842-c707-4446-871c-e570240cd730",
   "SessionName": "Teste"
 	...
 }
@@ -428,83 +427,59 @@ CREATE TABLE IF NOT EXISTS `tokens` (
 #### Iniciar sessão whatsapp (POST method)
 
 ```js
-router.post("/Start", (req, res, next) => {
-  const response = await fetch("http://localhost:9001/sistema/Start", {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      AuthorizationToken: req.body.AuthorizationToken,
-      sessionName: req.body.SessionName,
-    }),
-  });
-  const content = await response.json();
-  return content;
-});
-```
-
-#### Exibir QR-Code no navegador (POST method)
-
-```js
-router.post("/QRCode", (req, res, next) => {
-  const response = await fetch("http://localhost:9001/sistema/QRCode", {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      AuthorizationToken: req.body.AuthorizationToken,
-      sessionName: req.body.SessionName,
-      View: "true",
-    }),
-  });
-  const content = await response.json();
-  return content;
-});
+await fetch("http://localhost:9001/sistema/Start", {
+  method: "POST",
+  headers: {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+    "AuthorizationToken": "a56ad842-c707-4446-871c-e570240cd730",
+  },
+  body: JSON.stringify({
+    "SessionName": "Teste"
+  }),
+})
+  .then((response) => response.json())
+  .then((data) => console.log(data))
+  .catch((error) => console.error(error));
 ```
 
 #### Retorna json com (base64) do QR-Code (POST method)
 
 ```js
-router.post("/QRCode", (req, res, next) => {
-  const response = await fetch("http://localhost:9001/sistema/QRCode", {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      AuthorizationToken: req.body.AuthorizationToken,
-      sessionName: req.body.SessionName,
-      View: "false",
-    }),
-  });
-  const content = await response.json();
-  return content;
-});
+await fetch("http://localhost:9001/sistema/QRCode", {
+  method: "POST",
+  headers: {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+    "AuthorizationToken": "a56ad842-c707-4446-871c-e570240cd730",
+  },
+  body: JSON.stringify({
+    "SessionName": "Teste"
+		"View": false,
+  }),
+})
+  .then((response) => response.json())
+  .then((data) => console.log(data))
+  .catch((error) => console.error(error));
 ```
 
 #### Fecha sessão whatsapp (POST method)
 
 ```js
-router.post("/Close", (req, res, next) => {
-  const response = await fetch("http://localhost:9001/sistema/Close", {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      AuthorizationToken: req.body.AuthorizationToken,
-      sessionName: req.body.SessionName,
-    }),
-  });
-  const content = await response.json();
-  return content;
-});
+await fetch("http://localhost:9001/sistema/Close", {
+  method: "POST",
+  headers: {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+    "AuthorizationToken": "a56ad842-c707-4446-871c-e570240cd730",
+  },
+  body: JSON.stringify({
+    "SessionName": "Teste"
+  }),
+})
+  .then((response) => response.json())
+  .then((data) => console.log(data))
+  .catch((error) => console.error(error));
 ```
 
 ## Docker-Compose
