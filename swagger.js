@@ -77,7 +77,7 @@ module.exports = {
 								"properties": {
 									"SessionName": {
 										"type": "string",
-										"default": "Informe o nome da sessão aqui",
+										"default": "Informe o nome da sessão",
 									}
 								},
 								"required": [
@@ -218,7 +218,7 @@ module.exports = {
 								"type": "object",
 								"properties": {
 									"SessionName": {
-										"description": "Informe seu token se acesso",
+										"description": "Infore o nome da sessão",
 										"type": "string"
 									}
 								},
@@ -324,7 +324,7 @@ module.exports = {
 								"type": "object",
 								"properties": {
 									"SessionName": {
-										"description": "Informe seu token se acesso",
+										"description": "Infore o nome da sessão",
 										"type": "string"
 									}
 								},
@@ -360,7 +360,7 @@ module.exports = {
 								"type": "object",
 								"properties": {
 									"SessionName": {
-										"description": "Informe seu token se acesso",
+										"description": "Infore o nome da sessão",
 										"type": "string"
 									}
 								},
@@ -396,7 +396,7 @@ module.exports = {
 								"type": "object",
 								"properties": {
 									"SessionName": {
-										"description": "Informe seu token se acesso",
+										"description": "Infore o nome da sessão",
 										"type": "string"
 									},
 									"View": {
