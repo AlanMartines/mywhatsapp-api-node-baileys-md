@@ -77,6 +77,144 @@ if (!fs.existsSync(tokenPatch)) { // verifica se o diretório já existe
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
+async function saudacao() {
+	//
+	let data = new Date();
+	let hr = data.getHours();
+	let saudacao;
+	//
+	if (hr >= 6 && hr < 12) {
+		saudacao = "- Bom dia";
+		//
+	} else if (hr >= 12 && hr < 18) {
+		saudacao = "- Boa tarde";
+		//
+	} else if (hr >= 18 && hr < 23) {
+		saudacao = "- Boa noite";
+		//
+	} else {
+		saudacao = "- Boa madrugada";
+		//
+	}
+	return saudacao;
+}
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
+async function updateStateDb(state, status, AuthorizationToken) {
+	//
+	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
+	logger?.info(`- Date: ${date_now}`);
+	//
+	if (parseInt(config.VALIDATE_MYSQL) == true) {
+		logger?.info('- Atualizando status');
+		//
+		await Tokens.update({
+			state: state,
+			status: status,
+			lastactivity: date_now,
+		},
+			{
+				where: {
+					token: AuthorizationToken
+				},
+			}).then(async (entries) => {
+				logger?.info('- Status atualizado');
+			}).catch(async (err) => {
+				logger?.error('- Status não atualizado');
+				logger?.error(`- Error: ${err}`);
+			}).finally(async () => {
+				//Tokens.release();
+			});
+		//
+	}
+	//
+}
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
+async function updateUserConDb(userconnected, AuthorizationToken) {
+	//
+	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
+	logger?.info(`- Date: ${date_now}`);
+	//
+	if (parseInt(config.VALIDATE_MYSQL) == true) {
+		logger?.info('- Atualizando User Connected');
+		//
+		await Tokens.update({
+			userconnected: userconnected,
+			lastactivity: date_now,
+		},
+			{
+				where: {
+					token: AuthorizationToken
+				},
+			}).then(async (entries) => {
+				logger?.info('- User connection atualizado');
+			}).catch(async (err) => {
+				logger?.error('- User connection não atualizado');
+				logger?.error(`- Error: ${err}`);
+			}).finally(() => {
+				//Tokens.release();
+			});
+		//
+	}
+	//
+}
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
+async function deletaPastaToken(filePath, filename) {
+	//
+	await rmfr(`${filePath}/${filename}`).then(async (result) => {
+		//
+		logger?.info(`- Pasta "${filePath}/${filename}" removida com sucesso`);
+		//
+	}).catch((erro) => {
+		//
+		logger?.error(`- Erro ao remover pasta "${filePath}/${filename}"`);
+		//
+	});
+	//
+}
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
+async function deletaToken(filePath, filename) {
+	//
+	await rmfr(`${filePath}/${filename}`, { glob: true }).then(async (result) => {
+		//
+		logger?.info(`- Arquivo "${filename}" removido com sucesso`);
+		//
+	}).catch((erro) => {
+		//
+		logger?.error(`- Erro ao remover arquivo "${filename}"`);
+		//
+	});
+	//
+}
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
+async function resContacts(SessionName, contacts) {
+	//
+	//logger?.info(`- SessionName: ${SessionName}`);
+	try {
+		fs.writeJson(`${tokenPatch}/${SessionName}.contacts.json`, `${JSON.stringify(contacts, null, 2)}`, (err) => {
+			if (err) {
+				logger?.error(`- Erro: ${err}`);
+			} else {
+				//logger?.info('- Success create contacts file');
+			}
+		});
+	} catch (error) {
+		logger?.error(`- Error create contacts file: ${error}`);
+	}
+	//
+}
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
 module.exports = class Instace {
 	static async start(req, res, next) {
 		let SessionName = req.body.SessionName;
@@ -110,6 +248,7 @@ module.exports = class Instace {
 	//
 	static async initSession(req, res, next) {
 		//
+		logger?.info(saudacao());
 		logger?.info("- Iniciando sessão");
 		let SessionName = req.body.SessionName;
 		let data = await Sessions?.getSession(SessionName);
