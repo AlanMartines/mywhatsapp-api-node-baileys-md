@@ -338,6 +338,24 @@ module.exports = {
 								}
 							}
 						}
+					},
+
+					"422": {
+						"description": "Token não encontrado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"Status": {
+											"erro": true,
+											"status": 422,
+											"message": "Token não informado, verifique e tente novamente"
+										}
+									}
+								}
+							}
+						}
 					}
 				}
 			}
