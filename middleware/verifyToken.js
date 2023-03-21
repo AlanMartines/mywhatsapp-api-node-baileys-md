@@ -22,7 +22,7 @@ exports.verify = async (req, res, next) => {
 	let theSessionName;
 	//
 	if (!req?.headers['AuthorizationToken']) {
-		res.setHeader('Content-Type', 'application/json');
+		//res.setHeader('Content-Type', 'application/json');
 		res.status(422).json({
 			"Status": {
 				"erro": true,
@@ -35,7 +35,7 @@ exports.verify = async (req, res, next) => {
 	}
 	//
 	if (!req?.body?.SessionName) {
-		res.setHeader('Content-Type', 'application/json');
+		//res.setHeader('Content-Type', 'application/json');
 		res.status(422).json({
 			"Status": {
 				"erro": true,
@@ -75,7 +75,7 @@ exports.verify = async (req, res, next) => {
 				req.userToken = tokenToken;
 				//
 				if (!tokenActive) {
-					res.setHeader('Content-Type', 'application/json');
+					//res.setHeader('Content-Type', 'application/json');
 					res.status(401).json({
 						"Status": {
 							"erro": true,
@@ -86,7 +86,7 @@ exports.verify = async (req, res, next) => {
 				}
 				//
 				if (todayDate > tokenEndDate) {
-					res.setHeader('Content-Type', 'application/json');
+					//res.setHeader('Content-Type', 'application/json');
 					res.status(408).json({
 						"Status": {
 							"erro": true,
@@ -98,7 +98,7 @@ exports.verify = async (req, res, next) => {
 				//
 				next();
 			} else {
-				res.setHeader('Content-Type', 'application/json');
+				//res.setHeader('Content-Type', 'application/json');
 				res.status(404).json({
 					"Status": {
 						"erro": true,
@@ -109,7 +109,7 @@ exports.verify = async (req, res, next) => {
 			}
 		} catch (err) {
 			logger?.error(`- Error: ${err}`);
-			res.setHeader('Content-Type', 'application/json');
+			//res.setHeader('Content-Type', 'application/json');
 			res.status(400).json({
 				"Status": {
 					"erro": true,
