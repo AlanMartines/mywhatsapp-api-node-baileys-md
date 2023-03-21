@@ -51,9 +51,9 @@ module.exports = {
 	"components": {
 		"securitySchemes": {
 			"ApiKeyAuth": {
-        "type": "apiKey",
-        "in": "header",
-        "name": "AuthorizationToken"
+				"type": "apiKey",
+				"in": "header",
+				"name": "AuthorizationToken"
 			}
 		},
 		"schemas": {
@@ -209,6 +209,24 @@ module.exports = {
 											"erro": true,
 											"status": 404,
 											"message": "Token não encontrado, verifique e tente novamente"
+										}
+									}
+								}
+							}
+						}
+					},
+
+					"422": {
+						"description": "Token não encontrado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"Status": {
+											"erro": true,
+											"status": 422,
+											"message": "Token não informado, verifique e tente novamente"
 										}
 									}
 								}
