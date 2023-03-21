@@ -76,7 +76,7 @@ exports.verify = async (req, res, next) => {
 				//
 				if (!tokenActive) {
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(401).json({
+					res.status(401).json({
 						"Status": {
 							"erro": true,
 							"status": 401,
@@ -87,7 +87,7 @@ exports.verify = async (req, res, next) => {
 				//
 				if (todayDate > tokenEndDate) {
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(408).json({
+					res.status(408).json({
 						"Status": {
 							"erro": true,
 							"status": 408,
@@ -99,7 +99,7 @@ exports.verify = async (req, res, next) => {
 				next();
 			} else {
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(404).json({
+				res.status(404).json({
 					"Status": {
 						"erro": true,
 						"status": 404,
@@ -110,7 +110,7 @@ exports.verify = async (req, res, next) => {
 		} catch (err) {
 			logger?.error(`- Error: ${err}`);
 			res.setHeader('Content-Type', 'application/json');
-			return res.status(400).json({
+			res.status(400).json({
 				"Status": {
 					"erro": true,
 					"status": 400,
@@ -122,7 +122,7 @@ exports.verify = async (req, res, next) => {
 		//
 		if (config.SECRET_KEY != theTokenAuth) {
 			res.setHeader('Content-Type', 'application/json');
-			return res.status(408).json({
+			res.status(408).json({
 				"Status": {
 					"erro": true,
 					"status": 404,
