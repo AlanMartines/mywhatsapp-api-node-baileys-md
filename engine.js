@@ -1,10 +1,6 @@
 'use strict';
 // Configuração dos módulos
 const fs = require('fs-extra');
-const rmfr = require('rmfr');
-const {
-	forEach
-} = require('p-iteration');
 const QRCode = require('qrcode');
 const qrViewer = require('qrcode-terminal');
 const moment = require('moment');
@@ -12,13 +8,17 @@ moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
 const pino = require("pino");
 const colors = require('colors');
-const { Boom } = require('@hapi/boom');
 const { default: pQueue } = require('p-queue');
 const { release } = require('os');
 const NodeCache = require('node-cache');
-const { Tokens } = require('./models');
-const { logger } = require("./utils/logger");
 const msgRetryCounterCache = new NodeCache();
+const { logger } = require("./utils/logger");
+const Sessions = require('./controllers/sessions.js');
+const eventsSend = require('./controllers/events');
+const webhooks = require('./controllers/webhooks.js');
+const config = require('./config.global');
+//
+// ------------------------------------------------------------------------------------------------------- //
 //
 const {
 	default: makeWASocket,
@@ -74,14 +74,6 @@ if (parseInt(config.INDOCKER)) {
 if (!fs.existsSync(tokenPatch)) { // verifica se o diretório já existe
 	fs.mkdirSync(tokenPatch, { recursive: true }); // cria o diretório recursivamente
 }
-//
-// ------------------------------------------------------------------------------------------------------- //
-//
-const events = require('./controllers/events');
-const webhooks = require('./controllers/webhooks.js');
-const Sessions = require('./controllers/sessions.js');
-const fnSocket = require('./controllers/fnSockets');
-const config = require('./config.global');
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
@@ -553,7 +545,13 @@ module.exports = class Instace {
 										//
 										setTimeout(async function () {
 											return await startSock(SessionName).then(async (result) => {
-												session.client = result;
+												//
+												let addJson = {
+													client: result
+												};
+												//
+												await Sessions?.addInfoSession(SessionName, addJson);
+												//
 												return result;
 											}).catch(async (erro) => {
 												logger?.error(`- Error reconnecting connection: ${erro}`);
@@ -585,7 +583,13 @@ module.exports = class Instace {
 										//
 										setTimeout(async function () {
 											return await startSock(SessionName).then(async (result) => {
-												session.client = result;
+												//
+												let addJson = {
+													client: result
+												};
+												//
+												await Sessions?.addInfoSession(SessionName, addJson);
+												//
 												return result;
 											}).catch(async (erro) => {
 												logger?.error(`- Error reconnecting connection: ${erro}`);
@@ -610,7 +614,13 @@ module.exports = class Instace {
 										//
 										setTimeout(async function () {
 											return await startSock(SessionName).then(async (result) => {
-												session.client = result;
+																//
+											let addJson = {
+												client: result
+											};
+											//
+											await Sessions?.addInfoSession(SessionName, addJson);
+											//
 												return result;
 											}).catch(async (erro) => {
 												logger?.error(`- Error reconnecting connection: ${erro}`);
@@ -643,7 +653,13 @@ module.exports = class Instace {
 										//
 										setTimeout(async function () {
 											return await startSock(SessionName).then(async (result) => {
-												session.client = result;
+												//
+												let addJson = {
+													client: result
+												};
+												//
+												await Sessions?.addInfoSession(SessionName, addJson);
+												//
 												return result;
 											}).catch(async (erro) => {
 												logger?.error(`- Error reconnecting connection: ${erro}`);
@@ -704,7 +720,13 @@ module.exports = class Instace {
 										//
 										setTimeout(async function () {
 											return await startSock(SessionName).then(async (result) => {
-												session.client = result;
+												//
+												let addJson = {
+													client: result
+												};
+												//
+												await Sessions?.addInfoSession(SessionName, addJson);
+												//
 												return result;
 											}).catch(async (erro) => {
 												logger?.error(`- Error reconnecting connection: ${erro}`);
@@ -749,7 +771,13 @@ module.exports = class Instace {
 										//
 										setTimeout(async function () {
 											return await startSock(SessionName).then(async (result) => {
-												session.client = result;
+												//
+												let addJson = {
+													client: result
+												};
+												//
+												await Sessions?.addInfoSession(SessionName, addJson);
+												//
 												return result;
 											}).catch(async (erro) => {
 												logger?.error(`- Error reconnecting connection: ${erro}`);
@@ -763,7 +791,13 @@ module.exports = class Instace {
 										logger?.info('- Connection restartRequired');
 										setTimeout(async function () {
 											return await startSock(SessionName).then(async (result) => {
-												session.client = result;
+												//
+												let addJson = {
+													client: result
+												};
+												//
+												await Sessions?.addInfoSession(SessionName, addJson);
+												//
 												return result;
 											}).catch(async (erro) => {
 												logger?.error(`- Error reconnecting connection: ${erro}`);
@@ -777,7 +811,13 @@ module.exports = class Instace {
 										//
 										setTimeout(async function () {
 											return await startSock(SessionName).then(async (result) => {
-												session.client = result;
+												//
+												let addJson = {
+													client: result
+												};
+												//
+												await Sessions?.addInfoSession(SessionName, addJson);
+												//
 												return result;
 											}).catch(async (erro) => {
 												logger?.error(`- Error reconnecting connection: ${erro}`);
@@ -801,14 +841,14 @@ module.exports = class Instace {
 							await saveCreds();
 						}
 						//
-						eventsSend?.statusConnection(await Sessions?.getSession(SessionName), client, socket, events);
-						eventsSend?.statusMessage(await Sessions?.getSession(SessionName), client, socket, events);
-						eventsSend?.contactsEvents(await Sessions?.getSession(SessionName), client, socket, events);
-						eventsSend?.messagesEvents(await Sessions?.getSession(SessionName), client, socket, events);
-						eventsSend?.chatsEvents(await Sessions?.getSession(SessionName), client, socket, events);
-						eventsSend?.blocklistEvents(await Sessions?.getSession(SessionName), client, socket, events);
-						eventsSend?.groupsEvents(await Sessions?.getSession(SessionName), client, socket, events);
-						eventsSend?.extraEvents(await Sessions?.getSession(SessionName), client, socket, events);
+						eventsSend?.statusConnection(data, client, socket, events);
+						eventsSend?.statusMessage(data, client, socket, events);
+						eventsSend?.contactsEvents(data, client, socket, events);
+						eventsSend?.messagesEvents(data, client, socket, events);
+						eventsSend?.chatsEvents(data, client, socket, events);
+						eventsSend?.blocklistEvents(data, client, socket, events);
+						eventsSend?.groupsEvents(data, client, socket, events);
+						eventsSend?.extraEvents(data, client, socket, events);
 						//
 					}
 				);
@@ -817,7 +857,13 @@ module.exports = class Instace {
 			}
 			//
 			return await startSock(SessionName).then(async (result) => {
-				session.client = result;
+				//
+				let addJson = {
+					client: result
+				};
+				//
+				await Sessions?.addInfoSession(SessionName, addJson);
+				//
 				return result;
 			}).catch(async (erro) => {
 				logger?.error(`- startSock ${erro}`);
@@ -849,7 +895,7 @@ module.exports = class Instace {
 	}
 	//
 	static async exportQR(socket, base64Code, SessionName, attempts) {
-		req.io.emit('qrCode',
+		socket.emit('qrCode',
 			{
 				data: base64Code,
 				SessionName: SessionName,
