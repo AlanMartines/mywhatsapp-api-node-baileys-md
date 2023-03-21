@@ -94,6 +94,21 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 					//
 				}
 				//
+			} else {
+				//
+				engine.Start(req, res, next);
+					//
+					var resultRes = {
+						"erro": false,
+						"status": 200,
+						"state": 'notLogged',
+						"message": 'Sistema iniciando e indisponivel para uso'
+					};
+					//
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(resultRes.status).json({
+						"Status": resultRes
+					});
 			}
 		}
 	} catch (error) {

@@ -223,8 +223,7 @@ module.exports = class Instace {
 
 		if (data) {
 			this.initSession(req, res, next);
-		}
-		else
+		} else {
 			if (data == false) {
 				await Sessions?.checkAddUser(SessionName);
 				//
@@ -245,6 +244,7 @@ module.exports = class Instace {
 				await Sessions?.addInfoSession(SessionName, newSession);
 				this.initSession(req, res, next);
 			}
+		}
 	}
 	//
 	static async initSession(req, res, next) {
