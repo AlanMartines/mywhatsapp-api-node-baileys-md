@@ -50,7 +50,11 @@ module.exports = {
 	],
 	"components": {
 		"securitySchemes": {
-
+			"ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "AuthorizationToken"
+			}
 		}
 	},
 	"paths": {
@@ -83,7 +87,7 @@ module.exports = {
 				},
 				"security": [
 					{
-						"bearerAuth": []
+						"ApiKeyAuth": []
 					}
 				],
 				"responses": {
@@ -118,7 +122,7 @@ module.exports = {
 				},
 				"security": [
 					{
-						"bearerAuth": []
+						"ApiKeyAuth": []
 					}
 				],
 				"responses": {
@@ -154,7 +158,7 @@ module.exports = {
 				},
 				"security": [
 					{
-						"bearerAuth": []
+						"ApiKeyAuth": []
 					}
 				],
 				"responses": {
@@ -190,7 +194,7 @@ module.exports = {
 				},
 				"security": [
 					{
-						"bearerAuth": []
+						"ApiKeyAuth": []
 					}
 				],
 				"responses": {
