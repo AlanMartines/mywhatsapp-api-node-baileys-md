@@ -97,7 +97,6 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 				//
 				engine.Start(req, res, next);
 				//
-				//
 				var resultRes = {
 					"erro": false,
 					"status": 200,
