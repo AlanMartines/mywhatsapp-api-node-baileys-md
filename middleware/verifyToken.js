@@ -23,7 +23,7 @@ exports.verify = async (req, res, next) => {
 	//
 	console.log(req?.headers);
 	//
-	if (!req?.headers['authorizationtoken']) {
+	if (!req?.headers?.authorizationtoken) {
 		res.setHeader('Content-Type', 'application/json');
 		res.status(422).json({
 			"Status": {
@@ -33,7 +33,7 @@ exports.verify = async (req, res, next) => {
 			}
 		});
 	} else {
-		theTokenAuth = removeWithspace(req?.headers['authorizationtoken'])
+		theTokenAuth = req?.headers?.authorizationtoken;
 	}
 	//
 	if (!req?.body?.SessionName) {
