@@ -76,7 +76,7 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 					case 'DISCONNECTED':
 					case 'NOTFOUND':
 						//
-						await engine.Start(req, res, next);
+						engine.Start(req, res, next);
 						//
 						break;
 					default:
@@ -93,11 +93,22 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 					//
 				}
 				//
-			}else{
+			} else {
 				//
-				await engine.Start(req, res, next);
+				engine.Start(req, res, next);
 				//
-				logger?.error(`- Instancia não encontrada`);
+				//
+				var resultRes = {
+					"erro": false,
+					"status": 200,
+					"message": 'Sistema iniciando, por favor aguarde'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+				//
 			}
 		}
 	} catch (error) {

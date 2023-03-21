@@ -220,11 +220,9 @@ module.exports = class Instace {
 	static async Start(req, res, next) {
 		let SessionName = req.body.SessionName;
 		let data = await Sessions?.getSession(SessionName);
-		logger?.info(`- Iniciando instancia`);
 		if (data) {
 			this.initSession(req, res, next);
 		} else {
-			if (data == false) {
 				await Sessions?.checkAddUser(SessionName);
 				//
 				let newSession = {
@@ -243,7 +241,6 @@ module.exports = class Instace {
 				//
 				await Sessions?.addInfoSession(SessionName, newSession);
 				this.initSession(req, res, next);
-			}
 		}
 	}
 	//
