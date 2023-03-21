@@ -201,7 +201,7 @@ async function deletaToken(filePath, filename) {
 //
 async function resContacts(SessionName, contacts) {
 	//
-	logger?.info(`- SessionName: ${SessionName}`);
+	//logger?.info(`- SessionName: ${SessionName}`);
 	try {
 		fs.writeJson(`${tokenPatch}/${SessionName}.contacts.json`, `${JSON.stringify(contacts, null, 2)}`, (err) => {
 			if (err) {
