@@ -121,7 +121,7 @@ exports.verify = async (req, res, next) => {
 	} else {
 		//
 		if (config.SECRET_KEY != theTokenAuth) {
-			res.setHeader('Content-Type', 'application/json');
+			//res.setHeader('Content-Type', 'application/json');
 			res.status(408).json({
 				"Status": {
 					"erro": true,
