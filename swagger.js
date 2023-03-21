@@ -68,7 +68,6 @@ module.exports = {
 				],
 				"summary": "Iniciar sessão",
 				"description": "Comando que inicia a sessão.",
-				"tags": [],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -244,7 +243,6 @@ module.exports = {
 				],
 				"summary": "Status da sessão",
 				"description": "Comando para retorno do status atual.",
-				"tags": [],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -369,7 +367,6 @@ module.exports = {
 				],
 				"summary": "Fechar a sessão",
 				"description": "Comando que fecha a sessão.",
-				"tags": [],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -406,7 +403,6 @@ module.exports = {
 				],
 				"summary": "Deslogar a sessão",
 				"description": "Comando que desloga a sessão.",
-				"tags": [],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -443,7 +439,6 @@ module.exports = {
 				],
 				"summary": "Leitura do QR-Code",
 				"description": "Comando usado para leitura do QR-Code.",
-				"tags": [],
 				"requestBody": {
 					"required": true,
 					"content": {
