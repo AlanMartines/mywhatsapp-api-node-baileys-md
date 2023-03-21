@@ -21,8 +21,6 @@ exports.verify = async (req, res, next) => {
 	let theTokenAuth;
 	let theSessionName;
 	//
-	console.log(req?.headers);
-	//
 	if (!req?.headers?.authorizationtoken) {
 		res.setHeader('Content-Type', 'application/json');
 		res.status(422).json({
