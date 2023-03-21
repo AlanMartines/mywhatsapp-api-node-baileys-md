@@ -71,28 +71,13 @@ module.exports = {
 				"requestBody": {
 					"required": true,
 					"content": {
-						"multipart/form-data": {
-							"schema": {
-								"type": "object",
-								"properties": {
-									"SessionName": {
-										"description": "Informe seu token de acesso",
-										"type": "string",
-										"default": "",
-									}
-								},
-								"required": [
-									"SessionName"
-								]
-							}
-						},
 						"application/json": {
 							"schema": {
 								"type": "object",
 								"properties": {
 									"SessionName": {
 										"type": "string",
-										"default": "Informe seu token de acesso aqui",
+										"default": "Informe o nome da sessão aqui",
 									}
 								},
 								"required": [
@@ -228,7 +213,7 @@ module.exports = {
 				"requestBody": {
 					"required": true,
 					"content": {
-						"multipart/form-data": {
+						"application/json": {
 							"schema": {
 								"type": "object",
 								"properties": {
@@ -334,7 +319,7 @@ module.exports = {
 				"requestBody": {
 					"required": true,
 					"content": {
-						"multipart/form-data": {
+						"application/json": {
 							"schema": {
 								"type": "object",
 								"properties": {
@@ -370,7 +355,7 @@ module.exports = {
 				"requestBody": {
 					"required": true,
 					"content": {
-						"multipart/form-data": {
+						"application/json": {
 							"schema": {
 								"type": "object",
 								"properties": {
@@ -406,7 +391,7 @@ module.exports = {
 				"requestBody": {
 					"required": true,
 					"content": {
-						"multipart/form-data": {
+						"application/json": {
 							"schema": {
 								"type": "object",
 								"properties": {
