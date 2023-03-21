@@ -94,6 +94,8 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 					//
 				}
 				//
+			}else{
+				logger?.error(`- Instancia não encontrada`);
 			}
 		}
 	} catch (error) {
