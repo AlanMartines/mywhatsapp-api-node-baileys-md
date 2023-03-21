@@ -50,7 +50,7 @@
     "express-handlebars": "^7.0.2",
     "express-fileupload": "^1.4.0",
     "express-validator": "^6.15.0",
-		"file-type": "^18.2.1",
+		"file-type": "^16.5.3",
 		"fs-extra": "^11.1.1",
 		"github-latest-release": "^0.1.1",
 		"latest-version": "^7.0.0",
