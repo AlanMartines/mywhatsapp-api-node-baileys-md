@@ -351,7 +351,7 @@ module.exports = class Instace {
 					/** provide a cache to store a user's device list */
 					//userDevicesCache: NodeCache,
 					/** marks the client as online whenever the socket successfully connects */
-					markOnlineOnConnect: parseInt(setOnline),
+					markOnlineOnConnect: setOnline,
 					/**
 					 * map to store the retry counts for failed messages;
 					 * used to determine whether to retry a message or not */
