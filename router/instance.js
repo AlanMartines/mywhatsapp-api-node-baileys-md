@@ -16,7 +16,7 @@ const Sessions = require('../controllers/sessions');
 ╚═╝└─┘ ┴  ┴ ┴┘└┘└─┘  └─┘ ┴ ┴ ┴┴└─ ┴ └─┘─┴┘
 */
 //
-router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next) => {
+router.post("/Start", verifyToken.verify, async (req, res, next) => {
 	//
 	try {
 		if (!removeWithspace(req.body.SessionName)) {
@@ -33,111 +33,57 @@ router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next
 			//
 		} else {
 			//
-			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
-			//
-			switch (Status.status) {
-				case 'inChat':
-				case 'qrReadSuccess':
-				case 'isLogged':
-				case 'chatsAvailable':
-				case 'qrRead':
+			let existSession = Sessions.checkSession(removeWithspace(req.body.SessionName));
+			if (existSession) {
+				let data = Sessions.getSession(removeWithspace(req.body.SessionName));
+				switch (data?.status) {
+					case 'inChat':
+					case 'qrReadSuccess':
+					case 'isLogged':
+					case 'chatsAvailable':
+					case 'qrRead':
+						//
+						var resultRes = {
+							"erro": false,
+							"status": 200,
+							"state": data?.state,
+							"message": 'Sistema iniciado e disponivel para uso'
+						};
+						//
+						res.setHeader('Content-Type', 'application/json');
+						return res.status(resultRes.status).json({
+							"Status": resultRes
+						});
+						break;
+					case 'notLogged':
+					case 'deviceNotConnected':
+					case 'desconnectedMobile':
+					case 'qrReadFail':
+					case 'deleteToken':
+					case 'browserClose':
+					case 'autocloseCalled':
+					case 'serverClose':
+					case 'deleteToken':
+					case 'CLOSED':
+					case 'DISCONNECTED':
+					case 'NOTFOUND':
+						//
+						engine.Start(req, res, next);
+						//
+						break;
+					default:
+						var resultRes = {
+							"erro": true,
+							"status": 400,
+							"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+						};
+						//
+						res.setHeader('Content-Type', 'application/json');
+						return res.status(resultRes.status).json({
+							"Status": resultRes
+						});
 					//
-					var resultRes = {
-						"erro": false,
-						"status": 200,
-						"message": 'Sistema iniciado e disponivel para uso'
-					};
-					//
-					res.setHeader('Content-Type', 'application/json');
-					res.status(resultRes.status).json({
-						"Status": resultRes
-					});
-					break;
-				case 'notLogged':
-				case 'deviceNotConnected':
-				case 'desconnectedMobile':
-				case 'qrReadFail':
-				case 'deleteToken':
-				case 'browserClose':
-				case 'autocloseCalled':
-				case 'serverClose':
-				case 'deleteToken':
-				case 'CLOSED':
-				case 'DISCONNECTED':
-				case 'NOTFOUND':
-					//
-					await Sessions.Start(req.io, removeWithspace(req.body.SessionName), removeWithspace(req.body.SessionName), req.body.whatsappVersion);
-					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
-					if (parseInt(config.VALIDATE_MYSQL) == true) {;
-						try {
-							//
-							const row = await Tokens.findOne({
-								limit: 1,
-								attributes: [
-									'webhook', 
-									'wh_status', 
-									'wh_message', 
-									'wh_qrcode', 
-									'wh_connect'
-								],
-								where: {
-									token: removeWithspace(req.body.SessionName)
-								}
-							}).then(async function (entries) {
-								return entries;
-							}).catch(async (err) => {
-								console?.log('- Error:', err);
-								return false;
-							});
-							//
-							if (row.webhook) {
-								//
-								const webHook = row.webhook;
-								//
-									session.wh_status = webHook;
-									session.wh_message = webHook;
-									session.wh_qrcode = webHook;
-									session.wh_connect = webHook;
-									//
-							} else {
-								session.wh_status = req.body.wh_status;
-								session.wh_message = req.body.wh_message;
-								session.wh_qrcode = req.body.wh_qrcode;
-								session.wh_connect = req.body.wh_connect;
-							}
-						} catch (err) {
-							console?.log("- erro:", err);
-						}
-					} else {
-						session.wh_status = req.body.wh_status;
-						session.wh_message = req.body.wh_message;
-						session.wh_qrcode = req.body.wh_qrcode;
-						session.wh_connect = req.body.wh_connect;
-					}
-					//
-					var resultRes = {
-						"erro": false,
-						"status": 200,
-						"message": 'Sistema iniciando'
-					};
-					//
-					res.setHeader('Content-Type', 'application/json');
-					res.status(resultRes.status).json({
-						"Status": resultRes
-					});
-					//
-					break;
-				default:
-					var resultRes = {
-						"erro": true,
-						"status": 400,
-						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
-					};
-					//
-					res.setHeader('Content-Type', 'application/json');
-					res.status(resultRes.status).json({
-						"Status": resultRes
-					});
+				}
 				//
 			}
 		}
@@ -151,7 +97,7 @@ router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//

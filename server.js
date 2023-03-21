@@ -189,8 +189,6 @@ FORCE_CONNECTION_USE_HERE=0
 			app.set('view engine', 'ejs');
 			app.set('views', './views');
 			app.set('json spaces', 2);
-			//app.use(express.static('./public'));
-			//app.use('./public', express.static('public'));
 			app.use(express.static(__dirname + '/public'));
 			//
 			app.use((req, res, next) => {
@@ -223,10 +221,10 @@ FORCE_CONNECTION_USE_HERE=0
 			//
 			//
 			app.get('/', (req, res) => {
-				//res.status(200).send('Server WPPConnect is running API. https://github.com/AlanMartines/mywhatsapp-api-node-wppconnect');
 				res.sendFile(path.join(__dirname, './views/index.html'));
 			});
 			//
+			app.use("/instance", instance);
 			app.use("/sistema", sistem);
 			//
 			const sockets = {};
