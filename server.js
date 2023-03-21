@@ -291,7 +291,7 @@ SPEECH_TO_TEXT_URL=https://api.us-south.speech-to-text.watson.cloud.ibm.com/inst
 					logger?.info(`- To start: ${host}/Start`);
 					logger?.info(`- To doc: ${host}/api-doc`);
 					//
-					logger?.info(`Verificando Atualizações`);
+					logger?.info(`- Verificando Atualizações`);
 					io.emit('version', {
 						newVersion: undefined,
 						message: `Verificando Atualizações`
