@@ -21,7 +21,7 @@ exports.verify = async (req, res, next) => {
 	let theTokenAuth;
 	let theSessionName;
 	//
-	if (!req?.body?.AuthorizationToken) {
+	if (!req?.headers['AuthorizationToken']) {
 		res.setHeader('Content-Type', 'application/json');
 		res.status(422).json({
 			"Status": {
@@ -31,7 +31,7 @@ exports.verify = async (req, res, next) => {
 			}
 		});
 	} else {
-		theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+		theTokenAuth = removeWithspace(req?.headers['AuthorizationToken'])
 	}
 	//
 	if (!req?.body?.SessionName) {
