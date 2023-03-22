@@ -18,6 +18,7 @@ const { Tokens } = require('./models');
 const Sessions = require('./controllers/sessions.js');
 const eventsSend = require('./controllers/events');
 const webhooks = require('./controllers/webhooks.js');
+const fnSocket = require('./controllers/fnSockets');
 const config = require('./config.global');
 //
 // ------------------------------------------------------------------------------------------------------- //
@@ -228,20 +229,19 @@ module.exports = class Instace {
 				await saudacao();
 				logger?.info(`- Iniciando sessão`);
 				//
-				let newSession = {
+				await Sessions?.checkAddUser(SessionName);
+				await Sessions?.addInfoSession(SessionName, {
 					waqueue: null,
 					qrcode: null,
 					client: null,
 					tokenPatch: tokenPatch,
-					wh_status: req?.body?.wh_status,
-					wh_message: req?.body?.wh_message,
-					wh_qrcode: req?.body?.wh_qrcode,
-					wh_connect: req?.body?.wh_connect,
+          wh_status: req?.body?.wh_status != undefined ? req?.body?.wh_status : '',
+          wh_message: req?.body?.wh_message != undefined ? req?.body?.wh_message : '',
+          wh_qrcode: req?.body?.wh_qrcode != undefined ? req?.body?.wh_qrcode : '',
+          wh_connect: req?.body?.wh_connect != undefined ? req?.body?.wh_connect : '',
 					state: 'STARTING',
 					status: "notLogged"
-				}
-				await Sessions?.checkAddUser(SessionName);
-				await Sessions?.addInfoSession(SessionName, newSession);
+				});
 				this.initSession(req, res);
 			//
 		}
@@ -251,7 +251,6 @@ module.exports = class Instace {
 		//
 		let SessionName = req?.body?.SessionName;
 		let setOnline = req?.body?.setOnline;
-		let data = await Sessions?.getSession(SessionName);
 		let waqueue = new pQueue({ concurrency: parseInt(config.CONCURRENCY) });
 		await Sessions?.addInfoSession(SessionName, {
 			waqueue: waqueue
