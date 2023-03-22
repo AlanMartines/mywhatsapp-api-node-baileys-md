@@ -219,7 +219,6 @@ async function resContacts(SessionName, contacts) {
 //
 module.exports = class Instace {
 	static async Start(req, res) {
-		logger?.info(`${req?.body}`);
 		let SessionName = req?.body?.SessionName;
 		let data = await Sessions?.getSession(SessionName);
 		if (data) {
@@ -242,15 +241,15 @@ module.exports = class Instace {
 					state: 'STARTING',
 					status: "notLogged"
 				};
-				//
+	
 				await Sessions?.checkAddUser(SessionName);
 				await Sessions?.addInfoSession(SessionName, newSession);
-				this.initSession(req, res);
+				this.initSession(req, res, next);
 			//
 		}
 	}
 	//
-	static async initSession(req, res) {
+	static async initSession(req, res, next) {
 		//
 		let SessionName = req?.body?.SessionName;
 		let setOnline = req?.body?.setOnline;
@@ -982,14 +981,16 @@ module.exports = class Instace {
 							await saveCreds();
 						}
 						//
-						eventsSend?.statusConnection(data, client, req.io, events);
-						eventsSend?.statusMessage(data, client, req.io, events);
-						eventsSend?.contactsEvents(data, client, req.io, events);
-						eventsSend?.messagesEvents(data, client, req.io, events);
-						eventsSend?.chatsEvents(data, client, req.io, events);
-						eventsSend?.blocklistEvents(data, client, req.io, events);
-						eventsSend?.groupsEvents(data, client, req.io, events);
-						eventsSend?.extraEvents(data, client, req.io, events);
+						/*
+						eventsSend?.statusConnection(SessionName, client, req.io, events);
+						eventsSend?.statusMessage(SessionName, client, req.io, events);
+						eventsSend?.contactsEvents(SessionName, client, req.io, events);
+						eventsSend?.messagesEvents(SessionName, client, req.io, events);
+						eventsSend?.chatsEvents(SessionName, client, req.io, events);
+						eventsSend?.blocklistEvents(SessionName, client, req.io, events);
+						eventsSend?.groupsEvents(SessionName, client, req.io, events);
+						eventsSend?.extraEvents(SessionName, client, req.io, events);
+						*/
 						//
 					}
 				);
