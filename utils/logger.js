@@ -4,6 +4,7 @@ const pretty = require('pino-pretty');
 const logger = pino({
   timestamp: false,
   levelFirst: true,
+  prettyPrint: true,
   transport: {
     target: 'pino-pretty',
     options: {
