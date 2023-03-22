@@ -1,10 +1,9 @@
-const Sessions = require("../sessions.js");
 const axios = require('axios');
 const https = require('https');
-const superagent = require('superagent');
 require('superagent-queue');
 require('dotenv').config();
 const { logger } = require("../utils/logger");
+const Sessions = require('../controllers/sessions');
 //
 module.exports = class Webhooks {
 
@@ -96,9 +95,9 @@ module.exports = class Webhooks {
 		}
 	}
 
-	static async wh_qrcode(data, readQRCode, urlCode) {
-		//let data = Sessions?.getSession(session)
-		logger.info(`- SessionName: ${data?.SessionName}`);
+	static async wh_qrcode(SessionName, readQRCode, urlCode) {
+		let data = Sessions?.getSession(SessionName);
+		logger.info(`- SessionName: ${SessionName}`);
 		try {
 			let object = {
 				"wook": 'QRCODE',
