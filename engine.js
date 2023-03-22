@@ -106,7 +106,7 @@ async function saudacao() {
 async function updateStateDb(state, status, AuthorizationToken) {
 	//
 	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
-	logger?.info(`- Date: ${date_now}`);
+	//logger?.info(`- Date: ${date_now}`);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		logger?.info('- Atualizando status');
@@ -138,7 +138,7 @@ async function updateStateDb(state, status, AuthorizationToken) {
 async function updateUserConDb(userconnected, AuthorizationToken) {
 	//
 	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
-	logger?.info(`- Date: ${date_now}`);
+	//logger?.info(`- Date: ${date_now}`);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		logger?.info('- Atualizando User Connected');
