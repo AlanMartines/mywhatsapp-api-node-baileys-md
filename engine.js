@@ -456,6 +456,7 @@ module.exports = class Instace {
 							//
 							if (qr) {
 								//
+								logger?.info(`- SessionName: ${SessionName}`);
 								logger?.info('- Reading to WhatsApp'.blue);
 								logger?.info(`- Connection status: ${connection}`.blue);
 								//
