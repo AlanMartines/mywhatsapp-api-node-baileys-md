@@ -10,14 +10,7 @@ const logger = pino({
       errorProps: '*',
       ignore: "pid,hostname",
       translateTime: "SYS:yyyy-mm-dd HH:MM:ss",
-      colorize: true,
-      // Opção para habilitar o prettyPrint
-      prettyPrint: {
-        levelFirst: true,
-        colorize: true,
-        translateTime: "SYS:yyyy-mm-dd HH:MM:ss",
-        ignore: "pid,hostname"
-      }
+      colorize: true
     }
   }
 }, {
@@ -32,6 +25,7 @@ const logger = pino({
       return {
         stack: error.stack, // exibe nome do arquivo e linha do erro
         message: error.message,
+        line: error.lineNumber, // adiciona a propriedade line com o número da linha do erro
       };
     },
   },
