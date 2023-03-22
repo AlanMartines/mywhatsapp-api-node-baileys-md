@@ -23,8 +23,9 @@ const logger = pino({
     },
     error(error) {
       return {
+        stack: error.stack + `\n\tat ${__filename}:${__line}`,
         message: error.message,
-        stack: error.stack + `\n\tat ${__filename}:${__line}`
+        line: error.lineNumber, // adiciona a propriedade line com o número da linha do erro
       };
     },
   },
