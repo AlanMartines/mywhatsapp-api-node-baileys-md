@@ -242,12 +242,12 @@ module.exports = class Instace {
 				}
 				await Sessions?.checkAddUser(SessionName);
 				await Sessions?.addInfoSession(SessionName, newSession);
-				this.initSession(req, res, next);
+				this.initSession(req, res);
 			//
 		}
 	}
 	//
-	static async initSession(req, res, next) {
+	static async initSession(req, res) {
 		//
 		let SessionName = req?.body?.SessionName;
 		let setOnline = req?.body?.setOnline;
