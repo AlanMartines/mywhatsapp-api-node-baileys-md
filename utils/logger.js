@@ -22,11 +22,21 @@ const logger = pino({
       return { level: label };
     },
     error(error) {
-      return {
-        stack: error.stack + `\n\tat ${__filename}:${__line}`,
-        message: error.message,
-        line: error.lineNumber, // adiciona a propriedade line com o número da linha do erro
-      };
+      if (error && error.stack) {
+        const stackTrace = error.stack.split('\n');
+        const fileLine = stackTrace[1].match(/\(([^)]+)\)/)[1];
+        const fileName = fileLine.split(':')[0];
+        const lineNumber = fileLine.split(':')[1];
+
+        return {
+          stack: error.stack,
+          message: error.message,
+          line: lineNumber,
+          file: fileName
+        };
+      }
+
+      return error;
     },
   },
 });
