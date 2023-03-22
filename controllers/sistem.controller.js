@@ -20,6 +20,23 @@ const { logger } = require("../utils/logger");
 //
 // ------------------------------------------------------------------------------------------------//
 //
+async function deletaArquivosTemp(filePath) {
+	//
+	const cacheExists = await fs.pathExists(filePath);
+	if (cacheExists) {
+		fs.remove(filePath);
+		console?.log(`- O arquivo "${filePath}" removido`);
+	}
+	//
+}
+//
+function soNumeros(string) {
+	var numbers = string.replace(/[^0-9]/g, '');
+	return numbers;
+}
+//
+// ------------------------------------------------------------------------------------------------//
+//
 function removeWithspace(string) {
 	var string = string.replace(/\r?\n|\r|\s+/g, ""); /* replace all newlines and with a space */
 	return string;
@@ -27,9 +44,24 @@ function removeWithspace(string) {
 //
 // ------------------------------------------------------------------------------------------------//
 //
-function soNumeros(string) {
-	var numbers = string.replace(/[^0-9]/g, '');
-	return numbers;
+function validPhone(phone) {
+	// A função abaixo demonstra o uso de uma expressão regular que identifica, de forma simples, telefones válidos no Brasil.
+	// Nenhum DDD iniciado por 0 é aceito, e nenhum número de telefone pode iniciar com 0 ou 1.
+	// Exemplos válidos: +55 (11) 98888-8888 / 9999-9999 / 21 98888-8888 / 5511988888888
+	//
+	var isValid = /^(?:(?:\+|00)?(55)\s?)?(?:\(?([1-9][0-9])\)?\s?)?(?:((?:9\d|[2-9])\d{3})\-?(\d{4}))$/
+	return isValid.test(phone);
+}
+//
+// ------------------------------------------------------------------------------------------------//
+//
+function validInternationalPhoneNumber(phone) {
+	var regex = /^\+(?:[0-9] ?){6,14}[0-9]$/;
+	if (regex.test(phone)) {
+		return true;
+	} else {
+		return false;
+	}
 }
 //
 // ------------------------------------------------------------------------------------------------//
@@ -76,23 +108,12 @@ const convertBytes = function (bytes) {
 //
 router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
 	try {
-		if (!resSessionName) {
+		if (!removeWithspace(req.body.SessionName)) {
 			var resultRes = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -102,7 +123,7 @@ router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next
 			//
 		} else {
 			//
-			var Status = await Sessions.ApiStatus(resSessionName);
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
 			//
 			switch (Status.status) {
 				case 'inChat':
@@ -114,7 +135,6 @@ router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next
 					var resultRes = {
 						"erro": false,
 						"status": 200,
-						"state": Status.state,
 						"message": 'Sistema iniciado e disponivel para uso'
 					};
 					//
@@ -136,30 +156,27 @@ router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next
 				case 'DISCONNECTED':
 				case 'NOTFOUND':
 					//
-					var wh_status = null;
-					var wh_message = null;
-					var wh_qrcode = null;
-					var wh_connect = null;
-					//
-					if (parseInt(config.VALIDATE_MYSQL) == true) {
+					await Sessions.Start(req.io, removeWithspace(req.body.SessionName), removeWithspace(req.body.SessionName), req.body.whatsappVersion);
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					if (parseInt(config.VALIDATE_MYSQL) == true) {;
 						try {
 							//
 							const row = await Tokens.findOne({
 								limit: 1,
 								attributes: [
-									'webhook',
-									'wh_status',
-									'wh_message',
-									'wh_qrcode',
+									'webhook', 
+									'wh_status', 
+									'wh_message', 
+									'wh_qrcode', 
 									'wh_connect'
 								],
 								where: {
-									token: resSessionName
+									token: removeWithspace(req.body.SessionName)
 								}
 							}).then(async function (entries) {
 								return entries;
 							}).catch(async (err) => {
-								logger?.error(`- Error: ${err}`);
+								console?.log('- Error:', err);
 								return false;
 							});
 							//
@@ -167,55 +184,25 @@ router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next
 								//
 								const webHook = row.webhook;
 								//
-								wh_status = webHook || null;
-								wh_message = webHook || null;
-								wh_qrcode = webHook || null;
-								wh_connect = webHook || null;
-								//
+									session.wh_status = webHook;
+									session.wh_message = webHook;
+									session.wh_qrcode = webHook;
+									session.wh_connect = webHook;
+									//
 							} else {
-								wh_status = req.body.wh_status || null;
-								wh_message = req.body.wh_message || null;
-								wh_qrcode = req.body.wh_qrcode || null;
-								wh_connect = req.body.wh_connect || null;
+								session.wh_status = req.body.wh_status;
+								session.wh_message = req.body.wh_message;
+								session.wh_qrcode = req.body.wh_qrcode;
+								session.wh_connect = req.body.wh_connect;
 							}
 						} catch (err) {
-							logger?.error(`- Erro: ${err}`);
+							console?.log("- erro:", err);
 						}
 					} else {
-						wh_status = req.body.wh_status || null;
-						wh_message = req.body.wh_message || null;
-						wh_qrcode = req.body.wh_qrcode || null;
-						wh_connect = req.body.wh_connect || null;
-					}
-					//
-					await Sessions.Start(req.io, resSessionName, resTokenAuth, req.body.setOnline);
-					//
-					var session = Sessions.getSession(resSessionName);
-					session.wh_status = wh_status;
-					session.wh_message = wh_message;
-					session.wh_qrcode = wh_qrcode;
-					session.wh_connect = wh_connect;
-					//
-					try {
-						var startupRes = {
-							"AuthorizationToken": resTokenAuth,
-							"SessionName": resSessionName,
-							"setOnline": req.body.setOnline || true,
-							"wh_connect": wh_connect || null,
-							"wh_qrcode": wh_qrcode || null,
-							"wh_status": wh_status || null,
-							"wh_message": wh_message || null
-						};
-						//
-						fs.writeJson(`${config.PATCH_TOKENS}/${resSessionName}.startup.json`, startupRes, (err) => {
-							if (err) {
-								logger?.error(`- Erro: ${err}`);
-							} else {
-								logger?.info('- Success startup config for user file');
-							}
-						});
-					} catch (error) {
-						logger?.error('- Error startup config for user file');
+						session.wh_status = req.body.wh_status;
+						session.wh_message = req.body.wh_message;
+						session.wh_qrcode = req.body.wh_qrcode;
+						session.wh_connect = req.body.wh_connect;
 					}
 					//
 					var resultRes = {
@@ -245,7 +232,7 @@ router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next
 			}
 		}
 	} catch (error) {
-		logger?.error(`${error}`);
+		console?.log(error);
 		//
 		var resultRes = {
 			"erro": true,
@@ -265,25 +252,13 @@ router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next
 //
 router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	logger?.info("- Obtendo status");
-	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
+	console?.log("- Status");
 	try {
-		if (!resSessionName) {
+		if (!removeWithspace(req.body.SessionName)) {
 			var resultRes = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -294,7 +269,7 @@ router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, nex
 		} else {
 			//
 			try {
-				var Status = await Sessions.ApiStatus(resSessionName);
+				var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
 				//
 				res.setHeader('Content-Type', 'application/json');
 				res.status(200).json({
@@ -302,7 +277,7 @@ router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, nex
 				});
 				//
 			} catch (erro) {
-				logger?.error(`- Erro ao obter status: ${erro}`);
+				console?.log("- Erro ao obter status:", erro);
 				var resultRes = {
 					"erro": true,
 					"status": 400,
@@ -317,7 +292,7 @@ router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, nex
 			}
 		}
 	} catch (error) {
-		logger?.error(`${error}`);
+		console?.log(error);
 		//
 		var resultRes = {
 			"erro": true,
@@ -338,23 +313,12 @@ router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, nex
 // Fecha a sessão
 router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
 	try {
-		if (!resSessionName) {
+		if (!removeWithspace(req.body.SessionName)) {
 			var resultRes = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -365,7 +329,7 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 		} else {
 			//
 			try {
-				var Status = await Sessions.ApiStatus(resSessionName);
+				var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
 				switch (Status.status) {
 					case 'inChat':
 					case 'qrReadSuccess':
@@ -374,8 +338,8 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 					case 'qrRead':
 					case 'notLogged':
 						//
-						var session = Sessions.getSession(resSessionName);
-						var resultClose = await Sessions.closeSession(resSessionName);
+						var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+						var resultClose = await session.process.add(async () => await Sessions.closeSession(removeWithspace(req.body.SessionName)));
 						//
 						res.setHeader('Content-Type', 'application/json');
 						res.status(resultClose.status).json({
@@ -398,7 +362,7 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 					//
 				}
 			} catch (erro) {
-				logger?.error(`- Erro ao fechar navegador\n ${erro}`);
+				console?.log("- Erro ao fechar navegador\n", erro);
 				var resultRes = {
 					"erro": true,
 					"status": 400,
@@ -413,7 +377,7 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 			}
 		}
 	} catch (error) {
-		logger?.error(`${error}`);
+		console?.log(error);
 		//
 		var resultRes = {
 			"erro": true,
@@ -434,21 +398,12 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 // Desconecta do whatsapp web
 router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-	}
-	//
 	try {
-		if (!resSessionName) {
+		if (!removeWithspace(req.body.SessionName)) {
 			var resultRes = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -458,15 +413,15 @@ router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, nex
 			//
 		} else {
 			//
-			var Status = await Sessions.ApiStatus(resSessionName);
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
 			switch (Status.status) {
 				case 'inChat':
 				case 'qrReadSuccess':
 				case 'isLogged':
 				case 'chatsAvailable':
 					//
-					var session = Sessions.getSession(resSessionName);
-					var resultLogout = await Sessions.logoutSession(resSessionName);
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					var resultLogout = await session.process.add(async () => await Sessions.logoutSession(res, removeWithspace(req.body.SessionName)));
 					//
 					res.setHeader('Content-Type', 'application/json');
 					res.status(resultLogout.status).json({
@@ -490,7 +445,7 @@ router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, nex
 			}
 		}
 	} catch (error) {
-		logger?.error(`${error}`);
+		console?.log(error);
 		//
 		var resultRes = {
 			"erro": true,
@@ -510,23 +465,12 @@ router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, nex
 //
 router.post("/restartToken", verifyToken.verify, upload.none(''), async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
 	try {
-		if (!resSessionName) {
+		if (!removeWithspace(req.body.SessionName)) {
 			var resultRes = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -536,9 +480,8 @@ router.post("/restartToken", verifyToken.verify, upload.none(''), async (req, re
 			//
 		} else {
 			//
-			var session = Sessions.getSession(resSessionName);
-			var resultRestart = await Sessions.restartToken(req.io, session.name, session.AuthorizationToken);
-			//
+			var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+			var resultRestart = await Sessions.restartToken(req.io, session.name, session.AuthorizationToken, session.whatsappVersion);
 			res.setHeader('Content-Type', 'application/json');
 			res.status(resultRestart.status).json({
 				"Status": resultRestart
@@ -546,7 +489,7 @@ router.post("/restartToken", verifyToken.verify, upload.none(''), async (req, re
 			//
 		}
 	} catch (error) {
-		logger?.error(`${error}`);
+		console?.log(error);
 		//
 		var resultRes = {
 			"erro": true,
@@ -566,25 +509,14 @@ router.post("/restartToken", verifyToken.verify, upload.none(''), async (req, re
 //
 // Gera o QR-Code
 router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, next) => {
-	logger?.info(`- getQRCode`);
-	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
+	console?.log("- getQRCode");
 	//
 	try {
-		if (!resSessionName) {
+		if (!removeWithspace(req.body.SessionName)) {
 			var resultRes = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -594,7 +526,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 			//
 		} else {
 			//
-			var Status = await Sessions.ApiStatus(resSessionName);
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
 			switch (Status.status) {
 				case 'inChat':
 				case 'qrReadSuccess':
@@ -609,9 +541,14 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 					//
 					break;
 				//
+				case 'notLogged':
+				case 'qrReadFail':
+				case 'deviceNotConnected':
+				case 'desconnectedMobile':
+				case 'deleteToken':
 				case 'qrRead':
 					//
-					var session = Sessions.getSession(resSessionName);
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 					if (req.body.View === true) {
 						var qrcode = session.qrcode;
 						if (qrcode) {
@@ -622,8 +559,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 								'Content-Length': imageBuffer.length
 							});
 							//
-							res.status(200);
-							res.end(imageBuffer);
+							res.status(200).end(imageBuffer);
 							//
 						} else {
 							var resultRes = { "erro": true, "status_code": 400, ...Status };
@@ -651,24 +587,6 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 					}
 					//
 					break;
-				case 'notLogged':
-				case 'qrReadFail':
-				case 'deviceNotConnected':
-				case 'desconnectedMobile':
-				case 'deleteToken':
-					//
-					var resultRes = {
-						"erro": true,
-						"status": 401,
-						"message": 'Não foi possivel executar a ação, inicie o sistema'
-					};
-					//
-					res.setHeader('Content-Type', 'application/json');
-					res.status(resultRes.status).json({
-						"Status": resultRes
-					});
-					//
-					break;
 				default:
 					//
 					var resultRes = {
@@ -685,7 +603,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 			}
 		}
 	} catch (error) {
-		logger?.error(`${error}`);
+		console?.log(error);
 		//
 		var resultRes = {
 			"erro": true,
@@ -705,23 +623,12 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 //
 router.post("/getSession", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
 	try {
-		if (!resSessionName) {
+		if (!removeWithspace(req.body.SessionName)) {
 			var resultRes = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -731,7 +638,7 @@ router.post("/getSession", upload.none(''), verifyToken.verify, async (req, res,
 			//
 		} else {
 			//
-			var getSession = await Sessions.getSessions(resSessionName);
+			var getSession = await Sessions.getSessions(removeWithspace(req.body.SessionName));
 			//
 			var resultRes = { "erro": false, "status": 200, "Session": getSession };
 			res.setHeader('Content-Type', 'application/json');
@@ -740,7 +647,7 @@ router.post("/getSession", upload.none(''), verifyToken.verify, async (req, res,
 			});
 		}
 	} catch (error) {
-		logger?.error(`${error}`);
+		console?.log(error);
 		//
 		var resultRes = {
 			"erro": true,
@@ -760,22 +667,11 @@ router.post("/getSession", upload.none(''), verifyToken.verify, async (req, res,
 //
 router.post("/getSessions", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName) {
+	if (!removeWithspace(req.body.SessionName)) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -815,16 +711,7 @@ router.post("/getSessions", upload.none(''), verifyToken.verify, async (req, res
 //
 // Dados de memoria e uptime
 router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res, next) => {
-	logger?.info(`-getHardWare`);
-	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-	}
+	console?.log("- getHardWare");
 	//
 	try {
 		var resultRes = {
@@ -855,7 +742,7 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 		//
 	} catch (error) {
 		//
-		logger?.error(`${error}`);
+		console?.log(error);
 		var resultRes = {
 			"erro": true,
 			"status": 403,
@@ -881,23 +768,12 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 // Enviar Contato
 router.post("/sendContactVcard", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
 	try {
-		if (!resSessionName || !req.body.phonefull || !req.body.contact || !req.body.namecontact) {
+		if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.contact || !req.body.namecontact) {
 			var resultRes = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -907,43 +783,41 @@ router.post("/sendContactVcard", upload.none(''), verifyToken.verify, async (req
 			//
 		} else {
 			//
-			var Status = await Sessions.ApiStatus(resSessionName);
-			var session = Sessions.getSession(resSessionName);
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
 			switch (Status.status) {
 				case 'inChat':
 				case 'qrReadSuccess':
 				case 'isLogged':
 				case 'chatsAvailable':
 					//
-					await session.waqueue.add(async () => {
-						var checkNumberStatus = await Sessions.checkNumberStatus(
-							resSessionName,
-							soNumeros(req.body.phonefull).trim()
-						);
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					var checkNumberStatus = await Sessions.checkNumberStatus(
+						removeWithspace(req.body.SessionName),
+						soNumeros(req.body.phonefull).trim()
+					);
+					//
+					if (checkNumberStatus.status == 200 && checkNumberStatus.erro == false) {
 						//
-						if (checkNumberStatus.status == 200 && checkNumberStatus.erro == false) {
-							//
-							var sendContactVcard = await Sessions.sendContactVcard(
-								resSessionName,
-								checkNumberStatus.number,
-								soNumeros(req.body.contact),
-								req.body.namecontact
-							);
-							//
-							res.setHeader('Content-Type', 'application/json');
-							res.status(sendContactVcard.status).json({
-								"Status": sendContactVcard
-							});
-							//
-						} else {
-							//
-							res.setHeader('Content-Type', 'application/json');
-							res.status(sendContactVcard.status).json({
-								"Status": sendContactVcard
-							});
-							//
-						}
-					});
+						var sendContactVcard = await session.process.add(async () => await Sessions.sendContactVcard(
+							removeWithspace(req.body.SessionName),
+							checkNumberStatus.number + '@s.whatsapp.net',
+							soNumeros(req.body.contact),
+							req.body.namecontact
+						));
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(sendContactVcard.status).json({
+							"Status": sendContactVcard
+						});
+						//
+					} else {
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(sendContactVcard.status).json({
+							"Status": sendContactVcard
+						});
+						//
+					}
 					break;
 				default:
 					//
@@ -962,7 +836,7 @@ router.post("/sendContactVcard", upload.none(''), verifyToken.verify, async (req
 		}
 	} catch (error) {
 		//
-		logger?.error(`${error}`);
+		console?.log(error);
 		var resultRes = {
 			"erro": true,
 			"status": 403,
@@ -984,23 +858,12 @@ router.post("/sendContactVcard", upload.none(''), verifyToken.verify, async (req
 //
 router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
 	try {
-		if (!resSessionName || !req.body.phonefull || !req.file) {
+		if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.file) {
 			var validate = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -1013,7 +876,7 @@ router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req,
 			//let ext = path.extname(file.originalname);
 			//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
 			//let ext = path.parse(req.file.originalname).ext;
-			//logger?.info(`- acceptedTypes: ${req.file.mimetype}`);
+			//console?.log("- acceptedTypes:", req.file.mimetype);
 			let acceptedTypes = req.file.mimetype.split('/')[0];
 			if (acceptedTypes !== "audio") {
 				//
@@ -1030,44 +893,43 @@ router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req,
 				//
 			} else {
 				//
-				var Status = await Sessions.ApiStatus(resSessionName);
-				var session = Sessions.getSession(resSessionName);
+				var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+				var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 				switch (Status.status) {
 					case 'inChat':
 					case 'qrReadSuccess':
 					case 'isLogged':
 					case 'chatsAvailable':
 						//
-						await session.waqueue.add(async () => {
-							var checkNumberStatus = await Sessions.checkNumberStatus(
-								resSessionName,
-								soNumeros(req.body.phonefull).trim()
-							);
+						var checkNumberStatus = await Sessions.checkNumberStatus(
+							removeWithspace(req.body.SessionName),
+							soNumeros(req.body.phonefull).trim()
+						);
+						//
+						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 							//
-							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-								//
-								var sendPtt = await Sessions.sendPtt(
-									resSessionName,
-									checkNumberStatus.number,
-									req.file.buffer,
-									req.file.mimetype,
-									req.body.caption
-								);
-								//
-								res.setHeader('Content-Type', 'application/json');
-								res.status(sendPtt.status).json({
-									"Status": sendPtt
-								});
-								//
-							} else {
-								//
-								res.setHeader('Content-Type', 'application/json');
-								res.status(checkNumberStatus.status).json({
-									"Status": checkNumberStatus
-								});
-								//
-							}
-						});
+							var sendPtt = await session.process.add(async () => await Sessions.sendPtt(
+								removeWithspace(req.body.SessionName),
+								checkNumberStatus.number + '@s.whatsapp.net',
+								req.file.buffer,
+								req.file.mimetype,
+								req.body.caption
+							));
+							//
+							res.setHeader('Content-Type', 'application/json');
+							res.status(sendPtt.status).json({
+								"Status": sendPtt
+							});
+							//
+						} else {
+							//
+							res.setHeader('Content-Type', 'application/json');
+							res.status(checkNumberStatus.status).json({
+								"Status": checkNumberStatus
+							});
+							//
+						}
+						//
 						break;
 					default:
 						//
@@ -1087,7 +949,7 @@ router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req,
 		}
 	} catch (error) {
 		//
-		logger?.error(`${error}`);
+		console?.log(error);
 		var resultRes = {
 			"erro": true,
 			"status": 403,
@@ -1108,23 +970,12 @@ router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req,
 // Enviar audio
 router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
 	try {
-		if (!resSessionName || !req.body.phonefull || !req.body.base64 || !req.body.originalname) {
+		if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.base64 || !req.body.originalname) {
 			var validate = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -1134,47 +985,45 @@ router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req,
 			//
 		} else {
 			//
-			var Status = await Sessions.ApiStatus(resSessionName);
-			var session = Sessions.getSession(resSessionName);
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+			var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 			switch (Status.status) {
 				case 'inChat':
 				case 'qrReadSuccess':
 				case 'isLogged':
 				case 'chatsAvailable':
 					//
-					await session.waqueue.add(async () => {
-						var checkNumberStatus = await Sessions.checkNumberStatus(
-							resSessionName,
-							soNumeros(req.body.phonefull).trim()
-						);
+					var checkNumberStatus = await Sessions.checkNumberStatus(
+						removeWithspace(req.body.SessionName),
+						soNumeros(req.body.phonefull).trim()
+					);
+					//
+					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 						//
-						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-							//
-							var mimeType = mime.lookup(req.body.originalname);
-							//
-							var sendPtt = await Sessions.sendPtt(
-								resSessionName,
-								checkNumberStatus.number,
-								Buffer.from(req.body.base64, 'base64'),
-								mimeType,
-								req.body.caption
-							);
-							//
-							res.setHeader('Content-Type', 'application/json');
-							res.status(sendPtt.status).json({
-								"Status": sendPtt
-							});
-							//
-						} else {
-							//
-							res.setHeader('Content-Type', 'application/json');
-							res.status(checkNumberStatus.status).json({
-								"Status": checkNumberStatus
-							});
-							//
-						}
+						var mimeType = mime.lookup(req.body.originalname);
 						//
-					});
+						var sendPtt = await session.process.add(async () => await Sessions.sendPtt(
+							removeWithspace(req.body.SessionName),
+							checkNumberStatus.number + '@s.whatsapp.net',
+							Buffer.from(req.body.base64, 'base64'),
+							mimeType,
+							req.body.caption
+						));
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(sendPtt.status).json({
+							"Status": sendPtt
+						});
+						//
+					} else {
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(checkNumberStatus.status).json({
+							"Status": checkNumberStatus
+						});
+						//
+					}
+					//
 					break;
 				default:
 					//
@@ -1193,7 +1042,7 @@ router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req,
 		}
 	} catch (error) {
 		//
-		logger?.error(`${error}`);
+		console?.log(error);
 		var resultRes = {
 			"erro": true,
 			"status": 403,
@@ -1213,23 +1062,12 @@ router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req,
 // Enviar audio
 router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
 	try {
-		if (!resSessionName || !req.body.phonefull || !req.body.base64 || !req.body.mimetype || !req.body.originalname) {
+		if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.base64 || !req.body.mimetype || !req.body.originalname) {
 			var validate = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -1242,7 +1080,7 @@ router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (
 			//let ext = path.extname(file.originalname);
 			//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
 			//let ext = path.parse(req.file.originalname).ext;
-			//logger?.info(`- acceptedTypes: ${req.file.mimetype}`);
+			//console?.log("- acceptedTypes:", req.file.mimetype);
 			let acceptedTypes = req.body.mimetype.split('/')[0];
 			if (acceptedTypes !== "audio") {
 				//
@@ -1259,44 +1097,42 @@ router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (
 				//
 			} else {
 				//
-				var Status = await Sessions.ApiStatus(resSessionName);
-				var session = Sessions.getSession(resSessionName);
+				var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+				var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 				switch (Status.status) {
 					case 'inChat':
 					case 'qrReadSuccess':
 					case 'isLogged':
 					case 'chatsAvailable':
 						//
-						await session.waqueue.add(async () => {
-							var checkNumberStatus = await Sessions.checkNumberStatus(
-								resSessionName,
-								soNumeros(req.body.phonefull).trim()
-							);
+						var checkNumberStatus = await Sessions.checkNumberStatus(
+							removeWithspace(req.body.SessionName),
+							soNumeros(req.body.phonefull).trim()
+						);
+						//
+						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 							//
-							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-								//
-								var sendPtt = await Sessions.sendPtt(
-									resSessionName,
-									checkNumberStatus.number,
-									Buffer.from(req.body.base64, 'base64'),
-									req.body.mimetype
-								);
-								//
-								res.setHeader('Content-Type', 'application/json');
-								res.status(sendPtt.status).json({
-									"Status": sendPtt
-								});
-								//
-							} else {
-								//
-								res.setHeader('Content-Type', 'application/json');
-								res.status(checkNumberStatus.status).json({
-									"Status": checkNumberStatus
-								});
-								//
-							}
+							var sendPtt = await session.process.add(async () => await Sessions.sendPtt(
+								removeWithspace(req.body.SessionName),
+								checkNumberStatus.number + '@s.whatsapp.net',
+								Buffer.from(req.body.base64, 'base64'),
+								req.body.mimetype
+							));
 							//
-						});
+							res.setHeader('Content-Type', 'application/json');
+							res.status(sendPtt.status).json({
+								"Status": sendPtt
+							});
+							//
+						} else {
+							//
+							res.setHeader('Content-Type', 'application/json');
+							res.status(checkNumberStatus.status).json({
+								"Status": checkNumberStatus
+							});
+							//
+						}
+						//
 						break;
 					default:
 						//
@@ -1316,7 +1152,7 @@ router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (
 		}
 	} catch (error) {
 		//
-		logger?.error(`${error}`);
+		console?.log(error);
 		var resultRes = {
 			"erro": true,
 			"status": 403,
@@ -1336,23 +1172,12 @@ router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (
 //Enviar Texto
 router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
 	try {
-		if (!resSessionName || !req.body.phonefull || !req.body.msg) {
+		if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.msg) {
 			var validate = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -1362,43 +1187,41 @@ router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, n
 			//
 		} else {
 			//
-			var Status = await Sessions.ApiStatus(resSessionName);
-			var session = Sessions.getSession(resSessionName);
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+			var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 			switch (Status.status) {
 				case 'inChat':
 				case 'qrReadSuccess':
 				case 'isLogged':
 				case 'chatsAvailable':
 					//
-					await session.waqueue.add(async () => {
-						var checkNumberStatus = await Sessions.checkNumberStatus(
-							resSessionName,
-							soNumeros(req.body.phonefull).trim()
-						);
+					var checkNumberStatus = await Sessions.checkNumberStatus(
+						removeWithspace(req.body.SessionName),
+						soNumeros(req.body.phonefull).trim()
+					);
+					//
+					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 						//
-						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-							//
-							var sendText = await Sessions.sendText(
-								resSessionName,
-								checkNumberStatus.number,
-								req.body.msg
-							);
-							//
-							res.setHeader('Content-Type', 'application/json');
-							res.status(sendText.status).json({
-								"Status": sendText
-							});
-							//
-						} else {
-							//
-							res.setHeader('Content-Type', 'application/json');
-							res.status(checkNumberStatus.status).json({
-								"Status": checkNumberStatus
-							});
-							//
-						}
+						var sendText = await session.process.add(async () => await Sessions.sendText(
+							removeWithspace(req.body.SessionName),
+							checkNumberStatus.number + '@s.whatsapp.net',
+							req.body.msg
+						));
 						//
-					});
+						res.setHeader('Content-Type', 'application/json');
+						res.status(sendText.status).json({
+							"Status": sendText
+						});
+						//
+					} else {
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(checkNumberStatus.status).json({
+							"Status": checkNumberStatus
+						});
+						//
+					}
+					//
 					break;
 				default:
 					//
@@ -1417,7 +1240,7 @@ router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, n
 		}
 	} catch (error) {
 		//
-		logger?.error(`${error}`);
+		console?.log(error);
 		var resultRes = {
 			"erro": true,
 			"status": 403,
@@ -1437,24 +1260,13 @@ router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, n
 //Enviar localização
 router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
 	try {
-		if (!resSessionName || !req.body.phonefull || !req.body.lat || !req.body.long || !req.body.local) {
+		if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.lat || !req.body.long || !req.body.local) {
 			//
 			var validate = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -1464,47 +1276,44 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
 			//
 		} else {
 			//
-			var Status = await Sessions.ApiStatus(resSessionName);
-			var session = Sessions.getSession(resSessionName);
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+			var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 			switch (Status.status) {
 				case 'inChat':
 				case 'qrReadSuccess':
 				case 'isLogged':
 				case 'chatsAvailable':
 					//
-					await session.waqueue.add(async () => {
-						var checkNumberStatus = await Sessions.checkNumberStatus(
-							resSessionName,
-							soNumeros(req.body.phonefull).trim()
-						);
+					var checkNumberStatus = await Sessions.checkNumberStatus(
+						removeWithspace(req.body.SessionName),
+						soNumeros(req.body.phonefull).trim()
+					);
+					//
+					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 						//
-						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-							//
-							var sendLocation = await Sessions.sendLocation(
-								resSessionName,
-								checkNumberStatus.number,
-								req.body.lat,
-								req.body.long,
-								req.body.local
-							);
-							//
-							//console?.log(result);
-							res.setHeader('Content-Type', 'application/json');
-							res.status(sendLocation.status).json({
-								"Status": sendLocation
-							});
-							//
-						} else {
-							//
-							//console?.log(result);
-							res.setHeader('Content-Type', 'application/json');
-							res.status(checkNumberStatus.status).json({
-								"Status": checkNumberStatus
-							});
-							//
-						}
+						var sendLocation = await session.process.add(async () => await Sessions.sendLocation(
+							removeWithspace(req.body.SessionName),
+							checkNumberStatus.number + '@s.whatsapp.net',
+							req.body.lat,
+							req.body.long,
+							req.body.local
+						));
 						//
-					});
+						//console?.log(result);
+						res.setHeader('Content-Type', 'application/json');
+						res.status(sendLocation.status).json({
+							"Status": sendLocation
+						});
+						//
+					} else {
+						//
+						//console?.log(result);
+						res.setHeader('Content-Type', 'application/json');
+						res.status(checkNumberStatus.status).json({
+							"Status": checkNumberStatus
+						});
+						//
+					}
 					break;
 				default:
 					//
@@ -1523,7 +1332,7 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
 		}
 	} catch (error) {
 		//
-		logger?.error(`${error}`);
+		console?.log(error);
 		var resultRes = {
 			"erro": true,
 			"status": 403,
@@ -1543,24 +1352,13 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
 //Enviar links com preview
 router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
 	try {
-		if (!resSessionName || !req.body.phonefull || !req.body.link || !req.body.descricao) {
+		if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.link || !req.body.descricao) {
 			//
 			var validate = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -1570,58 +1368,56 @@ router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, n
 			//
 		} else {
 			//
-			var Status = await Sessions.ApiStatus(resSessionName);
-			var session = Sessions.getSession(resSessionName);
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+			var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 			switch (Status.status) {
 				case 'inChat':
 				case 'qrReadSuccess':
 				case 'isLogged':
 				case 'chatsAvailable':
 					//
-					await session.waqueue.add(async () => {
-						if (!validUrl.isUri(req.body.link)) {
-							var validate = {
-								"erro": true,
-								"status": 401,
-								"message": 'O link informado é invalido, verifique e tente novamente.'
-							};
-							//
-							res.setHeader('Content-Type', 'application/json');
-							res.status(validate.status).json({
-								"Status": validate
-							});
-							//
-						}
+					if (!validUrl.isUri(req.body.link)) {
+						var validate = {
+							"erro": true,
+							"status": 401,
+							"message": 'O link informado é invalido, corrija e tente novamente.'
+						};
 						//
-						var checkNumberStatus = await Sessions.checkNumberStatus(
-							resSessionName,
-							soNumeros(req.body.phonefull).trim()
-						);
+						res.setHeader('Content-Type', 'application/json');
+						res.status(validate.status).json({
+							"Status": validate
+						});
 						//
-						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-							//
-							var sendLink = await Sessions.sendLink(
-								resSessionName,
-								checkNumberStatus.number,
-								req.body.link,
-								req.body.descricao
-							);
-							//
-							res.setHeader('Content-Type', 'application/json');
-							res.status(sendLink.status).json({
-								"Status": sendLink
-							});
-							//
-						} else {
-							//
-							res.setHeader('Content-Type', 'application/json');
-							res.status(checkNumberStatus.status).json({
-								"Status": checkNumberStatus
-							});
-							//
-						}
+					}
+					//
+					var checkNumberStatus = await Sessions.checkNumberStatus(
+						removeWithspace(req.body.SessionName),
+						soNumeros(req.body.phonefull).trim()
+					);
+					//
+					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 						//
-					});
+						var sendLink = await session.process.add(async () => await Sessions.sendLink(
+							removeWithspace(req.body.SessionName),
+							checkNumberStatus.number + '@s.whatsapp.net',
+							req.body.link,
+							req.body.descricao
+						));
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(sendLink.status).json({
+							"Status": sendLink
+						});
+						//
+					} else {
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(checkNumberStatus.status).json({
+							"Status": checkNumberStatus
+						});
+						//
+					}
+					//
 					break;
 				default:
 					//
@@ -1659,23 +1455,12 @@ router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, n
 //Enviar Imagem
 router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
 	try {
-		if (!resSessionName || !req.body.phonefull || !req.file) {
+		if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.file) {
 			var validate = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -1688,7 +1473,7 @@ router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req,
 			//let ext = path.extname(file.originalname);
 			//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
 			//let ext = path.parse(req.file.originalname).ext;
-			//logger?.info(`- acceptedTypes: ${req.file.mimetype}`);
+			//console?.log("- acceptedTypes:", req.file.mimetype);
 			let acceptedTypes = req.file.mimetype.split('/')[0];
 			if (acceptedTypes !== "image") {
 				//
@@ -1705,46 +1490,44 @@ router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req,
 				//
 			} else {
 				//
-				var Status = await Sessions.ApiStatus(resSessionName);
-				var session = Sessions.getSession(resSessionName);
+				var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+				var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 				switch (Status.status) {
 					case 'inChat':
 					case 'qrReadSuccess':
 					case 'isLogged':
 					case 'chatsAvailable':
 						//
-						await session.waqueue.add(async () => {
-							var checkNumberStatus = await Sessions.checkNumberStatus(
-								resSessionName,
-								soNumeros(req.body.phonefull).trim()
-							);
+						var checkNumberStatus = await Sessions.checkNumberStatus(
+							removeWithspace(req.body.SessionName),
+							soNumeros(req.body.phonefull).trim()
+						);
+						//
+						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 							//
-							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-								//
-								var sendPtt = await Sessions.sendImage(
-									resSessionName,
-									checkNumberStatus.number,
-									req.file.buffer,
-									req.file.mimetype,
-									req.file.originalname,
-									req.body.caption
-								);
-								//
-								res.setHeader('Content-Type', 'application/json');
-								res.status(sendPtt.status).json({
-									"Status": sendPtt
-								});
-								//
-							} else {
-								//
-								res.setHeader('Content-Type', 'application/json');
-								res.status(checkNumberStatus.status).json({
-									"Status": checkNumberStatus
-								});
-								//
-							}
+							var sendPtt = await session.process.add(async () => await Sessions.sendImage(
+								removeWithspace(req.body.SessionName),
+								checkNumberStatus.number + '@s.whatsapp.net',
+								req.file.buffer,
+								req.file.mimetype,
+								req.file.originalname,
+								req.body.caption
+							));
 							//
-						});
+							res.setHeader('Content-Type', 'application/json');
+							res.status(sendPtt.status).json({
+								"Status": sendPtt
+							});
+							//
+						} else {
+							//
+							res.setHeader('Content-Type', 'application/json');
+							res.status(checkNumberStatus.status).json({
+								"Status": checkNumberStatus
+							});
+							//
+						}
+						//
 						break;
 					default:
 						//
@@ -1764,7 +1547,7 @@ router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req,
 		}
 	} catch (error) {
 		//
-		logger?.error(`${error}`);
+		console?.log(error);
 		var resultRes = {
 			"erro": true,
 			"status": 403,
@@ -1785,22 +1568,11 @@ router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req,
 // Enviar arquivo/documento
 router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.phonefull || !req.body.base64 || !req.body.originalname || !req.body.caption) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.base64 || !req.body.originalname || !req.body.caption) {
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -1813,7 +1585,7 @@ router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req,
 		//let ext = path.extname(file.originalname);
 		//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
 		//let ext = path.parse(req.file.originalname).ext;
-		//logger?.info(`- acceptedTypes: ${req.file.mimetype}`);
+		//console?.log("- acceptedTypes:", req.file.mimetype);
 		var mimeType = mime.lookup(req.body.originalname);
 		let acceptedTypes = mimeType.split('/')[0];
 		if (acceptedTypes !== "image") {
@@ -1831,30 +1603,29 @@ router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req,
 			//
 		} else {
 			//
-			var Status = await Sessions.ApiStatus(resSessionName);
-			var session = Sessions.getSession(resSessionName);
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+			var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 			switch (Status.status) {
 				case 'inChat':
 				case 'qrReadSuccess':
 				case 'isLogged':
 				case 'chatsAvailable':
 					//
-					await session.waqueue.add(async () => {
 						var checkNumberStatus = await Sessions.checkNumberStatus(
-							resSessionName,
+							removeWithspace(req.body.SessionName),
 							soNumeros(req.body.phonefull).trim()
 						);
 						//
 						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 							//
-							var sendFileBase64 = await Sessions.sendImage(
-								resSessionName,
-								checkNumberStatus.number,
+							var sendFileBase64 = await session.process.add(async () => await Sessions.sendImage(
+								removeWithspace(req.body.SessionName),
+								checkNumberStatus.number + '@s.whatsapp.net',
 								Buffer.from(req.body.base64, 'base64'),
 								req.body.originalname,
 								mimeType,
 								req.body.caption
-							);
+							));
 							//
 							res.setHeader('Content-Type', 'application/json');
 							res.status(sendFileBase64.status).json({
@@ -1869,7 +1640,6 @@ router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req,
 							});
 						}
 						//
-					});
 					break;
 				default:
 					//
@@ -1894,22 +1664,11 @@ router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req,
 // Enviar arquivo/documento
 router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.phonefull || !req.body.base64 || !req.body.mimetype || !req.body.originalname || !req.body.caption) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.base64 || !req.body.mimetype || !req.body.originalname || !req.body.caption) {
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -1922,7 +1681,7 @@ router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (
 		//let ext = path.extname(file.originalname);
 		//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
 		//let ext = path.parse(req.file.originalname).ext;
-		//logger?.info(`- acceptedTypes: ${req.file.mimetype}`);
+		//console?.log("- acceptedTypes:", req.file.mimetype);
 		var mimeType = req.body.mimetype;
 		let acceptedTypes = mimeType.split('/')[0];
 		if (acceptedTypes !== "image") {
@@ -1940,46 +1699,44 @@ router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (
 			//
 		} else {
 			//
-			var Status = await Sessions.ApiStatus(resSessionName);
-			var session = Sessions.getSession(resSessionName);
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+			var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 			switch (Status.status) {
 				case 'inChat':
 				case 'qrReadSuccess':
 				case 'isLogged':
 				case 'chatsAvailable':
 					//
-					await session.waqueue.add(async () => {
-						var checkNumberStatus = await Sessions.checkNumberStatus(
-							resSessionName,
-							soNumeros(req.body.phonefull).trim()
-						);
+					var checkNumberStatus = await Sessions.checkNumberStatus(
+						removeWithspace(req.body.SessionName),
+						soNumeros(req.body.phonefull).trim()
+					);
+					//
+					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 						//
-						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-							//
-							var sendFileFromBase64 = await Sessions.sendImage(
-								resSessionName,
-								checkNumberStatus.number,
-								Buffer.from(req.body.base64, 'base64'),
-								req.body.originalname,
-								req.body.mimetype,
-								req.body.caption
-							);
-							//
-							res.setHeader('Content-Type', 'application/json');
-							res.status(sendFileFromBase64.status).json({
-								"Status": sendFileFromBase64
-							});
-							//
-						} else {
-							//
-							res.setHeader('Content-Type', 'application/json');
-							res.status(checkNumberStatus.status).json({
-								"Status": checkNumberStatus
-							});
-							//
-						}
+						var sendFileFromBase64 = await session.process.add(async () => await Sessions.sendImage(
+							removeWithspace(req.body.SessionName),
+							checkNumberStatus.number + '@s.whatsapp.net',
+							Buffer.from(req.body.base64, 'base64'),
+							req.body.originalname,
+							req.body.mimetype,
+							req.body.caption
+						));
 						//
-					});
+						res.setHeader('Content-Type', 'application/json');
+						res.status(sendFileFromBase64.status).json({
+							"Status": sendFileFromBase64
+						});
+						//
+					} else {
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(checkNumberStatus.status).json({
+							"Status": checkNumberStatus
+						});
+						//
+					}
+					//
 					break;
 				default:
 					//
@@ -2005,22 +1762,11 @@ router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (
 // Enviar arquivo/documento
 router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.phonefull || !req.body.caption || !req.file) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.caption || !req.file) {
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -2030,30 +1776,29 @@ router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, 
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
 					var checkNumberStatus = await Sessions.checkNumberStatus(
-						resSessionName,
+						removeWithspace(req.body.SessionName),
 						soNumeros(req.body.phonefull).trim()
 					);
 					//
 					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 						//
-						var sendFile = await Sessions.sendFile(
-							resSessionName,
-							checkNumberStatus.number,
+						var sendFile = await session.process.add(async () => await Sessions.sendFile(
+							removeWithspace(req.body.SessionName),
+							checkNumberStatus.number + '@s.whatsapp.net',
 							req.file.buffer,
 							req.file.originalname,
 							req.file.mimetype,
 							req.body.caption
-						);
+						));
 						//
 						//console?.log(result);
 						res.setHeader('Content-Type', 'application/json');
@@ -2068,7 +1813,6 @@ router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, 
 						});
 					}
 					//
-				});
 				break;
 			default:
 				//
@@ -2093,22 +1837,11 @@ router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, 
 // Enviar arquivo/documento
 router.post("/sendFileUrl", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.phonefull || !req.body.url || !req.body.caption) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.url || !req.body.caption) {
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -2118,30 +1851,29 @@ router.post("/sendFileUrl", upload.none(''), verifyToken.verify, async (req, res
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
-				//
-				await session.waqueue.add(async () => {
+					//
 					var checkNumberStatus = await Sessions.checkNumberStatus(
-						resSessionName,
+						removeWithspace(req.body.SessionName),
 						soNumeros(req.body.phonefull).trim()
 					);
 					//
 					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 						//
-						var sendFile = await Sessions.sendFileUrl(
-							resSessionName,
-							checkNumberStatus.number,
+						var sendFile = await session.process.add(async () => await Sessions.sendFileUrl(
+							removeWithspace(req.body.SessionName),
+							checkNumberStatus.number + '@s.whatsapp.net',
 							req.body.url,
 							req.body.url.split('/').slice(-1)[0],
 							mime.lookup(req.body.url.split('.').slice(-1)[0]),
 							req.body.caption
-						);
+						));
 						//
 						//console?.log(result);
 						res.setHeader('Content-Type', 'application/json');
@@ -2156,7 +1888,6 @@ router.post("/sendFileUrl", upload.none(''), verifyToken.verify, async (req, res
 						});
 					}
 					//
-				});
 				break;
 			default:
 				//
@@ -2180,22 +1911,11 @@ router.post("/sendFileUrl", upload.none(''), verifyToken.verify, async (req, res
 // Enviar arquivo/documento
 router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.phonefull || !req.body.base64 || !req.body.originalname || !req.body.caption) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.base64 || !req.body.originalname || !req.body.caption) {
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -2205,37 +1925,36 @@ router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, 
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					//var folderName = fs.mkdtempSync(path.join(os.tmpdir(), 'BLS-' + resSessionName + '-'));
+					//var folderName = fs.mkdtempSync(path.join(os.tmpdir(), 'BLS-' + removeWithspace(req.body.SessionName) + '-'));
 					//var filePath = path.join(folderName, req.body.originalname);
 					//var base64Data = req.body.base64.replace(/^data:([A-Za-z-+/]+);base64,/,'');
 					var mimeType = mime.lookup(req.body.originalname);
 					//fs.writeFileSync(filePath, base64Data,  {encoding: 'base64'});
-					//logger?.info(`- File ${filePath}`);
+					//console?.log("- File", filePath);
 					//
 					var checkNumberStatus = await Sessions.checkNumberStatus(
-						resSessionName,
+						removeWithspace(req.body.SessionName),
 						soNumeros(req.body.phonefull).trim()
 					);
 					//
 					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 						//
-						var sendFileBase64 = await Sessions.sendFile(
-							resSessionName,
-							checkNumberStatus.number,
+						var sendFileBase64 = await session.process.add(async () => await Sessions.sendFile(
+							removeWithspace(req.body.SessionName),
+							checkNumberStatus.number + '@s.whatsapp.net',
 							Buffer.from(req.body.base64, 'base64'),
 							req.body.originalname,
 							mimeType,
 							req.body.caption
-						);
+						));
 						//
 						res.setHeader('Content-Type', 'application/json');
 						res.status(sendFileBase64.status).json({
@@ -2250,7 +1969,6 @@ router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, 
 						});
 					}
 					//
-				});
 				break;
 			default:
 				//
@@ -2274,22 +1992,11 @@ router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, 
 // Enviar arquivo/documento
 router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.phonefull || !req.body.base64 || !req.body.mimetype || !req.body.originalname || !req.body.caption) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.base64 || !req.body.mimetype || !req.body.originalname || !req.body.caption) {
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -2299,46 +2006,44 @@ router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (r
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var checkNumberStatus = await Sessions.checkNumberStatus(
-						resSessionName,
-						soNumeros(req.body.phonefull).trim()
-					);
+				var checkNumberStatus = await Sessions.checkNumberStatus(
+					removeWithspace(req.body.SessionName),
+					soNumeros(req.body.phonefull).trim()
+				);
+				//
+				if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 					//
-					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-						//
-						var sendFileFromBase64 = await Sessions.sendFile(
-							resSessionName,
-							checkNumberStatus.number,
-							Buffer.from(req.body.base64, 'base64'),
-							req.body.originalname,
-							req.body.mimetype,
-							req.body.caption
-						);
-						//
-						res.setHeader('Content-Type', 'application/json');
-						res.status(sendFileFromBase64.status).json({
-							"Status": sendFileFromBase64
-						});
-						//
-					} else {
-						//
-						res.setHeader('Content-Type', 'application/json');
-						res.status(checkNumberStatus.status).json({
-							"Status": checkNumberStatus
-						});
-						//
-					}
+					var sendFileFromBase64 = await session.process.add(async () => await Sessions.sendFile(
+						removeWithspace(req.body.SessionName),
+						checkNumberStatus.number + '@s.whatsapp.net',
+						Buffer.from(req.body.base64, 'base64'),
+						req.body.originalname,
+						req.body.mimetype,
+						req.body.caption
+					));
 					//
-				});
+					res.setHeader('Content-Type', 'application/json');
+					res.status(sendFileFromBase64.status).json({
+						"Status": sendFileFromBase64
+					});
+					//
+				} else {
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(checkNumberStatus.status).json({
+						"Status": checkNumberStatus
+					});
+					//
+				}
+				//
 				break;
 			default:
 				//
@@ -2363,22 +2068,11 @@ router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (r
 //Enviar button
 router.post("/sendButton", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.phonefull || !req.body.buttonMessage) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.buttonMessage) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -2388,43 +2082,41 @@ router.post("/sendButton", upload.none(''), verifyToken.verify, async (req, res,
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var checkNumberStatus = await Sessions.checkNumberStatus(
-						resSessionName,
-						soNumeros(req.body.phonefull).trim()
-					);
+				var checkNumberStatus = await Sessions.checkNumberStatus(
+					removeWithspace(req.body.SessionName),
+					soNumeros(req.body.phonefull).trim()
+				);
+				//
+				if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 					//
-					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-						//
-						var sendButton = await Sessions.sendButton(
-							resSessionName,
-							checkNumberStatus.number,
-							req.body.buttonMessage,
-						);
-						//
-						res.setHeader('Content-Type', 'application/json');
-						res.status(sendButton.status).json({
-							"Status": sendButton
-						});
-						//
-					} else {
-						//
-						res.setHeader('Content-Type', 'application/json');
-						res.status(checkNumberStatus.status).json({
-							"Status": checkNumberStatus
-						});
-						//
-					}
+					var sendButton = await session.process.add(async () => await Sessions.sendButton(
+						removeWithspace(req.body.SessionName),
+						checkNumberStatus.number + '@s.whatsapp.net',
+						req.body.buttonMessage,
+					));
 					//
-				});
+					res.setHeader('Content-Type', 'application/json');
+					res.status(sendButton.status).json({
+						"Status": sendButton
+					});
+					//
+				} else {
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(checkNumberStatus.status).json({
+						"Status": checkNumberStatus
+					});
+					//
+				}
+				//
 				break;
 			default:
 				//
@@ -2448,22 +2140,11 @@ router.post("/sendButton", upload.none(''), verifyToken.verify, async (req, res,
 //Enviar template
 router.post("/sendTemplate", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.phonefull || !req.body.templateMessage) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.templateMessage) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -2473,43 +2154,41 @@ router.post("/sendTemplate", upload.none(''), verifyToken.verify, async (req, re
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var checkNumberStatus = await Sessions.checkNumberStatus(
-						resSessionName,
-						soNumeros(req.body.phonefull).trim()
-					);
+				var checkNumberStatus = await Sessions.checkNumberStatus(
+					removeWithspace(req.body.SessionName),
+					soNumeros(req.body.phonefull).trim()
+				);
+				//
+				if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 					//
-					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-						//
-						var sendTemplate = await Sessions.sendTemplate(
-							resSessionName,
-							checkNumberStatus.number,
-							req.body.templateMessage,
-						);
-						//
-						res.setHeader('Content-Type', 'application/json');
-						res.status(sendTemplate.status).json({
-							"Status": sendTemplate
-						});
-						//
-					} else {
-						//
-						res.setHeader('Content-Type', 'application/json');
-						res.status(checkNumberStatus.status).json({
-							"Status": checkNumberStatus
-						});
-						//
-					}
+					var sendTemplate = await session.process.add(async () => await Sessions.sendTemplate(
+						removeWithspace(req.body.SessionName),
+						checkNumberStatus.number + '@s.whatsapp.net',
+						req.body.templateMessage,
+					));
 					//
-				});
+					res.setHeader('Content-Type', 'application/json');
+					res.status(sendTemplate.status).json({
+						"Status": sendTemplate
+					});
+					//
+				} else {
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(checkNumberStatus.status).json({
+						"Status": checkNumberStatus
+					});
+					//
+				}
+				//
 				break;
 			default:
 				//
@@ -2533,22 +2212,11 @@ router.post("/sendTemplate", upload.none(''), verifyToken.verify, async (req, re
 //Enviar lista
 router.post("/sendListMessage", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.phonefull || !req.body.listMessage) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.phonefull || !req.body.listMessage) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -2558,43 +2226,41 @@ router.post("/sendListMessage", upload.none(''), verifyToken.verify, async (req,
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var checkNumberStatus = await Sessions.checkNumberStatus(
-						resSessionName,
-						soNumeros(req.body.phonefull).trim()
-					);
+				var checkNumberStatus = await Sessions.checkNumberStatus(
+					removeWithspace(req.body.SessionName),
+					soNumeros(req.body.phonefull).trim()
+				);
+				//
+				if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 					//
-					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-						//
-						var sendListMessage = await Sessions.sendListMessage(
-							resSessionName,
-							checkNumberStatus.number,
-							req.body.listMessage,
-						);
-						//
-						res.setHeader('Content-Type', 'application/json');
-						res.status(sendListMessage.status).json({
-							"Status": sendListMessage
-						});
-						//
-					} else {
-						//
-						res.setHeader('Content-Type', 'application/json');
-						res.status(checkNumberStatus.status).json({
-							"Status": checkNumberStatus
-						});
-						//
-					}
+					var sendListMessage = await session.process.add(async () => await Sessions.sendListMessage(
+						removeWithspace(req.body.SessionName),
+						checkNumberStatus.number + '@s.whatsapp.net',
+						req.body.listMessage,
+					));
 					//
-				});
+					res.setHeader('Content-Type', 'application/json');
+					res.status(sendListMessage.status).json({
+						"Status": sendListMessage
+					});
+					//
+				} else {
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(checkNumberStatus.status).json({
+						"Status": checkNumberStatus
+					});
+					//
+				}
+				//
 				break;
 			default:
 				//
@@ -2624,22 +2290,11 @@ router.post("/sendListMessage", upload.none(''), verifyToken.verify, async (req,
 // Recuperar status do contatos
 router.post("/getStatus", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.phonefull) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.phonefull) {
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -2649,42 +2304,40 @@ router.post("/getStatus", upload.none(''), verifyToken.verify, async (req, res, 
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var checkNumberStatus = await Sessions.checkNumberStatus(
-						resSessionName,
-						soNumeros(req.body.phonefull).trim()
-					);
+				var checkNumberStatus = await Sessions.checkNumberStatus(
+					removeWithspace(req.body.SessionName),
+					soNumeros(req.body.phonefull).trim()
+				);
+				//
+				if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 					//
-					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-						//
-						var getStatus = await Sessions.getStatus(
-							resSessionName,
-							checkNumberStatus.number
-						);
-						//
-						res.setHeader('Content-Type', 'application/json');
-						res.status(getStatus.status).json({
-							"Status": getStatus
-						});
-						//
-					} else {
-						//
-						res.setHeader('Content-Type', 'application/json');
-						res.status(checkNumberStatus.status).json({
-							"Status": checkNumberStatus
-						});
-						//
-					}
+					var getStatus = await session.process.add(async () => await Sessions.getStatus(
+						removeWithspace(req.body.SessionName),
+						checkNumberStatus.number + '@s.whatsapp.net'
+					));
 					//
-				});
+					res.setHeader('Content-Type', 'application/json');
+					res.status(getStatus.status).json({
+						"Status": getStatus
+					});
+					//
+				} else {
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(checkNumberStatus.status).json({
+						"Status": checkNumberStatus
+					});
+					//
+				}
+				//
 				break;
 			default:
 				//
@@ -2708,22 +2361,11 @@ router.post("/getStatus", upload.none(''), verifyToken.verify, async (req, res, 
 // Recuperar contatos
 router.post("/getAllContacts", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName) {
+	if (!removeWithspace(req.body.SessionName)) {
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -2733,25 +2375,23 @@ router.post("/getAllContacts", upload.none(''), verifyToken.verify, async (req, 
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var getAllContacts = await Sessions.getAllContacts(
-						resSessionName
-					);
-					//
-					res.setHeader('Content-Type', 'application/json');
-					res.status(getAllContacts.status).json({
-						"Status": getAllContacts
-					});
-					//
+				var getAllContacts = await session.process.add(async () => await Sessions.getAllContacts(
+					removeWithspace(req.body.SessionName)
+				));
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(getAllContacts.status).json({
+					"Status": getAllContacts
 				});
+				//
 				break;
 			default:
 				//
@@ -2772,159 +2412,14 @@ router.post("/getAllContacts", upload.none(''), verifyToken.verify, async (req, 
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
-// Recuperar chats
-router.post("/getAllChats", upload.none(''), verifyToken.verify, async (req, res, next) => {
-	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName) {
-		var validate = {
-			"erro": true,
-			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
-		};
-		//
-		res.setHeader('Content-Type', 'application/json');
-		res.status(validate.status).json({
-			"Status": validate
-		});
-		//
-	} else {
-		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
-		switch (Status.status) {
-			case 'inChat':
-			case 'qrReadSuccess':
-			case 'isLogged':
-			case 'chatsAvailable':
-				//
-				await session.waqueue.add(async () => {
-					var getAllChats = await Sessions.getAllChats(
-						resSessionName
-					);
-					//
-					res.setHeader('Content-Type', 'application/json');
-					res.status(getAllChats.status).json({
-						"Status": getAllChats
-					});
-					//
-				});
-				break;
-			default:
-				//
-				var resultRes = {
-					"erro": true,
-					"status": 400,
-					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
-				};
-				//
-				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
-					"Status": resultRes
-				});
-			//
-		}
-	}
-}); //getAllChats
-//
-// ------------------------------------------------------------------------------------------------------- //
-//
-// Recuperar mensagens
-router.post("/getAllMessage", upload.none(''), verifyToken.verify, async (req, res, next) => {
-	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName) {
-		var validate = {
-			"erro": true,
-			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
-		};
-		//
-		res.setHeader('Content-Type', 'application/json');
-		res.status(validate.status).json({
-			"Status": validate
-		});
-		//
-	} else {
-		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
-		switch (Status.status) {
-			case 'inChat':
-			case 'qrReadSuccess':
-			case 'isLogged':
-			case 'chatsAvailable':
-				//
-				await session.waqueue.add(async () => {
-					var getAllMessage = await Sessions.getAllMessage(
-						resSessionName
-					);
-					//
-					res.setHeader('Content-Type', 'application/json');
-					res.status(getAllMessage.status).json({
-						"Status": getAllMessage
-					});
-					//
-				});
-				break;
-			default:
-				//
-				var resultRes = {
-					"erro": true,
-					"status": 400,
-					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
-				};
-				//
-				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
-					"Status": resultRes
-				});
-			//
-		}
-	}
-}); //getAllMessage
-//
-// ------------------------------------------------------------------------------------------------------- //
-//
 // Recuperar grupos
 router.post("/getAllGroups", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName) {
+	if (!removeWithspace(req.body.SessionName)) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -2934,25 +2429,23 @@ router.post("/getAllGroups", upload.none(''), verifyToken.verify, async (req, re
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var getAllGroups = await Sessions.getAllGroups(
-						req?.body?.SessionName
-					);
-					//
-					res.setHeader('Content-Type', 'application/json');
-					res.status(getAllGroups.status).json({
-						"Status": getAllGroups
-					});
-					//
+				var getAllGroups = await session.process.add(async () => await Sessions.getAllGroups(
+					req.body.SessionName
+				));
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(getAllGroups.status).json({
+					"Status": getAllGroups
 				});
+				//
 				break;
 			default:
 				//
@@ -2976,22 +2469,11 @@ router.post("/getAllGroups", upload.none(''), verifyToken.verify, async (req, re
 // Obter o perfil do número
 router.post("/getProfilePicFromServer", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.phonefull) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.phonefull) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -3001,42 +2483,40 @@ router.post("/getProfilePicFromServer", upload.none(''), verifyToken.verify, asy
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var checkNumberStatus = await Sessions.checkNumberStatus(
-						resSessionName,
-						soNumeros(req.body.phonefull).trim()
-					);
+				var checkNumberStatus = await Sessions.checkNumberStatus(
+					removeWithspace(req.body.SessionName),
+					soNumeros(req.body.phonefull).trim()
+				);
+				//
+				if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 					//
-					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-						//
-						var getProfilePicFromServer = await Sessions.getProfilePicFromServer(
-							resSessionName,
-							checkNumberStatus.number
-						);
-						//
-						res.setHeader('Content-Type', 'application/json');
-						res.status(getProfilePicFromServer.status).json({
-							"Status": getProfilePicFromServer
-						});
-						//
-					} else {
-						//
-						res.setHeader('Content-Type', 'application/json');
-						res.status(checkNumberStatus.status).json({
-							"Status": checkNumberStatus
-						});
-						//
-					}
+					var getProfilePicFromServer = await session.process.add(async () => await Sessions.getProfilePicFromServer(
+						removeWithspace(req.body.SessionName),
+						checkNumberStatus.number + '@s.whatsapp.net'
+					));
 					//
-				});
+					res.setHeader('Content-Type', 'application/json');
+					res.status(getProfilePicFromServer.status).json({
+						"Status": getProfilePicFromServer
+					});
+					//
+				} else {
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(checkNumberStatus.status).json({
+						"Status": checkNumberStatus
+					});
+					//
+				}
+				//
 				break;
 			default:
 				//
@@ -3060,22 +2540,11 @@ router.post("/getProfilePicFromServer", upload.none(''), verifyToken.verify, asy
 // Verificar o status do número
 router.post("/checkNumberStatus", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.phonefull) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.phonefull) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -3085,37 +2554,35 @@ router.post("/checkNumberStatus", upload.none(''), verifyToken.verify, async (re
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var checkNumberStatus = await Sessions.checkNumberStatus(
-						resSessionName,
-						soNumeros(req.body.phonefull).trim()
-					);
+				var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+				var checkNumberStatus = await session.process.add(async () => await Sessions.checkNumberStatus(
+					removeWithspace(req.body.SessionName),
+					soNumeros(req.body.phonefull).trim()
+				));
+				//
+				if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 					//
-					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-						//
-						res.setHeader('Content-Type', 'application/json');
-						res.status(checkNumberStatus.status).json({
-							"Status": checkNumberStatus
-						});
-						//
-					} else {
-						//
-						res.setHeader('Content-Type', 'application/json');
-						res.status(checkNumberStatus.status).json({
-							"Status": checkNumberStatus
-						});
-						//
-					}
+					res.setHeader('Content-Type', 'application/json');
+					res.status(checkNumberStatus.status).json({
+						"Status": checkNumberStatus
+					});
 					//
-				});
+				} else {
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(checkNumberStatus.status).json({
+						"Status": checkNumberStatus
+					});
+					//
+				}
+				//
 				break;
 			default:
 				//
@@ -3145,23 +2612,12 @@ router.post("/checkNumberStatus", upload.none(''), verifyToken.verify, async (re
 // Enviar Contato
 router.post("/sendContactVcardGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
 	try {
-		if (!resSessionName || !req.body.groupId || !req.body.contact || !req.body.namecontact) {
+		if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.contact || !req.body.namecontact) {
 			var resultRes = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -3171,28 +2627,26 @@ router.post("/sendContactVcardGrupo", upload.none(''), verifyToken.verify, async
 			//
 		} else {
 			//
-			var Status = await Sessions.ApiStatus(resSessionName);
-			var session = Sessions.getSession(resSessionName);
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
 			switch (Status.status) {
 				case 'inChat':
 				case 'qrReadSuccess':
 				case 'isLogged':
 				case 'chatsAvailable':
 					//
-					await session.waqueue.add(async () => {
-						var sendContactVcard = await Sessions.sendContactVcard(
-							resSessionName,
-							req.body.groupId.trim() + '@g.us',
-							soNumeros(req.body.contact),
-							req.body.namecontact
-						);
-						//
-						res.setHeader('Content-Type', 'application/json');
-						res.status(sendContactVcard.status).json({
-							"Status": sendContactVcard
-						});
-						//
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					var sendContactVcard = await session.process.add(async () => await Sessions.sendContactVcard(
+						removeWithspace(req.body.SessionName),
+						req.body.groupId.trim() + '@g.us',
+						soNumeros(req.body.contact),
+						req.body.namecontact
+					));
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(sendContactVcard.status).json({
+						"Status": sendContactVcard
 					});
+					//
 					break;
 				default:
 					//
@@ -3211,7 +2665,7 @@ router.post("/sendContactVcardGrupo", upload.none(''), verifyToken.verify, async
 		}
 	} catch (error) {
 		//
-		logger?.error(`${error}`);
+		console?.log(error);
 		var resultRes = {
 			"erro": true,
 			"status": 403,
@@ -3233,23 +2687,12 @@ router.post("/sendContactVcardGrupo", upload.none(''), verifyToken.verify, async
 //
 router.post("/sendVoiceGrupo", upload.single('file'), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
 	try {
-		if (!resSessionName || !req.body.groupId || !req.file) {
+		if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.file) {
 			var validate = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -3262,7 +2705,7 @@ router.post("/sendVoiceGrupo", upload.single('file'), verifyToken.verify, async 
 			//let ext = path.extname(file.originalname);
 			//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
 			//let ext = path.parse(req.file.originalname).ext;
-			//logger?.info(`- acceptedTypes: ${req.file.mimetype}`);
+			//console?.log("- acceptedTypes:", req.file.mimetype);
 			let acceptedTypes = req.file.mimetype.split('/')[0];
 			if (acceptedTypes !== "audio") {
 				//
@@ -3279,29 +2722,27 @@ router.post("/sendVoiceGrupo", upload.single('file'), verifyToken.verify, async 
 				//
 			} else {
 				//
-				var Status = await Sessions.ApiStatus(resSessionName);
-				var session = Sessions.getSession(resSessionName);
+				var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
 				switch (Status.status) {
 					case 'inChat':
 					case 'qrReadSuccess':
 					case 'isLogged':
 					case 'chatsAvailable':
 						//
-						await session.waqueue.add(async () => {
-							var sendPtt = await Sessions.sendPtt(
-								resSessionName,
-								req.body.groupId.trim() + '@g.us',
-								req.file.buffer,
-								req.file.mimetype,
-								req.body.caption
-							);
-							//
-							res.setHeader('Content-Type', 'application/json');
-							res.status(sendPtt.status).json({
-								"Status": sendPtt
-							});
-							//
+						var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+						var sendPtt = await session.process.add(async () => await Sessions.sendPtt(
+							removeWithspace(req.body.SessionName),
+							req.body.groupId.trim() + '@g.us',
+							req.file.buffer,
+							req.file.mimetype,
+							req.body.caption
+						));
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(sendPtt.status).json({
+							"Status": sendPtt
 						});
+						//
 						break;
 					default:
 						//
@@ -3321,7 +2762,7 @@ router.post("/sendVoiceGrupo", upload.single('file'), verifyToken.verify, async 
 		}
 	} catch (error) {
 		//
-		logger?.error(`${error}`);
+		console?.log(error);
 		var resultRes = {
 			"erro": true,
 			"status": 403,
@@ -3342,23 +2783,12 @@ router.post("/sendVoiceGrupo", upload.single('file'), verifyToken.verify, async 
 // Enviar audio
 router.post("/sendVoiceBase64Grupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
 	try {
-		if (!resSessionName || !req.body.groupId || !req.body.base64 || !req.body.originalname) {
+		if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.base64 || !req.body.originalname) {
 			var validate = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -3368,31 +2798,29 @@ router.post("/sendVoiceBase64Grupo", upload.none(''), verifyToken.verify, async 
 			//
 		} else {
 			//
-			var Status = await Sessions.ApiStatus(resSessionName);
-			var session = Sessions.getSession(resSessionName);
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
 			switch (Status.status) {
 				case 'inChat':
 				case 'qrReadSuccess':
 				case 'isLogged':
 				case 'chatsAvailable':
 					//
-					await session.waqueue.add(async () => {
-						var mimeType = mime.lookup(req.body.originalname);
-						//
-						var sendPtt = await Sessions.sendPtt(
-							resSessionName,
-							req.body.groupId.trim() + '@g.us',
-							Buffer.from(req.body.base64, 'base64'),
-							mimeType,
-							req.body.caption
-						);
-						//
-						res.setHeader('Content-Type', 'application/json');
-						res.status(sendPtt.status).json({
-							"Status": sendPtt
-						});
-						//
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					var mimeType = mime.lookup(req.body.originalname);
+					//
+					var sendPtt = await session.process.add(async () => await Sessions.sendPtt(
+						removeWithspace(req.body.SessionName),
+						req.body.groupId.trim() + '@g.us',
+						Buffer.from(req.body.base64, 'base64'),
+						mimeType,
+						req.body.caption
+					));
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(sendPtt.status).json({
+						"Status": sendPtt
 					});
+					//
 					break;
 				default:
 					//
@@ -3411,7 +2839,7 @@ router.post("/sendVoiceBase64Grupo", upload.none(''), verifyToken.verify, async 
 		}
 	} catch (error) {
 		//
-		logger?.error(`${error}`);
+		console?.log(error);
 		var resultRes = {
 			"erro": true,
 			"status": 403,
@@ -3431,23 +2859,12 @@ router.post("/sendVoiceBase64Grupo", upload.none(''), verifyToken.verify, async 
 // Enviar audio
 router.post("/sendVoiceFromBase64Grupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
 	try {
-		if (!resSessionName || !req.body.groupId || !req.body.base64 || !req.body.mimetype || !req.body.originalname) {
+		if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.base64 || !req.body.mimetype || !req.body.originalname) {
 			var validate = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -3460,7 +2877,7 @@ router.post("/sendVoiceFromBase64Grupo", upload.none(''), verifyToken.verify, as
 			//let ext = path.extname(file.originalname);
 			//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
 			//let ext = path.parse(req.file.originalname).ext;
-			//logger?.info(`- acceptedTypes: ${req.file.mimetype}`);
+			//console?.log("- acceptedTypes:", req.file.mimetype);
 			let acceptedTypes = req.body.mimetype.split('/')[0];
 			if (acceptedTypes !== "audio") {
 				//
@@ -3477,28 +2894,26 @@ router.post("/sendVoiceFromBase64Grupo", upload.none(''), verifyToken.verify, as
 				//
 			} else {
 				//
-				var Status = await Sessions.ApiStatus(resSessionName);
-				var session = Sessions.getSession(resSessionName);
+				var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
 				switch (Status.status) {
 					case 'inChat':
 					case 'qrReadSuccess':
 					case 'isLogged':
 					case 'chatsAvailable':
 						//
-						await session.waqueue.add(async () => {
-							var sendPtt = await Sessions.sendPtt(
-								resSessionName,
-								req.body.groupId.trim() + '@g.us',
-								Buffer.from(req.body.base64, 'base64'),
-								req.body.mimetype
-							);
-							//
-							res.setHeader('Content-Type', 'application/json');
-							res.status(sendPtt.status).json({
-								"Status": sendPtt
-							});
-							//
+						var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+						var sendPtt = await session.process.add(async () => await Sessions.sendPtt(
+							removeWithspace(req.body.SessionName),
+							req.body.groupId.trim() + '@g.us',
+							Buffer.from(req.body.base64, 'base64'),
+							req.body.mimetype
+						));
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(sendPtt.status).json({
+							"Status": sendPtt
 						});
+						//
 						break;
 					default:
 						//
@@ -3518,7 +2933,7 @@ router.post("/sendVoiceFromBase64Grupo", upload.none(''), verifyToken.verify, as
 		}
 	} catch (error) {
 		//
-		logger?.error(`${error}`);
+		console?.log(error);
 		var resultRes = {
 			"erro": true,
 			"status": 403,
@@ -3538,22 +2953,11 @@ router.post("/sendVoiceFromBase64Grupo", upload.none(''), verifyToken.verify, as
 //Enviar Texto em Grupo
 router.post("/sendTextGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.groupId || !req.body.msg) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.msg) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -3563,28 +2967,26 @@ router.post("/sendTextGrupo", upload.none(''), verifyToken.verify, async (req, r
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var sendTextGrupo = await Sessions.sendText(
-						resSessionName,
-						req.body.groupId.trim() + '@g.us',
-						req.body.msg
-					);
-					//
-					//console?.log(result);
-					res.setHeader('Content-Type', 'application/json');
-					res.status(sendTextGrupo.status).json({
-						"Status": sendTextGrupo
-					});
-					//
+				var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+				var sendTextGrupo = await session.process.add(async () => await Sessions.sendText(
+					removeWithspace(req.body.SessionName),
+					req.body.groupId.trim() + '@g.us',
+					req.body.msg
+				));
+				//
+				//console?.log(result);
+				res.setHeader('Content-Type', 'application/json');
+				res.status(sendTextGrupo.status).json({
+					"Status": sendTextGrupo
 				});
+				//
 				break;
 			default:
 				//
@@ -3608,23 +3010,12 @@ router.post("/sendTextGrupo", upload.none(''), verifyToken.verify, async (req, r
 //Enviar localização no grupo
 router.post("/sendLocationGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.groupId || !req.body.lat || !req.body.long || !req.body.local) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.lat || !req.body.long || !req.body.local) {
 		//
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -3634,28 +3025,26 @@ router.post("/sendLocationGrupo", upload.none(''), verifyToken.verify, async (re
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var sendLocationGroup = await Sessions.sendLocation(
-						resSessionName,
-						req.body.groupId.trim() + '@g.us',
-						req.body.lat,
-						req.body.long,
-						req.body.local
-					);
-					//
-					//console?.log(result);
-					res.setHeader('Content-Type', 'application/json');
-					res.status(sendLocationGroup.status).json({
-						"Status": sendLocationGroup
-					});
+				var sendLocationGroup = await session.process.add(async () => await Sessions.sendLocation(
+					removeWithspace(req.body.SessionName),
+					req.body.groupId.trim() + '@g.us',
+					req.body.lat,
+					req.body.long,
+					req.body.local
+				));
+				//
+				//console?.log(result);
+				res.setHeader('Content-Type', 'application/json');
+				res.status(sendLocationGroup.status).json({
+					"Status": sendLocationGroup
 				});
 				break;
 			default:
@@ -3680,24 +3069,13 @@ router.post("/sendLocationGrupo", upload.none(''), verifyToken.verify, async (re
 //Enviar links com preview
 router.post("/sendLinkGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
 	try {
-		if (!resSessionName || !req.body.groupId || !req.body.link || !req.body.descricao) {
+		if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.link || !req.body.descricao) {
 			//
 			var validate = {
 				"erro": true,
 				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
@@ -3707,42 +3085,40 @@ router.post("/sendLinkGrupo", upload.none(''), verifyToken.verify, async (req, r
 			//
 		} else {
 			//
-			var Status = await Sessions.ApiStatus(resSessionName);
-			var session = Sessions.getSession(resSessionName);
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
 			switch (Status.status) {
 				case 'inChat':
 				case 'qrReadSuccess':
 				case 'isLogged':
 				case 'chatsAvailable':
 					//
-					await session.waqueue.add(async () => {
-						if (!validUrl.isUri(req.body.link)) {
-							var validate = {
-								"erro": true,
-								"status": 401,
-								"message": 'O link informado é invalido, verifique e tente novamente.'
-							};
-							//
-							res.setHeader('Content-Type', 'application/json');
-							res.status(validate.status).json({
-								"Status": validate
-							});
-							//
-						}
-						//
-						var sendLink = await Sessions.sendLink(
-							resSessionName,
-							req.body.groupId.trim() + '@g.us',
-							req.body.link,
-							req.body.descricao
-						);
+					if (!validUrl.isUri(req.body.link)) {
+						var validate = {
+							"erro": true,
+							"status": 401,
+							"message": 'O link informado é invalido, corrija e tente novamente.'
+						};
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(sendLink.status).json({
-							"Status": sendLink
+						res.status(validate.status).json({
+							"Status": validate
 						});
 						//
+					}
+					//
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					var sendLink = await session.process.add(async () => await Sessions.sendLink(
+						removeWithspace(req.body.SessionName),
+						req.body.groupId.trim() + '@g.us',
+						req.body.link,
+						req.body.descricao
+					));
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(sendLink.status).json({
+						"Status": sendLink
 					});
+					//
 					break;
 				default:
 					//
@@ -3779,44 +3155,13 @@ router.post("/sendLinkGrupo", upload.none(''), verifyToken.verify, async (req, r
 //
 // Enviar imagen no grupo
 router.post("/sendImageGrupo", upload.single('file'), verifyToken.verify, async (req, res, next) => {
-	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	try {
-		if (!resSessionName || !req.body.groupId || !req.file) {
-			var validate = {
-				"erro": true,
-				"status": 400,
-				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
-			};
-			//
-			res.setHeader('Content-Type', 'application/json');
-			res.status(validate.status).json({
-				"Status": validate
-			});
-			//
-		} else {
-			//
-			//let ext = path.extname(file.originalname);
-			//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
-			//let ext = path.parse(req.file.originalname).ext;
-			//logger?.info(`- acceptedTypes: ${req.file.mimetype}`);
-			let acceptedTypes = req.file.mimetype.split('/')[0];
-			if (acceptedTypes !== "image") {
-				//
+		//
+		try {
+			if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.file) {
 				var validate = {
 					"erro": true,
 					"status": 400,
-					"message": 'Arquivo selecionado não permitido, apenas arquivo do tipo imagem'
+					"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
@@ -3826,63 +3171,81 @@ router.post("/sendImageGrupo", upload.single('file'), verifyToken.verify, async 
 				//
 			} else {
 				//
-				var Status = await Sessions.ApiStatus(resSessionName);
-				var session = Sessions.getSession(resSessionName);
-				switch (Status.status) {
-					case 'inChat':
-					case 'qrReadSuccess':
-					case 'isLogged':
-					case 'chatsAvailable':
-						//
-						await session.waqueue.add(async () => {
-							var sendPtt = await Sessions.sendImage(
-								resSessionName,
-								req.body.groupId.trim() + '@g.us',
-								req.file.buffer,
-								req.file.mimetype,
-								req.file.originalname,
-								req.body.caption
-							);
+				//let ext = path.extname(file.originalname);
+				//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
+				//let ext = path.parse(req.file.originalname).ext;
+				//console?.log("- acceptedTypes:", req.file.mimetype);
+				let acceptedTypes = req.file.mimetype.split('/')[0];
+				if (acceptedTypes !== "image") {
+					//
+					var validate = {
+						"erro": true,
+						"status": 400,
+						"message": 'Arquivo selecionado não permitido, apenas arquivo do tipo imagem'
+					};
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(validate.status).json({
+						"Status": validate
+					});
+					//
+				} else {
+					//
+					var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+					switch (Status.status) {
+						case 'inChat':
+						case 'qrReadSuccess':
+						case 'isLogged':
+						case 'chatsAvailable':
+							//
+							var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+								var sendPtt = await session.process.add(async () => await Sessions.sendImage(
+									removeWithspace(req.body.SessionName),
+									req.body.groupId.trim() + '@g.us',
+									req.file.buffer,
+									req.file.mimetype,
+									req.file.originalname,
+									req.body.caption
+								));
+								//
+								res.setHeader('Content-Type', 'application/json');
+								res.status(sendPtt.status).json({
+									"Status": sendPtt
+								});
+								//
+							break;
+						default:
+							//
+							var resultRes = {
+								"erro": true,
+								"status": 400,
+								"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+							};
 							//
 							res.setHeader('Content-Type', 'application/json');
-							res.status(sendPtt.status).json({
-								"Status": sendPtt
+							res.status(resultRes.status).json({
+								"Status": resultRes
 							});
-							//
-						});
-						break;
-					default:
 						//
-						var resultRes = {
-							"erro": true,
-							"status": 400,
-							"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
-						};
-						//
-						res.setHeader('Content-Type', 'application/json');
-						res.status(resultRes.status).json({
-							"Status": resultRes
-						});
-					//
+					}
 				}
 			}
+		} catch (error) {
+			//
+			console?.log(error);
+			var resultRes = {
+				"erro": true,
+				"status": 403,
+				"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(resultRes.status).json({
+				"Status": resultRes
+			});
+			//
 		}
-	} catch (error) {
 		//
-		logger?.error(`${error}`);
-		var resultRes = {
-			"erro": true,
-			"status": 403,
-			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
-		};
-		//
-		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
-			"Status": resultRes
-		});
-		//
-	}
-	//
 }); //sendImageGroup
 //
 // ------------------------------------------------------------------------------------------------//
@@ -3890,22 +3253,11 @@ router.post("/sendImageGrupo", upload.single('file'), verifyToken.verify, async 
 // Enviar arquivo/documento
 router.post("/sendImageBase64Grupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.groupId || !req.body.base64 || !req.body.originalname || !req.body.caption) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.base64 || !req.body.originalname || !req.body.caption) {
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -3918,7 +3270,7 @@ router.post("/sendImageBase64Grupo", upload.none(''), verifyToken.verify, async 
 		//let ext = path.extname(file.originalname);
 		//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
 		//let ext = path.parse(req.file.originalname).ext;
-		//logger?.info(`- acceptedTypes: ${req.file.mimetype}`);
+		//console?.log("- acceptedTypes:", req.file.mimetype);
 		var mimeType = mime.lookup(req.body.originalname);
 		let acceptedTypes = mimeType.split('/')[0];
 		if (acceptedTypes !== "image") {
@@ -3936,30 +3288,28 @@ router.post("/sendImageBase64Grupo", upload.none(''), verifyToken.verify, async 
 			//
 		} else {
 			//
-			var Status = await Sessions.ApiStatus(resSessionName);
-			var session = Sessions.getSession(resSessionName);
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+			var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 			switch (Status.status) {
 				case 'inChat':
 				case 'qrReadSuccess':
 				case 'isLogged':
 				case 'chatsAvailable':
 					//
-					await session.waqueue.add(async () => {
-						var sendFileBase64 = await Sessions.sendImage(
-							resSessionName,
-							req.body.groupId.trim() + '@g.us',
-							Buffer.from(req.body.base64, 'base64'),
-							req.body.originalname,
-							mimeType,
-							req.body.caption
-						);
-						//
-						res.setHeader('Content-Type', 'application/json');
-						res.status(sendFileBase64.status).json({
-							"Status": sendFileBase64
-						});
-						//
-					});
+							var sendFileBase64 = await session.process.add(async () => await Sessions.sendImage(
+								removeWithspace(req.body.SessionName),
+								req.body.groupId.trim() + '@g.us',
+								Buffer.from(req.body.base64, 'base64'),
+								req.body.originalname,
+								mimeType,
+								req.body.caption
+							));
+							//
+							res.setHeader('Content-Type', 'application/json');
+							res.status(sendFileBase64.status).json({
+								"Status": sendFileBase64
+							});
+							//
 					break;
 				default:
 					//
@@ -3984,22 +3334,11 @@ router.post("/sendImageBase64Grupo", upload.none(''), verifyToken.verify, async 
 // Enviar arquivo/documento
 router.post("/sendImageFromBase64Grupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.groupId || !req.body.base64 || !req.body.mimetype || !req.body.originalname || !req.body.caption) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.base64 || !req.body.mimetype || !req.body.originalname || !req.body.caption) {
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -4012,7 +3351,7 @@ router.post("/sendImageFromBase64Grupo", upload.none(''), verifyToken.verify, as
 		//let ext = path.extname(file.originalname);
 		//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
 		//let ext = path.parse(req.file.originalname).ext;
-		//logger?.info(`- acceptedTypes: ${req.file.mimetype}`);
+		//console?.log("- acceptedTypes:", req.file.mimetype);
 		var mimeType = req.body.mimetype;
 		let acceptedTypes = mimeType.split('/')[0];
 		if (acceptedTypes !== "image") {
@@ -4030,30 +3369,28 @@ router.post("/sendImageFromBase64Grupo", upload.none(''), verifyToken.verify, as
 			//
 		} else {
 			//
-			var Status = await Sessions.ApiStatus(resSessionName);
-			var session = Sessions.getSession(resSessionName);
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
 			switch (Status.status) {
 				case 'inChat':
 				case 'qrReadSuccess':
 				case 'isLogged':
 				case 'chatsAvailable':
 					//
-					await session.waqueue.add(async () => {
-						var sendFileFromBase64 = await Sessions.sendImage(
-							resSessionName,
+						var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+						var sendFileFromBase64 = await session.process.add(async () => await Sessions.sendImage(
+							removeWithspace(req.body.SessionName),
 							req.body.groupId.trim() + '@g.us',
 							Buffer.from(req.body.base64, 'base64'),
 							req.body.originalname,
 							req.body.mimetype,
 							req.body.caption
-						);
+						));
 						//
 						res.setHeader('Content-Type', 'application/json');
 						res.status(sendFileFromBase64.status).json({
 							"Status": sendFileFromBase64
 						});
 						//
-					});
 					break;
 				default:
 					//
@@ -4078,74 +3415,61 @@ router.post("/sendImageFromBase64Grupo", upload.none(''), verifyToken.verify, as
 //
 // Enviar arquivo/documento
 router.post("/sendFileGrupo", upload.single('file'), verifyToken.verify, async (req, res, next) => {
-	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.groupId || !req.body.caption || !req.file) {
-		var validate = {
-			"erro": true,
-			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
-		};
 		//
-		res.setHeader('Content-Type', 'application/json');
-		res.status(validate.status).json({
-			"Status": validate
-		});
-		//
-	} else {
-		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
-		switch (Status.status) {
-			case 'inChat':
-			case 'qrReadSuccess':
-			case 'isLogged':
-			case 'chatsAvailable':
-				//
-				await session.waqueue.add(async () => {
-					var sendFile = await Sessions.sendFile(
-						resSessionName,
-						req.body.groupId.trim() + '@g.us',
-						req.file.buffer,
-						req.file.originalname,
-						req.file.mimetype,
-						req.body.caption
-					);
-					//
-					//console?.log(result);
-					res.setHeader('Content-Type', 'application/json');
-					res.status(sendFile.status).json({
-						"Status": sendFile
-					});
-					//
-				});
-				break;
-			default:
-				//
-				var resultRes = {
-					"erro": true,
-					"status": 400,
-					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
-				};
-				//
-				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
-					"Status": resultRes
-				});
+		if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.caption || !req.file) {
+			var validate = {
+				"erro": true,
+				"status": 400,
+				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
+			};
 			//
+			res.setHeader('Content-Type', 'application/json');
+			res.status(validate.status).json({
+				"Status": validate
+			});
+			//
+		} else {
+			//
+			var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+			switch (Status.status) {
+				case 'inChat':
+				case 'qrReadSuccess':
+				case 'isLogged':
+				case 'chatsAvailable':
+					//
+							var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+							var sendFile = await session.process.add(async () => await Sessions.sendFile(
+								removeWithspace(req.body.SessionName),
+								req.body.groupId.trim() + '@g.us',
+								req.file.buffer,
+								req.file.originalname,
+								req.file.mimetype,
+								req.body.caption
+							));
+							//
+							//console?.log(result);
+							res.setHeader('Content-Type', 'application/json');
+							res.status(sendFile.status).json({
+								"Status": sendFile
+							});
+						//
+					break;
+				default:
+					//
+					var resultRes = {
+						"erro": true,
+						"status": 400,
+						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+					};
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(resultRes.status).json({
+						"Status": resultRes
+					});
+				//
+			}
 		}
-	}
-	//
+		//
 }); //sendFileGroup
 //
 // ------------------------------------------------------------------------------------------------//
@@ -4153,22 +3477,11 @@ router.post("/sendFileGrupo", upload.single('file'), verifyToken.verify, async (
 // Enviar arquivo/documento
 router.post("/sendFileUrlGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.groupId || !req.body.url || !req.body.caption) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.url || !req.body.caption) {
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -4178,31 +3491,29 @@ router.post("/sendFileUrlGrupo", upload.none(''), verifyToken.verify, async (req
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var sendFile = await Sessions.sendFileUrl(
-						resSessionName,
-						req.body.groupId.trim() + '@g.us',
-						req.body.url,
-						req.body.url.split('/').slice(-1)[0],
-						mime.lookup(req.body.url.split('.').slice(-1)[0]),
-						req.body.caption
-					);
-					//
-					//console?.log(result);
-					res.setHeader('Content-Type', 'application/json');
-					res.status(sendFile.status).json({
-						"Status": sendFile
-					});
-				});
-				//
+				var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+						var sendFile = await session.process.add(async () => await Sessions.sendFileUrl(
+							removeWithspace(req.body.SessionName),
+							req.body.groupId.trim() + '@g.us',
+							req.body.url,
+							req.body.url.split('/').slice(-1)[0],
+							mime.lookup(req.body.url.split('.').slice(-1)[0]),
+							req.body.caption
+						));
+						//
+						//console?.log(result);
+						res.setHeader('Content-Type', 'application/json');
+						res.status(sendFile.status).json({
+							"Status": sendFile
+						});
+						//
 				break;
 			default:
 				//
@@ -4226,22 +3537,11 @@ router.post("/sendFileUrlGrupo", upload.none(''), verifyToken.verify, async (req
 // Enviar arquivo/documento
 router.post("/sendFileBase64Grupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.groupId || !req.body.base64 || !req.body.originalname || !req.body.caption) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.base64 || !req.body.originalname || !req.body.caption) {
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -4251,31 +3551,30 @@ router.post("/sendFileBase64Grupo", upload.none(''), verifyToken.verify, async (
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var mimeType = mime.lookup(req.body.originalname);
-					var sendFileBase64 = await Sessions.sendFile(
-						resSessionName,
-						req.body.groupId.trim() + '@g.us',
-						Buffer.from(req.body.base64, 'base64'),
-						req.body.originalname,
-						mimeType,
-						req.body.caption
-					);
-					//
-					res.setHeader('Content-Type', 'application/json');
-					res.status(sendFileBase64.status).json({
-						"Status": sendFileBase64
-					});
-				});
+				var mimeType = mime.lookup(req.body.originalname);
 				//
+				var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+						var sendFileBase64 = await session.process.add(async () => await Sessions.sendFile(
+							removeWithspace(req.body.SessionName),
+							req.body.groupId.trim() + '@g.us',
+							Buffer.from(req.body.base64, 'base64'),
+							req.body.originalname,
+							mimeType,
+							req.body.caption
+						));
+						//
+						res.setHeader('Content-Type', 'application/json');
+						res.status(sendFileBase64.status).json({
+							"Status": sendFileBase64
+						});
+						//
 				break;
 			default:
 				//
@@ -4299,22 +3598,11 @@ router.post("/sendFileBase64Grupo", upload.none(''), verifyToken.verify, async (
 // Enviar arquivo/documento
 router.post("/sendFileFromBase64Grupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.groupId || !req.body.base64 || !req.body.mimetype || !req.body.originalname || !req.body.caption) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.base64 || !req.body.mimetype || !req.body.originalname || !req.body.caption) {
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -4324,30 +3612,28 @@ router.post("/sendFileFromBase64Grupo", upload.none(''), verifyToken.verify, asy
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var sendFileFromBase64 = await Sessions.sendFile(
-						resSessionName,
+					var sendFileFromBase64 = await session.process.add(async () => await Sessions.sendFile(
+						removeWithspace(req.body.SessionName),
 						req.body.groupId.trim() + '@g.us',
 						Buffer.from(req.body.base64, 'base64'),
 						req.body.originalname,
 						req.body.mimetype,
 						req.body.caption
-					);
+					));
 					//
 					res.setHeader('Content-Type', 'application/json');
 					res.status(sendFileFromBase64.status).json({
 						"Status": sendFileFromBase64
 					});
-				});
-				//
+					//
 				break;
 			default:
 				//
@@ -4372,22 +3658,11 @@ router.post("/sendFileFromBase64Grupo", upload.none(''), verifyToken.verify, asy
 //Enviar button
 router.post("/sendButtonGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.groupId || !req.body.buttonMessage) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.buttonMessage) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -4397,27 +3672,25 @@ router.post("/sendButtonGrupo", upload.none(''), verifyToken.verify, async (req,
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var sendButton = await Sessions.sendButton(
-						resSessionName,
+					var sendButton = await session.process.add(async () => await Sessions.sendButton(
+						removeWithspace(req.body.SessionName),
 						req.body.groupId.trim() + '@g.us',
 						req.body.buttonMessage,
-					);
+					));
 					//
 					res.setHeader('Content-Type', 'application/json');
 					res.status(sendButton.status).json({
 						"Status": sendButton
 					});
-				});
-				//
+					//
 				break;
 			default:
 				//
@@ -4441,22 +3714,11 @@ router.post("/sendButtonGrupo", upload.none(''), verifyToken.verify, async (req,
 //Enviar template
 router.post("/sendTemplateGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.groupId || !req.body.templateMessage) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.templateMessage) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -4466,27 +3728,25 @@ router.post("/sendTemplateGrupo", upload.none(''), verifyToken.verify, async (re
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var sendTemplate = await Sessions.sendTemplate(
-						resSessionName,
+					var sendTemplate = await session.process.add(async () => await Sessions.sendTemplate(
+						removeWithspace(req.body.SessionName),
 						req.body.groupId.trim() + '@g.us',
 						req.body.templateMessage,
-					);
+					));
 					//
 					res.setHeader('Content-Type', 'application/json');
 					res.status(sendTemplate.status).json({
 						"Status": sendTemplate
 					});
-				});
-				//
+					//
 				break;
 			default:
 				//
@@ -4510,22 +3770,11 @@ router.post("/sendTemplateGrupo", upload.none(''), verifyToken.verify, async (re
 //Enviar lista
 router.post("/sendListMessageGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.groupId || !req.body.listMessage) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.listMessage) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -4535,27 +3784,25 @@ router.post("/sendListMessageGrupo", upload.none(''), verifyToken.verify, async 
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var sendListMessage = await Sessions.sendListMessage(
-						resSessionName,
+					var sendListMessage = await session.process.add(async () => await Sessions.sendListMessage(
+						removeWithspace(req.body.SessionName),
 						req.body.groupId.trim() + '@g.us',
 						req.body.listMessage,
-					);
+					));
 					//
 					res.setHeader('Content-Type', 'application/json');
 					res.status(sendListMessage.status).json({
 						"Status": sendListMessage
 					});
-				});
-				//
+					//
 				break;
 			default:
 				//
@@ -4579,22 +3826,11 @@ router.post("/sendListMessageGrupo", upload.none(''), verifyToken.verify, async 
 //Deixar o grupo
 router.post("/leaveGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.groupId) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -4604,23 +3840,21 @@ router.post("/leaveGroup", upload.none(''), verifyToken.verify, async (req, res,
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var leaveGroup = await Sessions.leaveGroup(
-						resSessionName,
-						req.body.groupId + '@g.us'
-					);
-					res.setHeader('Content-Type', 'application/json');
-					res.status(leaveGroup.status).json({
-						"Status": leaveGroup
-					});
+				var leaveGroup = await session.process.add(async () => await Sessions.leaveGroup(
+					removeWithspace(req.body.SessionName),
+					req.body.groupId + '@g.us'
+				));
+				res.setHeader('Content-Type', 'application/json');
+				res.status(leaveGroup.status).json({
+					"Status": leaveGroup
 				});
 				break;
 			default:
@@ -4645,22 +3879,11 @@ router.post("/leaveGroup", upload.none(''), verifyToken.verify, async (req, res,
 // Criar grupo (título, participantes a adicionar)
 router.post("/createGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.title || !req.body.participants) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.title || !req.body.participants) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -4684,15 +3907,14 @@ router.post("/createGroup", upload.none(''), verifyToken.verify, async (req, res
 			//
 		}
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
-				//
-				await session.waqueue.add(async () => {
+					//
+					//
 					var contactlistValid = [];
 					var contactlistInvalid = [];
 					//
@@ -4705,34 +3927,34 @@ router.post("/createGroup", upload.none(''), verifyToken.verify, async (req, res
 						if (numero.length !== 0) {
 							//
 							var checkNumberStatus = await Sessions.checkNumberStatus(
-								resSessionName,
-								soNumeros(numero)
+								removeWithspace(req.body.SessionName),
+								soNumeros(numero) + '@s.whatsapp.net'
 							);
 							//
 							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 								//
-								contactlistValid.push(checkNumberStatus.number);
+								contactlistValid.push(checkNumberStatus.number + '@s.whatsapp.net');
 							} else {
-								contactlistInvalid.push(numero);
+								contactlistInvalid.push(numero + '@s.whatsapp.net');
 							}
 							//
 						}
 						//
 					}
 					//
-					var createGroup = await Sessions.createGroup(
-						resSessionName,
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					var createGroup = await session.process.add(async () => await Sessions.createGroup(
+						removeWithspace(req.body.SessionName),
 						req.body.title,
 						contactlistValid,
 						contactlistInvalid
-					);
+					));
 					//
 					res.setHeader('Content-Type', 'application/json');
 					res.status(createGroup.status).json({
 						"Status": createGroup
 					});
-				});
-				//
+					//
 				break;
 			default:
 				//
@@ -4756,22 +3978,11 @@ router.post("/createGroup", upload.none(''), verifyToken.verify, async (req, res
 // update Group Title
 router.post("/updateGroupTitle", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.groupId || !req.body.title) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.title) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -4795,27 +4006,26 @@ router.post("/updateGroupTitle", upload.none(''), verifyToken.verify, async (req
 			//
 		}
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
-				//
-				await session.waqueue.add(async () => {
-					var updateGroupTitle = await Sessions.updateGroupTitle(
-						resSessionName,
+					//
+					//
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					var updateGroupTitle = await session.process.add(async () => await Sessions.updateGroupTitle(
+						removeWithspace(req.body.SessionName),
 						req.body.groupId + '@g.us',
 						req.body.title,
-					);
+					));
 					//
 					res.setHeader('Content-Type', 'application/json');
 					res.status(updateGroupTitle.status).json({
 						"Status": updateGroupTitle
 					});
-				});
-				//
+					//
 				break;
 			default:
 				//
@@ -4839,22 +4049,11 @@ router.post("/updateGroupTitle", upload.none(''), verifyToken.verify, async (req
 // update Group desc
 router.post("/updateGroupDesc", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.groupId || !req.body.desc) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.desc) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -4864,27 +4063,26 @@ router.post("/updateGroupDesc", upload.none(''), verifyToken.verify, async (req,
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
-				//
-				await session.waqueue.add(async () => {
-					var updateGroupDesc = await Sessions.updateGroupDesc(
-						resSessionName,
+					//
+					//
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					var updateGroupDesc = await session.process.add(async () => await Sessions.updateGroupDesc(
+						removeWithspace(req.body.SessionName),
 						req.body.groupId + '@g.us',
 						req.body.desc,
-					);
+					));
 					//
 					res.setHeader('Content-Type', 'application/json');
 					res.status(updateGroupDesc.status).json({
 						"Status": updateGroupDesc
 					});
-				});
-				//
+					//
 				break;
 			default:
 				//
@@ -4908,22 +4106,11 @@ router.post("/updateGroupDesc", upload.none(''), verifyToken.verify, async (req,
 // Obtenha membros do grupo
 router.post("/getGroupMembers", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.groupId) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -4933,24 +4120,22 @@ router.post("/getGroupMembers", upload.none(''), verifyToken.verify, async (req,
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var getGroupMembers = await Sessions.getGroupMembers(
-						resSessionName,
-						req.body.groupId + '@g.us'
-					);
-					//
-					res.setHeader('Content-Type', 'application/json');
-					res.status(getGroupMembers.status).json({
-						"Status": getGroupMembers
-					});
+				var getGroupMembers = await session.process.add(async () => await Sessions.getGroupMembers(
+					removeWithspace(req.body.SessionName),
+					req.body.groupId + '@g.us'
+				));
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(getGroupMembers.status).json({
+					"Status": getGroupMembers
 				});
 				//
 				break;
@@ -4976,22 +4161,11 @@ router.post("/getGroupMembers", upload.none(''), verifyToken.verify, async (req,
 // Gerar link de url de convite de grupo
 router.post("/getGroupInviteLink", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.groupId) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -5001,23 +4175,21 @@ router.post("/getGroupInviteLink", upload.none(''), verifyToken.verify, async (r
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var GroupInviteLink = await Sessions.getGroupInviteLink(
-						resSessionName,
-						req.body.groupId + '@g.us'
-					);
-					res.setHeader('Content-Type', 'application/json');
-					res.status(GroupInviteLink.status).json({
-						"Status": GroupInviteLink
-					});
+				var GroupInviteLink = await session.process.add(async () => await Sessions.getGroupInviteLink(
+					removeWithspace(req.body.SessionName),
+					req.body.groupId + '@g.us'
+				));
+				res.setHeader('Content-Type', 'application/json');
+				res.status(GroupInviteLink.status).json({
+					"Status": GroupInviteLink
 				});
 				break;
 			default:
@@ -5042,22 +4214,11 @@ router.post("/getGroupInviteLink", upload.none(''), verifyToken.verify, async (r
 // Gerar link de url de convite de grupo
 router.post("/getGroupRevokeInviteLink", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.groupId) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -5067,23 +4228,21 @@ router.post("/getGroupRevokeInviteLink", upload.none(''), verifyToken.verify, as
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var GroupInviteLink = await Sessions.getGroupRevokeInviteLink(
-						resSessionName,
-						req.body.groupId + '@g.us'
-					);
-					res.setHeader('Content-Type', 'application/json');
-					res.status(GroupInviteLink.status).json({
-						"Status": GroupInviteLink
-					});
+				var GroupInviteLink = await session.process.add(async () => await Sessions.getGroupRevokeInviteLink(
+					removeWithspace(req.body.SessionName),
+					req.body.groupId + '@g.us'
+				));
+				res.setHeader('Content-Type', 'application/json');
+				res.status(GroupInviteLink.status).json({
+					"Status": GroupInviteLink
 				});
 				break;
 			default:
@@ -5107,22 +4266,11 @@ router.post("/getGroupRevokeInviteLink", upload.none(''), verifyToken.verify, as
 //
 router.post("/removeParticipant", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.groupId || !req.body.participants) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.participants) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -5132,15 +4280,14 @@ router.post("/removeParticipant", upload.none(''), verifyToken.verify, async (re
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
-				//
-				await session.waqueue.add(async () => {
+					//
+					//
 					var contactlistValid = [];
 					var contactlistInvalid = [];
 					//
@@ -5153,34 +4300,34 @@ router.post("/removeParticipant", upload.none(''), verifyToken.verify, async (re
 						if (numero.length !== 0) {
 							//
 							var checkNumberStatus = await Sessions.checkNumberStatus(
-								resSessionName,
-								soNumeros(numero)
+								removeWithspace(req.body.SessionName),
+								soNumeros(numero) + '@s.whatsapp.net'
 							);
 							//
 							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 								//
-								contactlistValid.push(checkNumberStatus.number);
+								contactlistValid.push(checkNumberStatus.number + '@s.whatsapp.net');
 							} else {
-								contactlistInvalid.push(numero);
+								contactlistInvalid.push(numero + '@s.whatsapp.net');
 							}
 							//
 						}
 						//
 					}
 					//
-					var removeParticipant = await Sessions.removeParticipant(
-						resSessionName,
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					var removeParticipant = await session.process.add(async () => await Sessions.removeParticipant(
+						removeWithspace(req.body.SessionName),
 						req.body.groupId + '@g.us',
 						contactlistValid,
 						contactlistInvalid
-					);
+					));
 					//
 					res.setHeader('Content-Type', 'application/json');
 					res.status(removeParticipant.status).json({
 						"Status": removeParticipant
 					});
-				});
-				//
+					//
 				break;
 			default:
 				//
@@ -5205,22 +4352,11 @@ router.post("/removeParticipant", upload.none(''), verifyToken.verify, async (re
 // Adicionar participante
 router.post("/addParticipant", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.groupId || !req.body.participants) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.participants) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -5230,15 +4366,14 @@ router.post("/addParticipant", upload.none(''), verifyToken.verify, async (req, 
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
-				//
-				await session.waqueue.add(async () => {
+					//
+					//
 					var contactlistValid = [];
 					var contactlistInvalid = [];
 					//
@@ -5251,34 +4386,34 @@ router.post("/addParticipant", upload.none(''), verifyToken.verify, async (req, 
 						if (numero.length !== 0) {
 							//
 							var checkNumberStatus = await Sessions.checkNumberStatus(
-								resSessionName,
-								soNumeros(numero)
+								removeWithspace(req.body.SessionName),
+								soNumeros(numero) + '@s.whatsapp.net'
 							);
 							//
 							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 								//
-								contactlistValid.push(checkNumberStatus.number);
+								contactlistValid.push(checkNumberStatus.number + '@s.whatsapp.net');
 							} else {
-								contactlistInvalid.push(numero);
+								contactlistInvalid.push(numero + '@s.whatsapp.net');
 							}
 							//
 						}
 						//
 					}
 					//
-					var addParticipant = await Sessions.addParticipant(
-						resSessionName,
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					var addParticipant = await session.process.add(async () => await Sessions.addParticipant(
+						removeWithspace(req.body.SessionName),
 						req.body.groupId + '@g.us',
 						contactlistValid,
 						contactlistInvalid
-					);
+					));
 					//
 					res.setHeader('Content-Type', 'application/json');
 					res.status(addParticipant.status).json({
 						"Status": addParticipant
 					});
-				});
-				//
+					//
 				break;
 			default:
 				//
@@ -5303,22 +4438,11 @@ router.post("/addParticipant", upload.none(''), verifyToken.verify, async (req, 
 // Promote participant (Give admin privileges)
 router.post("/promoteParticipant", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.groupId || !req.body.participants) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.participants) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -5328,15 +4452,14 @@ router.post("/promoteParticipant", upload.none(''), verifyToken.verify, async (r
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
-				//
-				await session.waqueue.add(async () => {
+					//
+					//
 					var contactlistValid = [];
 					var contactlistInvalid = [];
 					//
@@ -5349,34 +4472,34 @@ router.post("/promoteParticipant", upload.none(''), verifyToken.verify, async (r
 						if (numero.length !== 0) {
 							//
 							var checkNumberStatus = await Sessions.checkNumberStatus(
-								resSessionName,
-								soNumeros(numero)
+								removeWithspace(req.body.SessionName),
+								soNumeros(numero) + '@s.whatsapp.net'
 							);
 							//
 							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 								//
-								contactlistValid.push(checkNumberStatus.number);
+								contactlistValid.push(checkNumberStatus.number + '@s.whatsapp.net');
 							} else {
-								contactlistInvalid.push(numero);
+								contactlistInvalid.push(numero + '@s.whatsapp.net');
 							}
 							//
 						}
 						//
 					}
 					//
-					var promoteParticipant = await Sessions.promoteParticipant(
-						resSessionName,
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					var promoteParticipant = await session.process.add(async () => await Sessions.promoteParticipant(
+						removeWithspace(req.body.SessionName),
 						req.body.groupId + '@g.us',
 						contactlistValid,
 						contactlistInvalid
-					);
+					));
 					//
 					res.setHeader('Content-Type', 'application/json');
 					res.status(promoteParticipant.status).json({
 						"Status": promoteParticipant
 					});
-				});
-				//
+					//
 				break;
 			default:
 				//
@@ -5401,22 +4524,11 @@ router.post("/promoteParticipant", upload.none(''), verifyToken.verify, async (r
 // Depromote participant (Give admin privileges)
 router.post("/demoteParticipant", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.groupId || !req.body.participants) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.groupId || !req.body.participants) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -5426,15 +4538,14 @@ router.post("/demoteParticipant", upload.none(''), verifyToken.verify, async (re
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
-				//
-				await session.waqueue.add(async () => {
+					//
+					//
 					var contactlistValid = [];
 					var contactlistInvalid = [];
 					//
@@ -5447,34 +4558,34 @@ router.post("/demoteParticipant", upload.none(''), verifyToken.verify, async (re
 						if (numero.length !== 0) {
 							//
 							var checkNumberStatus = await Sessions.checkNumberStatus(
-								resSessionName,
-								soNumeros(numero)
+								removeWithspace(req.body.SessionName),
+								soNumeros(numero) + '@s.whatsapp.net'
 							);
 							//
 							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 								//
-								contactlistValid.push(checkNumberStatus.number);
+								contactlistValid.push(checkNumberStatus.number + '@s.whatsapp.net');
 							} else {
-								contactlistInvalid.push(numero);
+								contactlistInvalid.push(numero + '@s.whatsapp.net');
 							}
 							//
 						}
 						//
 					}
 					//
-					var demoteParticipant = await Sessions.demoteParticipant(
-						resSessionName,
+					var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
+					var demoteParticipant = await session.process.add(async () => await Sessions.demoteParticipant(
+						removeWithspace(req.body.SessionName),
 						req.body.groupId + '@g.us',
 						contactlistValid,
 						contactlistInvalid
-					);
+					));
 					//
 					res.setHeader('Content-Type', 'application/json');
 					res.status(demoteParticipant.status).json({
 						"Status": demoteParticipant
 					});
-				});
-				//
+					//
 				break;
 			default:
 				//
@@ -5499,22 +4610,11 @@ router.post("/demoteParticipant", upload.none(''), verifyToken.verify, async (re
 // Retorna o status do grupo, jid, descrição do link de convite
 router.post("/getGroupInfoFromInviteLink", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.inviteCode) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.inviteCode) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -5523,23 +4623,21 @@ router.post("/getGroupInfoFromInviteLink", upload.none(''), verifyToken.verify, 
 		});
 		//
 	} else {
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var getGroupInfoFromInviteLink = await Sessions.getGroupInfoFromInviteLink(
-						resSessionName,
-						req.body.inviteCode
-					);
-					res.setHeader('Content-Type', 'application/json');
-					res.status(getGroupInfoFromInviteLink.status).json({
-						"Status": getGroupInfoFromInviteLink
-					});
+				var getGroupInfoFromInviteLink = await session.process.add(async () => await Sessions.getGroupInfoFromInviteLink(
+					removeWithspace(req.body.SessionName),
+					req.body.inviteCode
+				));
+				res.setHeader('Content-Type', 'application/json');
+				res.status(getGroupInfoFromInviteLink.status).json({
+					"Status": getGroupInfoFromInviteLink
 				});
 				break;
 			default:
@@ -5564,22 +4662,11 @@ router.post("/getGroupInfoFromInviteLink", upload.none(''), verifyToken.verify, 
 // Junte-se a um grupo usando o código de convite do grupo
 router.post("/joinGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.inviteCode) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.inviteCode) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -5588,23 +4675,21 @@ router.post("/joinGroup", upload.none(''), verifyToken.verify, async (req, res, 
 		});
 		//
 	} else {
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var getGroupInfoFromInviteLink = await Sessions.joinGroup(
-						resSessionName,
-						req.body.inviteCode
-					);
-					res.setHeader('Content-Type', 'application/json');
-					res.status(getGroupInfoFromInviteLink.status).json({
-						"Status": getGroupInfoFromInviteLink
-					});
+				var getGroupInfoFromInviteLink = await session.process.add(async () => await Sessions.joinGroup(
+					removeWithspace(req.body.SessionName),
+					req.body.inviteCode
+				));
+				res.setHeader('Content-Type', 'application/json');
+				res.status(getGroupInfoFromInviteLink.status).json({
+					"Status": getGroupInfoFromInviteLink
 				});
 				break;
 			default:
@@ -5634,22 +4719,11 @@ router.post("/joinGroup", upload.none(''), verifyToken.verify, async (req, res, 
 // Recuperar status de contato
 router.post("/getPerfilStatus", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.phonefull) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.phonefull) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -5659,8 +4733,8 @@ router.post("/getPerfilStatus", upload.none(''), verifyToken.verify, async (req,
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 		//
 		switch (Status.status) {
 			case 'inChat':
@@ -5668,33 +4742,31 @@ router.post("/getPerfilStatus", upload.none(''), verifyToken.verify, async (req,
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var checkNumberStatus = await Sessions.checkNumberStatus(
-						resSessionName,
-						soNumeros(req.body.phonefull).trim()
-					);
+				var checkNumberStatus = await Sessions.checkNumberStatus(
+					removeWithspace(req.body.SessionName),
+					soNumeros(req.body.phonefull).trim()
+				);
+				//
+				if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 					//
-					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-						//
-						var getStatus = await Sessions.getPerfilStatus(
-							resSessionName,
-							checkNumberStatus.number
-						);
-						//
-						res.setHeader('Content-Type', 'application/json');
-						res.status(getStatus.status).json({
-							"Status": getStatus
-						});
-						//
-					} else {
-						//
-						res.setHeader('Content-Type', 'application/json');
-						res.status(checkNumberStatus.status).json({
-							"Status": checkNumberStatus
-						});
-						//
-					}
-				});
+					var getStatus = await session.process.add(async () => await Sessions.getPerfilStatus(
+						removeWithspace(req.body.SessionName),
+						checkNumberStatus.number + '@s.whatsapp.net'
+					));
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(getStatus.status).json({
+						"Status": getStatus
+					});
+					//
+				} else {
+					//
+					res.setHeader('Content-Type', 'application/json');
+					res.status(checkNumberStatus.status).json({
+						"Status": checkNumberStatus
+					});
+					//
+				}
 				//
 				break;
 			default:
@@ -5720,22 +4792,11 @@ router.post("/getPerfilStatus", upload.none(''), verifyToken.verify, async (req,
 // Set client status
 router.post("/setProfileStatus", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.ProfileStatus) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.ProfileStatus) {
 		var validate = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -5745,24 +4806,22 @@ router.post("/setProfileStatus", upload.none(''), verifyToken.verify, async (req
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var setProfileStatus = await Sessions.setProfileStatus(
-						resSessionName,
-						req.body.ProfileStatus
-					);
-					//
-					res.setHeader('Content-Type', 'application/json');
-					res.status(setProfileStatus.status).json({
-						"Status": setProfileStatus
-					});
+				var setProfileStatus = await session.process.add(async () => await Sessions.setProfileStatus(
+					removeWithspace(req.body.SessionName),
+					req.body.ProfileStatus
+				));
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(setProfileStatus.status).json({
+					"Status": setProfileStatus
 				});
 				//
 				break;
@@ -5788,23 +4847,12 @@ router.post("/setProfileStatus", upload.none(''), verifyToken.verify, async (req
 // Set client profile name
 router.post("/setProfileName", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
-	//
-	if (!resSessionName || !req.body.ProfileName) {
+	if (!removeWithspace(req.body.SessionName) || !req.body.ProfileName) {
 		var validate = {
 			result: "info",
 			state: 'FAILURE',
 			status: 'notProvided',
-			message: 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			message: 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
@@ -5814,23 +4862,21 @@ router.post("/setProfileName", upload.none(''), verifyToken.verify, async (req, 
 		//
 	} else {
 		//
-		var Status = await Sessions.ApiStatus(resSessionName);
-		var session = Sessions.getSession(resSessionName);
+		var Status = await Sessions.ApiStatus(removeWithspace(req.body.SessionName));
+		var session = await Sessions.getSession(removeWithspace(req.body.SessionName));
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var setProfileName = await Sessions.setProfileName(
-						resSessionName,
-						req.body.ProfileName
-					);
-					res.setHeader('Content-Type', 'application/json');
-					res.status(200).json({
-						"Status": setProfileName
-					});
+				var setProfileName = await session.process.add(async () => await Sessions.setProfileName(
+					removeWithspace(req.body.SessionName),
+					req.body.ProfileName
+				));
+				res.setHeader('Content-Type', 'application/json');
+				res.status(200).json({
+					"Status": setProfileName
 				});
 				break;
 			default:
@@ -5852,21 +4898,20 @@ router.post("/setProfileName", upload.none(''), verifyToken.verify, async (req, 
 //
 // ------------------------------------------------------------------------------------------------//
 //
-// rota url erro
-router.all('*', upload.none(''), async (req, res, next) => {
-	//
-	var resultRes = {
-		"erro": true,
-		"status": 404,
-		"message": 'Não foi possivel executar a ação, verifique a url informada.'
-	};
-	//
-	res.setHeader('Content-Type', 'application/json');
-	res.status(resultRes.status).json({
-		"Status": resultRes
-	});
-	//
-});
+/*
+╔╦╗┌─┐┬  ┬┬┌─┐┌─┐  ╔═╗┬ ┬┌┐┌┌─┐┌┬┐┬┌─┐┌┐┌┌─┐             
+ ║║├┤ └┐┌┘││  ├┤   ╠╣ │ │││││   │ ││ ││││└─┐             
+═╩╝└─┘ └┘ ┴└─┘└─┘  ╚  └─┘┘└┘└─┘ ┴ ┴└─┘┘└┘└─┘             
+*/
+//
+// ------------------------------------------------------------------------------------------------//
+//
+
+/*
+╔╦╗┌─┐┌─┐┌┬┐┌─┐┌─┐  ┌┬┐┌─┐  ╦═╗┌─┐┌┬┐┌─┐┌─┐
+ ║ ├┤ └─┐ │ ├┤ └─┐   ││├┤   ╠╦╝│ │ │ ├─┤└─┐
+ ╩ └─┘└─┘ ┴ └─┘└─┘  ─┴┘└─┘  ╩╚═└─┘ ┴ ┴ ┴└─┘
+ */
 //
 // ------------------------------------------------------------------------------------------------//
 //

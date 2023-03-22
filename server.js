@@ -9,12 +9,8 @@ const app = express();
 const cors = require('cors');
 const path = require('path');
 const swaggerUi = require('swagger-ui-express')
-const latest = require('github-latest-release'); // verifica a ultima release no github
-//const latest = require('latest-version'); // verifica a ultima release no npm
-const { version } = require('./package.json');
 const { logger } = require("./utils/logger");
 const AllSessions = require('./startup');
-const Sessions = require('./controllers/sessions.js');
 const config = require('./config.global');
 const swaggerDocument = require('./swagger');//
 const http = require('http').Server(app);
@@ -146,6 +142,11 @@ START_ALL_SESSIONS=1
 # Caso queira forçar a reconexão da API em caso de desconexão do WhatsApp defina true
 FORCE_CONNECTION_USE_HERE=0
 #
+# IBM Watson Speech to Text
+SPEECH_TO_TEXT_IAM_APIKEY=gwYQBqYIJT4c7uNLFon0Vy5o_lzqEBTA65r
+#
+SPEECH_TO_TEXT_URL=https://api.us-south.speech-to-text.watson.cloud.ibm.com/instances/c84a5015-ce89-445b-a500
+#
 `;
 		logger?.info(`- Modelo do arquivo de configuração:\n ${modelo}`);
 		process.exit(1);
@@ -155,11 +156,6 @@ FORCE_CONNECTION_USE_HERE=0
 		//
 		try {
 			//
-			const commands = require("./router/command");
-			const groups = require("./router/group");
-			const instance = require("./router/instance");
-			const mensagens = require("./router/message");
-			const status = require("./router//status");
 			const sistem = require("./router/sistem.controller");
 			//
 			// Body Parser
@@ -180,7 +176,6 @@ FORCE_CONNECTION_USE_HERE=0
 			}));
 			//
 			app.use(express.urlencoded({
-				origin: '*',
 				limit: '50mb',
 				extended: true,
 				parameterLimit: 50000
@@ -189,6 +184,8 @@ FORCE_CONNECTION_USE_HERE=0
 			app.set('view engine', 'ejs');
 			app.set('views', './views');
 			app.set('json spaces', 2);
+			//app.use(express.static('./public'));
+			//app.use('./public', express.static('public'));
 			app.use(express.static(__dirname + '/public'));
 			//
 			app.use((req, res, next) => {
@@ -198,9 +195,7 @@ FORCE_CONNECTION_USE_HERE=0
 			//
 			app.use((err, req, res, next) => {
 				res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
-				res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-				res.header('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Accept');
-				res.header('Access-Control-Allow-Credentials', true);
+				res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 				//
 				if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
 					//
@@ -221,10 +216,10 @@ FORCE_CONNECTION_USE_HERE=0
 			//
 			//
 			app.get('/', (req, res) => {
+				//res.status(200).send('Server WPPConnect is running API. https://github.com/AlanMartines/mywhatsapp-api-node-wppconnect');
 				res.sendFile(path.join(__dirname, './views/index.html'));
 			});
 			//
-			app.use("/instance", instance);
 			app.use("/sistema", sistem);
 			//
 			const sockets = {};
@@ -280,36 +275,13 @@ FORCE_CONNECTION_USE_HERE=0
 				if (err) {
 					logger?.error(err);
 				} else {
-					//let repoVersion = await latest('mywhatsapp-api-node-baileys-md')
 					let hostUrl = config.HOST == '0.0.0.0' ? '127.0.0.1' : `${config.HOST}`;
 					let host = config.DOMAIN_SSL == '' ? `http://${hostUrl}:${config.PORT}` : `https://${config.DOMAIN_SSL}`;
 					logger?.info(`- HTTP Server running on`);
 					logger?.info(`- To start: ${host}/Start`);
 					logger?.info(`- To doc: ${host}/api-doc`);
-					//
-					logger?.info(`- Verificando Atualizações`);
-					io.emit('version', {
-						newVersion: undefined,
-						message: `Verificando Atualizações`
-					});
-					/*
-					if (Sessions.upToDate(version, repoVersion)) {
-						logger?.info(`- Sua API esta Atualizada com a versão mais recente`);
-						io.emit('version', {
-							newVersion: false,
-							message: `Sua API esta Atualizada com a versão mais recente`
-						});
-					} else {
-						logger?.info(`- Há uma nova versão disponível`);
-						io.emit('version', {
-							newVersion: true,
-							message: `Há uma nova versão disponível`
-						});
-						Sessions.logUpdateAvailable(version, repoVersion);
-					}
-					*/
 				}
-				//
+
 				if (parseInt(config.START_ALL_SESSIONS) == true) {
 					let result = await AllSessions.startAllSessions();
 					if (result != undefined) {

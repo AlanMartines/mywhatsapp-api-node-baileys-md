@@ -1,10 +1,10 @@
-const Sessions = require('../controllers/sessions.js');
-//
+const Sessions = require("../sessions");
+
 module.exports = class Status {
 //
 	static async ApiStatus(SessionName) {
-		let session = await Sessions?.getSession(SessionName);
-		if (session?.client) { //só adiciona se não existir
+		var session = Sessions.getSession(SessionName);
+		if (session) { //só adiciona se não existir
 			if (session.state == "CONNECTED") {
 				return {
 					state: "CONNECTED",
