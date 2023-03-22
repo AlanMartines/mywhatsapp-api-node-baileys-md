@@ -1,116 +1,82 @@
 const os = require('os');
-const config = require('./config.global');
-const { logger } = require("./utils/logger");
+const path = require('path');
+const util = require('util');
 const fs = require('fs-extra');
-const request = require('request-promise');
-//
-let tokenPatch;
-if (parseInt(config.INDOCKER)) {
-	//
-	const containerHostname = os.hostname();
-  tokenPatch = `${config.PATCH_TOKENS}/${containerHostname}`;
-	//
-} else {
-	//
-  tokenPatch = `${config.PATCH_TOKENS}`;
-	//
-}
-//
-// ------------------------------------------------------------------------------------------------------- //
-//
-  if (!fs.existsSync(tokenPatch)) { // verifica se o diretório já existe
-    fs.mkdirSync(tokenPatch, { recursive: true }); // cria o diretório recursivamente
-  }
-//
-// ------------------------------------------------------------------------------------------------------- //
-//
-module.exports = class AllSessions {
-	static async getAllSessions() {
-		let startup = [];
-		try {
-			fs.readdirSync(tokenPatch).forEach(file => {
-				//
-				if (file.includes('.data.json') || file.includes('.store.json')) {
-					startup.push(file.split(".")[0]);
-				}
-				//
-			});
-		} catch (error) {
-			//
-			logger.error(`- Error startup:\n ${error}`);
-			startup = [];
-			//
-		}
-		return startup;
-	}
+const request = util.promisify(require('request'));
+const { logger } = require('./utils/logger');
+const config = require('./config.global');
 
-	static async startAllSessions() {
-		let hostUrl = config.HOST == '0.0.0.0' ? '127.0.0.1' : `${config.HOST}`;
-		let host = config.DOMAIN_SSL == '' ? `http://${hostUrl}:${config.PORT}` : `https://${config.DOMAIN_SSL}`;
-		let dados = await this.getAllSessions();
-		//
-		if (dados != null) {
-			dados.map((item, i) => {
-				setTimeout(async () => {
-					//
-					try {
-						if (fs.existsSync(`${tokenPatch}/${item}.startup.json`)) {
-							let result = JSON.parse(fs.readFileSync(`${tokenPatch}/${item}.startup.json`, 'utf-8'));
-							//
-							let resBody = {
-								"AuthorizationToken": item,
-								"SessionName": item,
-								"setOnline": result.setOnlineue,
-								"wh_connect": result.wh_connect,
-								"wh_qrcode": result.wh_qrcode,
-								"wh_status": result.wh_status,
-								"wh_message": result.wh_message
-							}
-							//
-							var options = {
-								'method': 'POST',
-								"rejectUnauthorized": false,
-								'json': true,
-								'url': `${host}/sistema/Start`,
-								body: resBody
-							};
-							request(options).then(result => {
-								logger?.info(`- Start Session: ${item}`);
-							}).catch(error => {
-								logger?.error(`- Error Start Session: ${error}`);
-							});
-							//
-						} else {
-							//
-							let resBody = {
-								"AuthorizationToken": item,
-								"SessionName": item,
-								"setOnline": true,
-								"wh_connect": null,
-								"wh_qrcode": null,
-								"wh_status": null,
-								"wh_message": null
-							}
-							//
-							var options = {
-								'method': 'POST',
-								"rejectUnauthorized": false,
-								'json': true,
-								'url': `${host}/sistema/Start`,
-								body: resBody
-							};
-							request(options).then(result => {
-								logger?.info(`- Start Session: ${item}`);
-							}).catch(error => {
-								logger?.error(`- Error Start Session: ${error}`);
-							});
-							//
-						}
-					} catch (err) {
-						logger?.error(`- Arquivo ${tokenPatch}/${item}.startup.json não existe`);
-					}
-				}, 3000);
-			});
-		}
-	}
+const tokenPatch = parseInt(config.INDOCKER) ? path.join(config.PATCH_TOKENS, os.hostname()) : config.PATCH_TOKENS;
+
+if (!fs.existsSync(tokenPatch)) {
+  try {
+    fs.mkdirSync(tokenPatch, { recursive: true });
+  } catch (error) {
+    logger.error(`- Error creating directory ${tokenPatch}: ${error}`);
+  }
 }
+
+class AllSessions {
+  static async getAllSessions() {
+    let startup = [];
+    try {
+      const files = await fs.readdir(tokenPatch);
+      files.forEach(file => {
+        if (file.includes('.data.json') || file.includes('.store.json')) {
+          startup.push(file.split('.')[0]);
+        }
+      });
+    } catch (error) {
+      logger.error(`- Error getting sessions: ${error}`);
+    }
+    return startup;
+  }
+
+  static async startAllSessions() {
+    const hostUrl = config.HOST == '0.0.0.0' ? '127.0.0.1' : config.HOST;
+    const host = config.DOMAIN_SSL == '' ? `http://${hostUrl}:${config.PORT}` : `https://${config.DOMAIN_SSL}`;
+    const dados = await this.getAllSessions();
+
+    for (let item of dados) {
+      setTimeout(async () => {
+        try {
+          const filePath = path.join(tokenPatch, `${item}.startup.json`);
+          const resBody = {};
+          if (fs.existsSync(filePath)) {
+            const result = JSON.parse(await fs.readFile(filePath, 'utf-8'));
+            resBody.SessionName = item;
+            resBody.setOnline = result.setOnlineue;
+            resBody.wh_connect = result.wh_connect;
+            resBody.wh_qrcode = result.wh_qrcode;
+            resBody.wh_status = result.wh_status;
+            resBody.wh_message = result.wh_message;
+          } else {
+            resBody.SessionName = item;
+            resBody.setOnline = true;
+            resBody.wh_connect = null;
+            resBody.wh_qrcode = null;
+            resBody.wh_status = null;
+            resBody.wh_message = null;
+          }
+          const options = {
+            method: 'POST',
+            rejectUnauthorized: false,
+            headers: {
+              'Content-Type': 'application/json',
+              AuthorizationToken: parseInt(config.VALIDATE_MYSQL) ? item : config.SECRET_KEY
+            },
+            json: true,
+            url: `${host}/sistema/Start`,
+            body: resBody
+          };
+          const result = await request(options);
+          logger?.info(`- Start Session Name: ${item}`);
+        } catch (err) {
+          logger?.error(`- Error starting session ${item}: ${err}`);
+        }
+      }, 3000);
+    }
+  }
+}
+
+module.exports = AllSessions;

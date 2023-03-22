@@ -1,5 +1,5 @@
 const urlExists = require("url-exists");
-const fs = require('fs');
+const fs = require('fs-extra');
 const redis = require('redis');
 const cache = redis?.createClient();
 const { fromBuffer } = require('file-type');
@@ -7,6 +7,7 @@ const mimeTypes = require('mime-types');
 const fileType = require('file-type');
 const axios = require('axios');
 const chalk = require('chalk');
+const { logger } = require("../utils/logger");
 
 module.exports = class Sessions {
 
@@ -28,10 +29,10 @@ module.exports = class Sessions {
     static async checkPath(path) {
         urlExists(path, (error, exists) => {
             if (exists) {
-                return true
+                return true;
             }
             else {
-                return false
+                return false;
             }
         })
     }
@@ -40,21 +41,21 @@ module.exports = class Sessions {
         var checkFilter = this.session?.filter(order => (order?.session === name)), add = null
         if (!checkFilter?.length) {
             add = {
-                session: name,
+                SessionName: name,
             }
-            this.session?.push(add)
-            return true
+            this.session?.push(add);
+            return true;
         }
-        return false
+        return false;
     }
 
     // checar se exite o usuario na sessão
     static async checkSession(name) {
         var checkFilter = this.session?.filter(order => (order?.session === name))
         if (checkFilter?.length) {
-            return true
+            return true;
         }
-        return false
+        return false;
     }
 
     // pegar index da sessão (chave)
@@ -62,11 +63,11 @@ module.exports = class Sessions {
         if (this.checkSession(name)) {
             for (var i in this.session) {
                 if (this.session[i]?.session === name) {
-                    return i
+                    return i;
                 }
             }
         }
-        return false
+        return false;
     }
 
     // adicionar informações a sessão 
@@ -76,11 +77,11 @@ module.exports = class Sessions {
             for (var i in this.session) {
                 if (this.session[i]?.session === name) {
                     Object?.assign(this.session[i], extend)
-                    return true
+                    return true;
                 }
             }
         }
-        return false
+        return false;
     }
 
     // Remove object na sessão
@@ -89,11 +90,11 @@ module.exports = class Sessions {
             for (var i in this.session) {
                 if (this.session[i]?.session === name) {
                     delete this.session[i][key]
-                    return true
+                    return true;
                 }
             }
         }
-        return false
+        return false;
     }
 
     // deletar sessão
@@ -101,31 +102,31 @@ module.exports = class Sessions {
         if (this.checkSession(name)) {
             var key = this.getSessionKey(name)
             delete this.session[key]
-            return true
+            return true;
         }
-        return false
+        return false;
     }
 
     // retornar sessão
     static async getSession(name) {
         if (this.checkSession(name)) {
-            var key = this.getSessionKey(name)
-            return this.session[key]
+            var key = this.getSessionKey(name);
+            return this.session[key];
         }
-        return false
+        return false;
     }
 
     // retornar todas
     static async getAll() {
-        return this.session
+        return this.session;
     }
 
     // checa o client
     static async checkClient(name) {
         if (this.getSession(name) && this.getSession(name)?.client) {
-            return true
+            return true;
         }
-        return false
+        return false;
     }
 
     static async getCache(key) {
@@ -143,9 +144,9 @@ module.exports = class Sessions {
         return new Promise((resolve, reject) => {
             cache?.set(key, value, 'EX', 3600, (error) => {
                 if (error) {
-                    reject(error)
+                    reject(error);
                 } else {
-                    resolve(true)
+                    resolve(true);
                 }
             })
         })
@@ -160,8 +161,8 @@ module.exports = class Sessions {
                     resolve(`data:${(await fromBuffer(result?.data))?.mime};base64,${buffer}`);
                 })
             } catch (error) {
-                console.log(error)
-                reject(error)
+                logger?.error(error);
+                reject(error);
             }
         })
     }
@@ -193,7 +194,7 @@ module.exports = class Sessions {
                         resolve(false);
                     }
             } catch (error) {
-                console?.log(error)
+                logger?.error(error);
                 reject(error);
             }
         })
@@ -225,9 +226,9 @@ module.exports = class Sessions {
         const newVersionLog =
             `Há uma nova versão da ${chalk.bold(`connectzap-api-node-baileys-md`)} ${chalk.gray(current)} ➜  ${chalk.bold.green(latest)}\n` +
             `Atualize sua API executando:\n\n` +
-            `${chalk.bold('\>')} ${chalk.blueBright('npm run update')}`;
-        console.log(boxen(newVersionLog, { padding: 1 }));
-        console.log(
+            `${chalk.bold('\>')} ${chalk.blueBright('git pull; npm install;')}`;
+        logger?.info(boxen(newVersionLog, { padding: 1 }));
+        logger?.info(
             `Para mais informações visite: ${chalk.underline(
                 'https://github.com/alanmartines/connectzap-api-node-baileys-md/releases'
             )}\n`

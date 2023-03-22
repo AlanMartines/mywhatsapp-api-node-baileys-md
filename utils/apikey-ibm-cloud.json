@@ -1,8 +1,0 @@
-{
-  "apikey": "",
-  "iam_apikey_description": "Auto-generated for key crn",
-  "iam_apikey_name": "Auto-generated service credentials",
-  "iam_role_crn": "",
-  "iam_serviceid_crn": "",
-  "url": "https://api.us-south.speech-to-text.watson.cloud.ibm.com/instances/e409539f-0e06-460e-ba51-4a81a3bcec3c"
-}

@@ -21,9 +21,9 @@ exports.verify = async (req, res, next) => {
 	let theTokenAuth;
 	let theSessionName;
 	//
-	if (!req?.body?.AuthorizationToken) {
+	if (!req?.headers?.authorizationtoken) {
 		res.setHeader('Content-Type', 'application/json');
-		res.status(422).json({
+		return res.status(422).json({
 			"Status": {
 				"erro": true,
 				"status": 422,
@@ -31,12 +31,12 @@ exports.verify = async (req, res, next) => {
 			}
 		});
 	} else {
-		theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
+		theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
 	}
 	//
 	if (!req?.body?.SessionName) {
 		res.setHeader('Content-Type', 'application/json');
-		res.status(422).json({
+		return res.status(422).json({
 			"Status": {
 				"erro": true,
 				"status": 422,

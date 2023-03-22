@@ -76,8 +76,8 @@ const convertBytes = function (bytes) {
 //
 router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -96,7 +96,7 @@ router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(resultRes.status).json({
+			return res.status(resultRes.status).json({
 				"Status": resultRes
 			});
 			//
@@ -119,7 +119,7 @@ router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(resultRes.status).json({
+					return res.status(resultRes.status).json({
 						"Status": resultRes
 					});
 					break;
@@ -225,7 +225,7 @@ router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(resultRes.status).json({
+					return res.status(resultRes.status).json({
 						"Status": resultRes
 					});
 					//
@@ -238,7 +238,7 @@ router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(resultRes.status).json({
+					return res.status(resultRes.status).json({
 						"Status": resultRes
 					});
 				//
@@ -254,7 +254,7 @@ router.post("/Start", upload.none(''), verifyToken.verify, async (req, res, next
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -267,8 +267,8 @@ router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, nex
 	//
 	logger?.info("- Obtendo status");
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -287,7 +287,7 @@ router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, nex
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(resultRes.status).json({
+			return res.status(resultRes.status).json({
 				"Status": resultRes
 			});
 			//
@@ -297,7 +297,7 @@ router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, nex
 				var Status = await Sessions.ApiStatus(resSessionName);
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(200).json({
+				return res.status(200).json({
 					"Status": Status
 				});
 				//
@@ -310,7 +310,7 @@ router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, nex
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 				//
@@ -326,7 +326,7 @@ router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, nex
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -338,8 +338,8 @@ router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, nex
 // Fecha a sessão
 router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -358,7 +358,7 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(resultRes.status).json({
+			return res.status(resultRes.status).json({
 				"Status": resultRes
 			});
 			//
@@ -378,7 +378,7 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 						var resultClose = await Sessions.closeSession(resSessionName);
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(resultClose.status).json({
+						return res.status(resultClose.status).json({
 							"Status": resultClose
 						});
 						//
@@ -392,7 +392,7 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 						};
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(resultRes.status).json({
+						return res.status(resultRes.status).json({
 							"Status": resultRes
 						});
 					//
@@ -406,7 +406,7 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 				//
@@ -422,7 +422,7 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -434,8 +434,8 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 // Desconecta do whatsapp web
 router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -452,7 +452,7 @@ router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, nex
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(resultRes.status).json({
+			return res.status(resultRes.status).json({
 				"Status": resultRes
 			});
 			//
@@ -469,7 +469,7 @@ router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, nex
 					var resultLogout = await Sessions.logoutSession(resSessionName);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(resultLogout.status).json({
+					return res.status(resultLogout.status).json({
 						"Status": resultLogout
 					});
 					//
@@ -483,7 +483,7 @@ router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, nex
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(resultRes.status).json({
+					return res.status(resultRes.status).json({
 						"Status": resultRes
 					});
 				//
@@ -499,7 +499,7 @@ router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, nex
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -510,8 +510,8 @@ router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, nex
 //
 router.post("/restartToken", verifyToken.verify, upload.none(''), async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -530,7 +530,7 @@ router.post("/restartToken", verifyToken.verify, upload.none(''), async (req, re
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(resultRes.status).json({
+			return res.status(resultRes.status).json({
 				"Status": resultRes
 			});
 			//
@@ -540,7 +540,7 @@ router.post("/restartToken", verifyToken.verify, upload.none(''), async (req, re
 			var resultRestart = await Sessions.restartToken(req.io, session.name, session.AuthorizationToken);
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(resultRestart.status).json({
+			return res.status(resultRestart.status).json({
 				"Status": resultRestart
 			});
 			//
@@ -555,7 +555,7 @@ router.post("/restartToken", verifyToken.verify, upload.none(''), async (req, re
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -568,8 +568,8 @@ router.post("/restartToken", verifyToken.verify, upload.none(''), async (req, re
 router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	logger?.info(`- getQRCode`);
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -588,7 +588,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(resultRes.status).json({
+			return res.status(resultRes.status).json({
 				"Status": resultRes
 			});
 			//
@@ -603,7 +603,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 					//
 					var resultRes = { "erro": false, "status_code": 200, ...Status };
 					res.setHeader('Content-Type', 'application/json');
-					res.status(resultRes.status_code).json({
+					return res.status(resultRes.status_code).json({
 						"Status": resultRes
 					});
 					//
@@ -622,13 +622,13 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 								'Content-Length': imageBuffer.length
 							});
 							//
-							res.status(200);
+							return res.status(200);
 							res.end(imageBuffer);
 							//
 						} else {
 							var resultRes = { "erro": true, "status_code": 400, ...Status };
 							res.setHeader('Content-Type', 'application/json');
-							res.status(resultRes.status_code).json({
+							return res.status(resultRes.status_code).json({
 								"Status": resultRes
 							});
 							//
@@ -644,7 +644,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 						};
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(resultRes.status_code).json({
+						return res.status(resultRes.status_code).json({
 							"Status": resultRes
 						});
 						//
@@ -664,7 +664,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(resultRes.status).json({
+					return res.status(resultRes.status).json({
 						"Status": resultRes
 					});
 					//
@@ -678,7 +678,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(resultRes.status).json({
+					return res.status(resultRes.status).json({
 						"Status": resultRes
 					});
 				//
@@ -694,7 +694,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -705,8 +705,8 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 //
 router.post("/getSession", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -725,7 +725,7 @@ router.post("/getSession", upload.none(''), verifyToken.verify, async (req, res,
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(resultRes.status).json({
+			return res.status(resultRes.status).json({
 				"Status": resultRes
 			});
 			//
@@ -735,7 +735,7 @@ router.post("/getSession", upload.none(''), verifyToken.verify, async (req, res,
 			//
 			var resultRes = { "erro": false, "status": 200, "Session": getSession };
 			res.setHeader('Content-Type', 'application/json');
-			res.status(resultRes.status).json({
+			return res.status(resultRes.status).json({
 				"Status": resultRes
 			});
 		}
@@ -749,7 +749,7 @@ router.post("/getSession", upload.none(''), verifyToken.verify, async (req, res,
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -760,8 +760,8 @@ router.post("/getSession", upload.none(''), verifyToken.verify, async (req, res,
 //
 router.post("/getSessions", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -779,7 +779,7 @@ router.post("/getSessions", upload.none(''), verifyToken.verify, async (req, res
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -791,7 +791,7 @@ router.post("/getSessions", upload.none(''), verifyToken.verify, async (req, res
 			//
 			var resultRes = { "erro": false, "status": 200, "Sessions": getSessions };
 			res.setHeader('Content-Type', 'application/json');
-			res.status(resultRes.status).json({
+			return res.status(resultRes.status).json({
 				"Status": resultRes
 			});
 			//
@@ -803,7 +803,7 @@ router.post("/getSessions", upload.none(''), verifyToken.verify, async (req, res
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(resultRes.status).json({
+			return res.status(resultRes.status).json({
 				"Status": resultRes
 			});
 			//
@@ -817,8 +817,8 @@ router.post("/getSessions", upload.none(''), verifyToken.verify, async (req, res
 router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	logger?.info(`-getHardWare`);
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -849,7 +849,7 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -863,7 +863,7 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -881,8 +881,8 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 // Enviar Contato
 router.post("/sendContactVcard", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -901,7 +901,7 @@ router.post("/sendContactVcard", upload.none(''), verifyToken.verify, async (req
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(result.status).json({
+			return res.status(result.status).json({
 				"Status": result
 			});
 			//
@@ -931,14 +931,14 @@ router.post("/sendContactVcard", upload.none(''), verifyToken.verify, async (req
 							);
 							//
 							res.setHeader('Content-Type', 'application/json');
-							res.status(sendContactVcard.status).json({
+							return res.status(sendContactVcard.status).json({
 								"Status": sendContactVcard
 							});
 							//
 						} else {
 							//
 							res.setHeader('Content-Type', 'application/json');
-							res.status(sendContactVcard.status).json({
+							return res.status(sendContactVcard.status).json({
 								"Status": sendContactVcard
 							});
 							//
@@ -954,7 +954,7 @@ router.post("/sendContactVcard", upload.none(''), verifyToken.verify, async (req
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(resultRes.status).json({
+					return res.status(resultRes.status).json({
 						"Status": resultRes
 					});
 				//
@@ -970,7 +970,7 @@ router.post("/sendContactVcard", upload.none(''), verifyToken.verify, async (req
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -984,8 +984,8 @@ router.post("/sendContactVcard", upload.none(''), verifyToken.verify, async (req
 //
 router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -1004,7 +1004,7 @@ router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req,
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(validate.status).json({
+			return res.status(validate.status).json({
 				"Status": validate
 			});
 			//
@@ -1024,7 +1024,7 @@ router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req,
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(validate.status).json({
+				return res.status(validate.status).json({
 					"Status": validate
 				});
 				//
@@ -1055,14 +1055,14 @@ router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req,
 								);
 								//
 								res.setHeader('Content-Type', 'application/json');
-								res.status(sendPtt.status).json({
+								return res.status(sendPtt.status).json({
 									"Status": sendPtt
 								});
 								//
 							} else {
 								//
 								res.setHeader('Content-Type', 'application/json');
-								res.status(checkNumberStatus.status).json({
+								return res.status(checkNumberStatus.status).json({
 									"Status": checkNumberStatus
 								});
 								//
@@ -1078,7 +1078,7 @@ router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req,
 						};
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(resultRes.status).json({
+						return res.status(resultRes.status).json({
 							"Status": resultRes
 						});
 					//
@@ -1095,7 +1095,7 @@ router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req,
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -1108,8 +1108,8 @@ router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req,
 // Enviar audio
 router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -1128,7 +1128,7 @@ router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req,
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(validate.status).json({
+			return res.status(validate.status).json({
 				"Status": validate
 			});
 			//
@@ -1161,14 +1161,14 @@ router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req,
 							);
 							//
 							res.setHeader('Content-Type', 'application/json');
-							res.status(sendPtt.status).json({
+							return res.status(sendPtt.status).json({
 								"Status": sendPtt
 							});
 							//
 						} else {
 							//
 							res.setHeader('Content-Type', 'application/json');
-							res.status(checkNumberStatus.status).json({
+							return res.status(checkNumberStatus.status).json({
 								"Status": checkNumberStatus
 							});
 							//
@@ -1185,7 +1185,7 @@ router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req,
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(resultRes.status).json({
+					return res.status(resultRes.status).json({
 						"Status": resultRes
 					});
 				//
@@ -1201,7 +1201,7 @@ router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req,
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -1213,8 +1213,8 @@ router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req,
 // Enviar audio
 router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -1233,7 +1233,7 @@ router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(validate.status).json({
+			return res.status(validate.status).json({
 				"Status": validate
 			});
 			//
@@ -1253,7 +1253,7 @@ router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(validate.status).json({
+				return res.status(validate.status).json({
 					"Status": validate
 				});
 				//
@@ -1283,14 +1283,14 @@ router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (
 								);
 								//
 								res.setHeader('Content-Type', 'application/json');
-								res.status(sendPtt.status).json({
+								return res.status(sendPtt.status).json({
 									"Status": sendPtt
 								});
 								//
 							} else {
 								//
 								res.setHeader('Content-Type', 'application/json');
-								res.status(checkNumberStatus.status).json({
+								return res.status(checkNumberStatus.status).json({
 									"Status": checkNumberStatus
 								});
 								//
@@ -1307,7 +1307,7 @@ router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (
 						};
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(resultRes.status).json({
+						return res.status(resultRes.status).json({
 							"Status": resultRes
 						});
 					//
@@ -1324,7 +1324,7 @@ router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -1336,8 +1336,8 @@ router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (
 //Enviar Texto
 router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -1356,7 +1356,7 @@ router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, n
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(validate.status).json({
+			return res.status(validate.status).json({
 				"Status": validate
 			});
 			//
@@ -1385,14 +1385,14 @@ router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, n
 							);
 							//
 							res.setHeader('Content-Type', 'application/json');
-							res.status(sendText.status).json({
+							return res.status(sendText.status).json({
 								"Status": sendText
 							});
 							//
 						} else {
 							//
 							res.setHeader('Content-Type', 'application/json');
-							res.status(checkNumberStatus.status).json({
+							return res.status(checkNumberStatus.status).json({
 								"Status": checkNumberStatus
 							});
 							//
@@ -1409,7 +1409,7 @@ router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, n
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(resultRes.status).json({
+					return res.status(resultRes.status).json({
 						"Status": resultRes
 					});
 				//
@@ -1425,7 +1425,7 @@ router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, n
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -1437,8 +1437,8 @@ router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, n
 //Enviar localização
 router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -1458,7 +1458,7 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(validate.status).json({
+			return res.status(validate.status).json({
 				"Status": validate
 			});
 			//
@@ -1490,7 +1490,7 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
 							//
 							//console?.log(result);
 							res.setHeader('Content-Type', 'application/json');
-							res.status(sendLocation.status).json({
+							return res.status(sendLocation.status).json({
 								"Status": sendLocation
 							});
 							//
@@ -1498,7 +1498,7 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
 							//
 							//console?.log(result);
 							res.setHeader('Content-Type', 'application/json');
-							res.status(checkNumberStatus.status).json({
+							return res.status(checkNumberStatus.status).json({
 								"Status": checkNumberStatus
 							});
 							//
@@ -1515,7 +1515,7 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(resultRes.status).json({
+					return res.status(resultRes.status).json({
 						"Status": resultRes
 					});
 				//
@@ -1531,7 +1531,7 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -1543,8 +1543,8 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
 //Enviar links com preview
 router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -1564,7 +1564,7 @@ router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, n
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(validate.status).json({
+			return res.status(validate.status).json({
 				"Status": validate
 			});
 			//
@@ -1587,7 +1587,7 @@ router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, n
 							};
 							//
 							res.setHeader('Content-Type', 'application/json');
-							res.status(validate.status).json({
+							return res.status(validate.status).json({
 								"Status": validate
 							});
 							//
@@ -1608,14 +1608,14 @@ router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, n
 							);
 							//
 							res.setHeader('Content-Type', 'application/json');
-							res.status(sendLink.status).json({
+							return res.status(sendLink.status).json({
 								"Status": sendLink
 							});
 							//
 						} else {
 							//
 							res.setHeader('Content-Type', 'application/json');
-							res.status(checkNumberStatus.status).json({
+							return res.status(checkNumberStatus.status).json({
 								"Status": checkNumberStatus
 							});
 							//
@@ -1632,7 +1632,7 @@ router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, n
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(resultRes.status).json({
+					return res.status(resultRes.status).json({
 						"Status": resultRes
 					});
 				//
@@ -1647,7 +1647,7 @@ router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, n
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -1659,8 +1659,8 @@ router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, n
 //Enviar Imagem
 router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -1679,7 +1679,7 @@ router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req,
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(validate.status).json({
+			return res.status(validate.status).json({
 				"Status": validate
 			});
 			//
@@ -1699,7 +1699,7 @@ router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req,
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(validate.status).json({
+				return res.status(validate.status).json({
 					"Status": validate
 				});
 				//
@@ -1731,14 +1731,14 @@ router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req,
 								);
 								//
 								res.setHeader('Content-Type', 'application/json');
-								res.status(sendPtt.status).json({
+								return res.status(sendPtt.status).json({
 									"Status": sendPtt
 								});
 								//
 							} else {
 								//
 								res.setHeader('Content-Type', 'application/json');
-								res.status(checkNumberStatus.status).json({
+								return res.status(checkNumberStatus.status).json({
 									"Status": checkNumberStatus
 								});
 								//
@@ -1755,7 +1755,7 @@ router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req,
 						};
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(resultRes.status).json({
+						return res.status(resultRes.status).json({
 							"Status": resultRes
 						});
 					//
@@ -1772,7 +1772,7 @@ router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req,
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -1785,8 +1785,8 @@ router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req,
 // Enviar arquivo/documento
 router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -1804,7 +1804,7 @@ router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req,
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(validate.status).json({
+		return res.status(validate.status).json({
 			"Status": validate
 		});
 		//
@@ -1825,7 +1825,7 @@ router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req,
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(validate.status).json({
+			return res.status(validate.status).json({
 				"Status": validate
 			});
 			//
@@ -1857,14 +1857,14 @@ router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req,
 							);
 							//
 							res.setHeader('Content-Type', 'application/json');
-							res.status(sendFileBase64.status).json({
+							return res.status(sendFileBase64.status).json({
 								"Status": sendFileBase64
 							});
 							//
 						} else {
 							//
 							res.setHeader('Content-Type', 'application/json');
-							res.status(checkNumberStatus.status).json({
+							return res.status(checkNumberStatus.status).json({
 								"Status": checkNumberStatus
 							});
 						}
@@ -1880,7 +1880,7 @@ router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req,
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(resultRes.status).json({
+					return res.status(resultRes.status).json({
 						"Status": resultRes
 					});
 				//
@@ -1894,8 +1894,8 @@ router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req,
 // Enviar arquivo/documento
 router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -1913,7 +1913,7 @@ router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(validate.status).json({
+		return res.status(validate.status).json({
 			"Status": validate
 		});
 		//
@@ -1934,7 +1934,7 @@ router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(validate.status).json({
+			return res.status(validate.status).json({
 				"Status": validate
 			});
 			//
@@ -1966,14 +1966,14 @@ router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (
 							);
 							//
 							res.setHeader('Content-Type', 'application/json');
-							res.status(sendFileFromBase64.status).json({
+							return res.status(sendFileFromBase64.status).json({
 								"Status": sendFileFromBase64
 							});
 							//
 						} else {
 							//
 							res.setHeader('Content-Type', 'application/json');
-							res.status(checkNumberStatus.status).json({
+							return res.status(checkNumberStatus.status).json({
 								"Status": checkNumberStatus
 							});
 							//
@@ -1990,7 +1990,7 @@ router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(resultRes.status).json({
+					return res.status(resultRes.status).json({
 						"Status": resultRes
 					});
 				//
@@ -2005,8 +2005,8 @@ router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (
 // Enviar arquivo/documento
 router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -2024,7 +2024,7 @@ router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, 
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(validate.status).json({
+		return res.status(validate.status).json({
 			"Status": validate
 		});
 		//
@@ -2057,13 +2057,13 @@ router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, 
 						//
 						//console?.log(result);
 						res.setHeader('Content-Type', 'application/json');
-						res.status(sendFile.status).json({
+						return res.status(sendFile.status).json({
 							"Status": sendFile
 						});
 					} else {
 						//console?.log(result);
 						res.setHeader('Content-Type', 'application/json');
-						res.status(checkNumberStatus.status).json({
+						return res.status(checkNumberStatus.status).json({
 							"Status": checkNumberStatus
 						});
 					}
@@ -2079,7 +2079,7 @@ router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, 
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -2093,8 +2093,8 @@ router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, 
 // Enviar arquivo/documento
 router.post("/sendFileUrl", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -2112,7 +2112,7 @@ router.post("/sendFileUrl", upload.none(''), verifyToken.verify, async (req, res
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(validate.status).json({
+		return res.status(validate.status).json({
 			"Status": validate
 		});
 		//
@@ -2145,13 +2145,13 @@ router.post("/sendFileUrl", upload.none(''), verifyToken.verify, async (req, res
 						//
 						//console?.log(result);
 						res.setHeader('Content-Type', 'application/json');
-						res.status(sendFile.status).json({
+						return res.status(sendFile.status).json({
 							"Status": sendFile
 						});
 					} else {
 						//console?.log(result);
 						res.setHeader('Content-Type', 'application/json');
-						res.status(checkNumberStatus.status).json({
+						return res.status(checkNumberStatus.status).json({
 							"Status": checkNumberStatus
 						});
 					}
@@ -2167,7 +2167,7 @@ router.post("/sendFileUrl", upload.none(''), verifyToken.verify, async (req, res
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -2180,8 +2180,8 @@ router.post("/sendFileUrl", upload.none(''), verifyToken.verify, async (req, res
 // Enviar arquivo/documento
 router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -2199,7 +2199,7 @@ router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, 
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(validate.status).json({
+		return res.status(validate.status).json({
 			"Status": validate
 		});
 		//
@@ -2238,14 +2238,14 @@ router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, 
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(sendFileBase64.status).json({
+						return res.status(sendFileBase64.status).json({
 							"Status": sendFileBase64
 						});
 						//
 					} else {
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(checkNumberStatus.status).json({
+						return res.status(checkNumberStatus.status).json({
 							"Status": checkNumberStatus
 						});
 					}
@@ -2261,7 +2261,7 @@ router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, 
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -2274,8 +2274,8 @@ router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, 
 // Enviar arquivo/documento
 router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -2293,7 +2293,7 @@ router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (r
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(validate.status).json({
+		return res.status(validate.status).json({
 			"Status": validate
 		});
 		//
@@ -2325,14 +2325,14 @@ router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (r
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(sendFileFromBase64.status).json({
+						return res.status(sendFileFromBase64.status).json({
 							"Status": sendFileFromBase64
 						});
 						//
 					} else {
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(checkNumberStatus.status).json({
+						return res.status(checkNumberStatus.status).json({
 							"Status": checkNumberStatus
 						});
 						//
@@ -2349,7 +2349,7 @@ router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (r
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -2363,8 +2363,8 @@ router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (r
 //Enviar button
 router.post("/sendButton", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -2382,7 +2382,7 @@ router.post("/sendButton", upload.none(''), verifyToken.verify, async (req, res,
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -2411,14 +2411,14 @@ router.post("/sendButton", upload.none(''), verifyToken.verify, async (req, res,
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(sendButton.status).json({
+						return res.status(sendButton.status).json({
 							"Status": sendButton
 						});
 						//
 					} else {
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(checkNumberStatus.status).json({
+						return res.status(checkNumberStatus.status).json({
 							"Status": checkNumberStatus
 						});
 						//
@@ -2435,7 +2435,7 @@ router.post("/sendButton", upload.none(''), verifyToken.verify, async (req, res,
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -2448,8 +2448,8 @@ router.post("/sendButton", upload.none(''), verifyToken.verify, async (req, res,
 //Enviar template
 router.post("/sendTemplate", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -2467,7 +2467,7 @@ router.post("/sendTemplate", upload.none(''), verifyToken.verify, async (req, re
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -2496,14 +2496,14 @@ router.post("/sendTemplate", upload.none(''), verifyToken.verify, async (req, re
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(sendTemplate.status).json({
+						return res.status(sendTemplate.status).json({
 							"Status": sendTemplate
 						});
 						//
 					} else {
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(checkNumberStatus.status).json({
+						return res.status(checkNumberStatus.status).json({
 							"Status": checkNumberStatus
 						});
 						//
@@ -2520,7 +2520,7 @@ router.post("/sendTemplate", upload.none(''), verifyToken.verify, async (req, re
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -2533,8 +2533,8 @@ router.post("/sendTemplate", upload.none(''), verifyToken.verify, async (req, re
 //Enviar lista
 router.post("/sendListMessage", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -2552,7 +2552,7 @@ router.post("/sendListMessage", upload.none(''), verifyToken.verify, async (req,
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -2581,14 +2581,14 @@ router.post("/sendListMessage", upload.none(''), verifyToken.verify, async (req,
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(sendListMessage.status).json({
+						return res.status(sendListMessage.status).json({
 							"Status": sendListMessage
 						});
 						//
 					} else {
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(checkNumberStatus.status).json({
+						return res.status(checkNumberStatus.status).json({
 							"Status": checkNumberStatus
 						});
 						//
@@ -2605,7 +2605,7 @@ router.post("/sendListMessage", upload.none(''), verifyToken.verify, async (req,
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -2624,8 +2624,8 @@ router.post("/sendListMessage", upload.none(''), verifyToken.verify, async (req,
 // Recuperar status do contatos
 router.post("/getStatus", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -2643,7 +2643,7 @@ router.post("/getStatus", upload.none(''), verifyToken.verify, async (req, res, 
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(validate.status).json({
+		return res.status(validate.status).json({
 			"Status": validate
 		});
 		//
@@ -2671,14 +2671,14 @@ router.post("/getStatus", upload.none(''), verifyToken.verify, async (req, res, 
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(getStatus.status).json({
+						return res.status(getStatus.status).json({
 							"Status": getStatus
 						});
 						//
 					} else {
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(checkNumberStatus.status).json({
+						return res.status(checkNumberStatus.status).json({
 							"Status": checkNumberStatus
 						});
 						//
@@ -2695,7 +2695,7 @@ router.post("/getStatus", upload.none(''), verifyToken.verify, async (req, res, 
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -2708,8 +2708,8 @@ router.post("/getStatus", upload.none(''), verifyToken.verify, async (req, res, 
 // Recuperar contatos
 router.post("/getAllContacts", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -2727,7 +2727,7 @@ router.post("/getAllContacts", upload.none(''), verifyToken.verify, async (req, 
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(validate.status).json({
+		return res.status(validate.status).json({
 			"Status": validate
 		});
 		//
@@ -2747,7 +2747,7 @@ router.post("/getAllContacts", upload.none(''), verifyToken.verify, async (req, 
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(getAllContacts.status).json({
+					return res.status(getAllContacts.status).json({
 						"Status": getAllContacts
 					});
 					//
@@ -2762,7 +2762,7 @@ router.post("/getAllContacts", upload.none(''), verifyToken.verify, async (req, 
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -2775,8 +2775,8 @@ router.post("/getAllContacts", upload.none(''), verifyToken.verify, async (req, 
 // Recuperar chats
 router.post("/getAllChats", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -2794,7 +2794,7 @@ router.post("/getAllChats", upload.none(''), verifyToken.verify, async (req, res
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(validate.status).json({
+		return res.status(validate.status).json({
 			"Status": validate
 		});
 		//
@@ -2814,7 +2814,7 @@ router.post("/getAllChats", upload.none(''), verifyToken.verify, async (req, res
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(getAllChats.status).json({
+					return res.status(getAllChats.status).json({
 						"Status": getAllChats
 					});
 					//
@@ -2829,7 +2829,7 @@ router.post("/getAllChats", upload.none(''), verifyToken.verify, async (req, res
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -2842,8 +2842,8 @@ router.post("/getAllChats", upload.none(''), verifyToken.verify, async (req, res
 // Recuperar mensagens
 router.post("/getAllMessage", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -2861,7 +2861,7 @@ router.post("/getAllMessage", upload.none(''), verifyToken.verify, async (req, r
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(validate.status).json({
+		return res.status(validate.status).json({
 			"Status": validate
 		});
 		//
@@ -2881,7 +2881,7 @@ router.post("/getAllMessage", upload.none(''), verifyToken.verify, async (req, r
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(getAllMessage.status).json({
+					return res.status(getAllMessage.status).json({
 						"Status": getAllMessage
 					});
 					//
@@ -2896,7 +2896,7 @@ router.post("/getAllMessage", upload.none(''), verifyToken.verify, async (req, r
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -2909,8 +2909,8 @@ router.post("/getAllMessage", upload.none(''), verifyToken.verify, async (req, r
 // Recuperar grupos
 router.post("/getAllGroups", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -2928,7 +2928,7 @@ router.post("/getAllGroups", upload.none(''), verifyToken.verify, async (req, re
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -2948,7 +2948,7 @@ router.post("/getAllGroups", upload.none(''), verifyToken.verify, async (req, re
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(getAllGroups.status).json({
+					return res.status(getAllGroups.status).json({
 						"Status": getAllGroups
 					});
 					//
@@ -2963,7 +2963,7 @@ router.post("/getAllGroups", upload.none(''), verifyToken.verify, async (req, re
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -2976,8 +2976,8 @@ router.post("/getAllGroups", upload.none(''), verifyToken.verify, async (req, re
 // Obter o perfil do número
 router.post("/getProfilePicFromServer", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -2995,7 +2995,7 @@ router.post("/getProfilePicFromServer", upload.none(''), verifyToken.verify, asy
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -3023,14 +3023,14 @@ router.post("/getProfilePicFromServer", upload.none(''), verifyToken.verify, asy
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(getProfilePicFromServer.status).json({
+						return res.status(getProfilePicFromServer.status).json({
 							"Status": getProfilePicFromServer
 						});
 						//
 					} else {
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(checkNumberStatus.status).json({
+						return res.status(checkNumberStatus.status).json({
 							"Status": checkNumberStatus
 						});
 						//
@@ -3047,7 +3047,7 @@ router.post("/getProfilePicFromServer", upload.none(''), verifyToken.verify, asy
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -3060,8 +3060,8 @@ router.post("/getProfilePicFromServer", upload.none(''), verifyToken.verify, asy
 // Verificar o status do número
 router.post("/checkNumberStatus", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -3079,7 +3079,7 @@ router.post("/checkNumberStatus", upload.none(''), verifyToken.verify, async (re
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -3102,14 +3102,14 @@ router.post("/checkNumberStatus", upload.none(''), verifyToken.verify, async (re
 					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(checkNumberStatus.status).json({
+						return res.status(checkNumberStatus.status).json({
 							"Status": checkNumberStatus
 						});
 						//
 					} else {
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(checkNumberStatus.status).json({
+						return res.status(checkNumberStatus.status).json({
 							"Status": checkNumberStatus
 						});
 						//
@@ -3126,7 +3126,7 @@ router.post("/checkNumberStatus", upload.none(''), verifyToken.verify, async (re
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -3145,8 +3145,8 @@ router.post("/checkNumberStatus", upload.none(''), verifyToken.verify, async (re
 // Enviar Contato
 router.post("/sendContactVcardGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -3165,7 +3165,7 @@ router.post("/sendContactVcardGrupo", upload.none(''), verifyToken.verify, async
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(result.status).json({
+			return res.status(result.status).json({
 				"Status": result
 			});
 			//
@@ -3188,7 +3188,7 @@ router.post("/sendContactVcardGrupo", upload.none(''), verifyToken.verify, async
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(sendContactVcard.status).json({
+						return res.status(sendContactVcard.status).json({
 							"Status": sendContactVcard
 						});
 						//
@@ -3203,7 +3203,7 @@ router.post("/sendContactVcardGrupo", upload.none(''), verifyToken.verify, async
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(resultRes.status).json({
+					return res.status(resultRes.status).json({
 						"Status": resultRes
 					});
 				//
@@ -3219,7 +3219,7 @@ router.post("/sendContactVcardGrupo", upload.none(''), verifyToken.verify, async
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -3233,8 +3233,8 @@ router.post("/sendContactVcardGrupo", upload.none(''), verifyToken.verify, async
 //
 router.post("/sendVoiceGrupo", upload.single('file'), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -3253,7 +3253,7 @@ router.post("/sendVoiceGrupo", upload.single('file'), verifyToken.verify, async 
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(validate.status).json({
+			return res.status(validate.status).json({
 				"Status": validate
 			});
 			//
@@ -3273,7 +3273,7 @@ router.post("/sendVoiceGrupo", upload.single('file'), verifyToken.verify, async 
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(validate.status).json({
+				return res.status(validate.status).json({
 					"Status": validate
 				});
 				//
@@ -3297,7 +3297,7 @@ router.post("/sendVoiceGrupo", upload.single('file'), verifyToken.verify, async 
 							);
 							//
 							res.setHeader('Content-Type', 'application/json');
-							res.status(sendPtt.status).json({
+							return res.status(sendPtt.status).json({
 								"Status": sendPtt
 							});
 							//
@@ -3312,7 +3312,7 @@ router.post("/sendVoiceGrupo", upload.single('file'), verifyToken.verify, async 
 						};
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(resultRes.status).json({
+						return res.status(resultRes.status).json({
 							"Status": resultRes
 						});
 					//
@@ -3329,7 +3329,7 @@ router.post("/sendVoiceGrupo", upload.single('file'), verifyToken.verify, async 
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -3342,8 +3342,8 @@ router.post("/sendVoiceGrupo", upload.single('file'), verifyToken.verify, async 
 // Enviar audio
 router.post("/sendVoiceBase64Grupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -3362,7 +3362,7 @@ router.post("/sendVoiceBase64Grupo", upload.none(''), verifyToken.verify, async 
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(validate.status).json({
+			return res.status(validate.status).json({
 				"Status": validate
 			});
 			//
@@ -3388,7 +3388,7 @@ router.post("/sendVoiceBase64Grupo", upload.none(''), verifyToken.verify, async 
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(sendPtt.status).json({
+						return res.status(sendPtt.status).json({
 							"Status": sendPtt
 						});
 						//
@@ -3403,7 +3403,7 @@ router.post("/sendVoiceBase64Grupo", upload.none(''), verifyToken.verify, async 
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(resultRes.status).json({
+					return res.status(resultRes.status).json({
 						"Status": resultRes
 					});
 				//
@@ -3419,7 +3419,7 @@ router.post("/sendVoiceBase64Grupo", upload.none(''), verifyToken.verify, async 
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -3431,8 +3431,8 @@ router.post("/sendVoiceBase64Grupo", upload.none(''), verifyToken.verify, async 
 // Enviar audio
 router.post("/sendVoiceFromBase64Grupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -3451,7 +3451,7 @@ router.post("/sendVoiceFromBase64Grupo", upload.none(''), verifyToken.verify, as
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(validate.status).json({
+			return res.status(validate.status).json({
 				"Status": validate
 			});
 			//
@@ -3471,7 +3471,7 @@ router.post("/sendVoiceFromBase64Grupo", upload.none(''), verifyToken.verify, as
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(validate.status).json({
+				return res.status(validate.status).json({
 					"Status": validate
 				});
 				//
@@ -3494,7 +3494,7 @@ router.post("/sendVoiceFromBase64Grupo", upload.none(''), verifyToken.verify, as
 							);
 							//
 							res.setHeader('Content-Type', 'application/json');
-							res.status(sendPtt.status).json({
+							return res.status(sendPtt.status).json({
 								"Status": sendPtt
 							});
 							//
@@ -3509,7 +3509,7 @@ router.post("/sendVoiceFromBase64Grupo", upload.none(''), verifyToken.verify, as
 						};
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(resultRes.status).json({
+						return res.status(resultRes.status).json({
 							"Status": resultRes
 						});
 					//
@@ -3526,7 +3526,7 @@ router.post("/sendVoiceFromBase64Grupo", upload.none(''), verifyToken.verify, as
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -3538,8 +3538,8 @@ router.post("/sendVoiceFromBase64Grupo", upload.none(''), verifyToken.verify, as
 //Enviar Texto em Grupo
 router.post("/sendTextGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -3557,7 +3557,7 @@ router.post("/sendTextGrupo", upload.none(''), verifyToken.verify, async (req, r
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -3580,7 +3580,7 @@ router.post("/sendTextGrupo", upload.none(''), verifyToken.verify, async (req, r
 					//
 					//console?.log(result);
 					res.setHeader('Content-Type', 'application/json');
-					res.status(sendTextGrupo.status).json({
+					return res.status(sendTextGrupo.status).json({
 						"Status": sendTextGrupo
 					});
 					//
@@ -3595,7 +3595,7 @@ router.post("/sendTextGrupo", upload.none(''), verifyToken.verify, async (req, r
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -3608,8 +3608,8 @@ router.post("/sendTextGrupo", upload.none(''), verifyToken.verify, async (req, r
 //Enviar localização no grupo
 router.post("/sendLocationGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -3628,7 +3628,7 @@ router.post("/sendLocationGrupo", upload.none(''), verifyToken.verify, async (re
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -3653,7 +3653,7 @@ router.post("/sendLocationGrupo", upload.none(''), verifyToken.verify, async (re
 					//
 					//console?.log(result);
 					res.setHeader('Content-Type', 'application/json');
-					res.status(sendLocationGroup.status).json({
+					return res.status(sendLocationGroup.status).json({
 						"Status": sendLocationGroup
 					});
 				});
@@ -3667,7 +3667,7 @@ router.post("/sendLocationGrupo", upload.none(''), verifyToken.verify, async (re
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -3680,8 +3680,8 @@ router.post("/sendLocationGrupo", upload.none(''), verifyToken.verify, async (re
 //Enviar links com preview
 router.post("/sendLinkGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -3701,7 +3701,7 @@ router.post("/sendLinkGrupo", upload.none(''), verifyToken.verify, async (req, r
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(validate.status).json({
+			return res.status(validate.status).json({
 				"Status": validate
 			});
 			//
@@ -3724,7 +3724,7 @@ router.post("/sendLinkGrupo", upload.none(''), verifyToken.verify, async (req, r
 							};
 							//
 							res.setHeader('Content-Type', 'application/json');
-							res.status(validate.status).json({
+							return res.status(validate.status).json({
 								"Status": validate
 							});
 							//
@@ -3738,7 +3738,7 @@ router.post("/sendLinkGrupo", upload.none(''), verifyToken.verify, async (req, r
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(sendLink.status).json({
+						return res.status(sendLink.status).json({
 							"Status": sendLink
 						});
 						//
@@ -3753,7 +3753,7 @@ router.post("/sendLinkGrupo", upload.none(''), verifyToken.verify, async (req, r
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(resultRes.status).json({
+					return res.status(resultRes.status).json({
 						"Status": resultRes
 					});
 				//
@@ -3768,7 +3768,7 @@ router.post("/sendLinkGrupo", upload.none(''), verifyToken.verify, async (req, r
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -3780,8 +3780,8 @@ router.post("/sendLinkGrupo", upload.none(''), verifyToken.verify, async (req, r
 // Enviar imagen no grupo
 router.post("/sendImageGrupo", upload.single('file'), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -3800,7 +3800,7 @@ router.post("/sendImageGrupo", upload.single('file'), verifyToken.verify, async 
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(validate.status).json({
+			return res.status(validate.status).json({
 				"Status": validate
 			});
 			//
@@ -3820,7 +3820,7 @@ router.post("/sendImageGrupo", upload.single('file'), verifyToken.verify, async 
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(validate.status).json({
+				return res.status(validate.status).json({
 					"Status": validate
 				});
 				//
@@ -3845,7 +3845,7 @@ router.post("/sendImageGrupo", upload.single('file'), verifyToken.verify, async 
 							);
 							//
 							res.setHeader('Content-Type', 'application/json');
-							res.status(sendPtt.status).json({
+							return res.status(sendPtt.status).json({
 								"Status": sendPtt
 							});
 							//
@@ -3860,7 +3860,7 @@ router.post("/sendImageGrupo", upload.single('file'), verifyToken.verify, async 
 						};
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(resultRes.status).json({
+						return res.status(resultRes.status).json({
 							"Status": resultRes
 						});
 					//
@@ -3877,7 +3877,7 @@ router.post("/sendImageGrupo", upload.single('file'), verifyToken.verify, async 
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -3890,8 +3890,8 @@ router.post("/sendImageGrupo", upload.single('file'), verifyToken.verify, async 
 // Enviar arquivo/documento
 router.post("/sendImageBase64Grupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -3909,7 +3909,7 @@ router.post("/sendImageBase64Grupo", upload.none(''), verifyToken.verify, async 
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(validate.status).json({
+		return res.status(validate.status).json({
 			"Status": validate
 		});
 		//
@@ -3930,7 +3930,7 @@ router.post("/sendImageBase64Grupo", upload.none(''), verifyToken.verify, async 
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(validate.status).json({
+			return res.status(validate.status).json({
 				"Status": validate
 			});
 			//
@@ -3955,7 +3955,7 @@ router.post("/sendImageBase64Grupo", upload.none(''), verifyToken.verify, async 
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(sendFileBase64.status).json({
+						return res.status(sendFileBase64.status).json({
 							"Status": sendFileBase64
 						});
 						//
@@ -3970,7 +3970,7 @@ router.post("/sendImageBase64Grupo", upload.none(''), verifyToken.verify, async 
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(resultRes.status).json({
+					return res.status(resultRes.status).json({
 						"Status": resultRes
 					});
 				//
@@ -3984,8 +3984,8 @@ router.post("/sendImageBase64Grupo", upload.none(''), verifyToken.verify, async 
 // Enviar arquivo/documento
 router.post("/sendImageFromBase64Grupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -4003,7 +4003,7 @@ router.post("/sendImageFromBase64Grupo", upload.none(''), verifyToken.verify, as
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(validate.status).json({
+		return res.status(validate.status).json({
 			"Status": validate
 		});
 		//
@@ -4024,7 +4024,7 @@ router.post("/sendImageFromBase64Grupo", upload.none(''), verifyToken.verify, as
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(validate.status).json({
+			return res.status(validate.status).json({
 				"Status": validate
 			});
 			//
@@ -4049,7 +4049,7 @@ router.post("/sendImageFromBase64Grupo", upload.none(''), verifyToken.verify, as
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(sendFileFromBase64.status).json({
+						return res.status(sendFileFromBase64.status).json({
 							"Status": sendFileFromBase64
 						});
 						//
@@ -4064,7 +4064,7 @@ router.post("/sendImageFromBase64Grupo", upload.none(''), verifyToken.verify, as
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(resultRes.status).json({
+					return res.status(resultRes.status).json({
 						"Status": resultRes
 					});
 				//
@@ -4079,8 +4079,8 @@ router.post("/sendImageFromBase64Grupo", upload.none(''), verifyToken.verify, as
 // Enviar arquivo/documento
 router.post("/sendFileGrupo", upload.single('file'), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -4098,7 +4098,7 @@ router.post("/sendFileGrupo", upload.single('file'), verifyToken.verify, async (
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(validate.status).json({
+		return res.status(validate.status).json({
 			"Status": validate
 		});
 		//
@@ -4124,7 +4124,7 @@ router.post("/sendFileGrupo", upload.single('file'), verifyToken.verify, async (
 					//
 					//console?.log(result);
 					res.setHeader('Content-Type', 'application/json');
-					res.status(sendFile.status).json({
+					return res.status(sendFile.status).json({
 						"Status": sendFile
 					});
 					//
@@ -4139,7 +4139,7 @@ router.post("/sendFileGrupo", upload.single('file'), verifyToken.verify, async (
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -4153,8 +4153,8 @@ router.post("/sendFileGrupo", upload.single('file'), verifyToken.verify, async (
 // Enviar arquivo/documento
 router.post("/sendFileUrlGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -4172,7 +4172,7 @@ router.post("/sendFileUrlGrupo", upload.none(''), verifyToken.verify, async (req
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(validate.status).json({
+		return res.status(validate.status).json({
 			"Status": validate
 		});
 		//
@@ -4198,7 +4198,7 @@ router.post("/sendFileUrlGrupo", upload.none(''), verifyToken.verify, async (req
 					//
 					//console?.log(result);
 					res.setHeader('Content-Type', 'application/json');
-					res.status(sendFile.status).json({
+					return res.status(sendFile.status).json({
 						"Status": sendFile
 					});
 				});
@@ -4213,7 +4213,7 @@ router.post("/sendFileUrlGrupo", upload.none(''), verifyToken.verify, async (req
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -4226,8 +4226,8 @@ router.post("/sendFileUrlGrupo", upload.none(''), verifyToken.verify, async (req
 // Enviar arquivo/documento
 router.post("/sendFileBase64Grupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -4245,7 +4245,7 @@ router.post("/sendFileBase64Grupo", upload.none(''), verifyToken.verify, async (
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(validate.status).json({
+		return res.status(validate.status).json({
 			"Status": validate
 		});
 		//
@@ -4271,7 +4271,7 @@ router.post("/sendFileBase64Grupo", upload.none(''), verifyToken.verify, async (
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(sendFileBase64.status).json({
+					return res.status(sendFileBase64.status).json({
 						"Status": sendFileBase64
 					});
 				});
@@ -4286,7 +4286,7 @@ router.post("/sendFileBase64Grupo", upload.none(''), verifyToken.verify, async (
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -4299,8 +4299,8 @@ router.post("/sendFileBase64Grupo", upload.none(''), verifyToken.verify, async (
 // Enviar arquivo/documento
 router.post("/sendFileFromBase64Grupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -4318,7 +4318,7 @@ router.post("/sendFileFromBase64Grupo", upload.none(''), verifyToken.verify, asy
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(validate.status).json({
+		return res.status(validate.status).json({
 			"Status": validate
 		});
 		//
@@ -4343,7 +4343,7 @@ router.post("/sendFileFromBase64Grupo", upload.none(''), verifyToken.verify, asy
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(sendFileFromBase64.status).json({
+					return res.status(sendFileFromBase64.status).json({
 						"Status": sendFileFromBase64
 					});
 				});
@@ -4358,7 +4358,7 @@ router.post("/sendFileFromBase64Grupo", upload.none(''), verifyToken.verify, asy
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -4372,8 +4372,8 @@ router.post("/sendFileFromBase64Grupo", upload.none(''), verifyToken.verify, asy
 //Enviar button
 router.post("/sendButtonGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -4391,7 +4391,7 @@ router.post("/sendButtonGrupo", upload.none(''), verifyToken.verify, async (req,
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -4413,7 +4413,7 @@ router.post("/sendButtonGrupo", upload.none(''), verifyToken.verify, async (req,
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(sendButton.status).json({
+					return res.status(sendButton.status).json({
 						"Status": sendButton
 					});
 				});
@@ -4428,7 +4428,7 @@ router.post("/sendButtonGrupo", upload.none(''), verifyToken.verify, async (req,
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -4441,8 +4441,8 @@ router.post("/sendButtonGrupo", upload.none(''), verifyToken.verify, async (req,
 //Enviar template
 router.post("/sendTemplateGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -4460,7 +4460,7 @@ router.post("/sendTemplateGrupo", upload.none(''), verifyToken.verify, async (re
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -4482,7 +4482,7 @@ router.post("/sendTemplateGrupo", upload.none(''), verifyToken.verify, async (re
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(sendTemplate.status).json({
+					return res.status(sendTemplate.status).json({
 						"Status": sendTemplate
 					});
 				});
@@ -4497,7 +4497,7 @@ router.post("/sendTemplateGrupo", upload.none(''), verifyToken.verify, async (re
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -4510,8 +4510,8 @@ router.post("/sendTemplateGrupo", upload.none(''), verifyToken.verify, async (re
 //Enviar lista
 router.post("/sendListMessageGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -4529,7 +4529,7 @@ router.post("/sendListMessageGrupo", upload.none(''), verifyToken.verify, async 
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -4551,7 +4551,7 @@ router.post("/sendListMessageGrupo", upload.none(''), verifyToken.verify, async 
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(sendListMessage.status).json({
+					return res.status(sendListMessage.status).json({
 						"Status": sendListMessage
 					});
 				});
@@ -4566,7 +4566,7 @@ router.post("/sendListMessageGrupo", upload.none(''), verifyToken.verify, async 
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -4579,8 +4579,8 @@ router.post("/sendListMessageGrupo", upload.none(''), verifyToken.verify, async 
 //Deixar o grupo
 router.post("/leaveGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -4598,7 +4598,7 @@ router.post("/leaveGroup", upload.none(''), verifyToken.verify, async (req, res,
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -4618,7 +4618,7 @@ router.post("/leaveGroup", upload.none(''), verifyToken.verify, async (req, res,
 						req.body.groupId + '@g.us'
 					);
 					res.setHeader('Content-Type', 'application/json');
-					res.status(leaveGroup.status).json({
+					return res.status(leaveGroup.status).json({
 						"Status": leaveGroup
 					});
 				});
@@ -4632,7 +4632,7 @@ router.post("/leaveGroup", upload.none(''), verifyToken.verify, async (req, res,
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -4645,8 +4645,8 @@ router.post("/leaveGroup", upload.none(''), verifyToken.verify, async (req, res,
 // Criar grupo (título, participantes a adicionar)
 router.post("/createGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -4664,7 +4664,7 @@ router.post("/createGroup", upload.none(''), verifyToken.verify, async (req, res
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -4678,7 +4678,7 @@ router.post("/createGroup", upload.none(''), verifyToken.verify, async (req, res
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(validate.status).json({
+			return res.status(validate.status).json({
 				"Status": validate
 			});
 			//
@@ -4728,7 +4728,7 @@ router.post("/createGroup", upload.none(''), verifyToken.verify, async (req, res
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(createGroup.status).json({
+					return res.status(createGroup.status).json({
 						"Status": createGroup
 					});
 				});
@@ -4743,7 +4743,7 @@ router.post("/createGroup", upload.none(''), verifyToken.verify, async (req, res
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -4756,8 +4756,8 @@ router.post("/createGroup", upload.none(''), verifyToken.verify, async (req, res
 // update Group Title
 router.post("/updateGroupTitle", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -4775,7 +4775,7 @@ router.post("/updateGroupTitle", upload.none(''), verifyToken.verify, async (req
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -4789,7 +4789,7 @@ router.post("/updateGroupTitle", upload.none(''), verifyToken.verify, async (req
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(validate.status).json({
+			return res.status(validate.status).json({
 				"Status": validate
 			});
 			//
@@ -4811,7 +4811,7 @@ router.post("/updateGroupTitle", upload.none(''), verifyToken.verify, async (req
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(updateGroupTitle.status).json({
+					return res.status(updateGroupTitle.status).json({
 						"Status": updateGroupTitle
 					});
 				});
@@ -4826,7 +4826,7 @@ router.post("/updateGroupTitle", upload.none(''), verifyToken.verify, async (req
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -4839,8 +4839,8 @@ router.post("/updateGroupTitle", upload.none(''), verifyToken.verify, async (req
 // update Group desc
 router.post("/updateGroupDesc", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -4858,7 +4858,7 @@ router.post("/updateGroupDesc", upload.none(''), verifyToken.verify, async (req,
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -4880,7 +4880,7 @@ router.post("/updateGroupDesc", upload.none(''), verifyToken.verify, async (req,
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(updateGroupDesc.status).json({
+					return res.status(updateGroupDesc.status).json({
 						"Status": updateGroupDesc
 					});
 				});
@@ -4895,7 +4895,7 @@ router.post("/updateGroupDesc", upload.none(''), verifyToken.verify, async (req,
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -4908,8 +4908,8 @@ router.post("/updateGroupDesc", upload.none(''), verifyToken.verify, async (req,
 // Obtenha membros do grupo
 router.post("/getGroupMembers", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -4927,7 +4927,7 @@ router.post("/getGroupMembers", upload.none(''), verifyToken.verify, async (req,
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -4948,7 +4948,7 @@ router.post("/getGroupMembers", upload.none(''), verifyToken.verify, async (req,
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(getGroupMembers.status).json({
+					return res.status(getGroupMembers.status).json({
 						"Status": getGroupMembers
 					});
 				});
@@ -4963,7 +4963,7 @@ router.post("/getGroupMembers", upload.none(''), verifyToken.verify, async (req,
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -4976,8 +4976,8 @@ router.post("/getGroupMembers", upload.none(''), verifyToken.verify, async (req,
 // Gerar link de url de convite de grupo
 router.post("/getGroupInviteLink", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -4995,7 +4995,7 @@ router.post("/getGroupInviteLink", upload.none(''), verifyToken.verify, async (r
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -5015,7 +5015,7 @@ router.post("/getGroupInviteLink", upload.none(''), verifyToken.verify, async (r
 						req.body.groupId + '@g.us'
 					);
 					res.setHeader('Content-Type', 'application/json');
-					res.status(GroupInviteLink.status).json({
+					return res.status(GroupInviteLink.status).json({
 						"Status": GroupInviteLink
 					});
 				});
@@ -5029,7 +5029,7 @@ router.post("/getGroupInviteLink", upload.none(''), verifyToken.verify, async (r
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -5042,8 +5042,8 @@ router.post("/getGroupInviteLink", upload.none(''), verifyToken.verify, async (r
 // Gerar link de url de convite de grupo
 router.post("/getGroupRevokeInviteLink", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -5061,7 +5061,7 @@ router.post("/getGroupRevokeInviteLink", upload.none(''), verifyToken.verify, as
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -5081,7 +5081,7 @@ router.post("/getGroupRevokeInviteLink", upload.none(''), verifyToken.verify, as
 						req.body.groupId + '@g.us'
 					);
 					res.setHeader('Content-Type', 'application/json');
-					res.status(GroupInviteLink.status).json({
+					return res.status(GroupInviteLink.status).json({
 						"Status": GroupInviteLink
 					});
 				});
@@ -5095,7 +5095,7 @@ router.post("/getGroupRevokeInviteLink", upload.none(''), verifyToken.verify, as
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -5107,8 +5107,8 @@ router.post("/getGroupRevokeInviteLink", upload.none(''), verifyToken.verify, as
 //
 router.post("/removeParticipant", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -5126,7 +5126,7 @@ router.post("/removeParticipant", upload.none(''), verifyToken.verify, async (re
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -5176,7 +5176,7 @@ router.post("/removeParticipant", upload.none(''), verifyToken.verify, async (re
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(removeParticipant.status).json({
+					return res.status(removeParticipant.status).json({
 						"Status": removeParticipant
 					});
 				});
@@ -5191,7 +5191,7 @@ router.post("/removeParticipant", upload.none(''), verifyToken.verify, async (re
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -5205,8 +5205,8 @@ router.post("/removeParticipant", upload.none(''), verifyToken.verify, async (re
 // Adicionar participante
 router.post("/addParticipant", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -5224,7 +5224,7 @@ router.post("/addParticipant", upload.none(''), verifyToken.verify, async (req, 
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -5274,7 +5274,7 @@ router.post("/addParticipant", upload.none(''), verifyToken.verify, async (req, 
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(addParticipant.status).json({
+					return res.status(addParticipant.status).json({
 						"Status": addParticipant
 					});
 				});
@@ -5289,7 +5289,7 @@ router.post("/addParticipant", upload.none(''), verifyToken.verify, async (req, 
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -5303,8 +5303,8 @@ router.post("/addParticipant", upload.none(''), verifyToken.verify, async (req, 
 // Promote participant (Give admin privileges)
 router.post("/promoteParticipant", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -5322,7 +5322,7 @@ router.post("/promoteParticipant", upload.none(''), verifyToken.verify, async (r
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -5372,7 +5372,7 @@ router.post("/promoteParticipant", upload.none(''), verifyToken.verify, async (r
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(promoteParticipant.status).json({
+					return res.status(promoteParticipant.status).json({
 						"Status": promoteParticipant
 					});
 				});
@@ -5387,7 +5387,7 @@ router.post("/promoteParticipant", upload.none(''), verifyToken.verify, async (r
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -5401,8 +5401,8 @@ router.post("/promoteParticipant", upload.none(''), verifyToken.verify, async (r
 // Depromote participant (Give admin privileges)
 router.post("/demoteParticipant", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -5420,7 +5420,7 @@ router.post("/demoteParticipant", upload.none(''), verifyToken.verify, async (re
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -5470,7 +5470,7 @@ router.post("/demoteParticipant", upload.none(''), verifyToken.verify, async (re
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(demoteParticipant.status).json({
+					return res.status(demoteParticipant.status).json({
 						"Status": demoteParticipant
 					});
 				});
@@ -5485,7 +5485,7 @@ router.post("/demoteParticipant", upload.none(''), verifyToken.verify, async (re
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -5499,8 +5499,8 @@ router.post("/demoteParticipant", upload.none(''), verifyToken.verify, async (re
 // Retorna o status do grupo, jid, descrição do link de convite
 router.post("/getGroupInfoFromInviteLink", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -5518,7 +5518,7 @@ router.post("/getGroupInfoFromInviteLink", upload.none(''), verifyToken.verify, 
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -5537,7 +5537,7 @@ router.post("/getGroupInfoFromInviteLink", upload.none(''), verifyToken.verify, 
 						req.body.inviteCode
 					);
 					res.setHeader('Content-Type', 'application/json');
-					res.status(getGroupInfoFromInviteLink.status).json({
+					return res.status(getGroupInfoFromInviteLink.status).json({
 						"Status": getGroupInfoFromInviteLink
 					});
 				});
@@ -5551,7 +5551,7 @@ router.post("/getGroupInfoFromInviteLink", upload.none(''), verifyToken.verify, 
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -5564,8 +5564,8 @@ router.post("/getGroupInfoFromInviteLink", upload.none(''), verifyToken.verify, 
 // Junte-se a um grupo usando o código de convite do grupo
 router.post("/joinGroup", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -5583,7 +5583,7 @@ router.post("/joinGroup", upload.none(''), verifyToken.verify, async (req, res, 
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -5602,7 +5602,7 @@ router.post("/joinGroup", upload.none(''), verifyToken.verify, async (req, res, 
 						req.body.inviteCode
 					);
 					res.setHeader('Content-Type', 'application/json');
-					res.status(getGroupInfoFromInviteLink.status).json({
+					return res.status(getGroupInfoFromInviteLink.status).json({
 						"Status": getGroupInfoFromInviteLink
 					});
 				});
@@ -5616,7 +5616,7 @@ router.post("/joinGroup", upload.none(''), verifyToken.verify, async (req, res, 
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -5634,8 +5634,8 @@ router.post("/joinGroup", upload.none(''), verifyToken.verify, async (req, res, 
 // Recuperar status de contato
 router.post("/getPerfilStatus", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -5653,7 +5653,7 @@ router.post("/getPerfilStatus", upload.none(''), verifyToken.verify, async (req,
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(resultRes.status).json({
+		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
 		//
@@ -5682,14 +5682,14 @@ router.post("/getPerfilStatus", upload.none(''), verifyToken.verify, async (req,
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(getStatus.status).json({
+						return res.status(getStatus.status).json({
 							"Status": getStatus
 						});
 						//
 					} else {
 						//
 						res.setHeader('Content-Type', 'application/json');
-						res.status(checkNumberStatus.status).json({
+						return res.status(checkNumberStatus.status).json({
 							"Status": checkNumberStatus
 						});
 						//
@@ -5706,7 +5706,7 @@ router.post("/getPerfilStatus", upload.none(''), verifyToken.verify, async (req,
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -5720,8 +5720,8 @@ router.post("/getPerfilStatus", upload.none(''), verifyToken.verify, async (req,
 // Set client status
 router.post("/setProfileStatus", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -5739,7 +5739,7 @@ router.post("/setProfileStatus", upload.none(''), verifyToken.verify, async (req
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(validate.status).json({
+		return res.status(validate.status).json({
 			"Status": validate
 		});
 		//
@@ -5760,7 +5760,7 @@ router.post("/setProfileStatus", upload.none(''), verifyToken.verify, async (req
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					res.status(setProfileStatus.status).json({
+					return res.status(setProfileStatus.status).json({
 						"Status": setProfileStatus
 					});
 				});
@@ -5775,7 +5775,7 @@ router.post("/setProfileStatus", upload.none(''), verifyToken.verify, async (req
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -5788,8 +5788,8 @@ router.post("/setProfileStatus", upload.none(''), verifyToken.verify, async (req
 // Set client profile name
 router.post("/setProfileName", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.body?.AuthorizationToken)
-	const theSessionName = removeWithspace(req?.body?.SessionName)
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -5808,7 +5808,7 @@ router.post("/setProfileName", upload.none(''), verifyToken.verify, async (req, 
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		res.status(400).json({
+		return res.status(400).json({
 			"Status": validate
 		});
 		//
@@ -5828,7 +5828,7 @@ router.post("/setProfileName", upload.none(''), verifyToken.verify, async (req, 
 						req.body.ProfileName
 					);
 					res.setHeader('Content-Type', 'application/json');
-					res.status(200).json({
+					return res.status(200).json({
 						"Status": setProfileName
 					});
 				});
@@ -5842,7 +5842,7 @@ router.post("/setProfileName", upload.none(''), verifyToken.verify, async (req, 
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				return res.status(resultRes.status).json({
 					"Status": resultRes
 				});
 			//
@@ -5862,7 +5862,7 @@ router.all('*', upload.none(''), async (req, res, next) => {
 	};
 	//
 	res.setHeader('Content-Type', 'application/json');
-	res.status(resultRes.status).json({
+	return res.status(resultRes.status).json({
 		"Status": resultRes
 	});
 	//
