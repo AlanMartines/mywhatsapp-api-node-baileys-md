@@ -251,6 +251,7 @@ module.exports = class Instace {
 	//
 	static async initSession(req, res, next) {
 		//
+		logger?.info(`- SessionName: ${SessionName}`);
 		let SessionName = req?.body?.SessionName;
 		let setOnline = req?.body?.setOnline;
 		let waqueue = new pQueue({ concurrency: parseInt(config.CONCURRENCY) });
