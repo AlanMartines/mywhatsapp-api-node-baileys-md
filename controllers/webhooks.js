@@ -97,6 +97,7 @@ module.exports = class Webhooks {
 
 	static async wh_qrcode(SessionName, readQRCode, urlCode) {
 		let dataSessions = await Sessions?.getSession(SessionName);
+		logger?.info(`- Data: ${JSON.stringify(dataSessions, null, 2)}`);
 		logger.info(`- SessionName: ${SessionName}`);
 		try {
 			let object = {
