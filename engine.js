@@ -220,11 +220,13 @@ module.exports = class Instace {
 	static async Start(req, res, next) {
 		let SessionName = req?.body?.SessionName;
 		let data = Sessions?.getSession(SessionName);
+		logger?.info(data);
 		if (data) {
 			logger?.info(`${await saudacao()}`);
 			logger?.info(`- Carregando sessão`);
 			this.initSession(req, res, next);
 		} else {
+			if (data == false) {
 				logger?.info(`${await saudacao()}`);
 				logger?.info(`- Iniciando sessão`);
 				await Sessions?.checkAddUser(SessionName);
@@ -243,9 +245,10 @@ module.exports = class Instace {
 					state: 'STARTING',
 					status: "notLogged"
 				}
-				//
 				await Sessions?.addInfoSession(SessionName, newSession);
 				this.initSession(req, res, next);
+			}
+			//
 		}
 	}
 	//
