@@ -118,7 +118,7 @@ module.exports = class Webhooks {
 					}),
 					headers: { 'Content-Type': 'application/json' }
 				}).then(response => {
-					logger.info('- Webhooks status message')
+					logger.info('- Webhooks status message send')
 				}).catch(error => {
 					logger?.error(`- Error status message ${error.message}`);
 				});
