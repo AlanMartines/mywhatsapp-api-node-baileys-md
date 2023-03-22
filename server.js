@@ -9,12 +9,12 @@ const app = express();
 const cors = require('cors');
 const path = require('path');
 const swaggerUi = require('swagger-ui-express')
-const latest = require('github-latest-release'); // verifica a ultima release no github
-//const latest = require('latest-version'); // verifica a ultima release no npm
+//const latest = require('github-latest-release'); // verifica a ultima release no github
+const latest = require('latest-version'); // verifica a ultima release no npm
 const { version } = require('./package.json');
 const { logger } = require("./utils/logger");
 const AllSessions = require('./startup');
-const Sessions = require('./controllers/sessions.js');
+const Sessions = require('./controllers/sessions');
 const config = require('./config.global');
 const swaggerDocument = require('./swagger');//
 const http = require('http').Server(app);
@@ -292,7 +292,7 @@ FORCE_CONNECTION_USE_HERE=0
 						newVersion: undefined,
 						message: `Verificando Atualizações`
 					});
-					/*
+
 					if (Sessions.upToDate(version, repoVersion)) {
 						logger?.info(`- Sua API esta Atualizada com a versão mais recente`);
 						io.emit('version', {
@@ -307,7 +307,7 @@ FORCE_CONNECTION_USE_HERE=0
 						});
 						Sessions.logUpdateAvailable(version, repoVersion);
 					}
-					*/
+
 				}
 				//
 				if (parseInt(config.START_ALL_SESSIONS) == true) {
