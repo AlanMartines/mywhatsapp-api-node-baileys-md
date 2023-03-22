@@ -983,7 +983,6 @@ module.exports = class Instace {
 							await saveCreds();
 						}
 						//
-						/*
 						eventsSend?.statusConnection(SessionName, client, req.io, events);
 						eventsSend?.statusMessage(SessionName, client, req.io, events);
 						eventsSend?.contactsEvents(SessionName, client, req.io, events);
@@ -992,7 +991,6 @@ module.exports = class Instace {
 						eventsSend?.blocklistEvents(SessionName, client, req.io, events);
 						eventsSend?.groupsEvents(SessionName, client, req.io, events);
 						eventsSend?.extraEvents(SessionName, client, req.io, events);
-						*/
 						//
 					}
 				);
