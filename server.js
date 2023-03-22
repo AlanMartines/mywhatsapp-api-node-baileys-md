@@ -286,7 +286,6 @@ FORCE_CONNECTION_USE_HERE=0
 					logger?.info(`- To start: ${host}/Start`);
 					logger?.info(`- To doc: ${host}/api-doc`);
 					//
-					/*
 					logger?.info(`- Verificando Atualizações`);
 					io.emit('version', {
 						newVersion: undefined,
@@ -308,7 +307,6 @@ FORCE_CONNECTION_USE_HERE=0
 						});
 						Sessions.logUpdateAvailable(version, repoVersion);
 					}
-					*/
 				}
 				//
 				if (parseInt(config.START_ALL_SESSIONS) == true) {
