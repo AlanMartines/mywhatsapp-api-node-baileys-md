@@ -4,14 +4,20 @@ const pretty = require('pino-pretty');
 const logger = pino({
   timestamp: false,
   levelFirst: true,
-  prettyPrint: true,
   transport: {
     target: 'pino-pretty',
     options: {
       errorProps: '*',
       ignore: "pid,hostname",
       translateTime: "SYS:yyyy-mm-dd HH:MM:ss",
-      colorize: true
+      colorize: true,
+      // Opção para habilitar o prettyPrint
+      prettyPrint: {
+        levelFirst: true,
+        colorize: true,
+        translateTime: "SYS:yyyy-mm-dd HH:MM:ss",
+        ignore: "pid,hostname"
+      }
     }
   }
 }, {
