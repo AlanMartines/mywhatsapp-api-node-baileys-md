@@ -219,13 +219,13 @@ async function resContacts(SessionName, contacts) {
 module.exports = class Instace {
 	static async Start(req, res, next) {
 		let SessionName = req?.body?.SessionName;
-		let data = await Sessions?.getSession(SessionName);
+		let data = Sessions?.getSession(SessionName);
 		if (data) {
-			logger?.info(`${saudacao()}`);
+			logger?.info(`${await saudacao()}`);
 			logger?.info(`- Carregando sessão`);
 			this.initSession(req, res, next);
 		} else {
-				logger?.info(`${saudacao()}`);
+				logger?.info(`${await saudacao()}`);
 				logger?.info(`- Iniciando sessão`);
 				await Sessions?.checkAddUser(SessionName);
 				//
