@@ -96,17 +96,17 @@ module.exports = class Webhooks {
 		}
 	}
 
-	static async wh_qrcode(data, response, urlCode) {
+	static async wh_qrcode(data, readQRCode, urlCode) {
 		//let data = Sessions?.getSession(session)
-		logger.info(`- SessionName: ${data?.name}`);
+		logger.info(`- SessionName: ${data?.SessionName}`);
 		try {
 			let object = {
 				"wook": 'QRCODE',
 				'result': 200,
-				'session': data.name,
-				'state': data.state,
-				'status': data.status,
-				'qrcode': response,
+				'session': data?.SessionName,
+				'state': data?.state,
+				'status': data?.status,
+				'qrcode': readQRCode,
 				'urlCode': urlCode
 			}
 			if (data?.wh_qrcode != undefined && data?.wh_qrcode != null && data?.wh_qrcode != '') {

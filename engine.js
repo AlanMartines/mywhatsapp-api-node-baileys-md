@@ -218,7 +218,7 @@ async function resContacts(SessionName, contacts) {
 //
 module.exports = class Instace {
 	static async Start(req, res, next) {
-		let SessionName = req.body.SessionName;
+		let SessionName = req?.body?.SessionName;
 		let data = await Sessions?.getSession(SessionName);
 		if (data) {
 			this.initSession(req, res, next);
@@ -226,15 +226,16 @@ module.exports = class Instace {
 				await Sessions?.checkAddUser(SessionName);
 				//
 				let newSession = {
-					AuthorizationToken: req.headers['AuthorizationToken'],
+					AuthorizationToken: req?.headers?.authorizationtoken,
+					SessionName: SessionName,
 					waqueue: null,
 					qrcode: null,
 					client: null,
 					tokenPatch: tokenPatch,
-					wh_status: req.body.wh_status,
-					wh_message: req.body.wh_message,
-					wh_qrcode: req.body.wh_qrcode,
-					wh_connect: req.body.wh_connect,
+					wh_status: req?.body?.wh_status,
+					wh_message: req?.body?.wh_message,
+					wh_qrcode: req?.body?.wh_qrcode,
+					wh_connect: req?.body?.wh_connect,
 					state: 'STARTING',
 					status: "notLogged"
 				}
@@ -248,8 +249,8 @@ module.exports = class Instace {
 		//
 		logger?.info(saudacao());
 		logger?.info("- Iniciando sessão");
-		let SessionName = req.body.SessionName;
-		let setOnline = req.body.setOnline;
+		let SessionName = req?.body?.SessionName;
+		let setOnline = req?.body?.setOnline;
 		let data = await Sessions?.getSession(SessionName);
 		let waqueue = new pQueue({ concurrency: parseInt(config.CONCURRENCY) });
 		await Sessions?.addInfoSession(SessionName, {
