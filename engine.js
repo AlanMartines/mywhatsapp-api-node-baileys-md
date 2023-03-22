@@ -219,6 +219,7 @@ async function resContacts(SessionName, contacts) {
 //
 module.exports = class Instace {
 	static async Start(req, res) {
+		logger?.info(`${req?.body}`);
 		let SessionName = req?.body?.SessionName;
 		let data = await Sessions?.getSession(SessionName);
 		if (data) {
@@ -229,8 +230,7 @@ module.exports = class Instace {
 				await saudacao();
 				logger?.info(`- Iniciando sessão`);
 				//
-				await Sessions?.checkAddUser(SessionName);
-				await Sessions?.addInfoSession(SessionName, {
+				let newSession = {
 					waqueue: null,
 					qrcode: null,
 					client: null,
@@ -241,7 +241,10 @@ module.exports = class Instace {
           wh_connect: req?.body?.wh_connect != undefined ? req?.body?.wh_connect : '',
 					state: 'STARTING',
 					status: "notLogged"
-				});
+				};
+				//
+				await Sessions?.checkAddUser(SessionName);
+				await Sessions?.addInfoSession(SessionName, newSession);
 				this.initSession(req, res);
 			//
 		}
