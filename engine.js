@@ -250,7 +250,6 @@ module.exports = class Instace {
 	}
 	//
 	static async initSession(req, res, next) {
-		logger?.info(`${JSON.stringify(lastDisconnect?.error?.output, null, 2)}`);
 		//
 		let SessionName = req?.body?.SessionName;
 		let setOnline = req?.body?.setOnline;
