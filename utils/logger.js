@@ -1,5 +1,6 @@
 const pino = require("pino");
 const pretty = require('pino-pretty');
+const stackTrace = require('stack-trace');
 
 const logger = pino({
   timestamp: false,
@@ -22,10 +23,14 @@ const logger = pino({
       return { level: label };
     },
     error(error) {
+      const stack = stackTrace.parse(error);
+      const frame = stack[0];
+
       return {
-        stack: error.stack, // exibe nome do arquivo e linha do erro
         message: error.message,
-        line: error.lineNumber, // adiciona a propriedade line com o número da linha do erro
+        file: frame.getFileName(),
+        line: frame.getLineNumber(),
+        stack: error.stack
       };
     },
   },
