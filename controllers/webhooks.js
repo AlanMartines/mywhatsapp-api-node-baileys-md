@@ -96,22 +96,22 @@ module.exports = class Webhooks {
 	}
 
 	static async wh_qrcode(SessionName, readQRCode, urlCode) {
-		let data = await Sessions?.getSession(SessionName);
-		logger.info(data);
+		let dataSessions = Sessions?.getSession(SessionName);
+		logger.info(dataSessions);
 		logger.info(`- SessionName: ${SessionName}`);
 		try {
 			let object = {
 				"wook": 'QRCODE',
 				'result': 200,
-				'session': data?.SessionName,
-				'state': data?.state,
-				'status': data?.status,
+				'session': dataSessions?.SessionName,
+				'state': dataSessions?.state,
+				'status': dataSessions?.status,
 				'qrcode': readQRCode,
 				'urlCode': urlCode
 			}
-			if (data?.wh_qrcode != undefined && data?.wh_qrcode != null && data?.wh_qrcode != '') {
+			if (dataSessions?.wh_qrcode != undefined && dataSessions?.wh_qrcode != null && dataSessions?.wh_qrcode != '') {
 				let dataJson = JSON.stringify(object, null, 2);
-				await axios.post(data?.wh_qrcode, dataJson, {
+				await axios.post(dataSessions?.wh_qrcode, dataJson, {
 					httpsAgent: new https.Agent({
 						rejectUnauthorized: false,
 						keepAlive: true

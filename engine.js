@@ -86,16 +86,16 @@ async function saudacao() {
 	let saudacao;
 	//
 	if (hr >= 6 && hr < 12) {
-		saudacao = "- Bom dia";
+		saudacao = `- Bom dia`;
 		//
 	} else if (hr >= 12 && hr < 18) {
-		saudacao = "- Boa tarde";
+		saudacao = `- Boa tarde`;
 		//
 	} else if (hr >= 18 && hr < 23) {
-		saudacao = "- Boa noite";
+		saudacao = `- Boa noite`;
 		//
 	} else {
-		saudacao = "- Boa madrugada";
+		saudacao = `- Boa madrugada`;
 		//
 	}
 	return saudacao;
@@ -221,8 +221,12 @@ module.exports = class Instace {
 		let SessionName = req?.body?.SessionName;
 		let data = await Sessions?.getSession(SessionName);
 		if (data) {
+			logger?.info(`${saudacao()}`);
+			logger?.info(`- Carregando sessão`);
 			this.initSession(req, res, next);
 		} else {
+				logger?.info(`${saudacao()}`);
+				logger?.info(`- Iniciando sessão`);
 				await Sessions?.checkAddUser(SessionName);
 				//
 				let newSession = {
@@ -247,8 +251,6 @@ module.exports = class Instace {
 	//
 	static async initSession(req, res, next) {
 		//
-		logger?.info(saudacao());
-		logger?.info("- Iniciando sessão");
 		let SessionName = req?.body?.SessionName;
 		let setOnline = req?.body?.setOnline;
 		let data = await Sessions?.getSession(SessionName);
