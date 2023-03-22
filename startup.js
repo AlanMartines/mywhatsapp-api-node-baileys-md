@@ -58,7 +58,6 @@ module.exports = class AllSessions {
 							let result = JSON.parse(fs.readFileSync(`${tokenPatch}/${item}.startup.json`, 'utf-8'));
 							//
 							let resBody = {
-								"AuthorizationToken": item,
 								"SessionName": item,
 								"setOnline": result.setOnlineue,
 								"wh_connect": result.wh_connect,
@@ -70,20 +69,23 @@ module.exports = class AllSessions {
 							var options = {
 								'method': 'POST',
 								"rejectUnauthorized": false,
+								"headers": {
+									"Content-Type": "application/json",
+									"AuthorizationToken": parseInt(config.VALIDATE_MYSQL) ? item : config.SECRET_KEY
+								},
 								'json': true,
 								'url': `${host}/sistema/Start`,
 								body: resBody
 							};
 							request(options).then(result => {
-								logger?.info(`- Start Session: ${item}`);
+								logger?.info(`- Start Session Name: ${item}`);
 							}).catch(error => {
-								logger?.error(`- Error Start Session: ${error}`);
+								logger?.error(`- Error Start Session Name: ${error}`);
 							});
 							//
 						} else {
 							//
 							let resBody = {
-								"AuthorizationToken": item,
 								"SessionName": item,
 								"setOnline": true,
 								"wh_connect": null,
@@ -95,14 +97,18 @@ module.exports = class AllSessions {
 							var options = {
 								'method': 'POST',
 								"rejectUnauthorized": false,
+								"headers": {
+									"Content-Type": "application/json",
+									"AuthorizationToken": parseInt(config.VALIDATE_MYSQL) ? item : config.SECRET_KEY
+								},
 								'json': true,
 								'url': `${host}/sistema/Start`,
 								body: resBody
 							};
 							request(options).then(result => {
-								logger?.info(`- Start Session: ${item}`);
+								logger?.info(`- Start Session Name: ${item}`);
 							}).catch(error => {
-								logger?.error(`- Error Start Session: ${error}`);
+								logger?.error(`- Error Start Session Name: ${error}`);
 							});
 							//
 						}
