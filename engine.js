@@ -123,8 +123,8 @@ async function updateStateDb(state, status, AuthorizationToken) {
 			}).then(async (entries) => {
 				logger?.info('- Status atualizado');
 			}).catch(async (err) => {
-				console?.log('- Status não atualizado');
-				console?.log(`- Error: ${err}`);
+				logger?.error('- Status não atualizado');
+				logger?.error(`- Error: ${err}`);
 			}).finally(async () => {
 				//Tokens.release();
 			});
@@ -154,8 +154,8 @@ async function updateUserConDb(userconnected, AuthorizationToken) {
 			}).then(async (entries) => {
 				logger?.info('- User connection atualizado');
 			}).catch(async (err) => {
-				console?.log('- User connection não atualizado');
-				console?.log(`- Error: ${err}`);
+				logger?.error('- User connection não atualizado');
+				logger?.error(`- Error: ${err}`);
 			}).finally(() => {
 				//Tokens.release();
 			});
@@ -174,7 +174,7 @@ async function deletaPastaToken(filePath, filename) {
 		//
 	}).catch((erro) => {
 		//
-		console?.log(`- Erro ao remover pasta "${filePath}/${filename}"`);
+		logger?.error(`- Erro ao remover pasta "${filePath}/${filename}"`);
 		//
 	});
 	//
@@ -190,7 +190,7 @@ async function deletaToken(filePath, filename) {
 		//
 	}).catch((erro) => {
 		//
-		console?.log(`- Erro ao remover arquivo "${filename}"`);
+		logger?.error(`- Erro ao remover arquivo "${filename}"`);
 		//
 	});
 	//
@@ -204,13 +204,13 @@ async function resContacts(SessionName, contacts) {
 	try {
 		fs.writeJson(`${tokenPatch}/${SessionName}.contacts.json`, `${JSON.stringify(contacts, null, 2)}`, (err) => {
 			if (err) {
-				console?.log(`- Erro: ${err}`);
+				logger?.error(`- Erro: ${err}`);
 			} else {
 				//logger?.info('- Success create contacts file');
 			}
 		});
 	} catch (error) {
-		console?.log(`- Error create contacts file: ${error}`);
+		logger?.error(`- Error create contacts file: ${error}`);
 	}
 	//
 }
@@ -281,7 +281,7 @@ module.exports = class Instace {
 			store?.readFromFile(`${tokenPatch}/${SessionName}.store.json`);
 			//
 		} catch (error) {
-			console?.log(`- Error read store file: ${error}`);
+			logger?.error(`- Error read store file: ${error}`);
 		};
 		//
 		// save every 10s
@@ -492,21 +492,21 @@ module.exports = class Instace {
 										// close WebSocket connection
 										await client.ws.close();
 									} catch (erro) {
-										console?.log(`- Error close: ${erro}`);
+										logger?.error(`- Error close: ${erro}`);
 									}
 									//
 									try {
 										// End WebSocket connection
 										//await client.ws.end();
 									} catch (erro) {
-										console?.log(`- Error end: ${erro}`);
+										logger?.error(`- Error end: ${erro}`);
 									}
 									//
 									try {
 										// remove all events
 										await client.ev.removeAllListeners();
 									} catch (erro) {
-										console?.log(`- Error removeAllListeners: ${erro}`);
+										logger?.error(`- Error removeAllListeners: ${erro}`);
 									}
 									//
 									attempts = 1;
@@ -639,21 +639,21 @@ module.exports = class Instace {
 											// close WebSocket connection
 											await client.ws.close();
 										} catch (erro) {
-											console?.log(`- Error close: ${erro}`);
+											logger?.error(`- Error close: ${erro}`);
 										}
 										//
 										try {
 											// End WebSocket connection
 											//await client.ws.end();
 										} catch (erro) {
-											console?.log(`- Error end: ${erro}`);
+											logger?.error(`- Error end: ${erro}`);
 										}
 										//
 										try {
 											// remove all events
 											await client.ev.removeAllListeners();
 										} catch (erro) {
-											console?.log(`- Error removeAllListeners: ${erro}`);
+											logger?.error(`- Error removeAllListeners: ${erro}`);
 										}
 										//
 										//await Sessions?.deleteSession(SessionName);
@@ -693,7 +693,7 @@ module.exports = class Instace {
 												//
 												return result;
 											}).catch(async (erro) => {
-												console?.log(`- Error reconnecting connection: ${erro}`);
+												logger?.error(`- Error reconnecting connection: ${erro}`);
 											});
 										}, 500);
 										//
@@ -731,7 +731,7 @@ module.exports = class Instace {
 												//
 												return result;
 											}).catch(async (erro) => {
-												console?.log(`- Error reconnecting connection: ${erro}`);
+												logger?.error(`- Error reconnecting connection: ${erro}`);
 											});
 										}, 500);
 										//
@@ -762,7 +762,7 @@ module.exports = class Instace {
 											//
 												return result;
 											}).catch(async (erro) => {
-												console?.log(`- Error reconnecting connection: ${erro}`);
+												logger?.error(`- Error reconnecting connection: ${erro}`);
 											});
 										}, 500);
 										*/
@@ -801,7 +801,7 @@ module.exports = class Instace {
 												//
 												return result;
 											}).catch(async (erro) => {
-												console?.log(`- Error reconnecting connection: ${erro}`);
+												logger?.error(`- Error reconnecting connection: ${erro}`);
 											});
 										}, 500);
 										//
@@ -816,21 +816,21 @@ module.exports = class Instace {
 											// close WebSocket connection
 											await client.ws.close();
 										} catch (erro) {
-											console?.log(`- Error close: ${erro}`);
+											logger?.error(`- Error close: ${erro}`);
 										}
 										//
 										try {
 											// End WebSocket connection
 											//await client.ws.end();
 										} catch (erro) {
-											console?.log(`- Error end: ${erro}`);
+											logger?.error(`- Error end: ${erro}`);
 										}
 										//
 										try {
 											// remove all events
 											await client.ev.removeAllListeners();
 										} catch (erro) {
-											console?.log(`- Error removeAllListeners: ${erro}`);
+											logger?.error(`- Error removeAllListeners: ${erro}`);
 										}
 										//
 										await deletaPastaToken(`${tokenPatch}`, `${SessionName}.data.json`);
@@ -868,7 +868,7 @@ module.exports = class Instace {
 												//
 												return result;
 											}).catch(async (erro) => {
-												console?.log(`- Error reconnecting connection: ${erro}`);
+												logger?.error(`- Error reconnecting connection: ${erro}`);
 											});
 										}, 500);
 										//
@@ -919,7 +919,7 @@ module.exports = class Instace {
 												//
 												return result;
 											}).catch(async (erro) => {
-												console?.log(`- Error reconnecting connection: ${erro}`);
+												logger?.error(`- Error reconnecting connection: ${erro}`);
 											});
 										}, 500);
 										//
@@ -939,7 +939,7 @@ module.exports = class Instace {
 												//
 												return result;
 											}).catch(async (erro) => {
-												console?.log(`- Error reconnecting connection: ${erro}`);
+												logger?.error(`- Error reconnecting connection: ${erro}`);
 											});
 										}, 500);
 										//
@@ -959,7 +959,7 @@ module.exports = class Instace {
 												//
 												return result;
 											}).catch(async (erro) => {
-												console?.log(`- Error reconnecting connection: ${erro}`);
+												logger?.error(`- Error reconnecting connection: ${erro}`);
 											});
 										}, 500);
 									//
@@ -968,7 +968,7 @@ module.exports = class Instace {
 							} else if (typeof connection === undefined) {
 								//
 								logger?.info(`- SessionName: ${SessionName}`);
-								console?.log(`- Connection undefined`.yellow);
+								logger?.error(`- Connection undefined`.yellow);
 								//
 							}
 							//
@@ -1005,12 +1005,12 @@ module.exports = class Instace {
 				//
 				return result;
 			}).catch(async (erro) => {
-				console?.log(`- startSock ${erro}`);
+				logger?.error(`- startSock ${erro}`);
 			});
 			//
 		} catch (error) {
 			logger?.info(`- SessionName: ${AuthorizationToken}`);
-			console?.log(`- Instância não criada: ${error.message}`);
+			logger?.error(`- Instância não criada: ${error.message}`);
 			//
 			let addJson = {
 				client: false,
