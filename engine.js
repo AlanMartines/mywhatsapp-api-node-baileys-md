@@ -219,7 +219,7 @@ async function resContacts(SessionName, contacts) {
 //
 module.exports = class Instace {
 	static async Start(req, res, next) {
-		logger?.info(`${req?.body}`);
+		logger?.info(`${JSON.stringify(req?.body, null, 2)}`);
 		let SessionName = req?.body?.SessionName;
 		let data = await Sessions?.getSession(SessionName);
 		if (data) {
@@ -486,7 +486,7 @@ module.exports = class Instace {
 								//
 								await Sessions?.addInfoSession(SessionName, addJson);
 								//
-								await updateStateDb(addJson?.state, addJson?.status, data?.AuthorizationToken);
+								await updateStateDb(addJson?.state, addJson?.status, SessionName);
 								//
 								if (attempts >= 5) {
 									//
@@ -601,7 +601,7 @@ module.exports = class Instace {
 									}
 								);
 								//
-								await updateStateDb(addJson?.state, addJson?.status, data?.AuthorizationToken);
+								await updateStateDb(addJson?.state, addJson?.status, SessionName);
 								webhooks?.wh_connect(await Sessions?.getSession(SessionName), addJson?.state, phone);
 								//
 								if (phone) {
@@ -675,7 +675,7 @@ module.exports = class Instace {
 										//
 										await Sessions?.addInfoSession(SessionName, addJson);
 										//
-										await updateStateDb(addJson?.state, addJson?.status, data?.AuthorizationToken);
+										await updateStateDb(addJson?.state, addJson?.status, SessionName);
 										//
 										req.io.emit('status',
 											{
@@ -713,7 +713,7 @@ module.exports = class Instace {
 										//
 										await Sessions?.addInfoSession(SessionName, addJson);
 										//
-										await updateStateDb(addJson?.state, addJson?.status, data?.AuthorizationToken);
+										await updateStateDb(addJson?.state, addJson?.status, SessionName);
 										//
 										req.io.emit('status',
 											{
@@ -790,7 +790,7 @@ module.exports = class Instace {
 										//
 										await Sessions?.addInfoSession(SessionName, addJson);
 										//
-										await updateStateDb(addJson?.state, addJson?.status, data?.AuthorizationToken);
+										await updateStateDb(addJson?.state, addJson?.status, SessionName);
 										//
 										setTimeout(async function () {
 											return await startSock(SessionName).then(async (result) => {
@@ -850,7 +850,7 @@ module.exports = class Instace {
 										//
 										await Sessions?.addInfoSession(SessionName, addJson);
 										//
-										await updateStateDb(addJson?.state, addJson?.status, data?.AuthorizationToken);
+										await updateStateDb(addJson?.state, addJson?.status, SessionName);
 										//
 										req.io.emit('status',
 											{
@@ -901,7 +901,7 @@ module.exports = class Instace {
 										//
 										await Sessions?.addInfoSession(SessionName, addJson);
 										//
-										await updateStateDb(addJson?.state, addJson?.status, data?.AuthorizationToken);
+										await updateStateDb(addJson?.state, addJson?.status, SessionName);
 										//
 										req.io.emit('status',
 											{
