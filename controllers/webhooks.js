@@ -8,7 +8,7 @@ const Sessions = require('../controllers/sessions');
 module.exports = class Webhooks {
 
 	static async wh_messages(data, object) {
-		//let data = Sessions?.getSession(session);
+		//let dataSessions = await Sessions?.getSession(SessionName);;
 		try {
 			if (data?.wh_message != undefined && data?.wh_message != null && data?.wh_message != '') {
 				logger.info(`- SessionName: ${data?.name}`);
@@ -34,7 +34,7 @@ module.exports = class Webhooks {
 	}
 
 	static async wh_connect(data, object, phone = null) {
-		//let data = Sessions?.getSession(session)
+		//let dataSessions = await Sessions?.getSession(SessionName);
 		logger.info(`- SessionName: ${data?.name}`);
 		try {
 			var object = {
@@ -70,7 +70,7 @@ module.exports = class Webhooks {
 	}
 
 	static async wh_status(data, object) {
-		//let data = Sessions?.getSession(session)
+		//let dataSessions = await Sessions?.getSession(SessionName);
 		logger.info(`- SessionName: ${data?.name}`);
 		try {
 			if (data?.wh_status != undefined && data?.wh_status != null && data?.wh_status != '') {
@@ -128,4 +128,39 @@ module.exports = class Webhooks {
 			logger?.error(`- Error: ${error.message}`);;
 		}
 	}
+
+  static async wh_incomingCall(SessionName, response) {
+    let dataSessions = await Sessions?.getSession(SessionName);
+		try {
+			if (dataSessions?.wh_message != undefined && dataSessions?.wh_message != null && dataSessions?.wh_message != '') {
+				logger.info(`- SessionName: ${SessionName}`);
+				let object = {
+					"wook": 'INCOMING CALL',
+					"id": response?.id,
+					"phone": response?.peerJid,
+					"data": moment?.unix(response?.offerTime)?.format('DD-MM-YYYY hh:mm:ss'),
+					"isVideo": response?.isVideo,
+					"isGroup": response?.isGroup,
+					"participants": response?.participants
+				};
+				let dataJson = JSON.stringify(object, null, 2);
+				await axios.post(dataSessions?.wh_message, dataJson, {
+					httpsAgent: new https.Agent({
+						rejectUnauthorized: false,
+						keepAlive: true
+					}),
+					headers: { 'Content-Type': 'application/json' }
+				}).then(response => {
+					logger.info('- Webhooks receive message')
+				}).catch(error => {
+					logger?.error(`- Error receive message: ${error.message}`);
+				});
+
+			} else {
+				logger.info('- Webhook no defined');
+			}
+		} catch (error) {
+			logger?.error(`- Error: ${error.message}`);
+		}
+  }
 }
