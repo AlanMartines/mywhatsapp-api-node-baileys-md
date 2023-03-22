@@ -53,7 +53,7 @@
 		"file-type": "^16.5.3",
 		"fs-extra": "^11.1.1",
 		"github-latest-release": "^0.1.1",
-		"latest-version": "^7.0.0",
+		"latest-version": "^5.1.0",
 		"link-preview-js":"^3.0.4",
 		"moment": "^2.29.4",
 		"multer": "^1.4.5-lts.1",
