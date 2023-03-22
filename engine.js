@@ -98,7 +98,7 @@ async function saudacao() {
 		saudacao = `- Boa madrugada`;
 		//
 	}
-	return saudacao;
+	logger?.info(`${saudacao}`);
 }
 //
 // ------------------------------------------------------------------------------------------------------- //
@@ -222,12 +222,12 @@ module.exports = class Instace {
 		let data = Sessions?.getSession(SessionName);
 		logger?.info(data);
 		if (data) {
-			logger?.info(`${await saudacao()}`);
+			await saudacao();
 			logger?.info(`- Carregando sessão`);
 			this.initSession(req, res, next);
 		} else {
 			if (data == false) {
-				logger?.info(`${await saudacao()}`);
+				await saudacao();
 				logger?.info(`- Iniciando sessão`);
 				await Sessions?.checkAddUser(SessionName);
 				//

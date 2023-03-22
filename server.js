@@ -294,10 +294,10 @@ FORCE_CONNECTION_USE_HERE=0
 
 					let repoVersion = await latest('mywhatsapp-api-node-baileys-md');
 					if (Sessions.upToDate(version, repoVersion)) {
-						logger?.info(`- Sua API esta Atualizada com a versão mais recente`);
+						logger?.info(`- API esta Atualizada com a versão mais recente`);
 						io.emit('version', {
 							newVersion: false,
-							message: `Sua API esta Atualizada com a versão mais recente`
+							message: `API esta Atualizada com a versão mais recente`
 						});
 					} else {
 						logger?.info(`- Há uma nova versão disponível`);
