@@ -42,7 +42,7 @@ module.exports = class Sessions {
 
   // checar ou adiciona um usuario na sessão
   static checkAddUser(name) {
-    var checkFilter = this.session?.filter(order => (order?.session === name)), add = null
+    var checkFilter = this.session?.filter(order => (order?.SessionName === name)), add = null
     if (!checkFilter?.length) {
       add = {
         SessionName: name,
@@ -55,7 +55,7 @@ module.exports = class Sessions {
 
   // checar se exite o usuario na sessão
   static checkSession(name) {
-    var checkFilter = this.session?.filter(order => (order?.session === name))
+    var checkFilter = this.session?.filter(order => (order?.SessionName === name))
     if (checkFilter?.length) {
       return true
     }
@@ -66,7 +66,7 @@ module.exports = class Sessions {
   static getSessionKey(name) {
     if (this.checkSession(name)) {
       for (var i in this.session) {
-        if (this.session[i]?.session === name) {
+        if (this.session[i]?.SessionName === name) {
           return i
         }
       }
@@ -78,7 +78,7 @@ module.exports = class Sessions {
   static addInfoSession(name, extend) {
     if (this.checkSession(name)) {
       for (var i in this.session) {
-        if (this.session[i]?.session === name) {
+        if (this.session[i]?.SessionName === name) {
           Object?.assign(this.session[i], extend)
           return true
         }
@@ -91,7 +91,7 @@ module.exports = class Sessions {
   static removeInfoObjects(name, key) {
     if (this.checkSession(name)) {
       for (var i in this.session) {
-        if (this.session[i]?.session === name) {
+        if (this.session[i]?.SessionName === name) {
           delete this.session[i][key]
           return true
         }
