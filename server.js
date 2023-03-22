@@ -280,7 +280,7 @@ FORCE_CONNECTION_USE_HERE=0
 				if (err) {
 					logger?.error(err);
 				} else {
-					//let repoVersion = await latest('mywhatsapp-api-node-baileys-md')
+					let repoVersion = await latest('mywhatsapp-api-node-baileys-md')
 					let hostUrl = config.HOST == '0.0.0.0' ? '127.0.0.1' : `${config.HOST}`;
 					let host = config.DOMAIN_SSL == '' ? `http://${hostUrl}:${config.PORT}` : `https://${config.DOMAIN_SSL}`;
 					logger?.info(`- HTTP Server running on`);
