@@ -3,7 +3,6 @@
 const config = require('./config.global');
 const eventsSend = require('./controllers/events');
 const webhooks = require('./controllers/webhooks.js');
-const fnSocket = require('./controllers/fnSockets');
 const fs = require('fs-extra');
 const rmfr = require('rmfr');
 const {
@@ -16,7 +15,6 @@ moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
 const pino = require("pino");
 const colors = require('colors');
-const { Boom } = require('@hapi/boom');
 const { default: pQueue } = require('p-queue');
 const { release } = require('os');
 const NodeCache = require('node-cache');
