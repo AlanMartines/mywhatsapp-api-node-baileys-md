@@ -280,19 +280,20 @@ FORCE_CONNECTION_USE_HERE=0
 				if (err) {
 					logger?.error(err);
 				} else {
-					let repoVersion = await latest('mywhatsapp-api-node-baileys-md')
 					let hostUrl = config.HOST == '0.0.0.0' ? '127.0.0.1' : `${config.HOST}`;
 					let host = config.DOMAIN_SSL == '' ? `http://${hostUrl}:${config.PORT}` : `https://${config.DOMAIN_SSL}`;
 					logger?.info(`- HTTP Server running on`);
 					logger?.info(`- To start: ${host}/Start`);
 					logger?.info(`- To doc: ${host}/api-doc`);
 					//
+					/*
 					logger?.info(`- Verificando Atualizações`);
 					io.emit('version', {
 						newVersion: undefined,
 						message: `Verificando Atualizações`
 					});
 
+					let repoVersion = await latest('mywhatsapp-api-node-baileys-md');
 					if (Sessions.upToDate(version, repoVersion)) {
 						logger?.info(`- Sua API esta Atualizada com a versão mais recente`);
 						io.emit('version', {
@@ -307,7 +308,7 @@ FORCE_CONNECTION_USE_HERE=0
 						});
 						Sessions.logUpdateAvailable(version, repoVersion);
 					}
-
+					*/
 				}
 				//
 				if (parseInt(config.START_ALL_SESSIONS) == true) {
