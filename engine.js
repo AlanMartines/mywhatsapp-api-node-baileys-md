@@ -221,7 +221,7 @@ module.exports = class Instace {
 		let SessionName = req?.body?.SessionName;
 		let data = Sessions?.checkSession(SessionName);
 		//let data = Sessions?.getSession(SessionName);
-		logger?.info(`Data: ${data}`);
+		logger?.info(`Data: ${JSON.stringify(data, null, 2)}`);
 		if (data) {
 			await saudacao();
 			logger?.info(`- Carregando sessão`);
