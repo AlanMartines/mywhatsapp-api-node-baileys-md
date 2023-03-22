@@ -227,11 +227,8 @@ module.exports = class Instace {
 		} else {
 				await saudacao();
 				logger?.info(`- Iniciando sessão`);
-				await Sessions?.checkAddUser(SessionName);
 				//
 				let newSession = {
-					AuthorizationToken: req?.headers?.authorizationtoken,
-					SessionName: SessionName,
 					waqueue: null,
 					qrcode: null,
 					client: null,
@@ -243,6 +240,7 @@ module.exports = class Instace {
 					state: 'STARTING',
 					status: "notLogged"
 				}
+				await Sessions?.checkAddUser(SessionName);
 				await Sessions?.addInfoSession(SessionName, newSession);
 				this.initSession(req, res, next);
 			//
