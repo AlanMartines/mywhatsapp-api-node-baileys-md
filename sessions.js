@@ -1178,14 +1178,14 @@ module.exports = class Sessions {
 							await saveCreds();
 						}
 						//
-						eventsSend?.statusConnection(SessionName, client, socket, events);
-						eventsSend?.statusMessage(SessionName, client, socket, events);
-						eventsSend?.contactsEvents(SessionName, client, socket, events);
-						eventsSend?.messagesEvents(SessionName, client, socket, events);
-						eventsSend?.chatsEvents(SessionName, client, socket, events);
-						eventsSend?.blocklistEvents(SessionName, client, socket, events);
-						eventsSend?.groupsEvents(SessionName, client, socket, events);
-						eventsSend?.extraEvents(SessionName, client, socket, events);
+						eventsSend?.statusConnection(Sessions.getSession(SessionName), client, socket, events);
+						eventsSend?.statusMessage(Sessions.getSession(SessionName), client, socket, events);
+						eventsSend?.contactsEvents(Sessions.getSession(SessionName), client, socket, events);
+						eventsSend?.messagesEvents(Sessions.getSession(SessionName), client, socket, events);
+						eventsSend?.chatsEvents(Sessions.getSession(SessionName), client, socket, events);
+						eventsSend?.blocklistEvents(Sessions.getSession(SessionName), client, socket, events);
+						eventsSend?.groupsEvents(Sessions.getSession(SessionName), client, socket, events);
+						eventsSend?.extraEvents(Sessions.getSession(SessionName), client, socket, events);
 						//
 					}
 				);
