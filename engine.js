@@ -7,6 +7,7 @@ const moment = require('moment');
 moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
 const pino = require("pino");
+const rmfr = require('rmfr');
 const colors = require('colors');
 const { default: pQueue } = require('p-queue');
 const { release } = require('os');
