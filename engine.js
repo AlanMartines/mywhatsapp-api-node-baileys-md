@@ -219,6 +219,7 @@ async function resContacts(SessionName, contacts) {
 //
 module.exports = class Instace {
 	static async Start(req, res, next) {
+		logger?.info(`${req?.body}`);
 		let SessionName = req?.body?.SessionName;
 		let data = await Sessions?.getSession(SessionName);
 		if (data) {
