@@ -226,7 +226,6 @@ module.exports = class Instace {
 			logger?.info(`- Carregando sessão`);
 			this.initSession(req, res, next);
 		} else {
-			if (data == false) {
 				await saudacao();
 				logger?.info(`- Iniciando sessão`);
 				await Sessions?.checkAddUser(SessionName);
@@ -247,7 +246,6 @@ module.exports = class Instace {
 				}
 				await Sessions?.addInfoSession(SessionName, newSession);
 				this.initSession(req, res, next);
-			}
 			//
 		}
 	}
