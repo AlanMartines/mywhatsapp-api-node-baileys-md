@@ -219,8 +219,15 @@ async function resContacts(SessionName, contacts) {
 //
 module.exports = class Instace {
 	static async Start(req, res, next) {
-		logger?.info(`${JSON.stringify(req?.body, null, 2)}`);
-		let SessionName = req?.body?.SessionName;
+		//
+		let reqBody = JSON.stringify(req?.body, null, 2);
+		//
+		let SessionName = reqBody?.SessionName;
+		let wh_status = reqBody?.wh_status;
+		let wh_message = reqBody?.wh_message;
+		let wh_qrcode = reqBody?.wh_qrcode;
+		let wh_connect = reqBody?.wh_connect;
+		//
 		let data = await Sessions?.getSession(SessionName);
 		if (data) {
 			await saudacao();
@@ -235,10 +242,10 @@ module.exports = class Instace {
 					qrcode: null,
 					client: null,
 					tokenPatch: tokenPatch,
-          wh_status: req?.body?.wh_status != undefined ? req?.body?.wh_status : '',
-          wh_message: req?.body?.wh_message != undefined ? req?.body?.wh_message : '',
-          wh_qrcode: req?.body?.wh_qrcode != undefined ? req?.body?.wh_qrcode : '',
-          wh_connect: req?.body?.wh_connect != undefined ? req?.body?.wh_connect : '',
+          wh_status: wh_status != undefined ? wh_status : '',
+          wh_message: wh_message != undefined ? wh_message : '',
+          wh_qrcode: wh_qrcode != undefined ? wh_qrcode : '',
+          wh_connect: wh_connect != undefined ? wh_connect : '',
 					state: 'STARTING',
 					status: "notLogged"
 				};
@@ -252,8 +259,11 @@ module.exports = class Instace {
 	//
 	static async initSession(req, res, next) {
 		//
-		let SessionName = req?.body?.SessionName;
-		let setOnline = req?.body?.setOnline;
+		let reqBody = JSON.stringify(req?.body, null, 2);
+		//
+		let SessionName = reqBody?.SessionName;
+		let setOnline = reqBody?.setOnline;
+		//
 		let waqueue = new pQueue({ concurrency: parseInt(config.CONCURRENCY) });
 		await Sessions?.addInfoSession(SessionName, {
 			waqueue: waqueue
