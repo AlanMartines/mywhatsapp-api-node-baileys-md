@@ -625,7 +625,7 @@ router.post("/getAllSessions", upload.none(''), verifyToken.verify, async (req, 
 	//
 	var getSessions = await instance?.AllSessions();
 	//
-	if (getSessions.length !== 0) {
+	if (getSessions.length) {
 		//
 		res.setHeader('Content-Type', 'application/json');
 		return res.status(getSessions.status).json({
