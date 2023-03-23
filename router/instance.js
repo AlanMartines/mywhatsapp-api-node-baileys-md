@@ -22,7 +22,7 @@ const config = require('../config.global');
 // ------------------------------------------------------------------------------------------------//
 //
 function removeWithspace(string) {
-	let string = string.replace(/\r?\n|\r|\s+/g, ""); /* replace all newlines and with a space */
+	var string = string.replace(/\r?\n|\r|\s+/g, ""); /* replace all newlines and with a space */
 	return string;
 }
 //
