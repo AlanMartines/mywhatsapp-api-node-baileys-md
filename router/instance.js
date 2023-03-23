@@ -337,7 +337,6 @@ router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, nex
 				case 'isLogged':
 				case 'chatsAvailable':
 					//
-					var session = Sessions.getSession(resSessionName);
 					var resultLogout = await Sessions.logoutSession(resSessionName);
 					//
 					res.setHeader('Content-Type', 'application/json');

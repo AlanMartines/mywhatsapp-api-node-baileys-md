@@ -262,7 +262,6 @@ module.exports = class Instance {
 			logger?.info("- Sessão fechada");
 			//
 			let addJson = {
-				client: false,
 				message: "Sessão fechada",
 				state: "CLOSED",
 				status: "notLogged"
@@ -271,14 +270,13 @@ module.exports = class Instance {
 			await Sessions?.addInfoSession(SessionName, addJson);
 			//
 			webhooks?.wh_connect(SessionName);
+			await updateStateDb(addJson?.state, addJson?.status, SessionName);
 			//
 			let result = {
 				"erro": false,
 				"status": 200,
 				"message": "Sessão fechada com sucesso"
 			};
-			//
-			await updateStateDb(addJson?.state, addJson?.status, SessionName);
 			//
 			return result;
 			//
@@ -297,7 +295,58 @@ module.exports = class Instance {
 		}
 		//
 	} //closeSession
-	//
+//
 	// ------------------------------------------------------------------------------------------------//
+	//
+	static async logoutSession(SessionName) {
+		//
+		logger?.info("- Desconetando sessão");
+		logger?.info(`- SessionName: ${SessionName}`);
+		//
+		var session = Sessions?.getSession(SessionName);
+		try {
+			//
+			await session.client.logout();
+			// close WebSocket connection
+			//await session.client.ws.close();
+			// remove all events
+			//await session.client.ev.removeAllListeners();
+			//
+			let addJson = {
+				client: false,
+				message: "Sessão desconetada",
+				state: "DISCONNECTED",
+				status: "notLogged"
+			};
+			//
+			await Sessions?.addInfoSession(SessionName, addJson);
+			//
+			webhooks?.wh_connect(SessionName);
+			await updateStateDb(addJson?.state, addJson?.status, SessionName);
+			//
+			let result = {
+				"erro": false,
+				"status": 200,
+				"message": "Sessão desconetada com sucesso"
+			};
+			//
+			return result;
+			//
+		} catch (error) {
+			logger?.error(`- Error ao desconetar sessão: ${error}`);
+			//
+			let result = {
+				"erro": true,
+				"status": 404,
+				"message": "Erro ao desconetar sessão"
+			};
+			//
+			return result;
+			//
+		}
+		//
+	} //LogoutSession
+	//
+	// ------------------------------------------------------------------------------------------------------- //
 	//
 }
