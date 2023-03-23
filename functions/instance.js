@@ -376,6 +376,7 @@ module.exports = class Instance {
 			//
 			webhooks?.wh_connect(SessionName);
 			await updateStateDb(addJson?.state, addJson?.status, SessionName);
+			//await Sessions?.deleteSession(SessionName);
 			//
 			let result = {
 				"erro": false,
@@ -473,6 +474,14 @@ module.exports = class Instance {
 			};
 		}
 	} //restartToken
+	//
+	// ------------------------------------------------------------------------------------------------------- //
+	//
+	static async showAllSessions(req, res, next) {
+		let data = await Sessions?.getAll();
+		console.log(JSON.stringify(data, null, 2));
+		return res?.status(200)?.json({ state: 'Teste'});
+	}
 	//
 	// ------------------------------------------------------------------------------------------------------- //
 	//
