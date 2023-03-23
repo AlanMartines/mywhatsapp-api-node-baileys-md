@@ -3,6 +3,7 @@
 const express = require("express");
 const router = express.Router();
 const verifyToken = require("../middleware/verifyToken");
+const instance = require("../functions/instance");
 const engine = require("../engine");
 const Sessions = require('../controllers/sessions');
 const { logger } = require("../utils/logger");
@@ -126,6 +127,85 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 		//
 	}
 });
+//
+// ------------------------------------------------------------------------------------------------//
+//
+router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	logger?.info("- Obtendo status");
+	//
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
+	//
+	if (parseInt(config.VALIDATE_MYSQL) == true) {
+		var resSessionName = theTokenAuth;
+		var resTokenAuth = theTokenAuth;
+	} else {
+		var resSessionName = theSessionName;
+		var resTokenAuth = theTokenAuth;
+	}
+	//
+	try {
+		if (!resSessionName) {
+			var resultRes = {
+				"erro": true,
+				"status": 400,
+				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			return res.status(resultRes.status).json({
+				"Status": resultRes
+			});
+			//
+		} else {
+			//
+			try {
+				var Status = await instance.Status(req, res, next);
+				//
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(200).json({
+					"Status": Status
+				});
+				//
+			} catch (erro) {
+				logger?.error(`- Erro ao obter status: ${erro}`);
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Erro ao obter status'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+				//
+			}
+		}
+	} catch (error) {
+		logger?.error(`${error}`);
+		//
+		var resultRes = {
+			"erro": true,
+			"status": 403,
+			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		return res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	}
+}); //Status
+
+router.post('/Close', verifyToken.verify, Auth.closeSession);
+router.post('/Logout', verifyToken.verify, Auth.logoutSession);
+router.post('/restartToken', verifyToken.verify, Auth.getConnectionState);
+router.get('/QRCode', Auth.getQrCode);
+router.post('/deleteSession', verifyToken.verify, database.deleteSession);
+router.post('/getAllSessions', verifyToken.verify, database.getAllSessions);
 //
 // ------------------------------------------------------------------------------------------------//
 //
