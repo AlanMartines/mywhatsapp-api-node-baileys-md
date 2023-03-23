@@ -386,10 +386,8 @@ router.post("/restartToken", verifyToken.verify, upload.none(''), async (req, re
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
 	} else {
 		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -407,7 +405,7 @@ router.post("/restartToken", verifyToken.verify, upload.none(''), async (req, re
 			//
 		} else {
 			//
-			var resultRestart = await Sessions.restartToken(req.io, session.name, session.AuthorizationToken);
+			let resultRestart = await instance.restartToken(req, res, next);
 			//
 			res.setHeader('Content-Type', 'application/json');
 			return res.status(resultRestart.status).json({

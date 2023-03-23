@@ -6,6 +6,7 @@ const { logger } = require("../utils/logger");
 const { Tokens } = require('../models');
 const webhooks = require('../controllers/webhooks');
 const config = require('../config.global');
+const engine = require("../engine");
 //
 let tokenPatch;
 if (parseInt(config.INDOCKER)) {
@@ -358,10 +359,10 @@ module.exports = class Instance {
 		}
 		//
 	} //LogoutSession
-//
+	//
 	// ------------------------------------------------------------------------------------------------------- //
 	//
-	static async restartToken(SessionName) {
+	static async restartToken(req, res, next) {
 		//
 		logger?.info("- Resetando sessão");
 		logger?.info(`- SessionName: ${SessionName}`);
@@ -382,15 +383,19 @@ module.exports = class Instance {
 				await deletaToken(`${tokenPatch}`, `${SessionName}.startup.json`);
 				await deletaToken(`${tokenPatch}`, `${SessionName}.contacts.json`);
 				//
-				session.qrcode = null;
-				session.qrRetry = null;
-				session.client = false;
-				session.result = null;
-				session.state = 'STARTING';
-				session.status = 'notLogged';
-				session.message = null;
+				let addJson = {
+					client: false,
+					message: "Sessão sendo reiniciada",
+					state: "STARTING",
+					status: "notLogged"
+				};
 				//
-				session.client = Sessions.initSession(socket, SessionName, AuthorizationToken, whatsappVersion);
+				await Sessions?.addInfoSession(SessionName, addJson);
+				//
+				webhooks?.wh_connect(SessionName);
+				await updateStateDb(addJson?.state, addJson?.status, SessionName);
+				//
+				engine?.Start(req, res, next);
 				//
 				return {
 					"erro": false,
