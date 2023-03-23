@@ -1,11 +1,26 @@
 const Sessions = require("../controllers/sessions");
-
+//
+// ------------------------------------------------------------------------------------------------//
+//
+function removeWithspace(string) {
+	var string = string.replace(/\r?\n|\r|\s+/g, ""); /* replace all newlines and with a space */
+	return string;
+}
+//
+// ------------------------------------------------------------------------------------------------//
+//
+function soNumeros(string) {
+	var numbers = string.replace(/[^0-9]/g, '');
+	return numbers;
+}
+//
+// ------------------------------------------------------------------------------------------------//
+//
 module.exports = class Instance {
 	//
-	static async Status(req, res, next) {
+	static async Status(resSessionName) {
 		try {
-			let SessionName = req.body.SessionName;
-			var session = Sessions?.getSession(SessionName);
+			let session = Sessions?.getSession(resSessionName);
 			if (session) {
 				//só adiciona se não existir
 				if (session.state == "CONNECTED") {

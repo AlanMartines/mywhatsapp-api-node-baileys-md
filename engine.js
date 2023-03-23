@@ -77,7 +77,21 @@ if (!fs.existsSync(tokenPatch)) { // verifica se o diretório já existe
 	fs.mkdirSync(tokenPatch, { recursive: true }); // cria o diretório recursivamente
 }
 //
-// ------------------------------------------------------------------------------------------------------- //
+// ------------------------------------------------------------------------------------------------//
+//
+function removeWithspace(string) {
+	var string = string.replace(/\r?\n|\r|\s+/g, ""); /* replace all newlines and with a space */
+	return string;
+}
+//
+// ------------------------------------------------------------------------------------------------//
+//
+function soNumeros(string) {
+	var numbers = string.replace(/[^0-9]/g, '');
+	return numbers;
+}
+//
+// ------------------------------------------------------------------------------------------------//
 //
 async function saudacao() {
 	//
@@ -218,32 +232,45 @@ async function resContacts(SessionName, contacts) {
 //
 module.exports = class Instace {
 	static async Start(req, res, next) {
-		let SessionName = req?.body?.SessionName;
+		//
+		const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+		const theSessionName = removeWithspace(req?.body?.SessionName);
+		let SessionName;
+		let resTokenAuth;
+		//
+		if (parseInt(config.VALIDATE_MYSQL) == true) {
+			SessionName = theTokenAuth;
+			resTokenAuth = theTokenAuth;
+		} else {
+			SessionName = theSessionName;
+			resTokenAuth = theTokenAuth;
+		}
+		//
 		let data = await Sessions?.getSession(SessionName);
 		if (data) {
 			await saudacao();
 			logger?.info(`- Carregando sessão`);
 			this.initSession(req, res, next);
 		} else {
-				await saudacao();
-				logger?.info(`- Iniciando sessão`);
-				//
-				let newSession = {
-					waqueue: null,
-					qrcode: null,
-					client: null,
-					tokenPatch: tokenPatch,
-          wh_status: req?.body?.wh_status != undefined ? req?.body?.wh_status : '',
-          wh_message: req?.body?.wh_message != undefined ? req?.body?.wh_message : '',
-          wh_qrcode: req?.body?.wh_qrcode != undefined ? req?.body?.wh_qrcode : '',
-          wh_connect: req?.body?.wh_connect != undefined ? req?.body?.wh_connect : '',
-					state: 'STARTING',
-					status: "notLogged"
-				};
-	
-				await Sessions?.checkAddUser(SessionName);
-				await Sessions?.addInfoSession(SessionName, newSession);
-				this.initSession(req, res, next);
+			await saudacao();
+			logger?.info(`- Iniciando sessão`);
+			//
+			let newSession = {
+				waqueue: null,
+				qrcode: null,
+				client: null,
+				tokenPatch: tokenPatch,
+				wh_status: req?.body?.wh_status != undefined ? req?.body?.wh_status : '',
+				wh_message: req?.body?.wh_message != undefined ? req?.body?.wh_message : '',
+				wh_qrcode: req?.body?.wh_qrcode != undefined ? req?.body?.wh_qrcode : '',
+				wh_connect: req?.body?.wh_connect != undefined ? req?.body?.wh_connect : '',
+				state: 'STARTING',
+				status: "notLogged"
+			};
+
+			await Sessions?.checkAddUser(SessionName);
+			await Sessions?.addInfoSession(SessionName, newSession);
+			this.initSession(req, res, next);
 			//
 		}
 	}
