@@ -19,7 +19,6 @@ function removeWithspace(string) {
 exports.verify = async (req, res, next) => {
 	//
 	let theTokenAuth;
-	let theSessionName;
 	//
 	if (!req?.headers?.authorizationtoken) {
 		res.setHeader('Content-Type', 'application/json');
@@ -34,18 +33,6 @@ exports.verify = async (req, res, next) => {
 		theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
 	}
 	//
-	if (!req?.body?.SessionName) {
-		res.setHeader('Content-Type', 'application/json');
-		return res.status(422).json({
-			"Status": {
-				"erro": true,
-				"status": 422,
-				"message": "SessionName não informado, verifique e tente novamente"
-			}
-		});
-	} else {
-		theSessionName = removeWithspace(req?.body?.SessionName)
-	}
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		//
