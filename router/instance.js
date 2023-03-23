@@ -626,52 +626,29 @@ router.post("/getAllSessions", upload.none(''), verifyToken.verify, async (req, 
 	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
 	const theSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
-	}
 	//
-	if (!resSessionName) {
+	var getSessions = await Sessions.getSessions();
+	//
+	if (getSessions) {
+		//
+		res.setHeader('Content-Type', 'application/json');
+		return res.status(getSessions.status).json({
+			"Status": getSessions
+		});
+		//
+	} else {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
-			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			"message": 'Nenhuma sessão criada'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
 		return res.status(resultRes.status).json({
 			"Status": resultRes
 		});
-		//
-	} else {
-		//
-		var getSessions = await Sessions.getSessions();
-		//
-		if (getSessions) {
-			//
-			var resultRes = { "erro": false, "status": 200, "Sessions": getSessions };
-			res.setHeader('Content-Type', 'application/json');
-			return res.status(resultRes.status).json({
-				"Status": resultRes
-			});
-			//
-		} else {
-			var resultRes = {
-				"erro": true,
-				"status": 400,
-				"message": 'Nenhuma sessão criada'
-			};
-			//
-			res.setHeader('Content-Type', 'application/json');
-			return res.status(resultRes.status).json({
-				"Status": resultRes
-			});
-			//
-		}
 	}
+	//
 }); //getSessions
 //
 // ------------------------------------------------------------------------------------------------//

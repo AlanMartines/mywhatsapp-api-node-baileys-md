@@ -480,8 +480,8 @@ module.exports = class Instance {
 	static async getSession(SessionName) {
 		try {
 			let data = await Sessions?.getSession(SessionName);
-				//
-				if(data){
+			//
+			if (data) {
 				//
 				return {
 					"erro": false,
@@ -490,7 +490,7 @@ module.exports = class Instance {
 					"session": data
 				};
 				//
-				}else{
+			} else {
 				//
 				return {
 					"erro": false,
@@ -498,7 +498,7 @@ module.exports = class Instance {
 					"message": "Sessão não encontrada"
 				};
 				//
-				}
+			}
 		} catch (error) {
 			logger?.error(`- Error when: ${error}`);
 			//
@@ -515,9 +515,38 @@ module.exports = class Instance {
 	// ------------------------------------------------------------------------------------------------------- //
 	//
 	static async AllSessions(req, res, next) {
-		let data = await Sessions?.getAll();
-		console.log(JSON.stringify(data, null, 2));
-		return res?.status(200)?.json({ state: 'Teste' });
+		try {
+			let data = await Sessions?.getAll();
+			//
+			if (data) {
+				//
+				return {
+					"erro": false,
+					"status": 200,
+					"message": "Sessões carregadas com sucesso",
+					"session": data
+				};
+				//
+			} else {
+				//
+				return {
+					"erro": false,
+					"status": 200,
+					"message": "Sessões não encontradas"
+				};
+				//
+			}
+		} catch (error) {
+			logger?.error(`- Error when: ${error}`);
+			//
+			return {
+				"erro": false,
+				"status": 404,
+				"message": 'Erro ao carregar sessões'
+			};
+			//
+		};
+		//
 	}
 	//
 	// ------------------------------------------------------------------------------------------------------- //
