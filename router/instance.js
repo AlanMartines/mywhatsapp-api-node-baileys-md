@@ -1,5 +1,6 @@
 //
 // Configuração dos módulos
+const os = require('os');
 const express = require("express");
 const router = express.Router();
 const multer = require('multer');
@@ -651,38 +652,40 @@ router.post("/getAllSessions", upload.none(''), verifyToken.verify, async (req, 
 //
 // Dados de memoria e uptime
 router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res, next) => {
-	logger?.info(`-getHardWare`);
-	//
-	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
-	const theSessionName = removeWithspace(req?.body?.SessionName);
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-	}
+	logger?.info(`- getHardWare`);
 	//
 	try {
-		var resultRes = {
-			"erro": false,
-			"status": 200,
-			"noformat": {
+		const resultRes = {
+			erro: false,
+			status: 200,
+			noformat: {
 				uptime: os.uptime(),
 				freemem: os.freemem(),
-				memusage: (os.totalmem() - os.freemem()),
+				memusage: os.totalmem() - os.freemem(),
 				totalmem: os.totalmem(),
-				freeusagemem: `${Math.round((os.freemem() * 100) / os.totalmem()).toFixed(0)}`,
-				usagemem: `${Math.round(((os.totalmem() - os.freemem()) * 100) / os.totalmem()).toFixed(0)}`
+				freeusagemem: `${Math.round((os.freemem() * 100) / os.totalmem()).toFixed(0)}%`,
+				usagemem: `${Math.round(((os.totalmem() - os.freemem()) * 100) / os.totalmem()).toFixed(0)}%`,
 			},
-			"format": {
-				uptime: (os.uptime() + "").toHHMMSS(),
+			format: {
+				uptime: convertSecondsToHHMMSS(os.uptime()),
 				freemem: convertBytes(os.freemem()),
-				memusage: convertBytes((os.totalmem() - os.freemem())),
+				memusage: convertBytes(os.totalmem() - os.freemem()),
 				totalmem: convertBytes(os.totalmem()),
-				freeusagemem: `${Math.round((os.freemem() * 100) / os.totalmem()).toFixed(0)} %`,
-				usagemem: `${Math.round(((os.totalmem() - os.freemem()) * 100) / os.totalmem()).toFixed(0)} %`
-			}
+				freeusagemem: `${Math.round((os.freemem() * 100) / os.totalmem()).toFixed(0)}%`,
+				usagemem: `${Math.round(((os.totalmem() - os.freemem()) * 100) / os.totalmem()).toFixed(0)}%`,
+			},
 		};
+
+		function convertSecondsToHHMMSS(seconds) {
+			return new Date(seconds * 1000).toISOString().substr(11, 8);
+		}
+
+		function convertBytes(bytes) {
+			const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+			if (bytes === 0) return "0 Bytes";
+			const i = Math.floor(Math.log2(bytes) / 10);
+			return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(2))} ${sizes[i]}`;
+		}
 		//
 		res.setHeader('Content-Type', 'application/json');
 		return res.status(resultRes.status).json({
