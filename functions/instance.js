@@ -477,10 +477,36 @@ module.exports = class Instance {
 	//
 	// ------------------------------------------------------------------------------------------------------- //
 	//
+	static async getSession(SessionName) {
+		try {
+			let data = await Sessions?.getSession(SessionName);
+				//
+				return {
+					"erro": false,
+					"status": 200,
+					"message": "Sessão carregada com sucesso",
+					"sesiion": data
+				};
+				//
+		} catch (error) {
+			logger?.error(`- Error when: ${error}`);
+			//
+			return {
+				"erro": false,
+				"status": 404,
+				"message": 'Erro ao carregar sessão'
+			};
+			//
+		};
+		//
+	}
+	//
+	// ------------------------------------------------------------------------------------------------------- //
+	//
 	static async AllSessions(req, res, next) {
 		let data = await Sessions?.getAll();
 		console.log(JSON.stringify(data, null, 2));
-		return res?.status(200)?.json({ state: 'Teste'});
+		return res?.status(200)?.json({ state: 'Teste' });
 	}
 	//
 	// ------------------------------------------------------------------------------------------------------- //

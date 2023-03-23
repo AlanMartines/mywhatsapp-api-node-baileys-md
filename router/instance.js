@@ -576,10 +576,8 @@ router.post("/getSession", upload.none(''), verifyToken.verify, async (req, res,
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
 	} else {
 		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -597,7 +595,7 @@ router.post("/getSession", upload.none(''), verifyToken.verify, async (req, res,
 			//
 		} else {
 			//
-			var getSession = await Sessions.getSessions(resSessionName);
+			var getSession = await instance?.getSession(resSessionName);
 			//
 			var resultRes = { "erro": false, "status": 200, "Session": getSession };
 			res.setHeader('Content-Type', 'application/json');
@@ -624,7 +622,7 @@ router.post("/getSession", upload.none(''), verifyToken.verify, async (req, res,
 //
 // ------------------------------------------------------------------------------------------------//
 //
-router.post("/getSessions", upload.none(''), verifyToken.verify, async (req, res, next) => {
+router.post("/getAllSessions", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
 	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
 	const theSessionName = removeWithspace(req?.body?.SessionName);
