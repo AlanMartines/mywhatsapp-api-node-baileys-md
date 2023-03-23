@@ -477,7 +477,7 @@ module.exports = class Instance {
 	//
 	// ------------------------------------------------------------------------------------------------------- //
 	//
-	static async showAllSessions(req, res, next) {
+	static async AllSessions(req, res, next) {
 		let data = await Sessions?.getAll();
 		console.log(JSON.stringify(data, null, 2));
 		return res?.status(200)?.json({ state: 'Teste'});
