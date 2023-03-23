@@ -356,7 +356,7 @@ module.exports = class Instace {
 					/**
 					 * map to store the retry counts for failed messages;
 					 * used to determine whether to retry a message or not */
-					msgRetryCounterCache: msgRetryCounterCache,
+					msgRetryCounterCache: MessageRetryMap,
 					/** width for link preview images */
 					linkPreviewImageThumbnailWidth: 192,
 					/** Should Baileys ask the phone for full history, will be received async */
@@ -375,8 +375,6 @@ module.exports = class Instace {
 					shouldIgnoreJid: jid => isJidBroadcast(jid),
 					/** By default true, should history messages be downloaded and processed */
 					downloadHistory: true,
-					//
-					msgRetryCounterMap: MessageRetryMap,
 					/**
 					 * fetch a message from your store
 					 * implement this so that messages failed to send (solves the "this message can take a while" issue) can be retried
