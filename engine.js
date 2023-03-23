@@ -14,9 +14,9 @@ const { release } = require('os');
 const NodeCache = require('node-cache');
 const { logger } = require("./utils/logger");
 const { Tokens } = require('./models');
-const Sessions = require('./controllers/sessions.js');
+const Sessions = require('./controllers/sessions');
 const eventsSend = require('./controllers/events');
-const webhooks = require('./controllers/webhooks.js');
+const webhooks = require('./controllers/webhooks');
 const fnSocket = require('./controllers/fnSockets');
 const config = require('./config.global');
 //
@@ -236,14 +236,11 @@ module.exports = class Instace {
 		const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
 		const theSessionName = removeWithspace(req?.body?.SessionName);
 		let SessionName;
-		let resTokenAuth;
 		//
 		if (parseInt(config.VALIDATE_MYSQL) == true) {
 			SessionName = theTokenAuth;
-			resTokenAuth = theTokenAuth;
 		} else {
 			SessionName = theSessionName;
-			resTokenAuth = theTokenAuth;
 		}
 		//
 		let data = await Sessions?.getSession(SessionName);

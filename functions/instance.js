@@ -1,20 +1,42 @@
 const Sessions = require("../controllers/sessions");
+const { logger } = require("./utils/logger");
+const { Tokens } = require('./models');
+const webhooks = require('../controllers/webhooks');
+const config = require('../config.global');
 //
 // ------------------------------------------------------------------------------------------------//
 //
-function removeWithspace(string) {
-	var string = string.replace(/\r?\n|\r|\s+/g, ""); /* replace all newlines and with a space */
-	return string;
+async function updateStateDb(state, status, AuthorizationToken) {
+	//
+	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
+	logger?.info(`- Date: ${date_now}`);
+	//
+	if (parseInt(config.VALIDATE_MYSQL) == true) {
+		logger?.info('- Atualizando status');
+		//
+		await Tokens.update({
+			state: state,
+			status: status,
+			lastactivity: date_now,
+		},
+			{
+				where: {
+					token: AuthorizationToken
+				},
+			}).then(async (entries) => {
+				logger?.info('- Status atualizado');
+			}).catch(async (err) => {
+				logger?.error('- Status não atualizado');
+				logger?.error(`- Error: ${err}`);
+			}).finally(async () => {
+				//Tokens.release();
+			});
+		//
+	}
+	//
 }
 //
-// ------------------------------------------------------------------------------------------------//
-//
-function soNumeros(string) {
-	var numbers = string.replace(/[^0-9]/g, '');
-	return numbers;
-}
-//
-// ------------------------------------------------------------------------------------------------//
+// ------------------------------------------------------------------------------------------------------- //
 //
 module.exports = class Instance {
 	//
@@ -218,5 +240,61 @@ module.exports = class Instance {
 			res.status(500).json({ error: error })
 		}
 	}
+	//
+	// ------------------------------------------------------------------------------------------------------- //
+	//
+	static async closeSession(SessionName) {
+		//
+		logger?.info("- Fechando sessão");
+		logger?.info(`- SessionName: ${SessionName}`);
+		//
+		var session = await Sessions?.getSession(SessionName);
+		try {
+			//
+			// close WebSocket connection
+			await session.client.ws.close();
+			// remove all events
+			await session.client.ev.removeAllListeners();
+			//
+			logger?.info("- Sessão fechada");
+			//
+			let addJson = {
+				client: false,
+				message: "Sessão fechada",
+				state: "CLOSED",
+				status: "notLogged"
+			};
+			//
+			await Sessions?.addInfoSession(SessionName, addJson);
+			//
+			webhooks?.wh_connect(SessionName);
+			//
+			let result = {
+				"erro": false,
+				"status": 200,
+				"message": "Sessão fechada com sucesso"
+			};
+			//
+			await updateStateDb(addJson?.state, addJson?.status, SessionName);
+			//
+			return result;
+			//
+		} catch (error) {
+			//
+			logger?.error(`- Erro ao fechar navegador ${error}`);
+			//
+			let result = {
+				"erro": true,
+				"status": 404,
+				"message": "Erro ao fechar navegador"
+			};
+			//
+			return result;
+			//
+		}
+		//
+	} //closeSession
+	//
+	// ------------------------------------------------------------------------------------------------//
 	//
 }

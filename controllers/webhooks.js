@@ -33,22 +33,22 @@ module.exports = class Webhooks {
 		}
 	}
 
-	static async wh_connect(data, object, phone = null) {
-		//let dataSessions = await Sessions?.getSession(SessionName);
-		logger.info(`- SessionName: ${data?.name}`);
+	static async wh_connect(SessionName) {
+		let dataSessions = await Sessions?.getSession(SessionName);
+		logger.info(`- SessionName: ${SessionName}`);
 		try {
 			var object = {
 				"wook": 'STATUS_CONNECT',
 				'result': 200,
-				'session': data.name,
-				'state': data.state,
-				'status': data.status,
-				'number': phone?.split('@')[0],
+				'SessionName': SessionName,
+				'state': dataSessions?.state,
+				'status': dataSessions?.status,
+				'number': dataSessions?.client?.user?.id.split(":")[0],
 			}
 
-			if (data?.wh_connect != undefined && data?.wh_connect != null && data?.wh_connect != '') {
+			if (dataSessions?.wh_connect != undefined && dataSessions?.wh_connect != null && dataSessions?.wh_connect != '') {
 				let dataJson = JSON.stringify(object, null, 2);
-				await axios.post(data?.wh_connect, dataJson, {
+				await axios.post(dataSessions?.wh_connect, dataJson, {
 					httpsAgent: new https.Agent({
 						rejectUnauthorized: false,
 						keepAlive: true
