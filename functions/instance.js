@@ -413,7 +413,7 @@ module.exports = class Instance {
 			var SessionName = theSessionName;
 		}
 		//
-		logger?.info("- Resetando sessão");
+		logger?.info("- Reiniciando sessão");
 		logger?.info(`- SessionName: ${SessionName}`);
 		var session = Sessions?.getSession(SessionName);
 		//
