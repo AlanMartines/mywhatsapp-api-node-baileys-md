@@ -623,7 +623,7 @@ router.post("/getSession", upload.none(''), verifyToken.verify, async (req, res,
 //
 router.post("/getAllSessions", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	var getSessions = await Sessions.getSessions();
+	var getSessions = await instance?.AllSessions();
 	//
 	if (getSessions) {
 		//
