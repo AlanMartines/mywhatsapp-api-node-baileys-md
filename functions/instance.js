@@ -449,7 +449,7 @@ module.exports = class Instance {
 				return {
 					"erro": false,
 					"status": 200,
-					"message": "Sistema esta reiniciado com sucesso"
+					"message": "Sistema reiniciado com sucesso"
 				};
 				//
 			} catch (error) {
