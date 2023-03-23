@@ -201,13 +201,14 @@ router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, nex
 		//
 	}
 }); //Status
-
+/*
 router.post('/Close', verifyToken.verify, Auth.closeSession);
 router.post('/Logout', verifyToken.verify, Auth.logoutSession);
 router.post('/restartToken', verifyToken.verify, Auth.getConnectionState);
 router.get('/QRCode', Auth.getQrCode);
 router.post('/deleteSession', verifyToken.verify, database.deleteSession);
 router.post('/getAllSessions', verifyToken.verify, database.getAllSessions);
+*/
 //
 // ------------------------------------------------------------------------------------------------//
 //
