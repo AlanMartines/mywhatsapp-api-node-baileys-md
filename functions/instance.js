@@ -364,6 +364,15 @@ module.exports = class Instance {
 	//
 	static async restartToken(req, res, next) {
 		//
+		const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+		const theSessionName = removeWithspace(req?.body?.SessionName);
+		//
+		if (parseInt(config.VALIDATE_MYSQL) == true) {
+			var SessionName = theTokenAuth;
+		} else {
+			var SessionName = theSessionName;
+		}
+		//
 		logger?.info("- Resetando sessão");
 		logger?.info(`- SessionName: ${SessionName}`);
 		var session = Sessions?.getSession(SessionName);
