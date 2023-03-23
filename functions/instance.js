@@ -7,7 +7,19 @@ const { Tokens } = require('../models');
 const webhooks = require('../controllers/webhooks');
 const config = require('../config.global');
 //
-// ------------------------------------------------------------------------------------------------//
+let tokenPatch;
+if (parseInt(config.INDOCKER)) {
+	//
+	const containerHostname = os.hostname();
+	tokenPatch = `${config.PATCH_TOKENS}/${containerHostname}`;
+	//
+} else {
+	//
+	tokenPatch = `${config.PATCH_TOKENS}`;
+	//
+}
+//
+// ------------------------------------------------------------------------------------------------------- //
 //
 async function updateStateDb(state, status, AuthorizationToken) {
 	//
@@ -295,7 +307,7 @@ module.exports = class Instance {
 		}
 		//
 	} //closeSession
-//
+	//
 	// ------------------------------------------------------------------------------------------------//
 	//
 	static async logoutSession(SessionName) {
@@ -346,6 +358,67 @@ module.exports = class Instance {
 		}
 		//
 	} //LogoutSession
+//
+	// ------------------------------------------------------------------------------------------------------- //
+	//
+	static async restartToken(SessionName) {
+		//
+		logger?.info("- Resetando sessão");
+		logger?.info(`- SessionName: ${SessionName}`);
+		var session = Sessions?.getSession(SessionName);
+		//
+		if (session) {
+			//
+			try {
+				//
+				// close WebSocket connection
+				await session.client.ws.close();
+				// remove all events
+				await session.client.ev.removeAllListeners();
+				//
+				await deletaPastaToken(`${tokenPatch}`, `${SessionName}.data.json`);
+				await deletaToken(`${tokenPatch}`, `${SessionName}.data.json`);
+				await deletaToken(`${tokenPatch}`, `${SessionName}.store.json`);
+				await deletaToken(`${tokenPatch}`, `${SessionName}.startup.json`);
+				await deletaToken(`${tokenPatch}`, `${SessionName}.contacts.json`);
+				//
+				session.qrcode = null;
+				session.qrRetry = null;
+				session.client = false;
+				session.result = null;
+				session.state = 'STARTING';
+				session.status = 'notLogged';
+				session.message = null;
+				//
+				session.client = Sessions.initSession(socket, SessionName, AuthorizationToken, whatsappVersion);
+				//
+				return {
+					"erro": false,
+					"status": 200,
+					"message": "Sistema esta reiniciado com sucesso"
+				};
+				//
+			} catch (error) {
+				logger?.error(`- Error when: ${error}`);
+				//
+				session.client = false;
+				//
+				return {
+					"erro": false,
+					"status": 404,
+					"message": 'Sistema Off-line'
+				};
+				//
+			};
+			//
+		} else {
+			return {
+				"erro": false,
+				"status": 404,
+				"message": 'Sistema Off-line'
+			};
+		}
+	} //restartToken
 	//
 	// ------------------------------------------------------------------------------------------------------- //
 	//
