@@ -54,9 +54,9 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 			//
 		} else {
 			//
-			let existSession = await Sessions.checkSession(resSessionName);
+			let existSession = await Sessions?.checkSession(resSessionName);
 			if (existSession) {
-				let data = await Sessions.getSession(resSessionName);
+				let data = await Sessions?.getSession(resSessionName);
 				switch (data?.status) {
 					case 'inChat':
 					case 'qrReadSuccess':
@@ -89,7 +89,7 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 					case 'DISCONNECTED':
 					case 'NOTFOUND':
 						//
-						engine.Start(req, res, next);
+						engine?.Start(req, res, next);
 						//
 						break;
 					default:
@@ -171,7 +171,7 @@ router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, nex
 		} else {
 			//
 			try {
-				var Status = await instance.Status(resSessionName);
+				var Status = await instance?.Status(resSessionName);
 				//
 				res.setHeader('Content-Type', 'application/json');
 				return res.status(200).json({
@@ -239,7 +239,7 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 		} else {
 			//
 			try {
-				let Status = await instance.Status(resSessionName);
+				let Status = await instance?.Status(resSessionName);
 				switch (Status.status) {
 					case 'inChat':
 					case 'qrReadSuccess':
@@ -248,7 +248,7 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 					case 'qrRead':
 					case 'notLogged':
 						//
-						let resultClose = await Sessions.closeSession(resSessionName);
+						let resultClose = await instance?.closeSession(resSessionName);
 						//
 						res.setHeader('Content-Type', 'application/json');
 						return res.status(resultClose.status).json({
