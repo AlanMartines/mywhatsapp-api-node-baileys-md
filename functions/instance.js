@@ -1,6 +1,6 @@
 const Sessions = require("../controllers/sessions");
-const { logger } = require("./utils/logger");
-const { Tokens } = require('./models');
+const { logger } = require("../utils/logger");
+const { Tokens } = require('../models');
 const webhooks = require('../controllers/webhooks');
 const config = require('../config.global');
 //
