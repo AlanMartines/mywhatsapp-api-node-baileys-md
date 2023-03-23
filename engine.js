@@ -11,6 +11,7 @@ const rmfr = require('rmfr');
 const colors = require('colors');
 const { default: pQueue } = require('p-queue');
 const { release } = require('os');
+const NodeCache = require('node-cache');
 const { logger } = require("./utils/logger");
 const { Tokens } = require('./models');
 const Sessions = require('./controllers/sessions.js');
@@ -272,7 +273,8 @@ module.exports = class Instace {
 		//
 		// external map to store retry counts of messages when decryption/encryption fails
 		// keep this out of the socket itself, so as to prevent a message decryption/encryption loop across socket restarts
-		const MessageRetryMap = {};
+		//const MessageRetryMap = {};
+		const msgRetryCounterCache = new NodeCache();
 		//
 		const store = useStore ? makeInMemoryStore({ loggerPino }) : undefined;
 		//
@@ -356,7 +358,7 @@ module.exports = class Instace {
 					/**
 					 * map to store the retry counts for failed messages;
 					 * used to determine whether to retry a message or not */
-					msgRetryCounterCache: MessageRetryMap,
+					msgRetryCounterCache: msgRetryCounterCache,
 					/** width for link preview images */
 					linkPreviewImageThumbnailWidth: 192,
 					/** Should Baileys ask the phone for full history, will be received async */

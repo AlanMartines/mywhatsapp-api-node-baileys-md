@@ -17,8 +17,10 @@ const pino = require("pino");
 const colors = require('colors');
 const { default: pQueue } = require('p-queue');
 const { release } = require('os');
+const NodeCache = require('node-cache');
 const { Tokens } = require('./models');
-const { logger } = require("./utils/logger");//
+const { logger } = require("./utils/logger");
+//
 const {
 	default: makeWASocket,
 	useSingleFileAuthState,
@@ -561,7 +563,8 @@ module.exports = class Sessions {
 		//
 		// external map to store retry counts of messages when decryption/encryption fails
 		// keep this out of the socket itself, so as to prevent a message decryption/encryption loop across socket restarts
-		const MessageRetryMap = {};
+		//const MessageRetryMap = {};
+		const msgRetryCounterCache = new NodeCache();
 		//
 		const store = useStore ? makeInMemoryStore({ loggerPino }) : undefined;
 		//
@@ -650,8 +653,6 @@ module.exports = class Sessions {
 					linkPreviewImageThumbnailWidth: 192,
 					/** Should Baileys ask the phone for full history, will be received async */
 					syncFullHistory: true,
-					//
-					msgRetryCounterMap : MessageRetryMap,
 					/** Should baileys fire init queries automatically, default true */
 					fireInitQueries: true,
 					/**
