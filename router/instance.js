@@ -28,6 +28,13 @@ function removeWithspace(string) {
 //
 // ------------------------------------------------------------------------------------------------//
 //
+function soNumeros(string) {
+	var numbers = string.replace(/[^0-9]/g, '');
+	return numbers;
+}
+//
+// ------------------------------------------------------------------------------------------------//
+//
 router.post("/Start", verifyToken.verify, async (req, res, next) => {
 	//
 	try {
@@ -164,7 +171,7 @@ router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, nex
 		} else {
 			//
 			try {
-				var Status = await instance.Status(req, res, next);
+				var Status = await instance.Status(resSessionName);
 				//
 				res.setHeader('Content-Type', 'application/json');
 				return res.status(200).json({
