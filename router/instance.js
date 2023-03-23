@@ -460,7 +460,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 			//
 		} else {
 			//
-			var Status = await instance?.ApiStatus(resSessionName);
+			var Status = await instance?.Status(resSessionName);
 			switch (Status.status) {
 				case 'inChat':
 				case 'qrReadSuccess':
