@@ -597,10 +597,9 @@ router.post("/getSession", upload.none(''), verifyToken.verify, async (req, res,
 			//
 			var getSession = await instance?.getSession(resSessionName);
 			//
-			var resultRes = { "erro": false, "status": 200, "Session": getSession };
 			res.setHeader('Content-Type', 'application/json');
-			return res.status(resultRes.status).json({
-				"Status": resultRes
+			return res.status(getSession.status).json({
+				"Status": getSession
 			});
 		}
 	} catch (error) {
