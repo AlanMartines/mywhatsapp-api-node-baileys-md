@@ -20,7 +20,14 @@ if (parseInt(config.INDOCKER)) {
 	//
 }
 //
-// ------------------------------------------------------------------------------------------------------- //
+// ------------------------------------------------------------------------------------------------//
+//
+function removeWithspace(string) {
+	var string = string.replace(/\r?\n|\r|\s+/g, ""); /* replace all newlines and with a space */
+	return string;
+}
+//
+// ------------------------------------------------------------------------------------------------//
 //
 async function updateStateDb(state, status, AuthorizationToken) {
 	//
