@@ -61,6 +61,38 @@ async function updateStateDb(state, status, AuthorizationToken) {
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
+async function deletaPastaToken(filePath, filename) {
+	//
+	await rmfr(`${filePath}/${filename}`).then(async (result) => {
+		//
+		logger?.info(`- Pasta "${filePath}/${filename}" removida com sucesso`);
+		//
+	}).catch((erro) => {
+		//
+		logger?.error(`- Erro ao remover pasta "${filePath}/${filename}"`);
+		//
+	});
+	//
+}
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
+async function deletaToken(filePath, filename) {
+	//
+	await rmfr(`${filePath}/${filename}`, { glob: true }).then(async (result) => {
+		//
+		logger?.info(`- Arquivo "${filename}" removido com sucesso`);
+		//
+	}).catch((erro) => {
+		//
+		logger?.error(`- Erro ao remover arquivo "${filename}"`);
+		//
+	});
+	//
+}
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
 module.exports = class Instance {
 	//
 	static async Status(resSessionName) {
