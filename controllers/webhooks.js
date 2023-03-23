@@ -39,7 +39,7 @@ module.exports = class Webhooks {
 		try {
 			var object = {
 				"wook": 'STATUS_CONNECT',
-				'result': 200,
+				'statusCode': 200,
 				'SessionName': SessionName,
 				'state': dataSessions?.state,
 				'status': dataSessions?.status,
@@ -100,7 +100,7 @@ module.exports = class Webhooks {
 		try {
 			let object = {
 				"wook": 'QRCODE',
-				'result': 200,
+				'statusCode': 200,
 				'session': dataSessions?.SessionName,
 				'state': dataSessions?.state,
 				'status': dataSessions?.status,
@@ -135,7 +135,8 @@ module.exports = class Webhooks {
 			if (dataSessions?.wh_message != undefined && dataSessions?.wh_message != null && dataSessions?.wh_message != '') {
 				logger.info(`- SessionName: ${SessionName}`);
 				let object = {
-					"wook": 'INCOMING CALL',
+					"wook": "INCOMING_CALL",
+					"statusCode": 200,
 					"id": response?.id,
 					"phone": response?.peerJid,
 					"data": moment?.unix(response?.offerTime)?.format('DD-MM-YYYY hh:mm:ss'),
