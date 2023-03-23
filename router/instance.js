@@ -304,7 +304,6 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 //
 // ------------------------------------------------------------------------------------------------//
 //
-// Desconecta do whatsapp web
 router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
 	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
