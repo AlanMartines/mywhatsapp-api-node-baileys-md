@@ -138,7 +138,7 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 		});
 		//
 	}
-});
+}); //Start
 //
 // ------------------------------------------------------------------------------------------------//
 //
@@ -379,7 +379,7 @@ router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, nex
 //
 // ------------------------------------------------------------------------------------------------//
 //
-router.post("/restartToken", verifyToken.verify, upload.none(''), async (req, res, next) => {
+router.post("/restartToken", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
 	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
 	const theSessionName = removeWithspace(req?.body?.SessionName);
@@ -428,7 +428,7 @@ router.post("/restartToken", verifyToken.verify, upload.none(''), async (req, re
 		});
 		//
 	}
-});
+}); //restartToken
 //
 // ------------------------------------------------------------------------------------------------//
 //
@@ -441,10 +441,8 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
 	} else {
 		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -462,16 +460,16 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 			//
 		} else {
 			//
-			var Status = await Sessions.ApiStatus(resSessionName);
+			var Status = await instance?.ApiStatus(resSessionName);
 			switch (Status.status) {
 				case 'inChat':
 				case 'qrReadSuccess':
 				case 'isLogged':
 				case 'chatsAvailable':
 					//
-					var resultRes = { "erro": false, "status_code": 200, ...Status };
+					var resultRes = { "erro": false, "statusCode": 200, ...Status };
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(resultRes.status_code).json({
+					return res.status(resultRes.statusCode).json({
 						"Status": resultRes
 					});
 					//
@@ -490,13 +488,13 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 								'Content-Length': imageBuffer.length
 							});
 							//
-							return res.status(200);
-							res.end(imageBuffer);
+							res.status(200);
+							return res.end(imageBuffer);
 							//
 						} else {
-							var resultRes = { "erro": true, "status_code": 400, ...Status };
+							var resultRes = { "erro": true, "statusCode": 400, ...Status };
 							res.setHeader('Content-Type', 'application/json');
-							return res.status(resultRes.status_code).json({
+							return res.status(resultRes.statusCode).json({
 								"Status": resultRes
 							});
 							//
@@ -504,7 +502,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 					} else if (req.body.View === false) {
 						var resultRes = {
 							"erro": false,
-							"status_code": 200,
+							"statusCode": 200,
 							"state": session.state,
 							"status": session.status,
 							"qrcode": session.qrcode,
@@ -512,7 +510,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 						};
 						//
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(resultRes.status_code).json({
+						return res.status(resultRes.statusCode).json({
 							"Status": resultRes
 						});
 						//
@@ -622,7 +620,7 @@ router.post("/getSession", upload.none(''), verifyToken.verify, async (req, res,
 		});
 		//
 	}
-}); //Status
+}); //getSession
 //
 // ------------------------------------------------------------------------------------------------//
 //
@@ -754,7 +752,7 @@ router.all('*', (req, res) => {
 		"Status": resultRes
 	});
 	//
-});
+}); //All
 //
 // ------------------------------------------------------------------------------------------------//
 //
