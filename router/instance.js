@@ -41,7 +41,7 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 	//
 	try {
 		if (!resSessionName) {
-			let resultRes = {
+			var resultRes = {
 				"erro": true,
 				"status": 400,
 				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
@@ -64,7 +64,7 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 					case 'chatsAvailable':
 					case 'qrRead':
 						//
-						let resultRes = {
+						var resultRes = {
 							"erro": false,
 							"status": 200,
 							"state": data?.state,
@@ -258,7 +258,7 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 						break;
 					default:
 						//
-						let resultRes = {
+						var resultRes = {
 							"erro": true,
 							"status": 400,
 							"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
@@ -288,7 +288,7 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 	} catch (error) {
 		logger?.error(`${error}`);
 		//
-		let resultRes = {
+		var resultRes = {
 			"erro": true,
 			"status": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
@@ -395,7 +395,7 @@ router.post("/restartToken", verifyToken.verify, upload.none(''), async (req, re
 	//
 	try {
 		if (!resSessionName) {
-			let resultRes = {
+			var resultRes = {
 				"erro": true,
 				"status": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
@@ -408,7 +408,7 @@ router.post("/restartToken", verifyToken.verify, upload.none(''), async (req, re
 			//
 		} else {
 			//
-			let resultRestart = await Sessions.restartToken(req.io, session.name, session.AuthorizationToken);
+			var resultRestart = await Sessions.restartToken(req.io, session.name, session.AuthorizationToken);
 			//
 			res.setHeader('Content-Type', 'application/json');
 			return res.status(resultRestart.status).json({
