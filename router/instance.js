@@ -68,14 +68,14 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 						var resultRes = {
 							"erro": false,
 							"status": 200,
-							"state": data?.state,
-							"message": 'Sistema iniciado e disponivel para uso'
+							"message": 'Sistema iniciado'
 						};
 						//
 						res.setHeader('Content-Type', 'application/json');
 						return res.status(resultRes.status).json({
 							"Status": resultRes
 						});
+						//
 						break;
 					case 'notLogged':
 					case 'deviceNotConnected':
@@ -91,6 +91,17 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 					case 'NOTFOUND':
 						//
 						engine?.Start(req, res, next);
+						//
+						var resultRes = {
+							"erro": false,
+							"status": 200,
+							"message": 'Sistema iniciando, por favor aguarde'
+						};
+						//
+						res.setHeader('Content-Type', 'application/json');
+						return res.status(resultRes.status).json({
+							"Status": resultRes
+						});
 						//
 						break;
 					default:
