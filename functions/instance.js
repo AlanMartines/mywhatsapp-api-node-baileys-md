@@ -485,7 +485,7 @@ module.exports = class Instance {
 					"erro": false,
 					"status": 200,
 					"message": "Sessão carregada com sucesso",
-					"sesiion": data
+					"sesiion": JSON.stringify(data, null, 2)
 				};
 				//
 		} catch (error) {
