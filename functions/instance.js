@@ -481,6 +481,8 @@ module.exports = class Instance {
 		try {
 			let data = await Sessions?.getSession(SessionName);
 				//
+				if(data){
+				//
 				return {
 					"erro": false,
 					"status": 200,
@@ -488,6 +490,15 @@ module.exports = class Instance {
 					"session": data
 				};
 				//
+				}else{
+				//
+				return {
+					"erro": false,
+					"status": 200,
+					"message": "Sessão não encontrada"
+				};
+				//
+				}
 		} catch (error) {
 			logger?.error(`- Error when: ${error}`);
 			//
