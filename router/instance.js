@@ -9,6 +9,7 @@ const instance = require("../functions/instance");
 const engine = require("../engine");
 const Sessions = require('../controllers/sessions');
 const { logger } = require("../utils/logger");
+const config = require('../config.global');
 //
 // ------------------------------------------------------------------------------------------------//
 //
