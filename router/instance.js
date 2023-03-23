@@ -623,10 +623,6 @@ router.post("/getSession", upload.none(''), verifyToken.verify, async (req, res,
 //
 router.post("/getAllSessions", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
-	const theSessionName = removeWithspace(req?.body?.SessionName);
-	//
-	//
 	var getSessions = await Sessions.getSessions();
 	//
 	if (getSessions) {
