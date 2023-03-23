@@ -1,3 +1,6 @@
+const moment = require('moment');
+moment()?.format('YYYY-MM-DD HH:mm:ss');
+moment?.locale('pt-br');
 const Sessions = require("../controllers/sessions");
 const { logger } = require("../utils/logger");
 const { Tokens } = require('../models');
