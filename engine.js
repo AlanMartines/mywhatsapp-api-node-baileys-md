@@ -11,8 +11,6 @@ const rmfr = require('rmfr');
 const colors = require('colors');
 const { default: pQueue } = require('p-queue');
 const { release } = require('os');
-const NodeCache = require('node-cache');
-const msgRetryCounterCache = new NodeCache();
 const { logger } = require("./utils/logger");
 const { Tokens } = require('./models');
 const Sessions = require('./controllers/sessions.js');
@@ -274,7 +272,7 @@ module.exports = class Instace {
 		//
 		// external map to store retry counts of messages when decryption/encryption fails
 		// keep this out of the socket itself, so as to prevent a message decryption/encryption loop across socket restarts
-		//const MessageRetryMap = {};
+		const MessageRetryMap = {};
 		//
 		const store = useStore ? makeInMemoryStore({ loggerPino }) : undefined;
 		//
@@ -377,6 +375,8 @@ module.exports = class Instace {
 					shouldIgnoreJid: jid => isJidBroadcast(jid),
 					/** By default true, should history messages be downloaded and processed */
 					downloadHistory: true,
+					//
+					msgRetryCounterMap: MessageRetryMap,
 					/**
 					 * fetch a message from your store
 					 * implement this so that messages failed to send (solves the "this message can take a while" issue) can be retried
