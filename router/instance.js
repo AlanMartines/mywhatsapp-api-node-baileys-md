@@ -711,38 +711,40 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 	logger?.info(`- getHardWare`);
 	//
 	try {
-		const resultRes = {
-			erro: false,
-			status: 200,
-			noformat: {
-				uptime: os.uptime(),
-				freemem: os.freemem(),
-				memusage: os.totalmem() - os.freemem(),
-				totalmem: os.totalmem(),
-				freeusagemem: `${Math.round((os.freemem() * 100) / os.totalmem()).toFixed(0)}%`,
-				usagemem: `${Math.round(((os.totalmem() - os.freemem()) * 100) / os.totalmem()).toFixed(0)}%`,
-			},
-			format: {
-				uptime: convertSecondsToHHMMSS(os.uptime()),
-				freemem: convertBytes(os.freemem()),
-				memusage: convertBytes(os.totalmem() - os.freemem()),
-				totalmem: convertBytes(os.totalmem()),
-				freeusagemem: `${Math.round((os.freemem() * 100) / os.totalmem()).toFixed(0)}%`,
-				usagemem: `${Math.round(((os.totalmem() - os.freemem()) * 100) / os.totalmem()).toFixed(0)}%`,
-			},
-		};
+		const { freemem, totalmem, uptime } = os;
 
-		function convertSecondsToHHMMSS(seconds) {
-			return new Date(seconds * 1000).toISOString().substr(11, 8);
-		}
-
-		function convertBytes(bytes) {
+		const formatBytes = (bytes) => {
 			const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
 			if (bytes === 0) return "0 Bytes";
 			const i = Math.floor(Math.log2(bytes) / 10);
 			return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(2))} ${sizes[i]}`;
-		}
-		//
+		};
+
+		const formatPercentage = (value) => `${Math.round(value * 100)}%`;
+
+		const formatUptime = (seconds) =>
+			new Date(seconds * 1000).toISOString().substr(11, 8);
+
+		const resultRes = {
+			erro: false,
+			status: 200,
+			noformat: {
+				uptime,
+				freemem,
+				memusage: totalmem() - freemem(),
+				totalmem,
+				freeusagemem: formatPercentage(freemem() / totalmem()),
+				usagemem: formatPercentage(1 - freemem() / totalmem()),
+			},
+			format: {
+				uptime: formatUptime(uptime),
+				freemem: formatBytes(freemem),
+				memusage: formatBytes(totalmem() - freemem()),
+				totalmem: formatBytes(totalmem),
+				freeusagemem: formatPercentage(freemem() / totalmem()),
+				usagemem: formatPercentage(1 - freemem() / totalmem()),
+			},
+		};
 		res.setHeader('Content-Type', 'application/json');
 		return res.status(resultRes.status).json({
 			"Status": resultRes
