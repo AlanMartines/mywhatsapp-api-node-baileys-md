@@ -719,9 +719,9 @@ const resultRes = {
     "totalmem": os.totalmem(),
     "memusage": os.totalmem() - os.freemem(),
     "freemem": os.freemem(),
-    "freeusagemem": formatPercentage(os.freemem() / os.totalmem()),
-    "usagemem": formatPercentage(1 - os.freemem() / os.totalmem()),
-    "cpuusage": formatPercentage(cpuUsage.user / (cpuUsage.user + cpuUsage.system)),
+    "freeusagemem": (os.freemem() / os.totalmem()),
+    "usagemem": (1 - os.freemem() / os.totalmem()),
+    "cpuusage": (cpuUsage.user / (cpuUsage.user + cpuUsage.system)),
   },
   "format": {
     "uptime": formatUptime(os.uptime()),
