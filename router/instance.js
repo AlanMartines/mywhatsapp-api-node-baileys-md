@@ -1,6 +1,7 @@
 //
 // Configuração dos módulos
 const os = require('os');
+const fs = require('fs-extra');
 const express = require("express");
 const router = express.Router();
 const multer = require('multer');
