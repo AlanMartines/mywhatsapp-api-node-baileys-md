@@ -22,7 +22,7 @@ class AllSessions {
     try {
       const files = await fs.readdir(tokenPatch);
       files.forEach(file => {
-        if (file.includes('.data.json') || file.includes('.startup.json')) {
+        if (file.includes('.startup.json')) {
           startup.push(file.split('.')[0]);
         }
       });
