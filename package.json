@@ -59,6 +59,7 @@
 		"moment": "^2.29.4",
 		"multer": "^1.4.5-lts.1",
 		"mysql2": "^3.2.0",
+		"os-utils": "^0.0.14",
 		"node-cache": "^5.1.2",
 		"p-iteration": "^1.1.8",
 		"p-queue": "^6.6.2",

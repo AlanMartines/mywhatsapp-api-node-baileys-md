@@ -1,6 +1,6 @@
 //
 // Configuração dos módulos
-const os = require('os');
+const osUtils = require('os-utils');
 const fs = require('fs-extra');
 const express = require("express");
 const router = express.Router();
@@ -714,20 +714,20 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 			"erro": false,
 			"status": 200,
 			"noformat": {
-				"uptime": uptime,
-				"totalmem": totalmem,
-				"memusage": totalmem() - freemem(),
-				"freemem": freemem,
-				"freeusagemem": formatPercentage(freemem() / totalmem()),
-				"usagemem": formatPercentage(1 - freemem() / totalmem()),
+				"uptime": osUtils.sysUptime(),
+				"totalmem": osUtils.totalmem(),
+				"memusage": osUtils.totalmem() - osUtils.freemem(),
+				"freemem": osUtils.freemem(),
+				"freeusagemem": Math.round(osUtils.freememPercentage() * 100) + '%',
+				"usagemem": Math.round((1 - osUtils.freememPercentage()) * 100) + '%',
 			},
 			"format": {
-				"uptime": formatUptime(uptime),
-				"totalmem": formatBytes(totalmem),
-				"memusage": formatBytes(totalmem() - freemem()),
-				"freemem": formatBytes(freemem),
-				"freeusagemem": formatPercentage(freemem() / totalmem()),
-				"usagemem": formatPercentage(1 - freemem() / totalmem()),
+				"uptime": formatUptime(osUtils.sysUptime()),
+				"totalmem": formatBytes(osUtils.totalmem()),
+				"memusage": formatBytes(osUtils.totalmem() - osUtils.freemem()),
+				"freemem": formatBytes(osUtils.freemem()),
+				"freeusagemem": Math.round(osUtils.freememPercentage() * 100) + '%',
+				"usagemem": Math.round((1 - osUtils.freememPercentage()) * 100) + '%',
 			},
 		};
 
