@@ -701,10 +701,11 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 		const formatPercentage = (value) => `${Math.round(value * 100)}%`;
 
 		const formatUptime = (seconds) => {
-			const hours = Math.floor(seconds / 3600);
+			const days = Math.floor(seconds / 86400);
+			const hours = Math.floor((seconds % 86400) / 3600);
 			const minutes = Math.floor((seconds % 3600) / 60);
 			const remainingSeconds = seconds % 60;
-			return `${hours.toString().padStart(2, "0")}:${minutes
+			return `${days}d ${hours.toString().padStart(2, "0")}:${minutes
 				.toString()
 				.padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
 		};
