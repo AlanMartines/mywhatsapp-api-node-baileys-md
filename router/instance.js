@@ -711,23 +711,23 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 		};
 
 		const resultRes = {
-			erro: false,
-			status: 200,
-			noformat: {
-				uptime,
-				freemem,
-				memusage: totalmem() - freemem(),
-				totalmem,
-				freeusagemem: formatPercentage(freemem() / totalmem()),
-				usagemem: formatPercentage(1 - freemem() / totalmem()),
+			"erro": false,
+			"status": 200,
+			"noformat": {
+				"uptime": uptime,
+				"totalmem": totalmem,
+				"memusage": totalmem() - freemem(),
+				"freemem": freemem,
+				"freeusagemem": formatPercentage(freemem() / totalmem()),
+				"usagemem": formatPercentage(1 - freemem() / totalmem()),
 			},
-			format: {
-				uptime: formatUptime(uptime),
-				freemem: formatBytes(freemem),
-				memusage: formatBytes(totalmem() - freemem()),
-				totalmem: formatBytes(totalmem),
-				freeusagemem: formatPercentage(freemem() / totalmem()),
-				usagemem: formatPercentage(1 - freemem() / totalmem()),
+			"format": {
+				"uptime": formatUptime(uptime),
+				"totalmem": formatBytes(totalmem),
+				"memusage": formatBytes(totalmem() - freemem()),
+				"freemem": formatBytes(freemem),
+				"freeusagemem": formatPercentage(freemem() / totalmem()),
+				"usagemem": formatPercentage(1 - freemem() / totalmem()),
 			},
 		};
 
