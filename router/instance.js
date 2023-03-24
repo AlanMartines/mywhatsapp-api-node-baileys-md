@@ -713,7 +713,7 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 		const lastCpuUsage = process.cpuUsage();
 		const lastIdleTime = os.cpus().reduce((total, cpu) => total + cpu.times.idle, 0);
 
-		const intervalId = setInterval(() => {
+		setInterval(async () => {
 			const currentCpuUsage = process.cpuUsage(lastCpuUsage);
 			const currentTime = os.cpus().reduce((total, cpu) => total + Object.values(cpu.times).reduce((t, v) => t + v, 0), 0);
 			const currentIdleTime = os.cpus().reduce((total, cpu) => total + cpu.times.idle, 0);
@@ -748,10 +748,6 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 			lastCpuUsage.system += currentCpuUsage.system;
 			lastIdleTime = currentIdleTime;
 		}, 1000);
-
-		setTimeout(() => {
-			clearInterval(intervalId);
-		}, 2000); // interrompe o setInterval após 2 segundos
 
 		res.setHeader('Content-Type', 'application/json');
 		return res.status(resultRes.status).json({
