@@ -689,7 +689,6 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 	logger?.info(`- getHardWare`);
 	//
 	try {
-		const { freemem, totalmem, uptime } = os;
 
 		const formatBytes = (bytes) => {
 			const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
