@@ -22,7 +22,7 @@ class AllSessions {
     try {
       const files = await fs.readdir(tokenPatch);
       files.forEach(file => {
-        if (file.includes('.data.json') || file.includes('.store.json')) {
+        if (file.includes('.data.json') || file.includes('.startup.json')) {
           startup.push(file.split('.')[0]);
         }
       });
@@ -36,7 +36,7 @@ class AllSessions {
     const hostUrl = config.HOST == '0.0.0.0' ? '127.0.0.1' : config.HOST;
     const host = config.DOMAIN_SSL == '' ? `http://${hostUrl}:${config.PORT}` : `https://${config.DOMAIN_SSL}`;
     const dados = await this.getAllSessions();
-
+		console.log(dados);
     for (let item of dados) {
       setTimeout(async () => {
         try {
