@@ -727,9 +727,9 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 					freemem: os.freemem(),
 					memusage: os.totalmem() - os.freemem(),
 					totalmem: os.totalmem(),
-					freeusagemem: formatPercentage(os.freemem() / os.totalmem()),
-					usagemem: formatPercentage(1 - os.freemem() / os.totalmem()),
-					cpuusage: formatPercentage(cpuUsage),
+					freeusagemem: (os.freemem() / os.totalmem()),
+					usagemem: (1 - os.freemem() / os.totalmem()),
+					cpuusage: cpuUsage,
 				},
 				"format": {
 					uptime: formatUptime(os.uptime()),
