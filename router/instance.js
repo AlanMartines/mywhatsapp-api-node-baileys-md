@@ -713,41 +713,37 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 		const lastCpuUsage = process.cpuUsage();
 		const lastIdleTime = os.cpus().reduce((total, cpu) => total + cpu.times.idle, 0);
 
-		setInterval(async () => {
-			const currentCpuUsage = process.cpuUsage(lastCpuUsage);
-			const currentTime = os.cpus().reduce((total, cpu) => total + Object.values(cpu.times).reduce((t, v) => t + v, 0), 0);
-			const currentIdleTime = os.cpus().reduce((total, cpu) => total + cpu.times.idle, 0);
-			const cpuUsage = (currentTime - lastIdleTime) / (currentTime + currentCpuUsage.user + currentCpuUsage.system - lastIdleTime - lastCpuUsage.idle);
+		lastCpuUsage.user += currentCpuUsage.user;
+		lastCpuUsage.system += currentCpuUsage.system;
+		lastIdleTime = currentIdleTime;
 
-			const resultRes = {
-				"erro": false,
-				"status": 200,
-				"noformat": {
-					uptime: os.uptime(),
-					freemem: os.freemem(),
-					memusage: os.totalmem() - os.freemem(),
-					totalmem: os.totalmem(),
-					freeusagemem: (os.freemem() / os.totalmem()),
-					usagemem: (1 - os.freemem() / os.totalmem()),
-					cpuusage: cpuUsage,
-				},
-				"format": {
-					uptime: formatUptime(os.uptime()),
-					freemem: formatBytes(os.freemem()),
-					memusage: formatBytes(os.totalmem() - os.freemem()),
-					totalmem: formatBytes(os.totalmem()),
-					freeusagemem: formatPercentage(os.freemem() / os.totalmem()),
-					usagemem: formatPercentage(1 - os.freemem() / os.totalmem()),
-					cpuusage: formatPercentage(cpuUsage),
-				}
-			};
+		const currentCpuUsage = process.cpuUsage(lastCpuUsage);
+		const currentTime = os.cpus().reduce((total, cpu) => total + Object.values(cpu.times).reduce((t, v) => t + v, 0), 0);
+		const currentIdleTime = os.cpus().reduce((total, cpu) => total + cpu.times.idle, 0);
+		const cpuUsage = (currentTime - lastIdleTime) / (currentTime + currentCpuUsage.user + currentCpuUsage.system - lastIdleTime - lastCpuUsage.idle);
 
-			console.log(resultRes);
-
-			lastCpuUsage.user += currentCpuUsage.user;
-			lastCpuUsage.system += currentCpuUsage.system;
-			lastIdleTime = currentIdleTime;
-		}, 1000);
+		const resultRes = {
+			"erro": false,
+			"status": 200,
+			"noformat": {
+				uptime: os.uptime(),
+				freemem: os.freemem(),
+				memusage: os.totalmem() - os.freemem(),
+				totalmem: os.totalmem(),
+				freeusagemem: (os.freemem() / os.totalmem()),
+				usagemem: (1 - os.freemem() / os.totalmem()),
+				cpuusage: cpuUsage,
+			},
+			"format": {
+				uptime: formatUptime(os.uptime()),
+				freemem: formatBytes(os.freemem()),
+				memusage: formatBytes(os.totalmem() - os.freemem()),
+				totalmem: formatBytes(os.totalmem()),
+				freeusagemem: formatPercentage(os.freemem() / os.totalmem()),
+				usagemem: formatPercentage(1 - os.freemem() / os.totalmem()),
+				cpuusage: formatPercentage(cpuUsage),
+			}
+		};
 
 		res.setHeader('Content-Type', 'application/json');
 		return res.status(resultRes.status).json({
