@@ -697,7 +697,8 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 			return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(2))} ${sizes[i]}`;
 		};
 
-		const formatPercentage = (value) => `${Math.round(value * 100)}%`;
+		const formatPercentage = (value) =>
+			`${Math.round(value * 100)}%`;
 
 		const formatUptime = (seconds) => {
 			const days = Math.floor(seconds / 86400);
@@ -709,30 +710,48 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 				.padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
 		};
 
-		const cpuUsage = process.cpuUsage();
+		const lastCpuUsage = process.cpuUsage();
+		const lastIdleTime = os.cpus().reduce((total, cpu) => total + cpu.times.idle, 0);
 
-		const resultRes = {
-			"erro": false,
-			"status": 200,
-			"noformat": {
-				"uptime": os.uptime(),
-				"totalmem": os.totalmem(),
-				"memusage": os.totalmem() - os.freemem(),
-				"freemem": os.freemem(),
-				"freeusagemem": (os.freemem() / os.totalmem()),
-				"usagemem": (1 - os.freemem() / os.totalmem()),
-				"cpuusage": (cpuUsage.user / (cpuUsage.user + cpuUsage.system)),
-			},
-			"format": {
-				"uptime": formatUptime(os.uptime()),
-				"totalmem": formatBytes(os.totalmem()),
-				"memusage": formatBytes(os.totalmem() - os.freemem()),
-				"freemem": formatBytes(os.freemem()),
-				"freeusagemem": formatPercentage(os.freemem() / os.totalmem()),
-				"usagemem": formatPercentage(1 - os.freemem() / os.totalmem()),
-				"cpuusage": formatPercentage(cpuUsage.user / (cpuUsage.user + cpuUsage.system)),
-			},
-		};
+		const intervalId = setInterval(() => {
+			const currentCpuUsage = process.cpuUsage(lastCpuUsage);
+			const currentTime = os.cpus().reduce((total, cpu) => total + Object.values(cpu.times).reduce((t, v) => t + v, 0), 0);
+			const currentIdleTime = os.cpus().reduce((total, cpu) => total + cpu.times.idle, 0);
+			const cpuUsage = (currentTime - lastIdleTime) / (currentTime + currentCpuUsage.user + currentCpuUsage.system - lastIdleTime - lastCpuUsage.idle);
+
+			const resultRes = {
+				"erro": false,
+				"status": 200,
+				"noformat": {
+					uptime: os.uptime(),
+					freemem: os.freemem(),
+					memusage: os.totalmem() - os.freemem(),
+					totalmem: os.totalmem(),
+					freeusagemem: formatPercentage(os.freemem() / os.totalmem()),
+					usagemem: formatPercentage(1 - os.freemem() / os.totalmem()),
+					cpuusage: formatPercentage(cpuUsage),
+				},
+				"format": {
+					uptime: formatUptime(os.uptime()),
+					freemem: formatBytes(os.freemem()),
+					memusage: formatBytes(os.totalmem() - os.freemem()),
+					totalmem: formatBytes(os.totalmem()),
+					freeusagemem: formatPercentage(os.freemem() / os.totalmem()),
+					usagemem: formatPercentage(1 - os.freemem() / os.totalmem()),
+					cpuusage: formatPercentage(cpuUsage),
+				}
+			};
+
+			console.log(resultRes);
+
+			lastCpuUsage.user += currentCpuUsage.user;
+			lastCpuUsage.system += currentCpuUsage.system;
+			lastIdleTime = currentIdleTime;
+		}, 1000);
+
+		setTimeout(() => {
+			clearInterval(intervalId);
+		}, 2000); // interrompe o setInterval após 2 segundos
 
 		res.setHeader('Content-Type', 'application/json');
 		return res.status(resultRes.status).json({
