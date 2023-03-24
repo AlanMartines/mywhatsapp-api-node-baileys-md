@@ -242,6 +242,28 @@ module.exports = class Instace {
 		} else {
 			SessionName = theSessionName;
 		}
+		try {
+			//
+			let startupRes = {
+				"AuthorizationToken": theTokenAuth,
+				"SessionName": SessionName,
+				"setOnline": req?.body?.setOnline || true,
+				"wh_connect": req?.body?.wh_status || null,
+				"wh_qrcode": req?.body?.wh_status || null,
+				"wh_status": req?.body?.wh_status || null,
+				"wh_message": req?.body?.wh_status || null
+			};
+			//
+			fs.writeJson(`${config.PATCH_TOKENS}/${SessionName}.startup.json`, startupRes, (err) => {
+				if (err) {
+					logger?.error(`- Erro: ${err}`);
+				} else {
+					logger?.info('- Success startup config for user file');
+				}
+			});
+		} catch (error) {
+			logger?.error('- Error startup config for user file');
+		}
 		//
 		let data = await Sessions?.getSession(SessionName);
 		if (data) {
