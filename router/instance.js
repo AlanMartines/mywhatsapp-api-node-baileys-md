@@ -1,6 +1,7 @@
 //
 // Configuração dos módulos
 const osUtils = require('os-utils');
+const os = require('os');
 const fs = require('fs-extra');
 const express = require("express");
 const router = express.Router();
@@ -689,49 +690,49 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 	logger?.info(`- getHardWare`);
 	//
 	try {
-		const resultRes = {
-			"erro": false,
-			"status": 200,
-			"noformat": {},
-			"format": {},
-		};
+const formatBytes = (bytes) => {
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+  if (bytes === 0) return "0 Bytes";
+  const i = Math.floor(Math.log2(bytes) / 10);
+  return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(2))} ${sizes[i]}`;
+};
 
-		const formatBytes = (bytes) => {
-			const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
-			if (bytes === 0) return "0 Bytes";
-			const i = Math.floor(Math.log2(bytes) / 10);
-			return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(2))} ${sizes[i]}`;
-		};
+const formatPercentage = (value) => `${Math.round(value * 100)}%`;
 
-		const formatPercentage = (value) => `${Math.round(value * 100)}%`;
+const formatUptime = (seconds) => {
+  const days = Math.floor(seconds / 86400);
+  const hours = Math.floor((seconds % 86400) / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+  return `${days}d ${hours.toString().padStart(2, "0")}:${minutes
+    .toString()
+    .padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
+};
 
-		const formatUptime = (seconds) => {
-			const days = Math.floor(seconds / 86400);
-			const hours = Math.floor((seconds % 86400) / 3600);
-			const minutes = Math.floor((seconds % 3600) / 60);
-			const remainingSeconds = seconds % 60;
-			return `${days}d ${hours.toString().padStart(2, "0")}:${minutes
-				.toString()
-				.padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
-		};
+const cpuUsage = process.cpuUsage();
 
-		osUtils.cpuUsage((cpuUsage) => {
-			resultRes.noformat.uptime = osUtils.sysUptime();
-			resultRes.noformat.totalmem = osUtils.totalmem();
-			resultRes.noformat.memusage = osUtils.totalmem() - osUtils.freemem();
-			resultRes.noformat.freemem = osUtils.freemem();
-			resultRes.noformat.freeusagemem = formatPercentage(osUtils.freememPercentage());
-			resultRes.noformat.usagemem = formatPercentage(1 - osUtils.freememPercentage());
-			resultRes.noformat.cpuusage = formatPercentage(cpuUsage);
-
-			resultRes.format.uptime = formatUptime(osUtils.sysUptime());
-			resultRes.format.totalmem = formatBytes(osUtils.totalmem());
-			resultRes.format.memusage = formatBytes(osUtils.totalmem() - osUtils.freemem());
-			resultRes.format.freemem = formatBytes(osUtils.freemem());
-			resultRes.format.freeusagemem = formatPercentage(osUtils.freememPercentage());
-			resultRes.format.usagemem = formatPercentage(1 - osUtils.freememPercentage());
-			resultRes.format.cpuusage = formatPercentage(cpuUsage);
-		});
+const resultRes = {
+  "erro": false,
+  "status": 200,
+  "noformat": {
+    "uptime": os.uptime(),
+    "totalmem": os.totalmem(),
+    "memusage": os.totalmem() - os.freemem(),
+    "freemem": os.freemem(),
+    "freeusagemem": formatPercentage(os.freemem() / os.totalmem()),
+    "usagemem": formatPercentage(1 - os.freemem() / os.totalmem()),
+    "cpuusage": formatPercentage(cpuUsage.user / (cpuUsage.user + cpuUsage.system)),
+  },
+  "format": {
+    "uptime": formatUptime(os.uptime()),
+    "totalmem": formatBytes(os.totalmem()),
+    "memusage": formatBytes(os.totalmem() - os.freemem()),
+    "freemem": formatBytes(os.freemem()),
+    "freeusagemem": formatPercentage(os.freemem() / os.totalmem()),
+    "usagemem": formatPercentage(1 - os.freemem() / os.totalmem()),
+    "cpuusage": formatPercentage(cpuUsage.user / (cpuUsage.user + cpuUsage.system)),
+  },
+};
 
 		res.setHeader('Content-Type', 'application/json');
 		return res.status(resultRes.status).json({
