@@ -722,8 +722,14 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 
 		const formatPercentage = (value) => `${Math.round(value * 100)}%`;
 
-		const formatUptime = (seconds) =>
-			new Date(seconds * 1000).toISOString().substr(11, 8);
+		const formatUptime = (seconds) => {
+			const hours = Math.floor(seconds / 3600);
+			const minutes = Math.floor((seconds % 3600) / 60);
+			const remainingSeconds = seconds % 60;
+			return `${hours.toString().padStart(2, "0")}:${minutes
+				.toString()
+				.padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
+		};
 
 		const resultRes = {
 			erro: false,
@@ -745,6 +751,7 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 				usagemem: formatPercentage(1 - freemem() / totalmem()),
 			},
 		};
+
 		res.setHeader('Content-Type', 'application/json');
 		return res.status(resultRes.status).json({
 			"Status": resultRes
