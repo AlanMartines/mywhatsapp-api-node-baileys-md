@@ -36,7 +36,7 @@ class AllSessions {
     const hostUrl = config.HOST == '0.0.0.0' ? '127.0.0.1' : config.HOST;
     const host = config.DOMAIN_SSL == '' ? `http://${hostUrl}:${config.PORT}` : `https://${config.DOMAIN_SSL}`;
     const dados = await this.getAllSessions();
-		console.log(dados);
+		if(dados?.length){
     for (let item of dados) {
       setTimeout(async () => {
         try {
@@ -76,6 +76,7 @@ class AllSessions {
         }
       }, 3000);
     }
+		}
   }
 }
 
