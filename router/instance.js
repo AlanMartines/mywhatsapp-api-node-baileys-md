@@ -689,50 +689,49 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 	logger?.info(`- getHardWare`);
 	//
 	try {
-const formatBytes = (bytes) => {
-  const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
-  if (bytes === 0) return "0 Bytes";
-  const i = Math.floor(Math.log2(bytes) / 10);
-  return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(2))} ${sizes[i]}`;
-};
+		const resultRes = {
+			"erro": false,
+			"status": 200,
+			"noformat": {},
+			"format": {},
+		};
 
-const formatPercentage = (value) => `${Math.round(value * 100)}%`;
+		const formatBytes = (bytes) => {
+			const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+			if (bytes === 0) return "0 Bytes";
+			const i = Math.floor(Math.log2(bytes) / 10);
+			return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(2))} ${sizes[i]}`;
+		};
 
-const formatUptime = (seconds) => {
-  const days = Math.floor(seconds / 86400);
-  const hours = Math.floor((seconds % 86400) / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const remainingSeconds = seconds % 60;
-  return `${days}d ${hours.toString().padStart(2, "0")}:${minutes
-    .toString()
-    .padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
-};
+		const formatPercentage = (value) => `${Math.round(value * 100)}%`;
 
-let resultRes = osUtils.cpuUsage((cpuUsage) => {
-  const resultRes = {
-    "erro": false,
-    "status": 200,
-    "noformat": {
-      "uptime": osUtils.sysUptime(),
-      "cpuusage": formatPercentage(cpuUsage),
-      "totalmem": osUtils.totalmem(),
-      "memusage": osUtils.totalmem() - osUtils.freemem(),
-      "freemem": osUtils.freemem(),
-      "freeusagemem": formatPercentage(osUtils.freememPercentage()),
-      "usagemem": formatPercentage(1 - osUtils.freememPercentage()),
-    },
-    "format": {
-      "uptime": formatUptime(osUtils.sysUptime()),
-      "cpuusage": formatPercentage(cpuUsage),
-      "totalmem": formatBytes(osUtils.totalmem()),
-      "memusage": formatBytes(osUtils.totalmem() - osUtils.freemem()),
-      "freemem": formatBytes(osUtils.freemem()),
-      "freeusagemem": formatPercentage(osUtils.freememPercentage()),
-      "usagemem": formatPercentage(1 - osUtils.freememPercentage()),
-    },
-  };
-	return resultRes;
-});
+		const formatUptime = (seconds) => {
+			const days = Math.floor(seconds / 86400);
+			const hours = Math.floor((seconds % 86400) / 3600);
+			const minutes = Math.floor((seconds % 3600) / 60);
+			const remainingSeconds = seconds % 60;
+			return `${days}d ${hours.toString().padStart(2, "0")}:${minutes
+				.toString()
+				.padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
+		};
+
+		osUtils.cpuUsage((cpuUsage) => {
+			resultRes.noformat.uptime = osUtils.sysUptime();
+			resultRes.noformat.totalmem = osUtils.totalmem();
+			resultRes.noformat.memusage = osUtils.totalmem() - osUtils.freemem();
+			resultRes.noformat.freemem = osUtils.freemem();
+			resultRes.noformat.freeusagemem = formatPercentage(osUtils.freememPercentage());
+			resultRes.noformat.usagemem = formatPercentage(1 - osUtils.freememPercentage());
+			resultRes.noformat.cpuusage = formatPercentage(cpuUsage);
+
+			resultRes.format.uptime = formatUptime(osUtils.sysUptime());
+			resultRes.format.totalmem = formatBytes(osUtils.totalmem());
+			resultRes.format.memusage = formatBytes(osUtils.totalmem() - osUtils.freemem());
+			resultRes.format.freemem = formatBytes(osUtils.freemem());
+			resultRes.format.freeusagemem = formatPercentage(osUtils.freememPercentage());
+			resultRes.format.usagemem = formatPercentage(1 - osUtils.freememPercentage());
+			resultRes.format.cpuusage = formatPercentage(cpuUsage);
+		});
 
 		res.setHeader('Content-Type', 'application/json');
 		return res.status(resultRes.status).json({
