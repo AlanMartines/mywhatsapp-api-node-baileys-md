@@ -158,7 +158,7 @@ FORCE_CONNECTION_USE_HERE=0
 			const commands = require("./router/command");
 			const groups = require("./router/group");
 			const instance = require("./router/instance");
-			const mensagens = require("./router/message");
+			const message = require("./router/message");
 			const retrieving = require("./router/retrieving");
 			const sistem = require("./router/sistem.controller");
 			//
