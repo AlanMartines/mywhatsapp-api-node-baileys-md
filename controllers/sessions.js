@@ -11,7 +11,7 @@ module.exports = class Sessions {
 
   static session = new Array()
 
-  static async isURL(str) {
+  static isURL(str) {
     var pattern = new RegExp(
       '^(https?:\\/\\/)?' +
       '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' +
@@ -24,7 +24,7 @@ module.exports = class Sessions {
     return pattern.test(str);
   }
 
-  static async checkPath(path) {
+  static checkPath(path) {
     urlExists(path, (error, exists) => {
       if (exists) {
         return true
@@ -35,17 +35,17 @@ module.exports = class Sessions {
     })
   }
 
-  static async sleep(ms) {
+  static sleep(ms) {
     let time = parseInt(ms) | 1
     return new Promise(resolve => setTimeout(resolve, time));
   }
 
   // checar ou adiciona um usuario na sessão
-  static async checkAddUser(name) {
-    var checkFilter = this.session?.filter(order => (order?.SessionName === name)), add = null
+  static checkAddUser(name) {
+    var checkFilter = this.session?.filter(order => (order?.session === name)), add = null
     if (!checkFilter?.length) {
       add = {
-        SessionName: name,
+        session: name,
       }
       this.session?.push(add)
       return true
@@ -54,8 +54,8 @@ module.exports = class Sessions {
   }
 
   // checar se exite o usuario na sessão
-  static async checkSession(name) {
-    var checkFilter = this.session?.filter(order => (order?.SessionName === name))
+  static checkSession(name) {
+    var checkFilter = this.session?.filter(order => (order?.session === name))
     if (checkFilter?.length) {
       return true
     }
@@ -63,10 +63,10 @@ module.exports = class Sessions {
   }
 
   // pegar index da sessão (chave)
-  static async getSessionKey(name) {
+  static getSessionKey(name) {
     if (this.checkSession(name)) {
       for (var i in this.session) {
-        if (this.session[i]?.SessionName === name) {
+        if (this.session[i]?.session === name) {
           return i
         }
       }
@@ -75,10 +75,10 @@ module.exports = class Sessions {
   }
 
   // adicionar informações a sessão 
-  static async addInfoSession(name, extend) {
+  static addInfoSession(name, extend) {
     if (this.checkSession(name)) {
       for (var i in this.session) {
-        if (this.session[i]?.SessionName === name) {
+        if (this.session[i]?.session === name) {
           Object?.assign(this.session[i], extend)
           return true
         }
@@ -88,10 +88,10 @@ module.exports = class Sessions {
   }
 
   // Remove object na sessão
-  static async removeInfoObjects(name, key) {
+  static removeInfoObjects(name, key) {
     if (this.checkSession(name)) {
       for (var i in this.session) {
-        if (this.session[i]?.SessionName === name) {
+        if (this.session[i]?.session === name) {
           delete this.session[i][key]
           return true
         }
@@ -101,7 +101,7 @@ module.exports = class Sessions {
   }
 
   // deletar sessão
-  static async deleteSession(name) {
+  static deleteSession(name) {
     if (this.checkSession(name)) {
       var key = this.getSessionKey(name)
       delete this.session[key]
@@ -111,7 +111,7 @@ module.exports = class Sessions {
   }
 
   // retornar sessão
-  static async getSession(name) {
+  static getSession(name) {
     if (this.checkSession(name)) {
       var key = this.getSessionKey(name)
       return this.session[key]
@@ -120,12 +120,12 @@ module.exports = class Sessions {
   }
 
   // retornar todas
-  static async getAll() {
+  static getAll() {
     return this.session
   }
 
   // checa o client
-  static async checkClient(name) {
+  static checkClient(name) {
     if (this.getSession(name) && this.getSession(name)?.client) {
       return true
     }
@@ -179,7 +179,7 @@ module.exports = class Sessions {
     })
   }
 
-  static async upToDate(local, remote) {
+  static upToDate(local, remote) {
     const VPAT = /^\d+(\.\d+){0,2}$/;
     if (!local || !remote || local.length === 0 || remote.length === 0)
       return false;
@@ -201,7 +201,7 @@ module.exports = class Sessions {
     }
   }
 
-  static async logUpdateAvailable(current, latest) {
+  static logUpdateAvailable(current, latest) {
     const newVersionLog =
       `Há uma nova versão da ${chalk.bold(`API MyZAP-Premium`)} ${chalk.gray(current)} ➜  ${chalk.bold.green(latest)}\n` +
       `Atualize sua API executando:\n\n` +
