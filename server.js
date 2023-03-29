@@ -158,8 +158,8 @@ FORCE_CONNECTION_USE_HERE=0
 			const commands = require("./router/command");
 			const groups = require("./router/group");
 			const instance = require("./router/instance");
-			const mensagens = require("./router/message");
-			const status = require("./router//status");
+			const message = require("./router/message");
+			const retrieving = require("./router/retrieving");
 			const sistem = require("./router/sistem.controller");
 			//
 			// Body Parser
@@ -225,6 +225,8 @@ FORCE_CONNECTION_USE_HERE=0
 			});
 			//
 			app.use("/instance", instance);
+			app.use("/retrieving", retrieving);
+			app.use("/message", message);
 			app.use("/sistema", sistem);
 			//
 			const sockets = {};
