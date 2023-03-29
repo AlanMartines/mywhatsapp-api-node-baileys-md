@@ -42,6 +42,7 @@ module.exports = class Sessions {
 
   // checar ou adiciona um usuario na sessão
   static async checkAddUser(name) {
+		console.log('checkAddUser', name);
     var checkFilter = this.session?.filter(order => (order?.SessionName === name)), add = null
     if (!checkFilter?.length) {
       add = {
