@@ -9,9 +9,9 @@ const boxen = require('boxen');
 
 module.exports = class Sessions {
 
-    static session = new Array()
+  static session = new Array()
 
-    static async isURL(str) {
+  static async isURL(str) {
     var pattern = new RegExp(
       '^(https?:\\/\\/)?' +
       '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' +
@@ -24,7 +24,7 @@ module.exports = class Sessions {
     return pattern.test(str);
   }
 
-    static async checkPath(path) {
+  static async checkPath(path) {
     urlExists(path, (error, exists) => {
       if (exists) {
         return true
@@ -35,17 +35,17 @@ module.exports = class Sessions {
     })
   }
 
-    static async sleep(ms) {
+  static async sleep(ms) {
     let time = parseInt(ms) | 1
     return new Promise(resolve => setTimeout(resolve, time));
   }
 
   // checar ou adiciona um usuario na sessão
-    static async checkAddUser(name) {
-    var checkFilter = this.session?.filter(order => (order?.session === name)), add = null
+  static async checkAddUser(name) {
+    var checkFilter = this.session?.filter(order => (order?.SessionName === name)), add = null
     if (!checkFilter?.length) {
       add = {
-        session: name,
+        SessionName: name,
       }
       this.session?.push(add)
       return true
@@ -54,8 +54,8 @@ module.exports = class Sessions {
   }
 
   // checar se exite o usuario na sessão
-    static async checkSession(name) {
-    var checkFilter = this.session?.filter(order => (order?.session === name))
+  static async checkSession(name) {
+    var checkFilter = this.session?.filter(order => (order?.SessionName === name))
     if (checkFilter?.length) {
       return true
     }
@@ -63,10 +63,10 @@ module.exports = class Sessions {
   }
 
   // pegar index da sessão (chave)
-    static async getSessionKey(name) {
+  static async getSessionKey(name) {
     if (this.checkSession(name)) {
       for (var i in this.session) {
-        if (this.session[i]?.session === name) {
+        if (this.session[i]?.SessionName === name) {
           return i
         }
       }
@@ -75,10 +75,10 @@ module.exports = class Sessions {
   }
 
   // adicionar informações a sessão 
-    static async addInfoSession(name, extend) {
+  static async addInfoSession(name, extend) {
     if (this.checkSession(name)) {
       for (var i in this.session) {
-        if (this.session[i]?.session === name) {
+        if (this.session[i]?.SessionName === name) {
           Object?.assign(this.session[i], extend)
           return true
         }
@@ -88,10 +88,10 @@ module.exports = class Sessions {
   }
 
   // Remove object na sessão
-    static async removeInfoObjects(name, key) {
+  static async removeInfoObjects(name, key) {
     if (this.checkSession(name)) {
       for (var i in this.session) {
-        if (this.session[i]?.session === name) {
+        if (this.session[i]?.SessionName === name) {
           delete this.session[i][key]
           return true
         }
@@ -101,7 +101,7 @@ module.exports = class Sessions {
   }
 
   // deletar sessão
-    static async deleteSession(name) {
+  static async deleteSession(name) {
     if (this.checkSession(name)) {
       var key = this.getSessionKey(name)
       delete this.session[key]
@@ -111,7 +111,7 @@ module.exports = class Sessions {
   }
 
   // retornar sessão
-    static async getSession(name) {
+  static async getSession(name) {
     if (this.checkSession(name)) {
       var key = this.getSessionKey(name)
       return this.session[key]
@@ -120,19 +120,19 @@ module.exports = class Sessions {
   }
 
   // retornar todas
-    static async getAll() {
+  static async getAll() {
     return this.session
   }
 
   // checa o client
-    static async checkClient(name) {
+  static async checkClient(name) {
     if (this.getSession(name) && this.getSession(name)?.client) {
       return true
     }
     return false
   }
 
-    static async UrlToBase64(url) {
+  static async UrlToBase64(url) {
     return new Promise((resolve, reject) => {
       try {
         axios?.get(url, { responseType: 'arraybuffer' }).then(async (result) => {
@@ -146,7 +146,7 @@ module.exports = class Sessions {
     })
   }
 
-    static async fileToBase64(path) {
+  static async fileToBase64(path) {
     return new Promise(async (resolve, reject) => {
       try {
         if (fs?.existsSync(path)) {
@@ -179,7 +179,7 @@ module.exports = class Sessions {
     })
   }
 
-    static async upToDate(local, remote) {
+  static async upToDate(local, remote) {
     const VPAT = /^\d+(\.\d+){0,2}$/;
     if (!local || !remote || local.length === 0 || remote.length === 0)
       return false;
@@ -201,7 +201,7 @@ module.exports = class Sessions {
     }
   }
 
-    static async logUpdateAvailable(current, latest) {
+  static async logUpdateAvailable(current, latest) {
     const newVersionLog =
       `Há uma nova versão da ${chalk.bold(`API MyZAP-Premium`)} ${chalk.gray(current)} ➜  ${chalk.bold.green(latest)}\n` +
       `Atualize sua API executando:\n\n` +
