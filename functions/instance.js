@@ -98,7 +98,7 @@ module.exports = class Instance {
 	//
 	static async Status(resSessionName) {
 		try {
-			let session = Sessions?.getSession(resSessionName);
+			let session = await Sessions?.getSession(resSessionName);
 			if (session) {
 				//só adiciona se não existir
 				if (session.state == "CONNECTED") {
