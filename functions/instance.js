@@ -358,7 +358,7 @@ module.exports = class Instance {
 		logger?.info("- Desconetando sessão");
 		logger?.info(`- SessionName: ${SessionName}`);
 		//
-		var session = Sessions?.getSession(SessionName);
+		var session = await Sessions?.getSession(SessionName);
 		try {
 			//
 			await session.client.logout();
@@ -418,7 +418,7 @@ module.exports = class Instance {
 		//
 		logger?.info("- Reiniciando sessão");
 		logger?.info(`- SessionName: ${SessionName}`);
-		var session = Sessions?.getSession(SessionName);
+		var session = await Sessions?.getSession(SessionName);
 		//
 		if (session) {
 			//
