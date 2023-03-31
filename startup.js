@@ -41,6 +41,7 @@ class AllSessions {
       setTimeout(async () => {
         try {
           const filePath = path.join(tokenPatch, `${item}.startup.json`);
+					console.log(item);
           const resBody = {};
           if (fs.existsSync(filePath)) {
             const result = JSON.parse(await fs.readFile(filePath, 'utf-8'));
