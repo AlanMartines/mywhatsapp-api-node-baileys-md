@@ -294,7 +294,7 @@ module.exports = class Instace {
 		//
 		let SessionName = req?.body?.SessionName;
 		let setOnline = req?.body?.setOnline;
-		logger?.info(`- SessionName: ${SessionName}`);
+		logger?.info(`- SessionNameeeeeeee: ${SessionName}`);
 		let waqueue = new pQueue({ concurrency: parseInt(config.CONCURRENCY) });
 		await Sessions?.addInfoSession(SessionName, {
 			waqueue: waqueue
@@ -499,7 +499,7 @@ module.exports = class Instace {
 							//
 							if (qr) {
 								//
-								logger?.info(`- SessionName: ${SessionName}`);
+								logger?.info(`- SessionNameeeeeeee: ${SessionName}`);
 								logger?.info('- Reading to WhatsApp'.blue);
 								logger?.info(`- Connection status: ${connection}`.blue);
 								//
@@ -677,7 +677,7 @@ module.exports = class Instace {
 								switch (statusCode) {
 									case resDisconnectReason.loggedOut:
 										// Device Logged Out, Deleting Session
-										logger?.info(`- SessionName: ${SessionName}`);
+										logger?.info(`- SessionNameeeeeeee: ${SessionName}`);
 										logger?.info('- Connection loggedOut'.red);
 										//
 										try {
@@ -723,7 +723,7 @@ module.exports = class Instace {
 										break;
 									case resDisconnectReason.timedOut:
 										//
-										logger?.info(`- SessionName: ${SessionName}`);
+										logger?.info(`- SessionNameeeeeeee: ${SessionName}`);
 										logger?.info('- Connection TimedOut'.yellow);
 										//
 										addJson = {
@@ -761,7 +761,7 @@ module.exports = class Instace {
 										break;
 									case resDisconnectReason.connectionLost:
 										//
-										logger?.info(`- SessionName: ${SessionName}`);
+										logger?.info(`- SessionNameeeeeeee: ${SessionName}`);
 										logger?.info(`- Connection Los`.red);
 										//
 										/*
@@ -793,13 +793,13 @@ module.exports = class Instace {
 										break;
 									case resDisconnectReason.multideviceMismatch:
 										//
-										logger?.info(`- SessionName: ${SessionName}`);
+										logger?.info(`- SessionNameeeeeeee: ${SessionName}`);
 										logger?.info('- Connection multideviceMismatch'.blue);
 										//
 										break;
 									case resDisconnectReason.connectionClosed:
 										//
-										logger?.info(`- SessionName: ${SessionName}`);
+										logger?.info(`- SessionNameeeeeeee: ${SessionName}`);
 										logger?.info(`- Connection connectionClosed`.red);
 										//
 										addJson = {
@@ -832,7 +832,7 @@ module.exports = class Instace {
 									case resDisconnectReason.connectionReplaced:
 										//
 										// Connection Replaced, Another New Session Opened, Please Close Current Session First
-										logger?.info(`- SessionName: ${SessionName}`);
+										logger?.info(`- SessionNameeeeeeee: ${SessionName}`);
 										logger?.info(`- Connection connectionReplaced`.yellow);
 										//
 										try {
@@ -899,7 +899,7 @@ module.exports = class Instace {
 									case resDisconnectReason.badSession:
 										//
 										// Bad session file, delete and run again
-										logger?.info(`- SessionName: ${SessionName}`);
+										logger?.info(`- SessionNameeeeeeee: ${SessionName}`);
 										logger?.info(`- Connection badSession`.red);
 										//
 										// close WebSocket connection
@@ -949,7 +949,7 @@ module.exports = class Instace {
 										break;
 									case resDisconnectReason.restartRequired:
 										//
-										logger?.info(`- SessionName: ${SessionName}`);
+										logger?.info(`- SessionNameeeeeeee: ${SessionName}`);
 										logger?.info('- Connection restartRequired');
 										setTimeout(async function () {
 											return await startSock(SessionName).then(async (result) => {
@@ -990,7 +990,7 @@ module.exports = class Instace {
 								//
 							} else if (typeof connection === undefined) {
 								//
-								logger?.info(`- SessionName: ${SessionName}`);
+								logger?.info(`- SessionNameeeeeeee: ${SessionName}`);
 								logger?.error(`- Connection undefined`.yellow);
 								//
 							}
@@ -1032,7 +1032,7 @@ module.exports = class Instace {
 			});
 			//
 		} catch (error) {
-			logger?.info(`- SessionName: ${SessionName}`);
+			logger?.info(`- SessionNameeeeeeee: ${SessionName}`);
 			logger?.error(`- Instância não criada: ${error.message}`);
 			//
 			let addJson = {
