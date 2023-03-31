@@ -97,6 +97,7 @@ async function deletaToken(filePath, filename) {
 module.exports = class Instance {
 	//
 	static async Status(resSessionName) {
+		console.log(resSessionName);
 		try {
 			let session = await Sessions?.getSession(resSessionName);
 			
