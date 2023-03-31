@@ -67,7 +67,7 @@ class AllSessions {
 					} catch (err) {
 						logger?.error(`- Error starting session ${item}: ${err}`);
 					}
-				}, 3000);
+				}, 2000);
 			}
 		}
 	}
