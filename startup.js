@@ -41,15 +41,17 @@ class AllSessions {
 				setTimeout(async () => {
 					try {
 						const filePath = path.join(tokenPatch, `${item}.startup.json`);
-						const resBody = {};
 
 						let result = JSON.parse(await fs.readFile(filePath, 'utf-8'));
-						resBody.SessionName = item;
-						resBody.setOnline = result.setOnlineue;
-						resBody.wh_connect = result.wh_connect;
-						resBody.wh_qrcode = result.wh_qrcode;
-						resBody.wh_status = result.wh_status;
-						resBody.wh_message = result.wh_message;
+
+						const resBody = {
+							"SessionName": item,
+							"setOnline": result.setOnlineue,
+							"wh_connect": result.wh_connect,
+							"wh_qrcode": result.wh_qrcode,
+							"wh_status": result.wh_status,
+							"wh_message": result.wh_message
+						};
 
 						const options = {
 							method: 'POST',
