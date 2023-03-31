@@ -112,7 +112,7 @@ async function saudacao() {
 		saudacao = `- Boa madrugada`;
 		//
 	}
-	logger?.info(`${saudacao}`);
+	console.log(`${saudacao}`);
 }
 //
 // ------------------------------------------------------------------------------------------------------- //
@@ -120,10 +120,10 @@ async function saudacao() {
 async function updateStateDb(state, status, AuthorizationToken) {
 	//
 	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
-	//logger?.info(`- Date: ${date_now}`);
+	//console.log(`- Date: ${date_now}`);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		logger?.info('- Atualizando status');
+		console.log('- Atualizando status');
 		//
 		await Tokens.update({
 			state: state,
@@ -135,7 +135,7 @@ async function updateStateDb(state, status, AuthorizationToken) {
 					token: AuthorizationToken
 				},
 			}).then(async (entries) => {
-				logger?.info('- Status atualizado');
+				console.log('- Status atualizado');
 			}).catch(async (err) => {
 				logger?.error('- Status não atualizado');
 				logger?.error(`- Error: ${err}`);
@@ -152,10 +152,10 @@ async function updateStateDb(state, status, AuthorizationToken) {
 async function updateUserConDb(userconnected, AuthorizationToken) {
 	//
 	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
-	//logger?.info(`- Date: ${date_now}`);
+	//console.log(`- Date: ${date_now}`);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		logger?.info('- Atualizando User Connected');
+		console.log('- Atualizando User Connected');
 		//
 		await Tokens.update({
 			userconnected: userconnected,
@@ -166,7 +166,7 @@ async function updateUserConDb(userconnected, AuthorizationToken) {
 					token: AuthorizationToken
 				},
 			}).then(async (entries) => {
-				logger?.info('- User connection atualizado');
+				console.log('- User connection atualizado');
 			}).catch(async (err) => {
 				logger?.error('- User connection não atualizado');
 				logger?.error(`- Error: ${err}`);
@@ -184,7 +184,7 @@ async function deletaPastaToken(filePath, filename) {
 	//
 	await rmfr(`${filePath}/${filename}`).then(async (result) => {
 		//
-		logger?.info(`- Pasta "${filePath}/${filename}" removida com sucesso`);
+		console.log(`- Pasta "${filePath}/${filename}" removida com sucesso`);
 		//
 	}).catch((erro) => {
 		//
@@ -200,7 +200,7 @@ async function deletaToken(filePath, filename) {
 	//
 	await rmfr(`${filePath}/${filename}`, { glob: true }).then(async (result) => {
 		//
-		logger?.info(`- Arquivo "${filename}" removido com sucesso`);
+		console.log(`- Arquivo "${filename}" removido com sucesso`);
 		//
 	}).catch((erro) => {
 		//
@@ -219,7 +219,7 @@ async function resContacts(SessionName, contacts) {
 			if (err) {
 				logger?.error(`- Erro: ${err}`);
 			} else {
-				//logger?.info('- Success create contacts file');
+				//console.log('- Success create contacts file');
 			}
 		});
 	} catch (error) {
@@ -257,7 +257,7 @@ module.exports = class Instace {
 				if (err) {
 					logger?.error(`- Erro: ${err}`);
 				} else {
-					logger?.info('- Success startup config for user file');
+					console.log('- Success startup config for user file');
 				}
 			});
 		} catch (error) {
@@ -276,11 +276,11 @@ module.exports = class Instace {
 		//
 		if (data) {
 			await saudacao();
-			logger?.info(`- Carregando sessão`);
+			console.log(`- Carregando sessão`);
 			await this.initSession(req, res, next);
 		} else {
 			await saudacao();
-			logger?.info(`- Iniciando sessão`);
+			console.log(`- Iniciando sessão`);
 			//
 			let newSession = {
 				funcoesSocket: funcoesSocket,
@@ -304,7 +304,7 @@ module.exports = class Instace {
 		//
 		let SessionName = req?.body?.SessionName;
 		let setOnline = req?.body?.setOnline;
-		logger?.info(`- SessionName: ${SessionName}`);
+		console.log(`- SessionName: ${SessionName}`);
 		let waqueue = new pQueue({ concurrency: parseInt(config.CONCURRENCY) });
 		await Sessions?.addInfoSession(SessionName, {
 			waqueue: waqueue
@@ -357,7 +357,7 @@ module.exports = class Instace {
 				//
 				// fetch latest version of WA Web
 				const { version, isLatest } = await fetchLatestBaileysVersion();
-				logger?.info(`- Using WA v${version.join('.')}, isLatest: ${isLatest}`)
+				console.log(`- Using WA v${version.join('.')}, isLatest: ${isLatest}`)
 				//
 				const AxiosRequestConfig = {};
 				//
@@ -499,28 +499,28 @@ module.exports = class Instace {
 								receivedPendingNotifications
 							} = conn;
 							//
-							logger?.info(`- Connection update`.green);
+							console.log(`- Connection update`.green);
 							//
 							/*
-							logger?.info(`- Output: \n ${JSON.stringify(lastDisconnect?.error?.output, null, 2)}`);
-							logger?.info(`- Data: \n ${JSON.stringify(lastDisconnect?.error?.data, null, 2)}`);
-							logger?.info(`- loggedOut: \n ${JSON.stringify(DisconnectReason?.loggedOut, null, 2)}`);
+							console.log(`- Output: \n ${JSON.stringify(lastDisconnect?.error?.output, null, 2)}`);
+							console.log(`- Data: \n ${JSON.stringify(lastDisconnect?.error?.data, null, 2)}`);
+							console.log(`- loggedOut: \n ${JSON.stringify(DisconnectReason?.loggedOut, null, 2)}`);
 							*/
 							//
 							if (qr) {
 								//
-								logger?.info(`- SessionName: ${SessionName}`);
-								logger?.info('- Reading to WhatsApp'.blue);
-								logger?.info(`- Connection status: ${connection}`.blue);
+								console.log(`- SessionName: ${SessionName}`);
+								console.log('- Reading to WhatsApp'.blue);
+								console.log(`- Connection status: ${connection}`.blue);
 								//
-								logger?.info('- QR Generated'.green);
+								console.log('- QR Generated'.green);
 								//
 								const readQRCode = await QRCode.toDataURL(qr);
 								const base64Code = readQRCode.replace('data:image/png;base64,', '');
 								//
-								logger?.info(`- Número de tentativas de ler o qr-code: ${attempts}`);
+								console.log(`- Número de tentativas de ler o qr-code: ${attempts}`);
 								//
-								logger?.info("- Captura do QR-Code");
+								console.log("- Captura do QR-Code");
 								//
 								if (parseInt(config.VIEW_QRCODE_TERMINAL)) {
 									qrViewer.generate(qr, { small: true });
@@ -588,7 +588,7 @@ module.exports = class Instace {
 										message: addJson?.message
 									});
 									//
-									logger?.info("- Navegador fechado automaticamente");
+									console.log("- Navegador fechado automaticamente");
 									//
 									//await updateStateDb(session.state, session.status, session.AuthorizationToken);
 								}
@@ -599,8 +599,8 @@ module.exports = class Instace {
 							//
 							if (connection === 'connecting') {
 								//
-								logger?.info('- Connecting to WhatsApp'.yellow);
-								logger?.info(`- Connection status: ${connection}`.yellow);
+								console.log('- Connecting to WhatsApp'.yellow);
+								console.log(`- Connection status: ${connection}`.yellow);
 								//
 								let addJson = {
 									message: "Dispositivo conectando",
@@ -619,21 +619,21 @@ module.exports = class Instace {
 								//
 							} else if (connection === 'open') {
 								//
-								logger?.info('- Connected to WhatsApp'.green);
-								logger?.info(`- Connection status: ${connection}`.green);
+								console.log('- Connected to WhatsApp'.green);
+								console.log(`- Connection status: ${connection}`.green);
 								//
 								let addJson = {};
 								//
 								// Wait 5 seg for linked qr process to whatsapp
 								await delay(5);
-								logger?.info(`- Started using WA v${version.join('.')}, isLatest: ${isLatest}`.green);
+								console.log(`- Started using WA v${version.join('.')}, isLatest: ${isLatest}`.green);
 								//
 								let phone = await client?.user?.id.split(":")[0];
 								//
 								attempts = 1;
 								//
-								logger?.info("- Sessão criada com sucesso");
-								logger?.info(`- Telefone conectado: ${phone?.split("@")[0]}`);
+								console.log("- Sessão criada com sucesso");
+								console.log(`- Telefone conectado: ${phone?.split("@")[0]}`);
 								//
 								addJson = {
 									client: client,
@@ -687,8 +687,8 @@ module.exports = class Instace {
 								switch (statusCode) {
 									case resDisconnectReason.loggedOut:
 										// Device Logged Out, Deleting Session
-										logger?.info(`- SessionName: ${SessionName}`);
-										logger?.info('- Connection loggedOut'.red);
+										console.log(`- SessionName: ${SessionName}`);
+										console.log('- Connection loggedOut'.red);
 										//
 										try {
 											// close WebSocket connection
@@ -733,8 +733,8 @@ module.exports = class Instace {
 										break;
 									case resDisconnectReason.timedOut:
 										//
-										logger?.info(`- SessionName: ${SessionName}`);
-										logger?.info('- Connection TimedOut'.yellow);
+										console.log(`- SessionName: ${SessionName}`);
+										console.log('- Connection TimedOut'.yellow);
 										//
 										addJson = {
 											message: "Dispositivo conectando",
@@ -771,8 +771,8 @@ module.exports = class Instace {
 										break;
 									case resDisconnectReason.connectionLost:
 										//
-										logger?.info(`- SessionName: ${SessionName}`);
-										logger?.info(`- Connection Los`.red);
+										console.log(`- SessionName: ${SessionName}`);
+										console.log(`- Connection Los`.red);
 										//
 										/*
 										//
@@ -803,14 +803,14 @@ module.exports = class Instace {
 										break;
 									case resDisconnectReason.multideviceMismatch:
 										//
-										logger?.info(`- SessionName: ${SessionName}`);
-										logger?.info('- Connection multideviceMismatch'.blue);
+										console.log(`- SessionName: ${SessionName}`);
+										console.log('- Connection multideviceMismatch'.blue);
 										//
 										break;
 									case resDisconnectReason.connectionClosed:
 										//
-										logger?.info(`- SessionName: ${SessionName}`);
-										logger?.info(`- Connection connectionClosed`.red);
+										console.log(`- SessionName: ${SessionName}`);
+										console.log(`- Connection connectionClosed`.red);
 										//
 										addJson = {
 											client: false,
@@ -842,8 +842,8 @@ module.exports = class Instace {
 									case resDisconnectReason.connectionReplaced:
 										//
 										// Connection Replaced, Another New Session Opened, Please Close Current Session First
-										logger?.info(`- SessionName: ${SessionName}`);
-										logger?.info(`- Connection connectionReplaced`.yellow);
+										console.log(`- SessionName: ${SessionName}`);
+										console.log(`- Connection connectionReplaced`.yellow);
 										//
 										try {
 											// close WebSocket connection
@@ -909,8 +909,8 @@ module.exports = class Instace {
 									case resDisconnectReason.badSession:
 										//
 										// Bad session file, delete and run again
-										logger?.info(`- SessionName: ${SessionName}`);
-										logger?.info(`- Connection badSession`.red);
+										console.log(`- SessionName: ${SessionName}`);
+										console.log(`- Connection badSession`.red);
 										//
 										// close WebSocket connection
 										await client.ws.close();
@@ -959,8 +959,8 @@ module.exports = class Instace {
 										break;
 									case resDisconnectReason.restartRequired:
 										//
-										logger?.info(`- SessionName: ${SessionName}`);
-										logger?.info('- Connection restartRequired');
+										console.log(`- SessionName: ${SessionName}`);
+										console.log('- Connection restartRequired');
 										//
 										addJson = {
 											message: "Dispositivo reconectando",
@@ -1030,7 +1030,7 @@ module.exports = class Instace {
 								//
 							} else if (typeof connection === undefined) {
 								//
-								logger?.info(`- SessionName: ${SessionName}`);
+								console.log(`- SessionName: ${SessionName}`);
 								logger?.error(`- Connection undefined`.yellow);
 								//
 							}
@@ -1072,7 +1072,7 @@ module.exports = class Instace {
 			});
 			//
 		} catch (error) {
-			logger?.info(`- SessionName: ${SessionName}`);
+			console.log(`- SessionName: ${SessionName}`);
 			logger?.error(`- Instância não criada: ${error.message}`);
 			//
 			let addJson = {
