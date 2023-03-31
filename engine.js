@@ -689,7 +689,7 @@ module.exports = class Instace {
 										//
 										try {
 											// End WebSocket connection
-											//await client.ws.end();
+											await client.ws.end();
 										} catch (erro) {
 											logger?.error(`- Error end: ${erro}`);
 										}
@@ -727,6 +727,7 @@ module.exports = class Instace {
 											}
 										);
 										//
+										/*
 										setTimeout(async function () {
 											return await startSock(SessionName).then(async (result) => {
 												//
@@ -741,6 +742,7 @@ module.exports = class Instace {
 												logger?.error(`- Error reconnecting connection: ${erro}`);
 											});
 										}, 500);
+										*/
 										//
 										break;
 									case resDisconnectReason.timedOut:
