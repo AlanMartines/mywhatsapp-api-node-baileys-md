@@ -1,6 +1,6 @@
 const pino = require("pino");
 const pretty = require('pino-pretty');
-/*
+
 const logger = pino({
 	timestamp: false,
 	levelFirst: true,
@@ -37,28 +37,6 @@ const logger = pino({
 			}
 
 			return error;
-		},
-	},
-});
-*/
-const logger = pino({
-	level: 'error',
-	prettyPrint: {
-		ignore: 'pid,hostname',
-		translateTime: true,
-	},
-	hooks: {
-		logMethod(inputArgs, method) {
-			const { err } = inputArgs[0];
-			if (err instanceof Error) {
-				const stack = err.stack.split('\n');
-				const fileName = stack[1].replace(/.*\((.*)\)/, '$1');
-				const lineNo = stack[1].replace(/^.*:(\d+):\d+$/, '$1');
-				const message = stack[0] + '\n' + err.message;
-				method.call(this, { ...inputArgs[0], err: message }, `Error in file ${fileName} at line number ${lineNo}`);
-			} else {
-				method.call(this, ...inputArgs);
-			}
 		},
 	},
 });
