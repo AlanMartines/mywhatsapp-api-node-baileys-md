@@ -4,7 +4,7 @@ module.exports = class Sockets {
     }
     //emitindo mensagem que qrcode mudou 
     qrCode(session, data) {
-        this.io.emit('qrcode', data);
+        this.io.emit('qrCode', data);
         return true;
     }
 

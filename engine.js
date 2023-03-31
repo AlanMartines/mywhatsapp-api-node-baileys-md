@@ -522,9 +522,6 @@ module.exports = class Instace {
 								//
 								logger?.info("- Captura do QR-Code");
 								//
-								webhooks?.wh_qrcode(SessionName, readQRCode, qr);
-								this.exportQR(req.io, readQRCode, SessionName, attempts);
-								//
 								if (parseInt(config.VIEW_QRCODE_TERMINAL)) {
 									qrViewer.generate(qr, { small: true });
 								}
@@ -540,6 +537,9 @@ module.exports = class Instace {
 								await Sessions?.addInfoSession(SessionName, addJson);
 								//
 								await updateStateDb(addJson?.state, addJson?.status, SessionName);
+								//
+								webhooks?.wh_qrcode(SessionName, readQRCode, qr);
+								this.exportQR(req.io, readQRCode, SessionName, attempts, addJson?.state, addJson?.status);
 								//
 								if (attempts >= 5) {
 									//
@@ -610,7 +610,7 @@ module.exports = class Instace {
 								//
 								await Sessions?.addInfoSession(SessionName, addJson);
 								//
-								funcoesSocket.events(SessionName, {
+								funcoesSocket.stateChange(SessionName, {
 									SessionName: SessionName,
 									state: addJson?.state,
 									status: addJson?.status,
@@ -647,7 +647,7 @@ module.exports = class Instace {
 								//
 								await Sessions?.addInfoSession(SessionName, addJson);
 								//
-								funcoesSocket.events(SessionName, {
+								funcoesSocket.stateChange(SessionName, {
 									SessionName: SessionName,
 									state: addJson?.state,
 									status: addJson?.status,
@@ -723,7 +723,7 @@ module.exports = class Instace {
 										//
 										await updateStateDb(addJson?.state, addJson?.status, SessionName);
 										//
-										funcoesSocket.events(SessionName, {
+										funcoesSocket.stateChange(SessionName, {
 											SessionName: SessionName,
 											state: addJson?.state,
 											status: addJson?.status,
@@ -746,7 +746,7 @@ module.exports = class Instace {
 										//
 										await updateStateDb(addJson?.state, addJson?.status, SessionName);
 										//
-										funcoesSocket.events(SessionName, {
+										funcoesSocket.stateChange(SessionName, {
 											SessionName: SessionName,
 											state: addJson?.state,
 											status: addJson?.status,
@@ -883,7 +883,7 @@ module.exports = class Instace {
 										//
 										await updateStateDb(addJson?.state, addJson?.status, SessionName);
 										//
-										funcoesSocket.events(SessionName, {
+										funcoesSocket.stateChange(SessionName, {
 											SessionName: SessionName,
 											state: addJson?.state,
 											status: addJson?.status,
@@ -934,7 +934,7 @@ module.exports = class Instace {
 										//
 										await updateStateDb(addJson?.state, addJson?.status, SessionName);
 										//
-										funcoesSocket.events(SessionName, {
+										funcoesSocket.stateChange(SessionName, {
 											SessionName: SessionName,
 											state: addJson?.state,
 											status: addJson?.status,
@@ -961,6 +961,24 @@ module.exports = class Instace {
 										//
 										logger?.info(`- SessionName: ${SessionName}`);
 										logger?.info('- Connection restartRequired');
+										//
+										addJson = {
+											message: "Dispositivo reconectando",
+											state: "DISCONNECTED",
+											status: "notLogged"
+										};
+										//
+										await Sessions?.addInfoSession(SessionName, addJson);
+										//
+										await updateStateDb(addJson?.state, addJson?.status, SessionName);
+										//
+										funcoesSocket.stateChange(SessionName, {
+											SessionName: SessionName,
+											state: addJson?.state,
+											status: addJson?.status,
+											message: addJson?.message
+										});
+										//
 										setTimeout(async function () {
 											return await startSock(SessionName).then(async (result) => {
 												//
@@ -979,16 +997,28 @@ module.exports = class Instace {
 										break;
 									default:
 										// code block
-										logger?.info(`- lastDisconnect: ${lastDisconnect?.error}`);
+										logger?.error(`- lastDisconnect: ${lastDisconnect?.error}`);
 										//
 										setTimeout(async function () {
 											return await startSock(SessionName).then(async (result) => {
 												//
-												let addJson = {
-													client: result
+												addJson = {
+													client: result,
+													message: "Dispositivo reconectando",
+													state: "DISCONNECTED",
+													status: "notLogged"
 												};
 												//
 												await Sessions?.addInfoSession(SessionName, addJson);
+												//
+												await updateStateDb(addJson?.state, addJson?.status, SessionName);
+												//
+												funcoesSocket.stateChange(SessionName, {
+													SessionName: SessionName,
+													state: addJson?.state,
+													status: addJson?.status,
+													message: addJson?.message
+												});
 												//
 												return result;
 											}).catch(async (erro) => {
@@ -1066,13 +1096,15 @@ module.exports = class Instace {
 		//
 	}
 	//
-	static async exportQR(socket, base64Code, SessionName, attempts) {
+	static async exportQR(socket, base64Code, SessionName, attempts, state, status) {
 		//
 		funcoesSocket.qrCode(SessionName, {
 			SessionName: SessionName,
-			state: addJson?.state,
-			status: addJson?.status,
-			message: addJson?.message
+			state: state,
+			status: status,
+			attempts: attempts,
+			data: base64Code,
+			message: 'qrCode Iniciado, Escanei por favor...'
 		});
 		//
 	};
