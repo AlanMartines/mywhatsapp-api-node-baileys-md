@@ -220,7 +220,7 @@ FORCE_CONNECTION_USE_HERE=0
 			});
 			//
 			//
-			app.get('/', (req, res) => {
+			app.get('/', (req, res, next) => {
 				res.sendFile(path.join(__dirname, './views/index.html'));
 			});
 			//
