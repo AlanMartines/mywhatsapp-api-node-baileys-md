@@ -47,7 +47,8 @@ module.exports = class Sessions {
       add = {
         session: name,
       }
-      this.session?.push(add)
+      this.session?.push(add);
+			console.log(this.session);
       return true
     }
     return false
