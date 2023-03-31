@@ -300,7 +300,7 @@
 				}
 			});
 			//
-			socket.on('status', (update) => {
+			socket.on('stateChange', (update) => {
 				let SessionName = $('#SessionName').val();
 				//
 				if (SessionName == update.SessionName) {

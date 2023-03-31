@@ -581,7 +581,7 @@ module.exports = class Instace {
 									await deletaToken(`${tokenPatch}`, `${SessionName}.startup.json`);
 									await deletaToken(`${tokenPatch}`, `${SessionName}.contacts.json`);
 									//
-									req.io.emit('status',
+									req.io.emit('stateChange',
 										{
 											SessionName: SessionName,
 											status: addJson?.status
@@ -610,7 +610,7 @@ module.exports = class Instace {
 								//
 								await Sessions?.addInfoSession(SessionName, addJson);
 								//
-								req.io.emit('status',
+								req.io.emit('stateChange',
 									{
 										SessionName: SessionName,
 										status: addJson?.status
@@ -647,7 +647,7 @@ module.exports = class Instace {
 								//
 								await Sessions?.addInfoSession(SessionName, addJson);
 								//
-								req.io.emit('status',
+								req.io.emit('stateChange',
 									{
 										SessionName: SessionName,
 										status: addJson?.status
@@ -723,7 +723,7 @@ module.exports = class Instace {
 										//
 										await updateStateDb(addJson?.state, addJson?.status, SessionName);
 										//
-										req.io.emit('status',
+										req.io.emit('stateChange',
 											{
 												SessionName: SessionName,
 												status: addJson?.status
@@ -746,7 +746,7 @@ module.exports = class Instace {
 										//
 										await updateStateDb(addJson?.state, addJson?.status, SessionName);
 										//
-										req.io.emit('status',
+										req.io.emit('stateChange',
 											{
 												SessionName: SessionName,
 												status: addJson?.status
@@ -883,7 +883,7 @@ module.exports = class Instace {
 										//
 										await updateStateDb(addJson?.state, addJson?.status, SessionName);
 										//
-										req.io.emit('status',
+										req.io.emit('stateChange',
 											{
 												SessionName: SessionName,
 												status: addJson?.status
@@ -934,7 +934,7 @@ module.exports = class Instace {
 										//
 										await updateStateDb(addJson?.state, addJson?.status, SessionName);
 										//
-										req.io.emit('status',
+										req.io.emit('stateChange',
 											{
 												SessionName: SessionName,
 												status: session.status
@@ -1055,7 +1055,7 @@ module.exports = class Instace {
 			//
 			await Sessions?.addInfoSession(SessionName, addJson);
 			//
-			req.io.emit('status',
+			req.io.emit('stateChange',
 				{
 					SessionName: SessionName,
 					status: addJson?.status
