@@ -233,14 +233,13 @@ async function resContacts(SessionName, contacts) {
 module.exports = class Instace {
 	static async Start(req, res, next) {
 		//
-		const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
-		const theSessionName = removeWithspace(req?.body?.SessionName);
-		let SessionName;
+		const theTokenAuth = req?.headers?.authorizationtoken;
+		const theSessionName = req?.body?.SessionName;
 		//
 		if (parseInt(config.VALIDATE_MYSQL) == true) {
-			SessionName = theTokenAuth;
+			var SessionName = removeWithspace(theTokenAuth);
 		} else {
-			SessionName = theSessionName;
+			var SessionName = removeWithspace(theSessionName);
 		}
 		try {
 			//

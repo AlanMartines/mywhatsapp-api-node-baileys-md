@@ -76,7 +76,6 @@ module.exports = class Sessions {
 
   // adicionar informações a sessão 
   static async addInfoSession(name, extend) {
-		console.log(extend);
     if (this.checkSession(name)) {
       for (var i in this.session) {
         if (this.session[i]?.session === name) {
