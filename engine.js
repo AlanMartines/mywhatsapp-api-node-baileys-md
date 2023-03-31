@@ -720,23 +720,6 @@ module.exports = class Instace {
 											}
 										);
 										//
-										/*
-										setTimeout(async function () {
-											return await startSock(SessionName).then(async (result) => {
-												//
-												let addJson = {
-													client: result
-												};
-												//
-												await Sessions?.addInfoSession(SessionName, addJson);
-												//
-												return result;
-											}).catch(async (erro) => {
-												logger?.error(`- Error reconnecting connection: ${erro}`);
-											});
-										}, 500);
-										*/
-										//
 										break;
 									case resDisconnectReason.timedOut:
 										//
