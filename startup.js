@@ -42,22 +42,15 @@ class AllSessions {
         try {
           const filePath = path.join(tokenPatch, `${item}.startup.json`);
           const resBody = {};
-          if (fs.existsSync(filePath)) {
-            const result = JSON.parse(await fs.readFile(filePath, 'utf-8'));
+
+            let result = JSON.parse(await fs.readFile(filePath, 'utf-8'));
             resBody.SessionName = item;
             resBody.setOnline = result.setOnlineue;
             resBody.wh_connect = result.wh_connect;
             resBody.wh_qrcode = result.wh_qrcode;
             resBody.wh_status = result.wh_status;
             resBody.wh_message = result.wh_message;
-          } else {
-            resBody.SessionName = item;
-            resBody.setOnline = true;
-            resBody.wh_connect = null;
-            resBody.wh_qrcode = null;
-            resBody.wh_status = null;
-            resBody.wh_message = null;
-          }
+
           const options = {
             method: 'POST',
             rejectUnauthorized: false,
@@ -69,7 +62,7 @@ class AllSessions {
             url: `${host}/instance/Start`,
             body: resBody
           };
-          const result = await request(options);
+          await request(options);
           logger?.info(`- Start Session Name: ${item}`);
         } catch (err) {
           logger?.error(`- Error starting session ${item}: ${err}`);
