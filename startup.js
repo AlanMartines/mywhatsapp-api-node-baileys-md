@@ -41,7 +41,6 @@ class AllSessions {
       setTimeout(async () => {
         try {
           const filePath = path.join(tokenPatch, `${item}.startup.json`);
-					console.log(item);
           const resBody = {};
           if (fs.existsSync(filePath)) {
             const result = JSON.parse(await fs.readFile(filePath, 'utf-8'));
@@ -67,7 +66,7 @@ class AllSessions {
               AuthorizationToken: parseInt(config.VALIDATE_MYSQL) ? item : config.SECRET_KEY
             },
             json: true,
-            url: `${host}/sistema/Start`,
+            url: `${host}/instance/Start`,
             body: resBody
           };
           const result = await request(options);
