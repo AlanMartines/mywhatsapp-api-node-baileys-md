@@ -124,7 +124,17 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 				//
 				engine.Start(req, res, next);
 				//
-
+				var resultRes = {
+					"erro": false,
+					"status": 200,
+					"message": 'Sistema iniciando, por favor aguarde'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+				//
 			}
 		}
 	} catch (error) {
