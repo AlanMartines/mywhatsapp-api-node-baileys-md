@@ -513,7 +513,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 				//
 				case 'qrRead':
 					//
-					var session = Sessions.getSession(resSessionName);
+					var session = await Sessions?.getSession(resSessionName);
 					if (req.body.View === true) {
 						var qrcode = session.qrcode;
 						if (qrcode) {
