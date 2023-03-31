@@ -45,7 +45,7 @@ class AllSessions {
 						let result = JSON.parse(await fs.readFile(filePath, 'utf-8'));
 
 						const resBody = {
-							"SessionName": item,
+							"SessionName": result.SessionName,
 							"setOnline": result.setOnlineue,
 							"wh_connect": result.wh_connect,
 							"wh_qrcode": result.wh_qrcode,
