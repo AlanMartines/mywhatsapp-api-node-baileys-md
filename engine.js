@@ -268,7 +268,7 @@ module.exports = class Instace {
 		if (data) {
 			await saudacao();
 			logger?.info(`- Carregando sessão`);
-			this.initSession(req, res, next);
+			await this.initSession(req, res, next);
 		} else {
 			await saudacao();
 			logger?.info(`- Iniciando sessão`);
@@ -283,9 +283,9 @@ module.exports = class Instace {
 				status: "notLogged"
 			};
 
-			Sessions?.checkAddUser(SessionName);
-			Sessions?.addInfoSession(SessionName, newSession);
-			this.initSession(req, res, next);
+			await Sessions?.checkAddUser(SessionName);
+			await Sessions?.addInfoSession(SessionName, newSession);
+			await this.initSession(req, res, next);
 			//
 		}
 	}

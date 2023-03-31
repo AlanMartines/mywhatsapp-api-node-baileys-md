@@ -228,6 +228,33 @@ FORCE_CONNECTION_USE_HERE=0
 			app.use("/retrieving", retrieving);
 			app.use("/message", message);
 			app.use("/sistema", sistem);
+			app.use("/api-doc", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+			//
+			app.get('/Start', function (req, res, next) {
+				let host = config.HOST == '0.0.0.0' ? '127.0.0.1' : `${config.HOST}`;
+				res.render('index', {
+					port: config.PORT,
+					host: host,
+					host_ssl: config.DOMAIN_SSL,
+					validate_mysql: parseInt(config.VALIDATE_MYSQL),
+				});
+			});
+			//
+			// rota url erro
+			app.all('*', (req, res) => {
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 404,
+					"message": 'Não foi possivel executar a ação, verifique a url informada.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+				//
+			});
 			//
 			const sockets = {};
 			//socket
@@ -247,36 +274,6 @@ FORCE_CONNECTION_USE_HERE=0
 					logger?.info(`- Socketid ${socket.id}`);
 				});
 			});
-			//
-			app.get('/Start', function (req, res, next) {
-				let host = config.HOST == '0.0.0.0' ? '127.0.0.1' : `${config.HOST}`;
-				res.render('index', {
-					port: config.PORT,
-					host: host,
-					host_ssl: config.DOMAIN_SSL,
-					validate_mysql: parseInt(config.VALIDATE_MYSQL),
-				});
-			});
-			//
-			app.use('/api-doc', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-			//
-			// rota url erro
-			app.all('*', (req, res) => {
-				//
-				var resultRes = {
-					"erro": true,
-					"status": 404,
-					"message": 'Não foi possivel executar a ação, verifique a url informada.'
-				};
-				//
-				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
-					"Status": resultRes
-				});
-				//
-			});
-			//
-			// ------------------------------------------------------------------------------------------------//
 			//
 			http.listen(config.PORT, config.HOST, async function (err) {
 				if (err) {
