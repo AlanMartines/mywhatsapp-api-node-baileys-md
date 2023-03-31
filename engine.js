@@ -688,13 +688,6 @@ module.exports = class Instace {
 										}
 										//
 										try {
-											// End WebSocket connection
-											await client.ws.end();
-										} catch (erro) {
-											logger?.error(`- Error end: ${erro}`);
-										}
-										//
-										try {
 											// remove all events
 											await client.ev.removeAllListeners();
 										} catch (erro) {
