@@ -113,8 +113,9 @@ module.exports = class Sessions {
   // retornar sessão
   static async getSession(name) {
     if (this.checkSession(name)) {
-      var key = this.getSessionKey(name)
-      return this.session[key]
+      var key = this.getSessionKey(name);
+			console.log(this.session[key]);
+      return this.session[key];
     }
     return false
   }
