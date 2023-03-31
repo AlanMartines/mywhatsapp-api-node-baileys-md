@@ -80,7 +80,6 @@ module.exports = class Sessions {
       for (var i in this.session) {
         if (this.session[i]?.session === name) {
           Object?.assign(this.session[i], extend);
-								console.log(this.session);
           return true
         }
       }
