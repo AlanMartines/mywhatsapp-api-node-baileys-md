@@ -42,10 +42,10 @@ module.exports = class Sessions {
 
   // checar ou adiciona um usuario na sessão
   static async checkAddUser(name) {
-    var checkFilter = this.session?.filter(order => (order?.SessionName === name)), add = null
+    var checkFilter = this.session?.filter(order => (order?.session === name)), add = null
     if (!checkFilter?.length) {
       add = {
-        SessionName: name,
+        session: name,
       }
       this.session?.push(add)
       return true
@@ -55,7 +55,7 @@ module.exports = class Sessions {
 
   // checar se exite o usuario na sessão
   static async checkSession(name) {
-    var checkFilter = this.session?.filter(order => (order?.SessionName === name))
+    var checkFilter = this.session?.filter(order => (order?.session === name))
     if (checkFilter?.length) {
       return true
     }
@@ -66,7 +66,7 @@ module.exports = class Sessions {
   static async getSessionKey(name) {
     if (this.checkSession(name)) {
       for (var i in this.session) {
-        if (this.session[i]?.SessionName === name) {
+        if (this.session[i]?.session === name) {
           return i
         }
       }
@@ -78,7 +78,7 @@ module.exports = class Sessions {
   static async addInfoSession(name, extend) {
     if (this.checkSession(name)) {
       for (var i in this.session) {
-        if (this.session[i]?.SessionName === name) {
+        if (this.session[i]?.session === name) {
           Object?.assign(this.session[i], extend)
           return true
         }
@@ -91,7 +91,7 @@ module.exports = class Sessions {
   static async removeInfoObjects(name, key) {
     if (this.checkSession(name)) {
       for (var i in this.session) {
-        if (this.session[i]?.SessionName === name) {
+        if (this.session[i]?.session === name) {
           delete this.session[i][key]
           return true
         }
@@ -203,13 +203,13 @@ module.exports = class Sessions {
 
   static async logUpdateAvailable(current, latest) {
     const newVersionLog =
-      `Há uma nova versão da ${chalk.bold(`API MyZAP-Premium`)} ${chalk.gray(current)} ➜  ${chalk.bold.green(latest)}\n` +
+      `Há uma nova versão da ${chalk.bold(`My Whatsapp`)} ${chalk.gray(current)} ➜  ${chalk.bold.green(latest)}\n` +
       `Atualize sua API executando:\n\n` +
-      `${chalk.bold('\>')} ${chalk.blueBright('npm run update')}`;
+      `${chalk.bold('\>')} ${chalk.blueBright('git pull; npm install')}`;
     console.log(boxen(newVersionLog, { padding: 1 }));
     console.log(
       `Para mais informações visite: ${chalk.underline(
-        'https://github.com/eduardo-policarpo/MyZAP2.0-Premiun/releases'
+        'https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md/releases'
       )}\n`
     );
   }
