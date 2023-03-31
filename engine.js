@@ -275,9 +275,6 @@ module.exports = class Instace {
 			logger?.info(`- Iniciando sessão`);
 			//
 			let newSession = {
-				waqueue: null,
-				qrcode: null,
-				client: null,
 				tokenPatch: tokenPatch,
 				wh_status: req?.body?.wh_status != undefined ? req?.body?.wh_status : '',
 				wh_message: req?.body?.wh_message != undefined ? req?.body?.wh_message : '',
