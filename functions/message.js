@@ -76,7 +76,7 @@ module.exports = class Mensagens {
 		});
 		//
 	} //sendContactVcard
-//
+	//
 	// ------------------------------------------------------------------------------------------------//
 	//
 	//Enviar Audio
@@ -97,33 +97,34 @@ module.exports = class Mensagens {
 			audio: buffer,
 			mimetype: mimetype,
 			ptt: true
-		}).then(async (result) => {
-			//logger?.info("Result: ", result); //return object success
-			//
-			let returnResult = {
-				"erro": false,
-				"status": 200,
-				"message": "Audio enviado com sucesso."
-			};
-			//
-			await session.client.sendPresenceUpdate('available', number);
-			return returnResult;
-			//
-		}).catch(async (erro) => {
-			await session.client.sendPresenceUpdate('available', number);
-			logger?.error(`- Error when: ${erro}`);
-			//return { result: 'error', state: session.state, message: "Erro ao enviar menssagem" };
-			//return (erro);
-			//
-			let returnResult = {
-				"erro": true,
-				"status": 404,
-				"message": "Erro ao enviar audio"
-			};
-			//
-			return returnResult;
-			//
-		});
+		},
+			{ presence: 'recording', delay: 500 },).then(async (result) => {
+				//logger?.info("Result: ", result); //return object success
+				//
+				let returnResult = {
+					"erro": false,
+					"status": 200,
+					"message": "Audio enviado com sucesso."
+				};
+				//
+				await session.client.sendPresenceUpdate('available', number);
+				return returnResult;
+				//
+			}).catch(async (erro) => {
+				await session.client.sendPresenceUpdate('available', number);
+				logger?.error(`- Error when: ${erro}`);
+				//return { result: 'error', state: session.state, message: "Erro ao enviar menssagem" };
+				//return (erro);
+				//
+				let returnResult = {
+					"erro": true,
+					"status": 404,
+					"message": "Erro ao enviar audio"
+				};
+				//
+				return returnResult;
+				//
+			});
 	} //sendPtt
 	//
 	// ------------------------------------------------------------------------------------------------//
