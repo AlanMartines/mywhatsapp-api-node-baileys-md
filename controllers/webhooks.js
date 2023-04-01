@@ -26,7 +26,7 @@ module.exports = class Webhooks {
 				});
 
 			} else {
-				logger.info('- Webhook no defined');
+				logger.info('- Webhook message no defined');
 			}
 		} catch (error) {
 			logger?.error(`- Error: ${error.message}`);
@@ -61,7 +61,7 @@ module.exports = class Webhooks {
 				});
 
 			} else {
-				logger.info('- Webhook no defined');
+				logger.info('- Webhook connect no defined');
 			}
 		} catch (error) {
 			logger?.error(`- Error: ${error.message}`);
@@ -88,7 +88,7 @@ module.exports = class Webhooks {
 				});
 
 			} else {
-				logger.info('- Webhook no defined');
+				logger.info('- Webhook status no defined');
 			}
 		} catch (error) {
 			logger?.error(`- Error: ${error.message}`);
@@ -122,7 +122,7 @@ module.exports = class Webhooks {
 				});
 
 			} else {
-				logger.info('- Webhook no defined');
+				logger.info('- Webhook status no defined');
 			}
 		} catch (error) {
 			logger?.error(`- Error: ${error.message}`);;
@@ -158,7 +158,7 @@ module.exports = class Webhooks {
 				});
 
 			} else {
-				logger.info('- Webhook no defined');
+				logger.info('- Webhook receive no defined');
 			}
 		} catch (error) {
 			logger?.error(`- Error: ${error.message}`);
