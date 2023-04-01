@@ -5,6 +5,7 @@ const express = require("express");
 const router = express.Router();
 const multer = require('multer');
 const upload = multer({});
+const mime = require('mime-types');
 const verifyToken = require("../middleware/verifyToken");
 const instance = require("../functions/instance");
 const message = require("../functions/message");
