@@ -98,7 +98,7 @@ module.exports = class Mensagens {
 			mimetype: mimetype,
 			ptt: true
 		},
-			{ presence: 'recording', delay: 500 }
+			{ presence: 'recording', delay: 1000 }
 		).then(async (result) => {
 				//logger?.info("Result: ", result); //return object success
 				//
@@ -149,7 +149,7 @@ module.exports = class Mensagens {
 			mp3: true,
 			ptt: true
 		},
-			{ presence: 'recording', delay: 500 }
+			{ presence: 'recording', delay: 1000 }
 		).then(async (result) => {
 			//logger?.info("Result: ", result); //return object success
 			//
@@ -196,7 +196,7 @@ module.exports = class Mensagens {
 		return await session.client.sendMessage(
 			number,
 			{ text: msg },
-			{ presence: 'composing', delay: 500 }
+			{ presence: 'composing', delay: 1000 }
 		).then(async (result) => {
 			//logger?.info("Result: ", result); //return object success
 			//
