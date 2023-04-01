@@ -269,10 +269,8 @@ router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req,
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
 	} else {
 		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -374,10 +372,8 @@ router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
 	} else {
 		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -497,10 +493,8 @@ router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, n
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
 	} else {
 		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -598,10 +592,8 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
 	} else {
 		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -704,10 +696,8 @@ router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, n
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
 	} else {
 		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -820,10 +810,8 @@ router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req,
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
 	} else {
 		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -946,10 +934,8 @@ router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req,
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
 	} else {
 		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.base64 || !req.body.originalname || !req.body.caption) {
@@ -1055,10 +1041,8 @@ router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
 	} else {
 		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.base64 || !req.body.mimetype || !req.body.originalname || !req.body.caption) {
@@ -1166,10 +1150,8 @@ router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, 
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
 	} else {
 		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.caption || !req.file) {
@@ -1254,10 +1236,8 @@ router.post("/sendFileUrl", upload.none(''), verifyToken.verify, async (req, res
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
 	} else {
 		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.url || !req.body.caption) {
@@ -1341,10 +1321,8 @@ router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, 
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
 	} else {
 		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.base64 || !req.body.originalname || !req.body.caption) {
@@ -1435,10 +1413,8 @@ router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (r
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
 	} else {
 		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.base64 || !req.body.mimetype || !req.body.originalname || !req.body.caption) {
@@ -1524,10 +1500,8 @@ router.post("/sendButton", upload.none(''), verifyToken.verify, async (req, res,
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
 	} else {
 		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.buttonMessage) {
@@ -1609,10 +1583,8 @@ router.post("/sendTemplate", upload.none(''), verifyToken.verify, async (req, re
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
 	} else {
 		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.templateMessage) {
@@ -1694,10 +1666,8 @@ router.post("/sendListMessage", upload.none(''), verifyToken.verify, async (req,
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
 	} else {
 		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.listMessage) {
