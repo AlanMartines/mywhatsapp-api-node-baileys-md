@@ -606,8 +606,12 @@ module.exports = class Events {
 						//
 					}
 					//
-					dataSessions?.funcoesSocket?.message(SessionName, response);
-					webhooks?.wh_messages(SessionName, response);
+					if (Object.keys(response).length !== 0) {
+						//
+						dataSessions?.funcoesSocket?.message(SessionName, response);
+						webhooks?.wh_messages(SessionName, response);
+						//
+					}
 					//
 				}
 			}
