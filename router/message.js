@@ -718,6 +718,7 @@ router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, n
 			//
 			var Status = await instance?.Status(resSessionName);
 			var session = await Sessions?.getSession(resSessionName);
+			console.log(Status);
 			switch (Status.status) {
 				case 'inChat':
 				case 'qrReadSuccess':
