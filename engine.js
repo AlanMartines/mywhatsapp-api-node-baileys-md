@@ -522,7 +522,7 @@ module.exports = class Instace {
 								//
 								logger?.info("- Captura do QR-Code");
 								//
-								webhooks?.wh_qrcode(SessionName, readQRCode, qr);
+								webhooks?.wh_qrcode(SessionName);
 								this.exportQR(req.io, readQRCode, SessionName, attempts);
 								//
 								if (parseInt(config.VIEW_QRCODE_TERMINAL)) {
@@ -655,7 +655,7 @@ module.exports = class Instace {
 								);
 								//
 								await updateStateDb(addJson?.state, addJson?.status, SessionName);
-								webhooks?.wh_connect(await Sessions?.getSession(SessionName), addJson?.state, phone);
+								webhooks?.wh_connect(SessionName);
 								//
 								if (phone) {
 									await updateUserConDb(phone, addJson?.AuthorizationToken);
