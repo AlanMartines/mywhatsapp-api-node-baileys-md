@@ -43,7 +43,8 @@ function convertHMS(value) {
 //
 module.exports = class Events {
 	//
-	static async statusConnection(session, client, socket, events) {
+	static async statusConnection(SessionName, events) {
+		let dataSessions = await Sessions?.getSession(SessionName);
 		if (events['connection.update']) {
 			const conn = events['connection.update'];
 			//
@@ -58,15 +59,15 @@ module.exports = class Events {
 		}
 	}
 	//
-	static async statusMessage(session, client, socket, events) {
-		let data = Sessions.getSession(session);
+	static async statusMessage(SessionName, events) {
+		let dataSessions = await Sessions?.getSession(SessionName);
 		try {
 			if (events['messages.update']) {
 				const message = events['messages.update'];
-				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- SessionName: ${SessionName}`);
 				//logger?.info(`- Messages update: ${JSON.stringify(message, null, 2)}`);
 				// logic of your application...
-				let phone = await client?.user?.id.split(":")[0];
+				let phone = dataSessions?.client?.user?.id?.split(":")[0];
 				let onAck = message[0]?.update?.status;
 				//logger?.info(`- onAck: ${onAck}`);
 				let status;
@@ -81,7 +82,7 @@ module.exports = class Events {
 						status = 'RECEIVED'
 						break;
 					case 2:
-						status = 'SENT'
+						status = 'SEND'
 						break;
 					case 1:
 						status = 'PENDING'
@@ -99,30 +100,31 @@ module.exports = class Events {
 					"to": message[0]?.key?.fromMe == false ? phone : message[0]?.key?.remoteJid?.split(':')[0].split('@')[0],
 					"dateTime": moment(new Date())?.format('YYYY-MM-DD HH:mm:ss')
 				}
-				//data.funcoesSocket.ack(session, response);
-				await webhooks?.wh_status(session, response);
+				dataSessions?.funcoesSocket?.ack(SessionName, response);
+				await webhooks?.wh_status(SessionName, response);
 				//
 			}
 		} catch (error) {
-			logger?.info(`- SessionName: ${session.name}`);
+			logger?.error(`- SessionName: ${SessionName}`);
 			logger?.error(`- Error onAck ${error}`);
 		}
 	}
 	//
-	static async contactsEvents(session, client, socket, events) {
+	static async contactsEvents(SessionName, events) {
+		let dataSessions = await Sessions.getSession(SessionName);
 		//
 		try {
 			if (events['contacts.set']) {
 				const contacts = JSON.parse(events['contacts.set']);
 				//logger?.info(`- Contacts upsert: ${JSON.stringify(contacts, null, 2)}`);
-				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Contacts set`);
 				//
 
 				//
 			}
 		} catch (error) {
-			logger?.info(`- SessionName: ${session.name}`);
+			logger?.info(`- SessionName: ${SessionName}`);
 			logger?.error(`- Error message-receipt update event ${error}`);
 		}
 		//
@@ -130,12 +132,12 @@ module.exports = class Events {
 			if (events['contacts.upsert']) {
 				const contacts = JSON.parse(events['contacts.upsert']);
 				//logger?.info(`- Contacts upsert: ${JSON.stringify(contacts, null, 2)}`);
-				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Contacts upsert`);
 				//
 				/*
 				try {
-					fs.writeJson(`${config.PATCH_TOKENS}/${session.name}.contacts.json`, `${JSON.stringify(contacts, null, 2)}`, (err) => {
+					fs.writeJson(`${config.PATCH_TOKENS}/${SessionName}.contacts.json`, `${JSON.stringify(contacts, null, 2)}`, (err) => {
 						if (err) {
 							logger?.error(`- Erro: ${err}`);
 						} else {
@@ -149,7 +151,7 @@ module.exports = class Events {
 				*/
 			}
 		} catch (error) {
-			logger?.info(`- SessionName: ${session.name}`);
+			logger?.info(`- SessionName: ${SessionName}`);
 			logger?.error(`- Error message-receipt update event ${error}`);
 		}
 		//
@@ -158,21 +160,22 @@ module.exports = class Events {
 				const contacts = events['contacts.update'];
 				for (const contact of contacts) {
 					if (typeof contact.imgUrl !== 'undefined') {
-						const newUrl = contact.imgUrl === null ? null : await client?.profilePictureUrl(contact.id).catch(() => null);
+						const newUrl = contact.imgUrl === null ? null : dataSessions?.client?.profilePictureUrl(contact.id).catch(() => null);
 						//logger?.info(` - Contact ${contact.id} has a new profile pic: ${newUrl}`,);
 					}
 				}
-				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Contacts update`);
 			}
 		} catch (error) {
-			logger?.info(`- SessionName: ${session.name}`);
+			logger?.info(`- SessionName: ${SessionName}`);
 			logger?.error(`- Error message-receipt update event ${error}`);
 		}
 		//
 	}
 	//
-	static async messagesEvents(session, client, socket, events) {
+	static async messagesEvents(SessionName, events) {
+		let dataSessions = await Sessions?.getSession(SessionName);
 		try {
 			if (events['messages.upsert']) {
 				const m = events['messages.upsert'];
@@ -181,12 +184,12 @@ module.exports = class Events {
 				//logger?.info(`- receiveMessage\n ${JSON.stringify(msg, null, 2)}`);
 				//
 				let type = null;
-				let response = [];
+				let response = {};
 				//
 				if (msg?.key?.remoteJid != 'status@broadcast') {
 					//
 					//if (m.type === 'notify' || m.type === 'append') {
-					logger?.info(`- Type: ${session.name}`);
+					logger?.info(`- Type: ${SessionName}`);
 					//
 					if (msg?.message?.locationMessage) {
 						type = 'location';
@@ -226,16 +229,16 @@ module.exports = class Events {
 						type = 'reactionMessage';
 					} else {
 						type = undefined;
-							//
-							logger?.info(`- Desculpe, estamos sem nenhuma resposta.`);
-							logger?.error(msg?.message);
-							//
+						//
+						logger?.info(`- Desculpe, estamos sem nenhuma resposta.`);
+						logger?.error(msg?.message);
+						//
 					}
 					//
 					// }
 					//
 					logger?.info(`- Type message: ${type}`);
-					let phone = await client?.user?.id.split(":")[0];
+					let phone = dataSessions?.client?.user?.id?.split(":")[0];
 					//
 					switch (type) {
 						case 'text':
@@ -251,7 +254,7 @@ module.exports = class Events {
 								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"content": msg?.message?.conversation,
-								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							break;
@@ -276,7 +279,7 @@ module.exports = class Events {
 								"base64": string64,
 								"height": msg?.message?.imageMessage?.height != undefined ? msg?.message?.imageMessage?.height : null,
 								"width": msg?.message?.imageMessage?.width != undefined ? msg?.message?.imageMessage?.width : null,
-								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							//
@@ -302,7 +305,7 @@ module.exports = class Events {
 								"base64": string64,
 								"height": msg?.message?.stickerMessage?.height != undefined ? msg?.message?.stickerMessage?.height : null,
 								"width": msg?.message?.stickerMessage?.width != undefined ? msg?.message?.stickerMessage?.width : null,
-								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							//
@@ -329,7 +332,7 @@ module.exports = class Events {
 								"time": convertHMS(msg?.message?.audioMessage?.seconds),
 								"base64": string64,
 								"ptt": msg?.message?.audioMessage?.ptt,
-								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							//
@@ -355,7 +358,7 @@ module.exports = class Events {
 								"mimetype": msg?.message?.videoMessage?.mimetype != undefined ? msg?.message?.videoMessage?.mimetype : null,
 								"fileLength": await convertBytes(msg?.message?.videoMessage?.fileLength),
 								"base64": string64,
-								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							//
@@ -374,7 +377,7 @@ module.exports = class Events {
 								"loc": msg?.message?.locationMessage?.degreesLatitude,
 								"lat": msg?.message?.locationMessage?.degreesLongitude,
 								"url": "https://maps.google.com/maps?q=" + msg?.message?.locationMessage?.degreesLatitude + "," + msg?.message?.locationMessage?.degreesLongitude,
-								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							break;
@@ -393,7 +396,7 @@ module.exports = class Events {
 								"lat": msg?.message?.liveLocationMessage?.degreesLongitude,
 								"caption": msg?.message?.liveLocationMessage?.caption,
 								"url": "https://maps.google.com/maps?q=" + msg?.message?.liveLocationMessage?.degreesLatitude + "," + msg?.message?.liveLocationMessage?.degreesLongitude,
-								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							break;
@@ -415,7 +418,7 @@ module.exports = class Events {
 								"caption": msg?.message?.documentMessage?.caption != undefined ? msg?.message?.documentMessage?.caption : null,
 								"mimetype": msg?.message?.documentMessage?.mimetype != undefined ? msg?.message?.documentMessage?.mimetype : null,
 								"base64": string64,
-								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							//
@@ -433,7 +436,7 @@ module.exports = class Events {
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"displayName": msg?.message?.contactMessage?.displayName,
 								"vcard": msg?.message?.contactMessage?.vcard,
-								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							break;
@@ -448,7 +451,7 @@ module.exports = class Events {
 								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"buttonsMessage": msg?.message?.viewOnceMessage?.message?.buttonsMessage,
-								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							break;
@@ -463,7 +466,7 @@ module.exports = class Events {
 								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"selectedButtonId": msg?.message?.buttonsResponseMessage.selectedButtonId,
 								"selectedDisplayText": msg?.message?.buttonsResponseMessage.selectedDisplayText,
-								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							break;
@@ -478,7 +481,7 @@ module.exports = class Events {
 								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"templateMessage": msg?.message?.templateMessage?.hydratedTemplate?.hydratedButtons,
-								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							break;
@@ -494,7 +497,7 @@ module.exports = class Events {
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"selectedId": msg?.message?.templateButtonReplyMessage?.selectedId,
 								"selectedDisplayText": msg?.message?.templateButtonReplyMessage?.selectedDisplayText,
-								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							break;
@@ -509,7 +512,7 @@ module.exports = class Events {
 								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"listMessage": msg?.message?.viewOnceMessage?.message?.listMessage,
-								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							break;
@@ -524,7 +527,7 @@ module.exports = class Events {
 								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"listResponseMessage": msg?.message?.listResponseMessage,
-								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							break;
@@ -545,7 +548,7 @@ module.exports = class Events {
 								"description": msg?.message?.extendedTextMessage?.description,
 								"title": msg?.message?.extendedTextMessage?.title,
 								"content": msg?.message?.extendedTextMessage?.text,
-								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							break;
@@ -560,7 +563,7 @@ module.exports = class Events {
 								"name": msg?.pushName || msg?.verifiedBizName || null,
 								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
-								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							//
@@ -576,39 +579,44 @@ module.exports = class Events {
 								"from": msg?.message?.reactionMessage?.key?.fromMe == true ? phone : msg?.message?.reactionMessage?.key?.remoteJid?.split('@')[0],
 								"to": msg?.message?.reactionMessage?.key?.fromMe == false ? phone : msg?.message?.reactionMessage?.key?.remoteJid?.split('@')[0],
 								"content": msg?.message?.reactionMessage?.text,
-								"status": msg?.message?.reactionMessage?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
+								"status": msg?.message?.reactionMessage?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.message?.reactionMessage?.senderTimestampMs * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							//
 							break;
 						default:
-							//
-							/*
-							logger?.info(`- Desculpe, estamos sem nenhuma resposta.`);
-							logger?.error(msg?.message);
-							//
-							response = {
-								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
-								"type": 'undefined',
-								"fromMe": msg?.key?.fromMe,
-								"id": msg?.key?.id,
-								"name": msg?.pushName || msg?.verifiedBizName || null,
-								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
-								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
-								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
-								"status": msg?.key?.fromMe == true ? 'SENT' : 'RECEIVED',
-								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
-							}
-							*/
+						//
+						/*
+						logger?.info(`- Desculpe, estamos sem nenhuma resposta.`);
+						logger?.error(msg?.message);
+						//
+						response = {
+							"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+							"type": 'undefined',
+							"fromMe": msg?.key?.fromMe,
+							"id": msg?.key?.id,
+							"name": msg?.pushName || msg?.verifiedBizName || null,
+							"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+							"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
+							"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
+							"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
+							"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
+						}
+						*/
+						//
 					}
 					//
-					msg?.key?.fromMe == true ? socket?.emit('send-message', response, true) : socket?.emit('received-message', response, true);
-					webhooks?.wh_messages(session, response);
+					if (Object.keys(JSON.parse(response)).length !== 0) {
+						//
+						dataSessions?.funcoesSocket?.message(SessionName, response);
+						webhooks?.wh_messages(SessionName, response);
+						//
+					}
 					//
 				}
 			}
 		} catch (error) {
-			logger?.info(`- SessionName: ${session.name}`);
+			logger?.info(`- SessionName: ${SessionName}`);
 			logger?.error(`- Error onAnyMessage: ${error}`);
 		}
 		//
@@ -616,11 +624,11 @@ module.exports = class Events {
 			if (events['messages.delete']) {
 				const messagesdelete = events['messages.delete'];
 				//logger?.info(`- Message delete: ${JSON.stringify(messagesdelete, null, 2)}`);
-				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Message delete`);
 			}
 		} catch (error) {
-			logger?.info(`- SessionName: ${session.name}`);
+			logger?.info(`- SessionName: ${SessionName}`);
 			logger?.error(`- Error message delete event ${error}`);
 		}
 		//
@@ -628,11 +636,11 @@ module.exports = class Events {
 			if (events['message.update']) {
 				const messageupdate = events['message.update'];
 				//logger?.info(`- Message update: ${JSON.stringify(messageupdate, null, 2)}`);
-				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Message update`);
 			}
 		} catch (error) {
-			logger?.info(`- SessionName: ${session.name}`);
+			logger?.info(`- SessionName: ${SessionName}`);
 			logger?.error(`- Error message update event ${error}`);
 		}
 		//
@@ -640,11 +648,11 @@ module.exports = class Events {
 			if (events['messages.media-update']) {
 				const messagesmedia = events['messages.media-update'];
 				//logger?.info(`- Message-media update: ${JSON.stringify(messagesmedia, null, 2)}`);
-				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Message-media update`);
 			}
 		} catch (error) {
-			logger?.info(`- SessionName: ${session.name}`);
+			logger?.info(`- SessionName: ${SessionName}`);
 			logger?.error(`- Error message-media update event ${error}`);
 		}
 		//
@@ -652,11 +660,11 @@ module.exports = class Events {
 			if (events['messages.reaction']) {
 				const reaction = events['messages.reaction'];
 				//logger?.info(`- Messages reaction: ${JSON.stringify(receipt, null, 2)}`);
-				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Messages reaction`);
 			}
 		} catch (error) {
-			logger?.info(`- SessionName: ${session.name}`);
+			logger?.info(`- SessionName: ${SessionName}`);
 			logger?.error(`- Error messages reaction event ${error}`);
 		}
 		//
@@ -665,11 +673,11 @@ module.exports = class Events {
 			if (events['message-receipt.update']) {
 				const messagereceipt = events['message-receipt.update'];
 				//logger?.info(`- Messages receipt: ${JSON.stringify(messagereceipt, null, 2)}`);
-				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Messages receipt`);
 			}
 		} catch (error) {
-			logger?.info(`- SessionName: ${session.name}`);
+			logger?.info(`- SessionName: ${SessionName}`);
 			logger?.error(`- Error messages receipt event ${error}`);
 		}
 		//
@@ -678,27 +686,28 @@ module.exports = class Events {
 			if (events['messaging-history.set']) {
 				const { chats, contacts, messages, isLatest } = events['messaging-history.set'];
 				//logger?.info(`- Recv ${chats.length} chats, ${contacts.length} contacts, ${messages.length} msgs (is latest: ${isLatest})`);
-				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Messaging History recv ${chats.length} chats, ${contacts.length} contacts, ${messages.length} msgs (is latest: ${isLatest})`);
 			}
 		} catch (error) {
-			logger?.info(`- SessionName: ${session.name}`);
+			logger?.info(`- SessionName: ${SessionName}`);
 			logger?.error(`- Error history received event ${error}`);
 		}
 		//
 	}
 	//
-	static async chatsEvents(session, client, socket, events) {
+	static async chatsEvents(SessionName, events) {
+		let dataSessions = await Sessions?.getSession(SessionName);
 		//
 		try {
 			if (events['chats.upsert']) {
 				const chatsUpsert = events['chats.upsert'];
 				//logger?.info(`- Chats upsert: ${JSON.stringify(chatsUpsert, null, 2)}`);
-				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Chats upsert`);
 			}
 		} catch (error) {
-			logger?.info(`- SessionName: ${session.name}`);
+			logger?.info(`- SessionName: ${SessionName}`);
 			logger?.error(`- Error chats upsert event ${error}`);
 		}
 		//
@@ -706,11 +715,11 @@ module.exports = class Events {
 			if (events['chats.update']) {
 				const chatsUpdate = events['chats.update'];
 				//logger?.info(`- Chats update: ${JSON.stringify(chatsUpdate, null, 2)}`);
-				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Chats update`);
 			}
 		} catch (error) {
-			logger?.info(`- SessionName: ${session.name}`);
+			logger?.info(`- SessionName: ${SessionName}`);
 			logger?.error(`- Error chats update event ${error}`);
 		}
 		//
@@ -718,27 +727,28 @@ module.exports = class Events {
 			if (events['chats.delete']) {
 				const chatsDelete = events['chats.delete'];
 				//logger?.info(`- Chats deleted: ${JSON.stringify(chatsDelete, null, 2)}`);
-				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Chats deleted`);
 			}
 		} catch (error) {
-			logger?.info(`- SessionName: ${session.name}`);
+			logger?.info(`- SessionName: ${SessionName}`);
 			logger?.error(`- Error chats deleted event ${error}`);
 		}
 		//
 	}
 	//
-	static async blocklistEvents(session, client, socket, events) {
+	static async blocklistEvents(SessionName, events) {
+		let dataSessions = await Sessions?.getSession(SessionName);
 		//
 		try {
 			if (events['blocklist.set']) {
 				const blocklistSet = events['blocklist.set'];
 				//logger?.info(`- Chats update: ${JSON.stringify(blocklistSet, null, 2)}`);
-				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Blocklist set`);
 			}
 		} catch (error) {
-			logger?.info(`- SessionName: ${session.name}`);
+			logger?.info(`- SessionName: ${SessionName}`);
 			logger?.error(`- Error blocklist set event ${error}`);
 		}
 		//
@@ -746,27 +756,28 @@ module.exports = class Events {
 			if (events['blocklist.update']) {
 				const blocklistUpdate = events['blocklist.update'];
 				//logger?.info(`- Blocklist update: ${JSON.stringify(blocklistUpdate, null, 2)}`);
-				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Blocklist update`);
 			}
 		} catch (error) {
-			logger?.info(`- SessionName: ${session.name}`);
+			logger?.info(`- SessionName: ${SessionName}`);
 			logger?.error(`- Error chats deleted event ${error}`);
 		}
 		//
 	}
 	//
-	static async groupsEvents(session, client, socket, events) {
+	static async groupsEvents(SessionName, events) {
+		let dataSessions = await Sessions?.getSession(SessionName);
 		//
 		try {
 			if (events['groups.upsert']) {
 				const groupsUpsert = events['groups.upsert'];
 				//logger?.info(`- Groups upsert: ${JSON.stringify(groupsUpsert, null, 2)}`);
-				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Groups upsert`);
 			}
 		} catch (error) {
-			logger?.info(`- SessionName: ${session.name}`);
+			logger?.info(`- SessionName: ${SessionName}`);
 			logger?.error(`- Error blocklist set event ${error}`);
 		}
 		//
@@ -774,11 +785,11 @@ module.exports = class Events {
 			if (events['groups.update']) {
 				const groupsUpdate = events['groups.update'];
 				//logger?.info(`- Groups update: ${JSON.stringify(groupsUpdate, null, 2)}`);
-				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Groups update`);
 			}
 		} catch (error) {
-			logger?.info(`- SessionName: ${session.name}`);
+			logger?.info(`- SessionName: ${SessionName}`);
 			logger?.error(`- Error chats deleted event ${error}`);
 		}
 		//
@@ -786,26 +797,28 @@ module.exports = class Events {
 			if (events['group-participants.update']) {
 				const participantsUpdate = events['group-participants.update'];
 				//logger?.info(`- Proup-participants update: ${JSON.stringify(participantsUpdate, null, 2)}`);
-				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Proup-participants update`);
 			}
 		} catch (error) {
-			logger?.info(`- SessionName: ${session.name}`);
+			logger?.info(`- SessionName: ${SessionName}`);
 			logger?.error(`- Error chats deleted event ${error}`);
 		}
 		//
 	}
 	//
-	static async extraEvents(session, client, socket, events) {
+	static async extraEvents(SessionName, events) {
+		let dataSessions = await Sessions?.getSession(SessionName);
+		//
 		try {
 			if (events['presence.update']) {
 				const presenceUpdate = events['presence.update'];
 				//logger?.info(`- Presence update: ${JSON.stringify(presenceUpdate, null, 2)}`);
-				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Presence update`);
 			}
 		} catch (error) {
-			logger?.info(`- SessionName: ${session.name}`);
+			logger?.info(`- SessionName: ${SessionName}`);
 			logger?.error(`- Error presence update event ${error}`);
 		}
 		//
@@ -813,11 +826,11 @@ module.exports = class Events {
 			// Listen when client has been added to a group
 			if (events.call) {
 				//logger?.info(`- Call: ${JSON.stringify(events.call, null, 2)}`);
-				logger?.info(`- SessionName: ${session.name}`);
+				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Call event`);
 			}
 		} catch (error) {
-			logger?.info(`- SessionName: ${session.name}`);
+			logger?.info(`- SessionName: ${SessionName}`);
 			logger?.error(`- Error recv call event ${error}`);
 		}
 	}

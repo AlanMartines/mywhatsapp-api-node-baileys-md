@@ -7,13 +7,13 @@ const Sessions = require('../controllers/sessions');
 //
 module.exports = class Webhooks {
 
-	static async wh_messages(data, object) {
-		//let dataSessions = await Sessions?.getSession(SessionName);;
+	static async wh_messages(SessionName, object) {
+		let dataSessions = await Sessions?.getSession(SessionName);;
 		try {
-			if (data?.wh_message != undefined && data?.wh_message != null && data?.wh_message != '') {
-				logger.info(`- SessionName: ${data?.SessionName}`);
+			if (dataSessions?.wh_message != undefined && dataSessions?.wh_message != null && dataSessions?.wh_message != '') {
+				logger.info(`- SessionName: ${SessionName}`);
 				let dataJson = JSON.stringify(object, null, 2);
-				await axios.post(data?.wh_message, dataJson, {
+				await axios.post(dataSessions?.wh_message, dataJson, {
 					httpsAgent: new https.Agent({
 						rejectUnauthorized: false,
 						keepAlive: true
@@ -69,13 +69,13 @@ module.exports = class Webhooks {
 
 	}
 
-	static async wh_status(data, object) {
-		//let dataSessions = await Sessions?.getSession(SessionName);
-		logger.info(`- SessionName: ${data?.name}`);
+	static async wh_status(SessionName, object) {
+		let dataSessions = await Sessions?.getSession(SessionName);
+		logger.info(`- SessionName: ${SessionName}`);
 		try {
-			if (data?.wh_status != undefined && data?.wh_status != null && data?.wh_status != '') {
+			if (dataSessions?.wh_status != undefined && dataSessions?.wh_status != null && dataSessions?.wh_status != '') {
 				let dataJson = JSON.stringify(object, null, 2);
-				await axios.post(data?.wh_status, dataJson, {
+				await axios.post(dataSessions?.wh_status, dataJson, {
 					httpsAgent: new https.Agent({
 						rejectUnauthorized: false,
 						keepAlive: true

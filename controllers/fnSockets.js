@@ -1,50 +1,60 @@
 module.exports = class Sockets {
+		//
     constructor(io) {
         this.io = io;
     }
-    //emitindo mensagem que qrcode mudou 
-    qrCode(session, data) {
+		//
+    //Emitindo mensagem que qrcode mudou 
+    qrCode(SessionName, data) {
         this.io.emit('qrCode', data);
         return true;
     }
-
-    //mudando statusFind
-    statusFind(session, data) {
+		//
+    //Mudando statusFind
+    statusFind(SessionName, data) {
         this.io.emit('statusFind', data);
         return true;
     }
-    //detectando start do servidor
-    start(session, data) {
+		//
+    //Detectando start do servidor
+    start(SessionName, data) {
         this.io.emit('start', data);
         return true;
     }
-    //enviando mensagem como emissor
-    messagesent(session, data) {
+		//
+    //Enviando mensagem como emissor
+    messagesent(SessionName, data) {
         this.io.emit('messagesent', data);
         return true;
     }
-    //recebendo mensagens
-    message(session, data) {
+		//
+    //Recebendo mensagens
+    message(SessionName, data) {
         this.io.emit('message', data);
         return true;
     }
-    //mudando status
-    stateChange(session, data) {
+		//
+    //Mudando status
+    stateChange(SessionName, data) {
         this.io.emit('stateChange', data);
         return true;
     }
-    //webhook para detecção de alteracoes de status nas mensagens
-    ack(session, data) {
+		//
+    //Webhook para detecção de alteracoes de status nas mensagens
+    ack(SessionName, data) {
         this.io.emit('ack', data);
         return true;
     }
+		//
     //Função para emitir mensagens de status
-    events(session, data) {
+    events(SessionName, data) {
         this.io.emit('events', data)
     }
+		//
     //Função para emitir um alerta
-    alert(session, data) {
+    alert(SessionName, data) {
         this.io.emit('alert', data);
         return true;
     }
+		//
 }

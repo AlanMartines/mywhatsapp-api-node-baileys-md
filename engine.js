@@ -1013,14 +1013,14 @@ module.exports = class Instace {
 							await saveCreds();
 						}
 						//
-						eventsSend?.statusConnection(SessionName, client, req.io, events);
-						eventsSend?.statusMessage(SessionName, client, req.io, events);
-						eventsSend?.contactsEvents(SessionName, client, req.io, events);
-						eventsSend?.messagesEvents(SessionName, client, req.io, events);
-						eventsSend?.chatsEvents(SessionName, client, req.io, events);
-						eventsSend?.blocklistEvents(SessionName, client, req.io, events);
-						eventsSend?.groupsEvents(SessionName, client, req.io, events);
-						eventsSend?.extraEvents(SessionName, client, req.io, events);
+						eventsSend?.statusConnection(SessionName, events);
+						eventsSend?.statusMessage(SessionName, events);
+						eventsSend?.contactsEvents(SessionName, events);
+						eventsSend?.messagesEvents(SessionName, events);
+						eventsSend?.chatsEvents(SessionName, events);
+						eventsSend?.blocklistEvents(SessionName, events);
+						eventsSend?.groupsEvents(SessionName, events);
+						eventsSend?.extraEvents(SessionName, events);
 						//
 					}
 				);
