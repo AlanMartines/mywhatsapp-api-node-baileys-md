@@ -146,10 +146,8 @@ router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req,
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
 	} else {
 		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
 	}
 	//
 	try {
@@ -187,7 +185,7 @@ router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req,
 				//
 			} else {
 				//
-				var Status = await Sessions.Status(resSessionName);
+				var Status = await instance?.Status(resSessionName);
 				var session = await Sessions?.getSession(resSessionName);
 				switch (Status.status) {
 					case 'inChat':
@@ -196,14 +194,14 @@ router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req,
 					case 'chatsAvailable':
 						//
 						await session.waqueue.add(async () => {
-							var checkNumberStatus = await Sessions.checkNumberStatus(
+							var checkNumberStatus = await retrieving?.checkNumberStatus(
 								resSessionName,
 								soNumeros(req.body.phonefull).trim()
 							);
 							//
 							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 								//
-								var sendPtt = await Sessions.sendPtt(
+								var sendPtt = await message?.sendPtt(
 									resSessionName,
 									checkNumberStatus.number,
 									req.file.buffer,
@@ -291,7 +289,7 @@ router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req,
 			//
 		} else {
 			//
-			var Status = await Sessions.Status(resSessionName);
+			var Status = await instance?.Status(resSessionName);
 			var session = await Sessions?.getSession(resSessionName);
 			switch (Status.status) {
 				case 'inChat':
@@ -300,7 +298,7 @@ router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req,
 				case 'chatsAvailable':
 					//
 					await session.waqueue.add(async () => {
-						var checkNumberStatus = await Sessions.checkNumberStatus(
+						var checkNumberStatus = await retrieving?.checkNumberStatus(
 							resSessionName,
 							soNumeros(req.body.phonefull).trim()
 						);
@@ -309,7 +307,7 @@ router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req,
 							//
 							var mimeType = mime.lookup(req.body.originalname);
 							//
-							var sendPtt = await Sessions.sendPtt(
+							var sendPtt = await message?.sendPtt(
 								resSessionName,
 								checkNumberStatus.number,
 								Buffer.from(req.body.base64, 'base64'),
@@ -416,7 +414,7 @@ router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (
 				//
 			} else {
 				//
-				var Status = await Sessions.Status(resSessionName);
+				var Status = await instance?.Status(resSessionName);
 				var session = await Sessions?.getSession(resSessionName);
 				switch (Status.status) {
 					case 'inChat':
@@ -425,14 +423,14 @@ router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (
 					case 'chatsAvailable':
 						//
 						await session.waqueue.add(async () => {
-							var checkNumberStatus = await Sessions.checkNumberStatus(
+							var checkNumberStatus = await retrieving?.checkNumberStatus(
 								resSessionName,
 								soNumeros(req.body.phonefull).trim()
 							);
 							//
 							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 								//
-								var sendPtt = await Sessions.sendPtt(
+								var sendPtt = await message?.sendPtt(
 									resSessionName,
 									checkNumberStatus.number,
 									Buffer.from(req.body.base64, 'base64'),
@@ -519,7 +517,7 @@ router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, n
 			//
 		} else {
 			//
-			var Status = await Sessions.Status(resSessionName);
+			var Status = await instance?.Status(resSessionName);
 			var session = await Sessions?.getSession(resSessionName);
 			switch (Status.status) {
 				case 'inChat':
@@ -528,14 +526,14 @@ router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, n
 				case 'chatsAvailable':
 					//
 					await session.waqueue.add(async () => {
-						var checkNumberStatus = await Sessions.checkNumberStatus(
+						var checkNumberStatus = await retrieving?.checkNumberStatus(
 							resSessionName,
 							soNumeros(req.body.phonefull).trim()
 						);
 						//
 						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 							//
-							var sendText = await Sessions.sendText(
+							var sendText = await message?.sendText(
 								resSessionName,
 								checkNumberStatus.number,
 								req.body.msg
@@ -621,7 +619,7 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
 			//
 		} else {
 			//
-			var Status = await Sessions.Status(resSessionName);
+			var Status = await instance?.Status(resSessionName);
 			var session = await Sessions?.getSession(resSessionName);
 			switch (Status.status) {
 				case 'inChat':
@@ -630,14 +628,14 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
 				case 'chatsAvailable':
 					//
 					await session.waqueue.add(async () => {
-						var checkNumberStatus = await Sessions.checkNumberStatus(
+						var checkNumberStatus = await retrieving?.checkNumberStatus(
 							resSessionName,
 							soNumeros(req.body.phonefull).trim()
 						);
 						//
 						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 							//
-							var sendLocation = await Sessions.sendLocation(
+							var sendLocation = await message?.sendLocation(
 								resSessionName,
 								checkNumberStatus.number,
 								req.body.lat,
@@ -727,7 +725,7 @@ router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, n
 			//
 		} else {
 			//
-			var Status = await Sessions.Status(resSessionName);
+			var Status = await instance?.Status(resSessionName);
 			var session = await Sessions?.getSession(resSessionName);
 			switch (Status.status) {
 				case 'inChat':
@@ -750,14 +748,14 @@ router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, n
 							//
 						}
 						//
-						var checkNumberStatus = await Sessions.checkNumberStatus(
+						var checkNumberStatus = await retrieving?.checkNumberStatus(
 							resSessionName,
 							soNumeros(req.body.phonefull).trim()
 						);
 						//
 						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 							//
-							var sendLink = await Sessions.sendLink(
+							var sendLink = await message?.sendLink(
 								resSessionName,
 								checkNumberStatus.number,
 								req.body.link,
@@ -862,7 +860,7 @@ router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req,
 				//
 			} else {
 				//
-				var Status = await Sessions.Status(resSessionName);
+				var Status = await instance?.Status(resSessionName);
 				var session = await Sessions?.getSession(resSessionName);
 				switch (Status.status) {
 					case 'inChat':
@@ -871,14 +869,14 @@ router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req,
 					case 'chatsAvailable':
 						//
 						await session.waqueue.add(async () => {
-							var checkNumberStatus = await Sessions.checkNumberStatus(
+							var checkNumberStatus = await retrieving?.checkNumberStatus(
 								resSessionName,
 								soNumeros(req.body.phonefull).trim()
 							);
 							//
 							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 								//
-								var sendPtt = await Sessions.sendImage(
+								var sendPtt = await message?.sendImage(
 									resSessionName,
 									checkNumberStatus.number,
 									req.file.buffer,
@@ -988,7 +986,7 @@ router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req,
 			//
 		} else {
 			//
-			var Status = await Sessions.Status(resSessionName);
+			var Status = await instance?.Status(resSessionName);
 			var session = await Sessions?.getSession(resSessionName);
 			switch (Status.status) {
 				case 'inChat':
@@ -997,14 +995,14 @@ router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req,
 				case 'chatsAvailable':
 					//
 					await session.waqueue.add(async () => {
-						var checkNumberStatus = await Sessions.checkNumberStatus(
+						var checkNumberStatus = await retrieving?.checkNumberStatus(
 							resSessionName,
 							soNumeros(req.body.phonefull).trim()
 						);
 						//
 						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 							//
-							var sendFileBase64 = await Sessions.sendImage(
+							var sendFileBase64 = await message?.sendImage(
 								resSessionName,
 								checkNumberStatus.number,
 								Buffer.from(req.body.base64, 'base64'),
@@ -1097,7 +1095,7 @@ router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (
 			//
 		} else {
 			//
-			var Status = await Sessions.Status(resSessionName);
+			var Status = await instance?.Status(resSessionName);
 			var session = await Sessions?.getSession(resSessionName);
 			switch (Status.status) {
 				case 'inChat':
@@ -1106,14 +1104,14 @@ router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (
 				case 'chatsAvailable':
 					//
 					await session.waqueue.add(async () => {
-						var checkNumberStatus = await Sessions.checkNumberStatus(
+						var checkNumberStatus = await retrieving?.checkNumberStatus(
 							resSessionName,
 							soNumeros(req.body.phonefull).trim()
 						);
 						//
 						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 							//
-							var sendFileFromBase64 = await Sessions.sendImage(
+							var sendFileFromBase64 = await message?.sendImage(
 								resSessionName,
 								checkNumberStatus.number,
 								Buffer.from(req.body.base64, 'base64'),
@@ -1187,7 +1185,7 @@ router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, 
 		//
 	} else {
 		//
-		var Status = await Sessions.Status(resSessionName);
+		var Status = await instance?.Status(resSessionName);
 		var session = await Sessions?.getSession(resSessionName);
 		switch (Status.status) {
 			case 'inChat':
@@ -1196,14 +1194,14 @@ router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, 
 			case 'chatsAvailable':
 				//
 				await session.waqueue.add(async () => {
-					var checkNumberStatus = await Sessions.checkNumberStatus(
+					var checkNumberStatus = await retrieving?.checkNumberStatus(
 						resSessionName,
 						soNumeros(req.body.phonefull).trim()
 					);
 					//
 					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 						//
-						var sendFile = await Sessions.sendFile(
+						var sendFile = await message?.sendFile(
 							resSessionName,
 							checkNumberStatus.number,
 							req.file.buffer,
@@ -1275,7 +1273,7 @@ router.post("/sendFileUrl", upload.none(''), verifyToken.verify, async (req, res
 		//
 	} else {
 		//
-		var Status = await Sessions.Status(resSessionName);
+		var Status = await instance?.Status(resSessionName);
 		var session = await Sessions?.getSession(resSessionName);
 		switch (Status.status) {
 			case 'inChat':
@@ -1284,14 +1282,14 @@ router.post("/sendFileUrl", upload.none(''), verifyToken.verify, async (req, res
 			case 'chatsAvailable':
 				//
 				await session.waqueue.add(async () => {
-					var checkNumberStatus = await Sessions.checkNumberStatus(
+					var checkNumberStatus = await retrieving?.checkNumberStatus(
 						resSessionName,
 						soNumeros(req.body.phonefull).trim()
 					);
 					//
 					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 						//
-						var sendFile = await Sessions.sendFileUrl(
+						var sendFile = await message?.sendFileUrl(
 							resSessionName,
 							checkNumberStatus.number,
 							req.body.url,
@@ -1362,7 +1360,7 @@ router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, 
 		//
 	} else {
 		//
-		var Status = await Sessions.Status(resSessionName);
+		var Status = await instance?.Status(resSessionName);
 		var session = await Sessions?.getSession(resSessionName);
 		switch (Status.status) {
 			case 'inChat':
@@ -1378,14 +1376,14 @@ router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, 
 					//fs.writeFileSync(filePath, base64Data,  {encoding: 'base64'});
 					//logger?.info(`- File ${filePath}`);
 					//
-					var checkNumberStatus = await Sessions.checkNumberStatus(
+					var checkNumberStatus = await retrieving?.checkNumberStatus(
 						resSessionName,
 						soNumeros(req.body.phonefull).trim()
 					);
 					//
 					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 						//
-						var sendFileBase64 = await Sessions.sendFile(
+						var sendFileBase64 = await message?.sendFile(
 							resSessionName,
 							checkNumberStatus.number,
 							Buffer.from(req.body.base64, 'base64'),
@@ -1456,7 +1454,7 @@ router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (r
 		//
 	} else {
 		//
-		var Status = await Sessions.Status(resSessionName);
+		var Status = await instance?.Status(resSessionName);
 		var session = await Sessions?.getSession(resSessionName);
 		switch (Status.status) {
 			case 'inChat':
@@ -1465,14 +1463,14 @@ router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (r
 			case 'chatsAvailable':
 				//
 				await session.waqueue.add(async () => {
-					var checkNumberStatus = await Sessions.checkNumberStatus(
+					var checkNumberStatus = await retrieving?.checkNumberStatus(
 						resSessionName,
 						soNumeros(req.body.phonefull).trim()
 					);
 					//
 					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 						//
-						var sendFileFromBase64 = await Sessions.sendFile(
+						var sendFileFromBase64 = await message?.sendFile(
 							resSessionName,
 							checkNumberStatus.number,
 							Buffer.from(req.body.base64, 'base64'),
@@ -1545,7 +1543,7 @@ router.post("/sendButton", upload.none(''), verifyToken.verify, async (req, res,
 		//
 	} else {
 		//
-		var Status = await Sessions.Status(resSessionName);
+		var Status = await instance?.Status(resSessionName);
 		var session = await Sessions?.getSession(resSessionName);
 		switch (Status.status) {
 			case 'inChat':
@@ -1554,14 +1552,14 @@ router.post("/sendButton", upload.none(''), verifyToken.verify, async (req, res,
 			case 'chatsAvailable':
 				//
 				await session.waqueue.add(async () => {
-					var checkNumberStatus = await Sessions.checkNumberStatus(
+					var checkNumberStatus = await retrieving?.checkNumberStatus(
 						resSessionName,
 						soNumeros(req.body.phonefull).trim()
 					);
 					//
 					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 						//
-						var sendButton = await Sessions.sendButton(
+						var sendButton = await message?.sendButton(
 							resSessionName,
 							checkNumberStatus.number,
 							req.body.buttonMessage,
@@ -1630,7 +1628,7 @@ router.post("/sendTemplate", upload.none(''), verifyToken.verify, async (req, re
 		//
 	} else {
 		//
-		var Status = await Sessions.Status(resSessionName);
+		var Status = await instance?.Status(resSessionName);
 		var session = await Sessions?.getSession(resSessionName);
 		switch (Status.status) {
 			case 'inChat':
@@ -1639,14 +1637,14 @@ router.post("/sendTemplate", upload.none(''), verifyToken.verify, async (req, re
 			case 'chatsAvailable':
 				//
 				await session.waqueue.add(async () => {
-					var checkNumberStatus = await Sessions.checkNumberStatus(
+					var checkNumberStatus = await retrieving?.checkNumberStatus(
 						resSessionName,
 						soNumeros(req.body.phonefull).trim()
 					);
 					//
 					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 						//
-						var sendTemplate = await Sessions.sendTemplate(
+						var sendTemplate = await message?.sendTemplate(
 							resSessionName,
 							checkNumberStatus.number,
 							req.body.templateMessage,
@@ -1715,7 +1713,7 @@ router.post("/sendListMessage", upload.none(''), verifyToken.verify, async (req,
 		//
 	} else {
 		//
-		var Status = await Sessions.Status(resSessionName);
+		var Status = await instance?.Status(resSessionName);
 		var session = await Sessions?.getSession(resSessionName);
 		switch (Status.status) {
 			case 'inChat':
@@ -1724,14 +1722,14 @@ router.post("/sendListMessage", upload.none(''), verifyToken.verify, async (req,
 			case 'chatsAvailable':
 				//
 				await session.waqueue.add(async () => {
-					var checkNumberStatus = await Sessions.checkNumberStatus(
+					var checkNumberStatus = await retrieving?.checkNumberStatus(
 						resSessionName,
 						soNumeros(req.body.phonefull).trim()
 					);
 					//
 					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 						//
-						var sendListMessage = await Sessions.sendListMessage(
+						var sendListMessage = await message?.sendListMessage(
 							resSessionName,
 							checkNumberStatus.number,
 							req.body.listMessage,
