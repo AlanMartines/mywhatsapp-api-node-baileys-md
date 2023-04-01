@@ -65,7 +65,7 @@ router.post("/sendContactVcard", upload.none(''), verifyToken.verify, async (req
 		} else {
 			//
 			var Status = await instance?.Status(resSessionName);
-			var session = Sessions?.getSession(resSessionName);
+			var session = await Sessions?.getSession(resSessionName);
 			switch (Status.status) {
 				case 'inChat':
 				case 'qrReadSuccess':
@@ -188,7 +188,7 @@ router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req,
 			} else {
 				//
 				var Status = await Sessions.Status(resSessionName);
-				var session = Sessions?.getSession(resSessionName);
+				var session = await Sessions?.getSession(resSessionName);
 				switch (Status.status) {
 					case 'inChat':
 					case 'qrReadSuccess':
@@ -292,7 +292,7 @@ router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req,
 		} else {
 			//
 			var Status = await Sessions.Status(resSessionName);
-			var session = Sessions?.getSession(resSessionName);
+			var session = await Sessions?.getSession(resSessionName);
 			switch (Status.status) {
 				case 'inChat':
 				case 'qrReadSuccess':
@@ -417,7 +417,7 @@ router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (
 			} else {
 				//
 				var Status = await Sessions.Status(resSessionName);
-				var session = Sessions?.getSession(resSessionName);
+				var session = await Sessions?.getSession(resSessionName);
 				switch (Status.status) {
 					case 'inChat':
 					case 'qrReadSuccess':
@@ -520,7 +520,7 @@ router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, n
 		} else {
 			//
 			var Status = await Sessions.Status(resSessionName);
-			var session = Sessions?.getSession(resSessionName);
+			var session = await Sessions?.getSession(resSessionName);
 			switch (Status.status) {
 				case 'inChat':
 				case 'qrReadSuccess':
@@ -622,7 +622,7 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
 		} else {
 			//
 			var Status = await Sessions.Status(resSessionName);
-			var session = Sessions?.getSession(resSessionName);
+			var session = await Sessions?.getSession(resSessionName);
 			switch (Status.status) {
 				case 'inChat':
 				case 'qrReadSuccess':
@@ -728,7 +728,7 @@ router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, n
 		} else {
 			//
 			var Status = await Sessions.Status(resSessionName);
-			var session = Sessions?.getSession(resSessionName);
+			var session = await Sessions?.getSession(resSessionName);
 			switch (Status.status) {
 				case 'inChat':
 				case 'qrReadSuccess':
@@ -863,7 +863,7 @@ router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req,
 			} else {
 				//
 				var Status = await Sessions.Status(resSessionName);
-				var session = Sessions?.getSession(resSessionName);
+				var session = await Sessions?.getSession(resSessionName);
 				switch (Status.status) {
 					case 'inChat':
 					case 'qrReadSuccess':
@@ -989,7 +989,7 @@ router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req,
 		} else {
 			//
 			var Status = await Sessions.Status(resSessionName);
-			var session = Sessions?.getSession(resSessionName);
+			var session = await Sessions?.getSession(resSessionName);
 			switch (Status.status) {
 				case 'inChat':
 				case 'qrReadSuccess':
@@ -1098,7 +1098,7 @@ router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (
 		} else {
 			//
 			var Status = await Sessions.Status(resSessionName);
-			var session = Sessions?.getSession(resSessionName);
+			var session = await Sessions?.getSession(resSessionName);
 			switch (Status.status) {
 				case 'inChat':
 				case 'qrReadSuccess':
@@ -1188,7 +1188,7 @@ router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, 
 	} else {
 		//
 		var Status = await Sessions.Status(resSessionName);
-		var session = Sessions?.getSession(resSessionName);
+		var session = await Sessions?.getSession(resSessionName);
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
@@ -1276,7 +1276,7 @@ router.post("/sendFileUrl", upload.none(''), verifyToken.verify, async (req, res
 	} else {
 		//
 		var Status = await Sessions.Status(resSessionName);
-		var session = Sessions?.getSession(resSessionName);
+		var session = await Sessions?.getSession(resSessionName);
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
@@ -1363,7 +1363,7 @@ router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, 
 	} else {
 		//
 		var Status = await Sessions.Status(resSessionName);
-		var session = Sessions?.getSession(resSessionName);
+		var session = await Sessions?.getSession(resSessionName);
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
@@ -1457,7 +1457,7 @@ router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (r
 	} else {
 		//
 		var Status = await Sessions.Status(resSessionName);
-		var session = Sessions?.getSession(resSessionName);
+		var session = await Sessions?.getSession(resSessionName);
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
@@ -1546,7 +1546,7 @@ router.post("/sendButton", upload.none(''), verifyToken.verify, async (req, res,
 	} else {
 		//
 		var Status = await Sessions.Status(resSessionName);
-		var session = Sessions?.getSession(resSessionName);
+		var session = await Sessions?.getSession(resSessionName);
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
@@ -1631,7 +1631,7 @@ router.post("/sendTemplate", upload.none(''), verifyToken.verify, async (req, re
 	} else {
 		//
 		var Status = await Sessions.Status(resSessionName);
-		var session = Sessions?.getSession(resSessionName);
+		var session = await Sessions?.getSession(resSessionName);
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
@@ -1716,7 +1716,7 @@ router.post("/sendListMessage", upload.none(''), verifyToken.verify, async (req,
 	} else {
 		//
 		var Status = await Sessions.Status(resSessionName);
-		var session = Sessions?.getSession(resSessionName);
+		var session = await Sessions?.getSession(resSessionName);
 		switch (Status.status) {
 			case 'inChat':
 			case 'qrReadSuccess':
