@@ -14,7 +14,19 @@ module.exports = class Webhooks {
 			if (dataSessions?.wh_message != undefined && dataSessions?.wh_message != null && dataSessions?.wh_message != '') {
 				logger.info(`- SessionName: ${SessionName}`);
 				let dataJson = JSON.stringify(object, null, 2);
-				await axios.post(dataSessions?.wh_message, dataJson, {
+				await axios.post(dataSessions?.wh_message, {
+					"wook": "RECEIVE_MESSAGE",
+					"type": "text",
+					"fromMe": false,
+					"id": "3EB0FB91889AF3343EC36F",
+					"name": "🍃𝒜𝓁𝒶𝓃 ℳ𝒶𝓇𝓉𝒾𝓃ℯ𝓈🍂",
+					"from": "556796787854",
+					"to": "556799757085",
+					"isGroup": false,
+					"content": "ssssssssssssssssssssssssssssssssssssssssddddddddddddd",
+					"status": "RECEIVED",
+					"datetime": "2023-04-01 20:57:11"
+				}, {
 					httpsAgent: new https.Agent({
 						rejectUnauthorized: false,
 						keepAlive: true
