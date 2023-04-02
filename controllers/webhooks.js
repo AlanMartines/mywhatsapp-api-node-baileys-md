@@ -27,15 +27,17 @@ module.exports = class Webhooks {
 					logger?.error(`- Error receive message: ${error.message}`);
 				});
 				*/
-				request
+				superagent
 					.post(dataSessions?.wh_message)
 					.send(dataJson)
 					.set('Content-Type', 'application/json')
-					.ca() // desativa a verificação do certificado
+					.rejectUnauthorized(false)
 					.end((err, res) => {
 						if (err) {
-							logger?.error(`- Error receive message: ${error.message}`);
+							console.error(err);
+							return;
 						}
+						console.log(res.body);
 					});
 			} else {
 				logger.info('- Webhook message no defined');
