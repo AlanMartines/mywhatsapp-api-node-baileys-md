@@ -30,7 +30,7 @@ module.exports = class Webhooks {
 
 				await superagent
 					.post(dataSessions?.wh_message)
-					.send(object)
+					.send(dataJson)
 					.set('Accept', 'application/json')
 					.queue('messages')
 					.end(function () {
