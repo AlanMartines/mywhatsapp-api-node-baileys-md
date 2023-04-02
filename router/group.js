@@ -1,6 +1,5 @@
 //
 // Configuração dos módulos
-const fs = require('fs-extra');
 const express = require("express");
 const router = express.Router();
 const multer = require('multer');
@@ -14,7 +13,6 @@ const retrieving = require("../functions/retrieving");
 const Sessions = require('../controllers/sessions');
 const { logger } = require("../utils/logger");
 const config = require('../config.global');
-const {	isJidGroup } = require('@adiwajshing/baileys');
 //
 // ------------------------------------------------------------------------------------------------//
 //
@@ -74,7 +72,7 @@ router.post("/sendContactVcardGrupo", upload.none(''), verifyToken.verify, async
 				case 'chatsAvailable':
 					//
 					await session.waqueue.add(async () => {
-						var sendContactVcard = await group?.sendContactVcard(
+						var sendContactVcard = await message?.sendContactVcard(
 							resSessionName,
 							req.body.groupId.trim() + '@g.us',
 							soNumeros(req.body.contact),
@@ -180,7 +178,7 @@ router.post("/sendVoiceGrupo", upload.single('file'), verifyToken.verify, async 
 					case 'chatsAvailable':
 						//
 						await session.waqueue.add(async () => {
-							var sendPtt = await group?.sendPtt(
+							var sendPtt = await message?.sendPtt(
 								resSessionName,
 								req.body.groupId.trim() + '@g.us',
 								req.file.buffer,
@@ -269,7 +267,7 @@ router.post("/sendVoiceBase64Grupo", upload.none(''), verifyToken.verify, async 
 					await session.waqueue.add(async () => {
 						var mimeType = mime.lookup(req.body.originalname);
 						//
-						var sendPtt = await group?.sendPtt(
+						var sendPtt = await message?.sendPtt(
 							resSessionName,
 							req.body.groupId.trim() + '@g.us',
 							Buffer.from(req.body.base64, 'base64'),
@@ -374,7 +372,7 @@ router.post("/sendVoiceFromBase64Grupo", upload.none(''), verifyToken.verify, as
 					case 'chatsAvailable':
 						//
 						await session.waqueue.add(async () => {
-							var sendPtt = await group?.sendPtt(
+							var sendPtt = await message?.sendPtt(
 								resSessionName,
 								req.body.groupId.trim() + '@g.us',
 								Buffer.from(req.body.base64, 'base64'),
