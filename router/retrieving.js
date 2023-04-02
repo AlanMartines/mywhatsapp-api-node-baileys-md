@@ -1,17 +1,27 @@
 //
 // Configuração dos módulos
-const fs = require('fs-extra');
 const express = require("express");
 const router = express.Router();
 const multer = require('multer');
 const upload = multer({});
-const mime = require('mime-types');
 const verifyToken = require("../middleware/verifyToken");
-const instance = require("../functions/instance");
 const retrieving = require("../functions/retrieving");
 const Sessions = require('../controllers/sessions');
-const { logger } = require("../utils/logger");
 const config = require('../config.global');
+//
+// ------------------------------------------------------------------------------------------------//
+//
+function removeWithspace(string) {
+	var string = string.replace(/\r?\n|\r|\s+/g, ""); /* replace all newlines and with a space */
+	return string;
+}
+//
+// ------------------------------------------------------------------------------------------------//
+//
+function soNumeros(string) {
+	var numbers = string.replace(/[^0-9]/g, '');
+	return numbers;
+}
 //
 // ------------------------------------------------------------------------------------------------//
 //
