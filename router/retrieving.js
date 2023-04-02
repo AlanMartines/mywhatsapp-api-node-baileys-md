@@ -5,6 +5,7 @@ const router = express.Router();
 const multer = require('multer');
 const upload = multer({});
 const verifyToken = require("../middleware/verifyToken");
+const instance = require("../functions/instance");
 const retrieving = require("../functions/retrieving");
 const Sessions = require('../controllers/sessions');
 const config = require('../config.global');
@@ -59,7 +60,7 @@ router.post("/getStatus", upload.none(''), verifyToken.verify, async (req, res, 
 		//
 	} else {
 		//
-		var Status = await Sessions.Status(resSessionName);
+		var Status = await instance?.Status(resSessionName);
 		var session = await Sessions?.getSession(resSessionName);
 		switch (Status.status) {
 			case 'inChat':
@@ -143,7 +144,7 @@ router.post("/getAllContacts", upload.none(''), verifyToken.verify, async (req, 
 		//
 	} else {
 		//
-		var Status = await Sessions.Status(resSessionName);
+		var Status = await instance?.Status(resSessionName);
 		var session = await Sessions?.getSession(resSessionName);
 		switch (Status.status) {
 			case 'inChat':
@@ -210,7 +211,7 @@ router.post("/getAllChats", upload.none(''), verifyToken.verify, async (req, res
 		//
 	} else {
 		//
-		var Status = await Sessions.Status(resSessionName);
+		var Status = await instance?.Status(resSessionName);
 		var session = await Sessions?.getSession(resSessionName);
 		switch (Status.status) {
 			case 'inChat':
@@ -277,7 +278,7 @@ router.post("/getAllMessage", upload.none(''), verifyToken.verify, async (req, r
 		//
 	} else {
 		//
-		var Status = await Sessions.Status(resSessionName);
+		var Status = await instance?.Status(resSessionName);
 		var session = await Sessions?.getSession(resSessionName);
 		switch (Status.status) {
 			case 'inChat':
@@ -344,7 +345,7 @@ router.post("/getAllGroups", upload.none(''), verifyToken.verify, async (req, re
 		//
 	} else {
 		//
-		var Status = await Sessions.Status(resSessionName);
+		var Status = await instance?.Status(resSessionName);
 		var session = await Sessions?.getSession(resSessionName);
 		switch (Status.status) {
 			case 'inChat':
@@ -411,7 +412,7 @@ router.post("/getProfilePicFromServer", upload.none(''), verifyToken.verify, asy
 		//
 	} else {
 		//
-		var Status = await Sessions.Status(resSessionName);
+		var Status = await instance?.Status(resSessionName);
 		var session = await Sessions?.getSession(resSessionName);
 		switch (Status.status) {
 			case 'inChat':
@@ -495,7 +496,7 @@ router.post("/checkNumberStatus", upload.none(''), verifyToken.verify, async (re
 		//
 	} else {
 		//
-		var Status = await Sessions.Status(resSessionName);
+		var Status = await instance?.Status(resSessionName);
 		var session = await Sessions?.getSession(resSessionName);
 		switch (Status.status) {
 			case 'inChat':
