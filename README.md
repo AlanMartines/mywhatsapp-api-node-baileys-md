@@ -413,7 +413,6 @@ CREATE TABLE IF NOT EXISTS `tokens` (
 ## Rotas
 
 > As rota se encontra no arquivo [Insomnia.json](https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md/blob/master/Insomnia.json "Insomnia.json"), importe para seu Insomnia e desfrute da API.
-> As rota se encontra no arquivo [Postman.json](https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md/blob/master/Postman.json "Postman.json"), importe para seu Postman e desfrute da API.
 
 #### Json (POST)
 
