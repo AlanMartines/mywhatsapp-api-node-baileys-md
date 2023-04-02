@@ -35,7 +35,7 @@ module.exports = class Webhooks {
 
 				axios.post(dataSessions?.wh_message, objeto).then((resposta) => {
 					logger.info('- Webhooks receive message');
-				}).catch((erro) => {
+				}).catch((error) => {
 					logger?.error(`- Error receive message: ${error.message}`);
 				});
 
