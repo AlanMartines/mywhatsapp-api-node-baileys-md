@@ -18,7 +18,7 @@ module.exports = class Webhooks {
 						rejectUnauthorized: false,
 						keepAlive: true
 					}),
-					headers: { 'Content-Type': 'application/json' }
+					headers: { 'Content-Type': 'application/json; charset=utf-8' }
 				}).then(response => {
 					logger.info('- Webhooks receive message');
 				}).catch(error => {
@@ -58,25 +58,6 @@ module.exports = class Webhooks {
 				}).catch(error => {
 					logger?.error(`- Error connect status ${error.message}`);
 				});
-				/*
-				const config = {
-					headers: {
-						'Content-Type': 'application/json; charset=utf-8'
-					}
-				};
-				//
-				request.post({
-					url: dataSessions?.wh_connect,
-					rejectUnauthorized: false,
-					json: dataJson
-				}, (err, res, body) => {
-					if (err) {
-						logger?.error(`- Error connect status ${err?.message}`);
-					} else {
-						logger.info('- Webhooks connect status');
-					}
-				});
-				*/
 			} else {
 				logger.info('- Webhook connect no defined');
 			}
