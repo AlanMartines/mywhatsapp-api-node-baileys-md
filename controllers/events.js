@@ -611,7 +611,7 @@ module.exports = class Events {
 						//
 						dataSessions?.funcoesSocket?.message(SessionName, response);
 						console.log(response);
-						await webhooks?.wh_messages(SessionName, response);
+						webhooks?.wh_messages(SessionName, response);
 						//
 					}
 					//
