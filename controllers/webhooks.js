@@ -1,5 +1,6 @@
 const axios = require('axios');
 const https = require('https');
+const superagent = require('superagent');
 require('dotenv').config();
 const { logger } = require("../utils/logger");
 const Sessions = require('../controllers/sessions');
@@ -12,6 +13,7 @@ module.exports = class Webhooks {
 			if (dataSessions?.wh_message != undefined && dataSessions?.wh_message != null && dataSessions?.wh_message != '') {
 				logger.info(`- SessionName: ${SessionName}`);
 				let dataJson = JSON.stringify(object, null, 2);
+				/*
 				await axios.post(dataSessions?.wh_message, dataJson, {
 					httpsAgent: new https.Agent({
 						rejectUnauthorized: false,
@@ -19,10 +21,21 @@ module.exports = class Webhooks {
 					}),
 					headers: { 'Content-Type': 'application/json' }
 				}).then(response => {
-					logger.info('- Webhooks receive message')
+					logger.info('- Webhooks receive message');
 				}).catch(error => {
 					logger?.error(`- Error receive message: ${error.message}`);
 				});
+				*/
+
+        await superagent
+          .post(dataSessions?.wh_message)
+          .send(dataJson)
+          .set('Accept', 'application/json')
+          .queue('messages')
+          .end(function () {
+            logger.info('- Webhooks receive message');
+          });
+
 			} else {
 				logger.info('- Webhook message no defined');
 			}
