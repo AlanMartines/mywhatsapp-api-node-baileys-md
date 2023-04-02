@@ -8,6 +8,7 @@ const upload = multer({});
 const mime = require('mime-types');
 const verifyToken = require("../middleware/verifyToken");
 const instance = require("../functions/instance");
+const message = require("../functions/message");
 const group = require("../functions/group");
 const retrieving = require("../functions/retrieving");
 const Sessions = require('../controllers/sessions');
@@ -456,7 +457,7 @@ router.post("/sendTextGrupo", upload.none(''), verifyToken.verify, async (req, r
 			case 'chatsAvailable':
 				//
 				await session.waqueue.add(async () => {
-					var sendTextGrupo = await group?.sendText(
+					var sendTextGrupo = await message?.sendText(
 						resSessionName,
 						req.body.groupId.trim() + '@g.us',
 						req.body.msg
@@ -525,7 +526,7 @@ router.post("/sendLocationGrupo", upload.none(''), verifyToken.verify, async (re
 			case 'chatsAvailable':
 				//
 				await session.waqueue.add(async () => {
-					var sendLocationGroup = await group?.sendLocation(
+					var sendLocationGroup = await message?.sendLocation(
 						resSessionName,
 						req.body.groupId.trim() + '@g.us',
 						req.body.lat,
@@ -610,7 +611,7 @@ router.post("/sendLinkGrupo", upload.none(''), verifyToken.verify, async (req, r
 							//
 						}
 						//
-						var sendLink = await group?.sendLink(
+						var sendLink = await message?.sendLink(
 							resSessionName,
 							req.body.groupId.trim() + '@g.us',
 							req.body.link,
@@ -713,7 +714,7 @@ router.post("/sendImageGrupo", upload.single('file'), verifyToken.verify, async 
 					case 'chatsAvailable':
 						//
 						await session.waqueue.add(async () => {
-							var sendPtt = await group?.sendImage(
+							var sendPtt = await message?.sendImage(
 								resSessionName,
 								req.body.groupId.trim() + '@g.us',
 								req.file.buffer,
@@ -821,7 +822,7 @@ router.post("/sendImageBase64Grupo", upload.none(''), verifyToken.verify, async 
 				case 'chatsAvailable':
 					//
 					await session.waqueue.add(async () => {
-						var sendFileBase64 = await group?.sendImage(
+						var sendFileBase64 = await message?.sendImage(
 							resSessionName,
 							req.body.groupId.trim() + '@g.us',
 							Buffer.from(req.body.base64, 'base64'),
@@ -913,7 +914,7 @@ router.post("/sendImageFromBase64Grupo", upload.none(''), verifyToken.verify, as
 				case 'chatsAvailable':
 					//
 					await session.waqueue.add(async () => {
-						var sendFileFromBase64 = await group?.sendImage(
+						var sendFileFromBase64 = await message?.sendImage(
 							resSessionName,
 							req.body.groupId.trim() + '@g.us',
 							Buffer.from(req.body.base64, 'base64'),
@@ -985,7 +986,7 @@ router.post("/sendFileGrupo", upload.single('file'), verifyToken.verify, async (
 			case 'chatsAvailable':
 				//
 				await session.waqueue.add(async () => {
-					var sendFile = await group?.sendFile(
+					var sendFile = await message?.sendFile(
 						resSessionName,
 						req.body.groupId.trim() + '@g.us',
 						req.file.buffer,
@@ -1057,7 +1058,7 @@ router.post("/sendFileUrlGrupo", upload.none(''), verifyToken.verify, async (req
 			case 'chatsAvailable':
 				//
 				await session.waqueue.add(async () => {
-					var sendFile = await group?.sendFileUrl(
+					var sendFile = await message?.sendFileUrl(
 						resSessionName,
 						req.body.groupId.trim() + '@g.us',
 						req.body.url,
@@ -1129,7 +1130,7 @@ router.post("/sendFileBase64Grupo", upload.none(''), verifyToken.verify, async (
 				//
 				await session.waqueue.add(async () => {
 					var mimeType = mime.lookup(req.body.originalname);
-					var sendFileBase64 = await group?.sendFile(
+					var sendFileBase64 = await message?.sendFile(
 						resSessionName,
 						req.body.groupId.trim() + '@g.us',
 						Buffer.from(req.body.base64, 'base64'),
@@ -1199,7 +1200,7 @@ router.post("/sendFileFromBase64Grupo", upload.none(''), verifyToken.verify, asy
 			case 'chatsAvailable':
 				//
 				await session.waqueue.add(async () => {
-					var sendFileFromBase64 = await group?.sendFile(
+					var sendFileFromBase64 = await message?.sendFile(
 						resSessionName,
 						req.body.groupId.trim() + '@g.us',
 						Buffer.from(req.body.base64, 'base64'),
@@ -1270,7 +1271,7 @@ router.post("/sendButtonGrupo", upload.none(''), verifyToken.verify, async (req,
 			case 'chatsAvailable':
 				//
 				await session.waqueue.add(async () => {
-					var sendButton = await group?.sendButton(
+					var sendButton = await message?.sendButton(
 						resSessionName,
 						req.body.groupId.trim() + '@g.us',
 						req.body.buttonMessage,
@@ -1337,7 +1338,7 @@ router.post("/sendTemplateGrupo", upload.none(''), verifyToken.verify, async (re
 			case 'chatsAvailable':
 				//
 				await session.waqueue.add(async () => {
-					var sendTemplate = await group?.sendTemplate(
+					var sendTemplate = await message?.sendTemplate(
 						resSessionName,
 						req.body.groupId.trim() + '@g.us',
 						req.body.templateMessage,
@@ -1404,7 +1405,7 @@ router.post("/sendListMessageGrupo", upload.none(''), verifyToken.verify, async 
 			case 'chatsAvailable':
 				//
 				await session.waqueue.add(async () => {
-					var sendListMessage = await group?.sendListMessage(
+					var sendListMessage = await message?.sendListMessage(
 						resSessionName,
 						req.body.groupId.trim() + '@g.us',
 						req.body.listMessage,
