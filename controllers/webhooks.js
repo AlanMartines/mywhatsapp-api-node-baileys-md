@@ -47,19 +47,24 @@ module.exports = class Webhooks {
 
 			if (dataSessions?.wh_connect != undefined && dataSessions?.wh_connect != null && dataSessions?.wh_connect != '') {
 				let dataJson = JSON.stringify(object, null, 2);
-				/*
 				await axios.post(dataSessions?.wh_connect, dataJson, {
 					httpsAgent: new https.Agent({
 						rejectUnauthorized: false,
 						keepAlive: true
 					}),
-					headers: { 'Content-Type': 'application/json' }
+					headers: { 'Content-Type': 'application/json; charset=utf-8' }
 				}).then(response => {
 					logger.info('- Webhooks connect status');
 				}).catch(error => {
 					logger?.error(`- Error connect status ${error.message}`);
 				});
-				*/
+				/*
+				const config = {
+					headers: {
+						'Content-Type': 'application/json; charset=utf-8'
+					}
+				};
+				//
 				request.post({
 					url: dataSessions?.wh_connect,
 					rejectUnauthorized: false,
@@ -71,6 +76,7 @@ module.exports = class Webhooks {
 						logger.info('- Webhooks connect status');
 					}
 				});
+				*/
 			} else {
 				logger.info('- Webhook connect no defined');
 			}
