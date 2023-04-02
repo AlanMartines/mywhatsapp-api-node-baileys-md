@@ -1,6 +1,6 @@
 const axios = require('axios');
 const https = require('https');
-const superagent = require('superagent');
+const got = require('got');
 require('superagent-queue');
 require('dotenv').config();
 const { logger } = require("../utils/logger");
@@ -27,21 +27,18 @@ module.exports = class Webhooks {
 					logger?.error(`- Error receive message: ${error.message}`);
 				});
 				*/
-
-				await superagent
-					.post(dataSessions?.wh_message)
-					.send(dataJson)
-					.set('Content-Type', 'application/json; charset=utf-8')
-					.queue('messages')
-					.end(function () {
-						logger.info('- Webhooks receive message');
-					});
+				const response = await got.post(dataSessions?.wh_message, {
+					json: dataJson,
+					headers: {
+						'Content-Type': 'application/json;charset=utf-8'
+					}
+				});
 
 			} else {
 				logger.info('- Webhook message no defined');
 			}
 		} catch (error) {
-			logger?.error(`- Error: ${error.message}`);
+			logger?.error(`- Error receive message: ${error.message}`);
 		}
 	}
 
