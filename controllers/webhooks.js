@@ -22,7 +22,7 @@ module.exports = class Webhooks {
 					}),
 					headers: { 'Content-Type': 'application/json' }
 				}).then(response => {
-					logger.info('- Webhooks receive message')
+					logger.info('- Webhooks receive message');
 				}).catch(error => {
 					logger?.error(`- Error receive message: ${error.message}`);
 				});
@@ -34,10 +34,10 @@ module.exports = class Webhooks {
 					.rejectUnauthorized(false)
 					.end((err, res) => {
 						if (err) {
-							console.error(err);
-							return;
+							logger?.error(`- Error receive message: ${error.message}`);
+						} else {
+							logger.info('- Webhooks receive message');
 						}
-						console.log(res.body);
 					});
 			} else {
 				logger.info('- Webhook message no defined');
