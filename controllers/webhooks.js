@@ -13,7 +13,6 @@ module.exports = class Webhooks {
 			if (dataSessions?.wh_message != undefined && dataSessions?.wh_message != null && dataSessions?.wh_message != '') {
 				logger.info(`- SessionName: ${SessionName}`);
 				let dataJson = JSON.stringify(object, null, 2);
-				/*
 				await axios.post(dataSessions?.wh_message, dataJson, {
 					httpsAgent: new https.Agent({
 						rejectUnauthorized: false,
@@ -25,19 +24,6 @@ module.exports = class Webhooks {
 				}).catch(error => {
 					logger?.error(`- Error receive message: ${error.message}`);
 				});
-				*/
-				request.post({
-					url: dataSessions?.wh_connect,
-					rejectUnauthorized: false,
-					json: object
-				}, (err, res, body) => {
-					if (err) {
-						logger?.error(`- Error receive message: ${err.message}`);
-					} else {
-						logger.info('- Webhooks receive message');
-					}
-				});
-
 			} else {
 				logger.info('- Webhook message no defined');
 			}
@@ -91,7 +77,7 @@ module.exports = class Webhooks {
 						rejectUnauthorized: false,
 						keepAlive: true
 					}),
-					headers: { 'Content-Type': 'application/json' }
+					headers: { 'Content-Type': 'application/json; charset=utf-8' }
 				}).then(response => {
 					logger.info('- Webhooks status message')
 				}).catch(error => {
@@ -125,7 +111,7 @@ module.exports = class Webhooks {
 						rejectUnauthorized: false,
 						keepAlive: true
 					}),
-					headers: { 'Content-Type': 'application/json' }
+					headers: { 'Content-Type': 'application/json; charset=utf-8' }
 				}).then(response => {
 					logger.info('- Webhooks status message send')
 				}).catch(error => {
@@ -161,7 +147,7 @@ module.exports = class Webhooks {
 						rejectUnauthorized: false,
 						keepAlive: true
 					}),
-					headers: { 'Content-Type': 'application/json' }
+					headers: { 'Content-Type': 'application/json; charset=utf-8' }
 				}).then(response => {
 					logger.info('- Webhooks receive message')
 				}).catch(error => {
