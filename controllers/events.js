@@ -41,6 +41,12 @@ function convertHMS(value) {
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
+function removerEmojis(texto) {
+  return texto.replace(/[\u{1F000}-\u{1F6FF}\u{1F900}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{2B00}-\u{2BFF}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{1FAD0}-\u{1FAFF}]/gu, '');
+}
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
 module.exports = class Events {
 	//
 	static async statusConnection(SessionName, events) {
@@ -250,7 +256,7 @@ module.exports = class Events {
 								"type": 'text',
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
-								"name": msg?.pushName || msg?.verifiedBizName || null,
+								"name": `${msg?.pushName}` || `${msg?.verifiedBizName}` || null,
 								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
