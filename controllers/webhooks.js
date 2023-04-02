@@ -31,7 +31,7 @@ module.exports = class Webhooks {
 				await superagent
 					.post(dataSessions?.wh_message)
 					.send(dataJson)
-					.set('Accept', 'application/json')
+					.set('Content-Type', 'application/json')
 					.queue('messages')
 					.end(function () {
 						logger.info('- Webhooks receive message');
