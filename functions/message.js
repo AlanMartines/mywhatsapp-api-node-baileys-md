@@ -3,16 +3,6 @@ moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
 const Sessions = require("../controllers/sessions");
 const { logger } = require("../utils/logger");
-const { Tokens } = require('../models');
-const webhooks = require('../controllers/webhooks');
-const config = require('../config.global');
-//
-// ------------------------------------------------------------------------------------------------//
-//
-function removeWithspace(string) {
-	var string = string.replace(/\r?\n|\r|\s+/g, ""); /* replace all newlines and with a space */
-	return string;
-}
 //
 // ------------------------------------------------------------------------------------------------//
 //
