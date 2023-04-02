@@ -154,7 +154,7 @@ FORCE_CONNECTION_USE_HERE=0
 		//
 		try {
 			//
-			const commands = require("./router/command");
+			const profile = require("./router/profile");
 			const group = require("./router/group");
 			const instance = require("./router/instance");
 			const message = require("./router/message");
@@ -226,6 +226,7 @@ FORCE_CONNECTION_USE_HERE=0
 			app.use("/message", message);
 			app.use("/group", group);
 			app.use("/retrieving", retrieving);
+			app.use("/profile", profile);
 			app.use("/api-doc", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 			//
 			app.get('/Start', function (req, res, next) {
