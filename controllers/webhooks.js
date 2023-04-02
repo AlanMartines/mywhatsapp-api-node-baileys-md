@@ -1,7 +1,6 @@
 const axios = require('axios');
 const https = require('https');
 const superagent = require('superagent');
-const charset = require('superagent-charset');
 require('superagent-queue');
 require('dotenv').config();
 const { logger } = require("../utils/logger");
@@ -31,10 +30,8 @@ module.exports = class Webhooks {
 
 				await superagent
 					.post(dataSessions?.wh_message)
-					.type('application/json')
-					.charset('utf-8')
 					.send(dataJson)
-					.set('Content-Type', 'application/json')
+					.set('Content-Type', 'application/json; charset=utf-8')
 					.queue('messages')
 					.end(function () {
 						logger.info('- Webhooks receive message');
