@@ -14,6 +14,7 @@ const retrieving = require("../functions/retrieving");
 const Sessions = require('../controllers/sessions');
 const { logger } = require("../utils/logger");
 const config = require('../config.global');
+const {	isJidGroup } = require('@adiwajshing/baileys');
 //
 // ------------------------------------------------------------------------------------------------//
 //
