@@ -14,7 +14,6 @@ module.exports = class Webhooks {
 			if (dataSessions?.wh_message != undefined && dataSessions?.wh_message != null && dataSessions?.wh_message != '') {
 				logger.info(`- SessionName: ${SessionName}`);
 				let dataJson = JSON.stringify(object, null, 2);
-				/*
 				await axios.post(dataSessions?.wh_message, dataJson, {
 					httpsAgent: new https.Agent({
 						rejectUnauthorized: false,
@@ -26,21 +25,6 @@ module.exports = class Webhooks {
 				}).catch(error => {
 					logger?.error(`- Error receive message: ${error.message}`);
 				});
-				*/
-
-				const objeto = {
-					"nome": "João",
-					"sobrenome": "da Silva",
-					"mensagem": "Olá, mundo! 🌍"
-				};
-
-				axios.post(dataSessions?.wh_message, objeto).then((resposta) => {
-					logger.info('- Webhooks receive message');
-				}).catch((error) => {
-					logger?.error(`- Error receive message: ${error.message}`);
-				});
-
-
 			} else {
 				logger.info('- Webhook message no defined');
 			}
