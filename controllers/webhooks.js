@@ -1,6 +1,6 @@
 const axios = require('axios');
 const https = require('https');
-const request = require('request');
+const fetch = require('node-fetch');
 require('dotenv').config();
 const { logger } = require("../utils/logger");
 const Sessions = require('../controllers/sessions');
@@ -13,6 +13,7 @@ module.exports = class Webhooks {
 			if (dataSessions?.wh_message != undefined && dataSessions?.wh_message != null && dataSessions?.wh_message != '') {
 				logger.info(`- SessionName: ${SessionName}`);
 				let dataJson = JSON.stringify(object, null, 2);
+				/*
 				await axios.post(dataSessions?.wh_message, dataJson, {
 					httpsAgent: new https.Agent({
 						rejectUnauthorized: false,
@@ -20,6 +21,21 @@ module.exports = class Webhooks {
 					}),
 					headers: { 'Content-Type': 'application/json; charset=utf-8' }
 				}).then(response => {
+					logger.info('- Webhooks receive message');
+				}).catch(error => {
+					logger?.error(`- Error receive message: ${error.message}`);
+				});
+				*/	
+				fetch(dataSessions?.wh_message, {
+					method: 'POST',
+					agent: new https.Agent({rejectUnauthorized: false}),
+					body: dataJson,
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				}).then(response => {
+					return response.json();
+				}).then(data => {
 					logger.info('- Webhooks receive message');
 				}).catch(error => {
 					logger?.error(`- Error receive message: ${error.message}`);
