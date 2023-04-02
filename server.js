@@ -1,6 +1,5 @@
 'use strict';
 //
-const os = require('os');
 const fs = require('fs-extra');
 const express = require('express');
 require('express-async-errors');
