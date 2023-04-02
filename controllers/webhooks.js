@@ -1,6 +1,5 @@
 const axios = require('axios');
 const https = require('https');
-const superagent = require('superagent');
 require('dotenv').config();
 const { logger } = require("../utils/logger");
 const Sessions = require('../controllers/sessions');
@@ -13,7 +12,6 @@ module.exports = class Webhooks {
 			if (dataSessions?.wh_message != undefined && dataSessions?.wh_message != null && dataSessions?.wh_message != '') {
 				logger.info(`- SessionName: ${SessionName}`);
 				let dataJson = JSON.stringify(object, null, 2);
-				/*
 				await axios.post(dataSessions?.wh_message, dataJson, {
 					httpsAgent: new https.Agent({
 						rejectUnauthorized: false,
@@ -21,23 +19,10 @@ module.exports = class Webhooks {
 					}),
 					headers: { 'Content-Type': 'application/json' }
 				}).then(response => {
-					logger.info('- Webhooks receive message');
+					logger.info('- Webhooks receive message')
 				}).catch(error => {
 					logger?.error(`- Error receive message: ${error.message}`);
 				});
-				*/
-				superagent
-					.post(dataSessions?.wh_message)
-					.send(dataJson)
-					.set('Content-Type', 'application/json')
-					.rejectUnauthorized(false)
-					.end((err, res) => {
-						if (err) {
-							logger?.error(`- Error receive message: ${error.message}`);
-						} else {
-							logger.info('- Webhooks receive message');
-						}
-					});
 			} else {
 				logger.info('- Webhook message no defined');
 			}
@@ -142,8 +127,8 @@ module.exports = class Webhooks {
 		}
 	}
 
-	static async wh_incomingCall(SessionName, response) {
-		let dataSessions = await Sessions?.getSession(SessionName);
+  static async wh_incomingCall(SessionName, response) {
+    let dataSessions = await Sessions?.getSession(SessionName);
 		try {
 			if (dataSessions?.wh_message != undefined && dataSessions?.wh_message != null && dataSessions?.wh_message != '') {
 				logger.info(`- SessionName: ${SessionName}`);
@@ -176,5 +161,5 @@ module.exports = class Webhooks {
 		} catch (error) {
 			logger?.error(`- Error: ${error.message}`);
 		}
-	}
+  }
 }
