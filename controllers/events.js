@@ -256,7 +256,7 @@ module.exports = class Events {
 								"type": 'text',
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
-								"name": `${msg?.pushName}` || `${msg?.verifiedBizName}` || null,
+								"name": removerEmojis(msg?.pushName || msg?.verifiedBizName || null),
 								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
