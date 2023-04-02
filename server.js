@@ -156,7 +156,7 @@ FORCE_CONNECTION_USE_HERE=0
 		try {
 			//
 			const commands = require("./router/command");
-			const groups = require("./router/group");
+			const group = require("./router/group");
 			const instance = require("./router/instance");
 			const message = require("./router/message");
 			const retrieving = require("./router/retrieving");
@@ -227,6 +227,7 @@ FORCE_CONNECTION_USE_HERE=0
 			app.use("/instance", instance);
 			app.use("/retrieving", retrieving);
 			app.use("/message", message);
+			app.use("/group", group);
 			app.use("/sistema", sistem);
 			app.use("/api-doc", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 			//
