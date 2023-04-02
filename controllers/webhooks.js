@@ -12,7 +12,7 @@ module.exports = class Webhooks {
 		try {
 			if (dataSessions?.wh_message != undefined && dataSessions?.wh_message != null && dataSessions?.wh_message != '') {
 				logger.info(`- SessionName: ${SessionName}`);
-				let dataJson = JSON.stringify(object, null, 2);
+				let dataJson = JSON.stringify(object);
 				/*
 				await axios.post(dataSessions?.wh_message, dataJson, {
 					httpsAgent: new https.Agent({
@@ -29,7 +29,7 @@ module.exports = class Webhooks {
 				fetch(dataSessions?.wh_message, {
 					method: 'POST',
 					agent: new https.Agent({rejectUnauthorized: false}),
-					body: object,
+					body: dataJson,
 					headers: {
 						'Content-Type': 'application/json'
 					}
