@@ -232,7 +232,6 @@ module.exports = class Events {
 						//
 						logger?.info(`- Desculpe, estamos sem nenhuma resposta.`);
 						logger?.error(msg?.message);
-						console.log(msg);
 						//
 					}
 					//
