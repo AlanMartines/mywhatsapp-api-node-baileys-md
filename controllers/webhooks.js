@@ -31,7 +31,7 @@ module.exports = class Webhooks {
 
 				await superagent
 					.post(dataSessions?.wh_message)
-					.type('json')
+					.type('application/json')
 					.charset('utf-8')
 					.send(dataJson)
 					.set('Content-Type', 'application/json')
