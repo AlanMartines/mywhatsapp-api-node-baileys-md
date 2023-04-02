@@ -27,7 +27,7 @@ module.exports = class Webhooks {
 				});
 				*/
 				await superagent
-					.post(webhook.wh_message)
+					.post(dataSessions?.wh_message)
 					.send(dataJson)
 					.set('Accept', 'application/json')
 					.queue('messages')
