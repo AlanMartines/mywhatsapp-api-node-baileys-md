@@ -29,7 +29,7 @@ module.exports = class Webhooks {
 				fetch(dataSessions?.wh_message, {
 					method: 'POST',
 					agent: new https.Agent({rejectUnauthorized: false}),
-					body: dataJson,
+					body: JSON.stringify(dataJson),
 					headers: {
 						'Content-Type': 'application/json'
 					}
