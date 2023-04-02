@@ -86,13 +86,6 @@ function removeWithspace(string) {
 //
 // ------------------------------------------------------------------------------------------------//
 //
-function soNumeros(string) {
-	var numbers = string.replace(/[^0-9]/g, '');
-	return numbers;
-}
-//
-// ------------------------------------------------------------------------------------------------//
-//
 async function saudacao() {
 	//
 	let data = new Date();

@@ -23,7 +23,7 @@ module.exports = class Retrieving {
 		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = await Sessions?.getSession(SessionName);
-		return await session.client.fetchStatus(number).then(async (result) => {
+		return await session?.client?.fetchStatus(number).then(async (result) => {
 			//logger?.info('Result: ', result); //return object success
 			//
 			return {
@@ -58,11 +58,12 @@ module.exports = class Retrieving {
 		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		try {
+			var session = await Sessions?.getSession(SessionName);
 			var contactsList = [];
 			//
-			if (fs.existsSync(`${tokenPatch}/${SessionName}.contacts.json`)) {
-				//let result = JSON.parse(fs.readFileSync(`${tokenPatch}/${SessionName}.contacts.json`, 'utf-8'));
-				let result = require(`${tokenPatch}/${SessionName}.contacts.json`);
+			if (fs.existsSync(`${session?.tokenPatch}/${SessionName}.contacts.json`)) {
+				//let result = JSON.parse(fs.readFileSync(`${session?.tokenPatch}/${SessionName}.contacts.json`, 'utf-8'));
+				let result = require(`${session?.tokenPatch}/${SessionName}.contacts.json`);
 				//
 				const resContacts = Object.values(JSON.parse(result));
 				//
@@ -137,11 +138,12 @@ module.exports = class Retrieving {
 		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		try {
+			var session = await Sessions?.getSession(SessionName);
 			var allchat = [];
 			//
-			if (fs.existsSync(`${tokenPatch}/${SessionName}.store.json`)) {
-				//let result = require(`${tokenPatch}/${SessionName}.store.json`);
-				let result = JSON.parse(fs.readFileSync(`${tokenPatch}/${SessionName}.store.json`, 'utf-8'));
+			if (fs.existsSync(`${session?.tokenPatch}/${SessionName}.store.json`)) {
+				//let result = require(`${session?.tokenPatch}/${SessionName}.store.json`);
+				let result = JSON.parse(fs.readFileSync(`${session?.tokenPatch}/${SessionName}.store.json`, 'utf-8'));
 				//
 				//
 				const resChats = Object.values(result.chats);
@@ -207,11 +209,12 @@ module.exports = class Retrieving {
 		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		try {
+			var session = await Sessions?.getSession(SessionName);
 			var allmessages = [];
 			//
-			if (fs.existsSync(`${tokenPatch}/${SessionName}.store.json`)) {
-				//let result = require(`${tokenPatch}/${SessionName}.store.json`);
-				let result = JSON.parse(fs.readFileSync(`${tokenPatch}/${SessionName}.store.json`, 'utf-8'));
+			if (fs.existsSync(`${session?.tokenPatch}/${SessionName}.store.json`)) {
+				//let result = require(`${session?.tokenPatch}/${SessionName}.store.json`);
+				let result = JSON.parse(fs.readFileSync(`${session?.tokenPatch}/${SessionName}.store.json`, 'utf-8'));
 				//
 				const resMessages = Object.values(result.messages);
 				//
@@ -276,7 +279,7 @@ module.exports = class Retrieving {
 		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = await Sessions?.getSession(SessionName);
-		return await session.client.groupFetchAllParticipating().then(async (result) => {
+		return await session?.client?.groupFetchAllParticipating().then(async (result) => {
 			//logger?.info('Result:\n', result); //return object success
 			//
 			var getAllGroups = [];
@@ -356,7 +359,7 @@ module.exports = class Retrieving {
 		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = await Sessions?.getSession(SessionName);
-		return await session.client.onWhatsApp(number).then(([result]) => {
+		return await session?.client?.onWhatsApp(number).then(([result]) => {
 			//logger?.info('Result: ', result); //return object success
 			//
 			if (result?.exists == true) {
@@ -403,7 +406,7 @@ module.exports = class Retrieving {
 		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = await Sessions?.getSession(SessionName);
-		return await session.client.profilePictureUrl(number, 'image').then(async (result) => {
+		return await session?.client?.profilePictureUrl(number, 'image').then(async (result) => {
 			//logger?.info('Result: ', result); //return object success
 			//
 			let returnResult = {
