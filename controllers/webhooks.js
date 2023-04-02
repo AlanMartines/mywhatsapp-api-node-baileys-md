@@ -1,6 +1,6 @@
 const axios = require('axios');
 const https = require('https');
-const superagent = require('superagent');
+const request = require('request');
 require('dotenv').config();
 const { logger } = require("../utils/logger");
 const Sessions = require('../controllers/sessions');
@@ -13,7 +13,6 @@ module.exports = class Webhooks {
 			if (dataSessions?.wh_message != undefined && dataSessions?.wh_message != null && dataSessions?.wh_message != '') {
 				logger.info(`- SessionName: ${SessionName}`);
 				let dataJson = JSON.stringify(object, null, 2);
-				/*
 				await axios.post(dataSessions?.wh_message, dataJson, {
 					httpsAgent: new https.Agent({
 						rejectUnauthorized: false,
@@ -25,17 +24,6 @@ module.exports = class Webhooks {
 				}).catch(error => {
 					logger?.error(`- Error receive message: ${error.message}`);
 				});
-				*/
-
-        await superagent
-          .post(dataSessions?.wh_message)
-          .send(dataJson)
-          .set('Accept', 'application/json')
-          .queue('messages')
-          .end(function () {
-            logger.info('- Webhooks receive message');
-          });
-
 			} else {
 				logger.info('- Webhook message no defined');
 			}
@@ -59,6 +47,7 @@ module.exports = class Webhooks {
 
 			if (dataSessions?.wh_connect != undefined && dataSessions?.wh_connect != null && dataSessions?.wh_connect != '') {
 				let dataJson = JSON.stringify(object, null, 2);
+				/*
 				await axios.post(dataSessions?.wh_connect, dataJson, {
 					httpsAgent: new https.Agent({
 						rejectUnauthorized: false,
@@ -66,18 +55,28 @@ module.exports = class Webhooks {
 					}),
 					headers: { 'Content-Type': 'application/json' }
 				}).then(response => {
-					logger.info('- Webhooks connect status')
+					logger.info('- Webhooks connect status');
 				}).catch(error => {
 					logger?.error(`- Error connect status ${error.message}`);
 				});
-
+				*/
+				request.post({
+					url: dataSessions?.wh_connect,
+					rejectUnauthorized: false,
+					json: dataJson
+				}, (err, res, body) => {
+					if (err) {
+						logger?.error(`- Error connect status ${err?.message}`);
+					} else {
+						logger.info('- Webhooks connect status');
+					}
+				});
 			} else {
 				logger.info('- Webhook connect no defined');
 			}
 		} catch (error) {
 			logger?.error(`- Error: ${error.message}`);
 		}
-
 	}
 
 	static async wh_status(SessionName, object) {
@@ -140,8 +139,8 @@ module.exports = class Webhooks {
 		}
 	}
 
-  static async wh_incomingCall(SessionName, response) {
-    let dataSessions = await Sessions?.getSession(SessionName);
+	static async wh_incomingCall(SessionName, response) {
+		let dataSessions = await Sessions?.getSession(SessionName);
 		try {
 			if (dataSessions?.wh_message != undefined && dataSessions?.wh_message != null && dataSessions?.wh_message != '') {
 				logger.info(`- SessionName: ${SessionName}`);
@@ -174,5 +173,5 @@ module.exports = class Webhooks {
 		} catch (error) {
 			logger?.error(`- Error: ${error.message}`);
 		}
-  }
+	}
 }
