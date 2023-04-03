@@ -641,19 +641,20 @@ module.exports = class Instace {
 									qrcode: null,
 									CodeurlCode: null,
 									phone: phone,
-									message: "Sistema iniciado e disponivel para uso",
 									state: "CONNECTED",
-									status: "inChat"
+									status: "inChat",
+									message: "Sistema iniciado e disponivel para uso"
 								};
 								//
 								await Sessions?.addInfoSession(SessionName, addJson);
 								//
-								req.io.emit('stateChange',
-									{
-										SessionName: SessionName,
-										status: addJson?.status
-									}
-								);
+								dataSessions?.funcoesSocket?.stateChange(SessionName, {
+									SessionName: SessionName,
+									phone: addJson?.phone,
+									state: addJson?.state,
+									status: addJson?.status,
+									message: addJson?.message,
+								});
 								//
 								await updateStateDb(addJson?.state, addJson?.status, SessionName);
 								webhooks?.wh_connect(SessionName);
