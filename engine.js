@@ -298,6 +298,7 @@ module.exports = class Instace {
 		//
 		let SessionName = req?.body?.SessionName;
 		let setOnline = req?.body?.setOnline;
+		let dataSessions = await Sessions?.getSession(SessionName);
 		logger?.info(`- SessionName: ${SessionName}`);
 		let waqueue = new pQueue({ concurrency: parseInt(config.CONCURRENCY) });
 		await Sessions?.addInfoSession(SessionName, {
@@ -568,9 +569,9 @@ module.exports = class Instace {
 									//
 									let addJson = {
 										client: false,
-										message: "Sistema desconectado",
 										state: "CLOSED",
-										status: "notLogged"
+										status: "notLogged",
+										message: "Navegador fechado automaticamente"
 									};
 									//
 									await Sessions?.addInfoSession(SessionName, addJson);
@@ -581,12 +582,12 @@ module.exports = class Instace {
 									await deletaToken(`${tokenPatch}`, `${SessionName}.startup.json`);
 									await deletaToken(`${tokenPatch}`, `${SessionName}.contacts.json`);
 									//
-									req.io.emit('stateChange',
-										{
-											SessionName: SessionName,
-											status: addJson?.status
-										}
-									);
+									dataSessions?.funcoesSocket?.stateChange(SessionName, {
+										SessionName: SessionName,
+										state: addJson?.state,
+										status: addJson?.status,
+										message: addJson?.message,
+									});
 									//
 									logger?.info("- Navegador fechado automaticamente");
 									//
@@ -603,19 +604,19 @@ module.exports = class Instace {
 								logger?.info(`- Connection status: ${connection}`.yellow);
 								//
 								let addJson = {
-									message: "Dispositivo conectando",
 									state: "CONNECTING",
-									status: "notLogged"
+									status: "notLogged",
+									message: "Dispositivo conectando"
 								};
 								//
 								await Sessions?.addInfoSession(SessionName, addJson);
 								//
-								req.io.emit('stateChange',
-									{
-										SessionName: SessionName,
-										status: addJson?.status
-									}
-								);
+								dataSessions?.funcoesSocket?.stateChange(SessionName, {
+									SessionName: SessionName,
+									state: addJson?.state,
+									status: addJson?.status,
+									message: addJson?.message,
+								});
 								//
 							} else if (connection === 'open') {
 								//
