@@ -261,7 +261,7 @@ module.exports = class Instace {
 		let data = await Sessions?.getSession(SessionName);
 		const funcoesSocket = new fnSocket(req.io);
 		//
-		funcoesSocket.events(SessionName, {
+		funcoesSocket.start(SessionName, {
 			SessionName: SessionName,
 			state: 'STARTING',
 			status: "notLogged",
