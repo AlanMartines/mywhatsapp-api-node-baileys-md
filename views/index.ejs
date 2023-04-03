@@ -426,39 +426,39 @@
 							window.scrollTo(0, 0);
 						}
 					}).catch(function (error) {
-					console.log(error.response.status);
-					let Status = error.response.data.Status;
-					if (Status.status == 422) {
-						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-on.png');
-						$("#description").html(Status.message);
+						console.log(error.response.status);
+						let Status = error.response.data.Status;
+						if (Status.status == 422) {
+							$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-on.png');
+							$("#description").html(Status.message);
 
-						window.scrollTo(0, 0);
-					} else if (Status.status == 401) {
-						$('#imageQrcode').attr("src", '/imagens/body/impressao-digital.png');
-						$("#description").html(Status.message);
+							window.scrollTo(0, 0);
+						} else if (Status.status == 401) {
+							$('#imageQrcode').attr("src", '/imagens/body/impressao-digital.png');
+							$("#description").html(Status.message);
 
-						window.scrollTo(0, 0);
-					} else if (Status.status == 408) {
-						$('#imageQrcode').attr("src", '/imagens/body/impressao-digital.png');
-						$("#description").html(Status.message);
+							window.scrollTo(0, 0);
+						} else if (Status.status == 408) {
+							$('#imageQrcode').attr("src", '/imagens/body/impressao-digital.png');
+							$("#description").html(Status.message);
 
-						window.scrollTo(0, 0);
-					} else if (Status.status == 404) {
-						$('#imageQrcode').attr("src", '/imagens/body/not-found.png');
-						$("#description").html(Status.message);
+							window.scrollTo(0, 0);
+						} else if (Status.status == 404) {
+							$('#imageQrcode').attr("src", '/imagens/body/not-found.png');
+							$("#description").html(Status.message);
 
-						window.scrollTo(0, 0);
-					} else if (Status.status == 400) {
-						$('#imageQrcode').attr("src", '/imagens/body/not-found.png');
-						$("#description").html(Status.message);
+							window.scrollTo(0, 0);
+						} else if (Status.status == 400) {
+							$('#imageQrcode').attr("src", '/imagens/body/not-found.png');
+							$("#description").html(Status.message);
 
-						window.scrollTo(0, 0);
-					} else {
-						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-travado.png');
-						$("#description").html("Não foi possivel verificar o status");
-					}
-				});
-				//
+							window.scrollTo(0, 0);
+						} else {
+							$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-travado.png');
+							$("#description").html("Não foi possivel verificar o status");
+						}
+					});
+					//
 				}
 			});
 			//
@@ -469,11 +469,13 @@
 				event.preventDefault();
 				//let data = $("#start-form").serialize();
 				let jsonData = JSON.stringify($("#start-form").serializeJSON(), null, 2);
+				let inputValue = $('#AuthorizationToken').val();
 				//
-				axios.post(`${url}/sistema/Status`, jsonData, {
+				axios.post(`${url}/instance/Status`, jsonData, {
 					headers: {
 						// Overwrite Axios's automatically set Content-Type
-						'Content-Type': 'application/json'
+						'Content-Type': 'application/json',
+						'AuthorizationToken': inputValue,
 					}
 				}).then(function (response) {
 					console.log(response.data);
@@ -549,11 +551,13 @@
 				event.preventDefault();
 				//
 				let jsonData = JSON.stringify($("#start-form").serializeJSON(), null, 2);
+				let inputValue = $('#AuthorizationToken').val();
 				//
-				axios.post(`${url}/sistema/Close`, jsonData, {
+				axios.post(`${url}/instance/Close`, jsonData, {
 					headers: {
 						// Overwrite Axios's automatically set Content-Type
-						'Content-Type': 'application/json'
+						'Content-Type': 'application/json',
+						'AuthorizationToken': inputValue,
 					}
 				}).then(function (response) {
 					console.log(response.data);
@@ -624,11 +628,13 @@
 				event.preventDefault();
 				//let data = $("#start-form").serialize();
 				let jsonData = JSON.stringify($("#start-form").serializeJSON(), null, 2);
+				let inputValue = $('#AuthorizationToken').val();
 				//
-				axios.post(`${url}/sistema/Logout`, jsonData, {
+				axios.post(`${url}/instance/Logout`, jsonData, {
 					headers: {
 						// Overwrite Axios's automatically set Content-Type
-						'Content-Type': 'application/json'
+						'Content-Type': 'application/json',
+						'AuthorizationToken': inputValue,
 					}
 				}).then(function (response) {
 					console.log(response.data);
