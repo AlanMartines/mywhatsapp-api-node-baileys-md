@@ -383,11 +383,13 @@
 					//
 					//let data = $("#start-form").serialize();
 					let jsonData = JSON.stringify($("#start-form").serializeJSON(), null, 2);
+					let inputValue = $('#AuthorizationToken').val();
 					//
-					axios.post(`${url}/sistema/Start`, jsonData, {
+					axios.post(`${url}/instance/Start`, jsonData, {
 						headers: {
 							// Overwrite Axios's automatically set Content-Type
-							'Content-Type': 'application/json'
+							'Content-Type': 'application/json',
+							'AuthorizationToken': inputValue,
 						}
 					}).then(function (response) {
 						console.log(response.data);
