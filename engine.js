@@ -474,6 +474,12 @@ module.exports = class Instace {
 				//
 				store?.bind(client.ev);
 				//
+				let addJson = {
+					store: store
+				};
+				//
+				await Sessions?.addInfoSession(SessionName, addJson);
+				//
 				let attempts = 1;
 				//
 				// the process function lets you process all events that just occurred
