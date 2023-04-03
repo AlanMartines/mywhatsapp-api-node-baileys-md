@@ -523,7 +523,7 @@ module.exports = class Instace {
 								logger?.info("- Captura do QR-Code");
 								//
 								webhooks?.wh_qrcode(SessionName);
-								this.exportQR(funcoesSocket, readQRCode, SessionName, attempts);
+								this.exportQR(req.io, readQRCode, SessionName, attempts);
 								//
 								if (parseInt(config.VIEW_QRCODE_TERMINAL)) {
 									qrViewer.generate(qr, { small: true });
@@ -581,12 +581,12 @@ module.exports = class Instace {
 									await deletaToken(`${tokenPatch}`, `${SessionName}.startup.json`);
 									await deletaToken(`${tokenPatch}`, `${SessionName}.contacts.json`);
 									//
-									funcoesSocket.stateChange(SessionName, {
-										SessionName: SessionName,
-										state: addJson?.state,
-										status: addJson?.status,
-										message: addJson?.message
-									});
+									req.io.emit('stateChange',
+										{
+											SessionName: SessionName,
+											status: addJson?.status
+										}
+									);
 									//
 									logger?.info("- Navegador fechado automaticamente");
 									//
@@ -610,12 +610,12 @@ module.exports = class Instace {
 								//
 								await Sessions?.addInfoSession(SessionName, addJson);
 								//
-								funcoesSocket.stateChange(SessionName, {
-									SessionName: SessionName,
-									state: addJson?.state,
-									status: addJson?.status,
-									message: addJson?.message
-								});
+								req.io.emit('stateChange',
+									{
+										SessionName: SessionName,
+										status: addJson?.status
+									}
+								);
 								//
 							} else if (connection === 'open') {
 								//
@@ -652,7 +652,7 @@ module.exports = class Instace {
 									phone: addJson?.phone,
 									state: addJson?.state,
 									status: addJson?.status,
-									message: addJson?.message
+									message: addJson?.message,
 								});
 								//
 								await updateStateDb(addJson?.state, addJson?.status, SessionName);
@@ -724,12 +724,12 @@ module.exports = class Instace {
 										//
 										await updateStateDb(addJson?.state, addJson?.status, SessionName);
 										//
-										funcoesSocket.stateChange(SessionName, {
-											SessionName: SessionName,
-											state: addJson?.state,
-											status: addJson?.status,
-											message: addJson?.message
-										});
+										req.io.emit('stateChange',
+											{
+												SessionName: SessionName,
+												status: addJson?.status
+											}
+										);
 										//
 										break;
 									case resDisconnectReason.timedOut:
@@ -747,12 +747,12 @@ module.exports = class Instace {
 										//
 										await updateStateDb(addJson?.state, addJson?.status, SessionName);
 										//
-										funcoesSocket.stateChange(SessionName, {
-											SessionName: SessionName,
-											state: addJson?.state,
-											status: addJson?.status,
-											message: addJson?.message
-										});
+										req.io.emit('stateChange',
+											{
+												SessionName: SessionName,
+												status: addJson?.status
+											}
+										);
 										//
 										setTimeout(async function () {
 											return await startSock(SessionName).then(async (result) => {
@@ -884,12 +884,12 @@ module.exports = class Instace {
 										//
 										await updateStateDb(addJson?.state, addJson?.status, SessionName);
 										//
-										funcoesSocket.stateChange(SessionName, {
-											SessionName: SessionName,
-											state: addJson?.state,
-											status: addJson?.status,
-											message: addJson?.message
-										});
+										req.io.emit('stateChange',
+											{
+												SessionName: SessionName,
+												status: addJson?.status
+											}
+										);
 										//
 										setTimeout(async function () {
 											return await startSock(SessionName).then(async (result) => {
@@ -935,12 +935,12 @@ module.exports = class Instace {
 										//
 										await updateStateDb(addJson?.state, addJson?.status, SessionName);
 										//
-										funcoesSocket.stateChange(SessionName, {
-											SessionName: SessionName,
-											state: addJson?.state,
-											status: addJson?.status,
-											message: addJson?.message
-										});
+										req.io.emit('stateChange',
+											{
+												SessionName: SessionName,
+												status: session.status
+											}
+										);
 										//
 										setTimeout(async function () {
 											return await startSock(SessionName).then(async (result) => {
@@ -1056,29 +1056,27 @@ module.exports = class Instace {
 			//
 			await Sessions?.addInfoSession(SessionName, addJson);
 			//
-			funcoesSocket.stateChange(SessionName, {
-				SessionName: SessionName,
-				state: addJson?.state,
-				status: addJson?.status,
-				message: addJson?.message
-			});
+			req.io.emit('stateChange',
+				{
+					SessionName: SessionName,
+					status: addJson?.status
+				}
+			);
 			//
 		}
 		//
 	}
 	//
-	static async exportQR(funcoesSocket, base64Code, SessionName, attempts) {
+	static async exportQR(socket, base64Code, SessionName, attempts) {
 		//
-		/*
-		funcoesSocket.qrCode(SessionName, {
-			SessionName: SessionName,
-			data: base64Code,
-			attempts: attempts,
-			state: addJson?.state,
-			status: addJson?.status,
-			message: 'QRCode Iniciado, Escanei por favor...'
-		});
-*/
+		socket.emit('qrCode',
+			{
+				data: base64Code,
+				SessionName: SessionName,
+				attempts: attempts,
+				message: 'QRCode Iniciado, Escanei por favor...'
+			}
+		);
 		//
 	};
 }
