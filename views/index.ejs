@@ -394,7 +394,7 @@
 					}).then(function (response) {
 						console.log(response.data);
 						let Status = response.data.Status;
-						if (Status.state == 'CONNECTED') {
+						if (Status.erro == false && Status.status == 200) {
 							$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-on.png');
 							$("#description").html("Sistema iniciado com sucesso.");
 
