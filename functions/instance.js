@@ -327,6 +327,13 @@ module.exports = class Instance {
 			webhooks?.wh_connect(SessionName);
 			await updateStateDb(addJson?.state, addJson?.status, SessionName);
 			//
+			session?.funcoesSocket?.stateChange(SessionName, {
+				SessionName: SessionName,
+				state: addJson?.state,
+				status: addJson?.status,
+				message: addJson?.message,
+			});
+			//
 			let result = {
 				"erro": false,
 				"status": 200,
