@@ -4,17 +4,17 @@ moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
 const Sessions = require("../controllers/sessions");
 const { logger } = require("../utils/logger");
-const {	isJidGroup } = require('@adiwajshing/baileys');
+const { isJidGroup } = require('@adiwajshing/baileys');
 //
 //
 // ------------------------------------------------------------------------------------------------//
 //
 module.exports = class Retrieving {
-/*
-	╦═╗┌─┐┌┬┐┬─┐┬┌─┐┬  ┬┬┌┐┌┌─┐  ╔╦╗┌─┐┌┬┐┌─┐
-	╠╦╝├┤  │ ├┬┘│├┤ └┐┌┘│││││ ┬   ║║├─┤ │ ├─┤
-	╩╚═└─┘ ┴ ┴└─┴└─┘ └┘ ┴┘└┘└─┘  ═╩╝┴ ┴ ┴ ┴ ┴
-	*/
+	/*
+		╦═╗┌─┐┌┬┐┬─┐┬┌─┐┬  ┬┬┌┐┌┌─┐  ╔╦╗┌─┐┌┬┐┌─┐
+		╠╦╝├┤  │ ├┬┘│├┤ └┐┌┘│││││ ┬   ║║├─┤ │ ├─┤
+		╩╚═└─┘ ┴ ┴└─┴└─┘ └┘ ┴┘└┘└─┘  ═╩╝┴ ┴ ┴ ┴ ┴
+		*/
 	//
 	// Recuperar contatos
 	static async getStatus(
@@ -270,6 +270,56 @@ module.exports = class Retrieving {
 		};
 		//
 	} //getAllMessage
+	//
+	// ------------------------------------------------------------------------------------------------//
+	//
+	// Recuperar mensagem
+	static async getMessage(
+		SessionName,
+		number,
+		limit,
+		cursor_id,
+		cursor_fromMe
+	) {
+		logger?.info("- Obtendo todas as mensagens!");
+		logger?.info(`- SessionName: ${SessionName}`);
+		//
+		try {
+			let session = await Sessions?.getSession(SessionName);
+			let messages = [];
+			let cursor = {};
+			if (cursor_id) {
+				cursor.before = {
+					id: cursor_id,
+					fromMe: Boolean(cursor_fromMe && cursor_fromMe === 'true'),
+				}
+			}
+			//
+			const useCursor = 'before' in cursor ? cursor : null
+			messages = await session.store.loadMessages(number, limit, useCursor);
+			//
+			let returnResult = {
+				"erro": false,
+				"status": 200,
+				"getMessage": messages
+			};
+			//
+			return returnResult;
+			//
+		} catch (erro) {
+			logger?.error(`- Error when: ${erro}`);
+			//
+			let returnResult = {
+				"erro": true,
+				"status": 404,
+				"message": "Erro ao recuperar contatos"
+			};
+			//
+			return returnResult;
+			//
+		};
+		//
+	} //getMessage
 	//
 	// ------------------------------------------------------------------------------------------------//
 	//

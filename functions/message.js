@@ -33,7 +33,7 @@ module.exports = class Mensagens {
 			+ 'TEL;type=CELL;type=VOICE;waid=' + contact + ':' + contact + '\n' // WhatsApp ID + phone number
 			+ 'END:VCARD';
 		//
-		return await await session.client.sendMessage(
+		return await await session?.client?.sendMessage(
 			number,
 			{
 				contacts: {
@@ -82,8 +82,8 @@ module.exports = class Mensagens {
 		var session = await Sessions?.getSession(SessionName);
 		// Send audio
 		//let mimetype = getDevice(message.id) == 'ios' ? 'audio/mpeg' : 'audio/mp4';
-		await session.client.sendPresenceUpdate('recording', number);
-		return await session.client.sendMessage(number, {
+		await session?.client?.sendPresenceUpdate('recording', number);
+		return await session?.client?.sendMessage(number, {
 			audio: buffer,
 			mimetype: mimetype,
 			ptt: true
@@ -98,11 +98,11 @@ module.exports = class Mensagens {
 					"message": "Audio enviado com sucesso."
 				};
 				//
-				await session.client.sendPresenceUpdate('available', number);
+				await session?.client?.sendPresenceUpdate('available', number);
 				return returnResult;
 				//
 			}).catch(async (erro) => {
-				await session.client.sendPresenceUpdate('available', number);
+				await session?.client?.sendPresenceUpdate('available', number);
 				logger?.error(`- Error when: ${erro}`);
 				//return { result: 'error', state: session.state, message: "Erro ao enviar menssagem" };
 				//return (erro);
@@ -132,8 +132,8 @@ module.exports = class Mensagens {
 		//
 		var session = await Sessions?.getSession(SessionName);
 		// Send audio
-		await session.client.sendPresenceUpdate('recording', number);
-		return await session.client.sendMessage(number, {
+		await session?.client?.sendPresenceUpdate('recording', number);
+		return await session?.client?.sendMessage(number, {
 			audio: buffer,
 			mimetype: "audio/mpeg",
 			mp3: true,
@@ -149,12 +149,12 @@ module.exports = class Mensagens {
 				"message": "Audio enviado com sucesso."
 			};
 			//
-			await session.client.sendPresenceUpdate('available', number);
+			await session?.client?.sendPresenceUpdate('available', number);
 			//
 			return returnResult;
 			//
 		}).catch(async (erro) => {
-			await session.client.sendPresenceUpdate('available', number);
+			await session?.client?.sendPresenceUpdate('available', number);
 			logger?.error(`- Error when: ${erro}`);
 			//return { result: 'error', state: session.state, message: "Erro ao enviar menssagem" };
 			//return (erro);
@@ -183,7 +183,7 @@ module.exports = class Mensagens {
 		//
 		var session = await Sessions?.getSession(SessionName);
 		// Send basic text
-		return await session.client.sendMessage(
+		return await session?.client?.sendMessage(
 			number,
 			{ text: msg },
 			{ presence: 'composing', delay: 1000 }
@@ -224,7 +224,7 @@ module.exports = class Mensagens {
 		//
 		var session = await Sessions?.getSession(SessionName);
 		// Send basic text
-		return await session.client.sendMessage(
+		return await session?.client?.sendMessage(
 			number,
 			{
 				location: {
@@ -276,7 +276,7 @@ module.exports = class Mensagens {
 		//
 		var session = await Sessions?.getSession(SessionName);
 		// Send basic text
-		return await session.client.sendMessage(
+		return await session?.client?.sendMessage(
 			number,
 			{
 				text: link,
@@ -320,7 +320,7 @@ module.exports = class Mensagens {
 		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = await Sessions?.getSession(SessionName);
-		return await session.client.sendMessage(
+		return await session?.client?.sendMessage(
 			number, {
 			image: buffer,
 			fileName: originalname,
@@ -375,7 +375,7 @@ module.exports = class Mensagens {
 		switch (mime) {
 			case 'image':
 				//
-				return await session.client.sendMessage(from, {
+				return await session?.client?.sendMessage(from, {
 					image: buffer,
 					mimetype: mimetype,
 					fileName: originalname,
@@ -405,7 +405,7 @@ module.exports = class Mensagens {
 				break;
 			case 'audio':
 				//
-				return await session.client.sendMessage(from, {
+				return await session?.client?.sendMessage(from, {
 					audio: buffer,
 					mimetype: mime,
 					caption: caption,
@@ -439,7 +439,7 @@ module.exports = class Mensagens {
 						//
 						mime = 'application/pdf';
 						//
-						return await session.client.sendMessage(from, {
+						return await session?.client?.sendMessage(from, {
 							document: buffer,
 							mimetype: mime,
 							fileName: originalname,
@@ -471,7 +471,7 @@ module.exports = class Mensagens {
 						//
 						mime = 'application/excel';
 						//
-						return await session.client.sendMessage(from, {
+						return await session?.client?.sendMessage(from, {
 							document: buffer,
 							mimetype: mime,
 							fileName: originalname,
@@ -504,7 +504,7 @@ module.exports = class Mensagens {
 						mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 						//
 						//
-						return await session.client.sendMessage(from, {
+						return await session?.client?.sendMessage(from, {
 							document: buffer,
 							mimetype: mime,
 							fileName: originalname,
@@ -536,7 +536,7 @@ module.exports = class Mensagens {
 						//
 						mime = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 						//
-						return await session.client.sendMessage(from, {
+						return await session?.client?.sendMessage(from, {
 							document: buffer,
 							mimetype: mime,
 							fileName: originalname,
@@ -568,7 +568,7 @@ module.exports = class Mensagens {
 						//
 						mime = 'application/msword';
 						//
-						return await session.client.sendMessage(from, {
+						return await session?.client?.sendMessage(from, {
 							document: buffer,
 							mimetype: mime,
 							fileName: originalname,
@@ -600,7 +600,7 @@ module.exports = class Mensagens {
 						//
 						mime = 'application/zip';
 						//
-						return await session.client.sendMessage(from, {
+						return await session?.client?.sendMessage(from, {
 							document: buffer,
 							mimetype: mime,
 							fileName: originalname,
@@ -630,7 +630,7 @@ module.exports = class Mensagens {
 						break;
 					default:
 						//
-						return await session.client.sendMessage(from, {
+						return await session?.client?.sendMessage(from, {
 							document: buffer,
 							mimetype: mime,
 							fileName: originalname,
@@ -679,7 +679,7 @@ module.exports = class Mensagens {
 		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = await Sessions?.getSession(SessionName);
-		return await session.client.sendMessage(
+		return await session?.client?.sendMessage(
 			number, {
 			document: {
 				url: filePath
@@ -723,7 +723,7 @@ module.exports = class Mensagens {
 		//
 		var session = await Sessions?.getSession(SessionName);
 		// Send basic text
-		return await session.client.sendMessage(
+		return await session?.client?.sendMessage(
 			number,
 			buttonMessage
 		).then(async (result) => {
@@ -766,7 +766,7 @@ module.exports = class Mensagens {
 		//
 		var session = await Sessions?.getSession(SessionName);
 		// Send basic text
-		return await session.client.sendMessage(
+		return await session?.client?.sendMessage(
 			number,
 			templateMessage
 		).then(async (result) => {
@@ -809,7 +809,7 @@ module.exports = class Mensagens {
 		//
 		var session = await Sessions?.getSession(SessionName);
 		// Send basic text
-		return await session.client.sendMessage(
+		return await session?.client?.sendMessage(
 			number,
 			listMessage
 		).then(async (result) => {

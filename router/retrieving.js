@@ -40,10 +40,8 @@ router.post("/getStatus", upload.none(''), verifyToken.verify, async (req, res, 
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
 	} else {
 		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.phonefull) {
@@ -124,10 +122,8 @@ router.post("/getAllContacts", upload.none(''), verifyToken.verify, async (req, 
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
 	} else {
 		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName) {
@@ -191,10 +187,8 @@ router.post("/getAllChats", upload.none(''), verifyToken.verify, async (req, res
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
 	} else {
 		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName) {
@@ -258,10 +252,8 @@ router.post("/getAllMessage", upload.none(''), verifyToken.verify, async (req, r
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
 	} else {
 		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName) {
@@ -317,6 +309,91 @@ router.post("/getAllMessage", upload.none(''), verifyToken.verify, async (req, r
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
+// Recuperar mensagens
+router.post("/getMessage", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
+	//
+	if (parseInt(config.VALIDATE_MYSQL) == true) {
+		var resSessionName = theTokenAuth;
+	} else {
+		var resSessionName = theSessionName;
+	}
+	//
+	if (!resSessionName || !req.body.phonefull || !req.body.limit || !req.body.cursor_id || !req.body.cursor_fromMe) {
+		var validate = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		return res.status(validate.status).json({
+			"Status": validate
+		});
+		//
+	} else {
+		//
+		var Status = await instance?.Status(resSessionName);
+		var session = await Sessions?.getSession(resSessionName);
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+				await session.waqueue.add(async () => {
+					var checkNumberStatus = await retrieving?.checkNumberStatus(
+						resSessionName,
+						soNumeros(req.body.phonefull).trim()
+					);
+					//
+					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+						//
+						var getAllMessage = await retrieving?.getMessage(
+							resSessionName,
+							checkNumberStatus.number,
+							req.body.limit,
+							req.body.cursor_id,
+							req.body.cursor_fromMe
+						);
+						//
+						res.setHeader('Content-Type', 'application/json');
+						return res.status(getAllMessage.status).json({
+							"Status": getAllMessage
+						});
+						//
+					} else {
+						//
+						res.setHeader('Content-Type', 'application/json');
+						return res.status(checkNumberStatus.status).json({
+							"Status": checkNumberStatus
+						});
+						//
+					}
+					//
+				});
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+}); //getMessage
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
 // Recuperar grupos
 router.post("/getAllGroups", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
@@ -325,10 +402,8 @@ router.post("/getAllGroups", upload.none(''), verifyToken.verify, async (req, re
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
 	} else {
 		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName) {
@@ -392,10 +467,8 @@ router.post("/getProfilePicFromServer", upload.none(''), verifyToken.verify, asy
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
 	} else {
 		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.phonefull) {
@@ -476,10 +549,8 @@ router.post("/checkNumberStatus", upload.none(''), verifyToken.verify, async (re
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
-		var resTokenAuth = theTokenAuth;
 	} else {
 		var resSessionName = theSessionName;
-		var resTokenAuth = theTokenAuth;
 	}
 	//
 	if (!resSessionName || !req.body.phonefull) {
