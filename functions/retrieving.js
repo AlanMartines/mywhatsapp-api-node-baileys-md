@@ -296,7 +296,7 @@ module.exports = class Retrieving {
 			}
 			//
 			const useCursor = 'before' in cursor ? cursor : null
-			messages = await session.store.loadMessages(number, limit, useCursor);
+			messages = await session?.store?.loadMessages(number, limit, useCursor);
 			//
 			let returnResult = {
 				"erro": false,
