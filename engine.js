@@ -1069,6 +1069,7 @@ module.exports = class Instace {
 	//
 	static async exportQR(funcoesSocket, base64Code, SessionName, attempts) {
 		//
+		/*
 		funcoesSocket.qrCode(SessionName, {
 			SessionName: SessionName,
 			data: base64Code,
@@ -1077,6 +1078,7 @@ module.exports = class Instace {
 			status: addJson?.status,
 			message: 'QRCode Iniciado, Escanei por favor...'
 		});
+*/
 		//
 	};
 }
