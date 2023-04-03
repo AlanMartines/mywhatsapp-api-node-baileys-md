@@ -489,7 +489,7 @@ module.exports = class Instance {
 					"erro": false,
 					"status": 200,
 					"message": "Sessão carregada com sucesso",
-					"session": data
+					"session": JSON.stringify(data, null, 2)
 				};
 				//
 			} else {
@@ -526,7 +526,7 @@ module.exports = class Instance {
 					"erro": false,
 					"status": 200,
 					"message": "Sessões carregadas com sucesso",
-					"session": data
+					"session": JSON.stringify(data, null, 2)
 				};
 				//
 			} else {
