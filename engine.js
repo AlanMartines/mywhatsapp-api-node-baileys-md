@@ -33,6 +33,7 @@ const {
 	MessageOptions,
 	Mimetype,
 	isJidGroup,
+	loadMessages,
 	fetchLatestBaileysVersion,
 	WASocket,
 	AuthenticationState,
