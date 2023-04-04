@@ -263,7 +263,7 @@ pm2 unstartup systemd
 ## Gerar SECRET_KEY para uso local de validação
 
 ```bash
-node -e "console.log(require('crypto').randomBytes(64).toString('base64').replace(/[^a-zA-Z0-9]/g, ''));"
+node -e "console.log(require('crypto').randomBytes(45).toString('base64').slice(0, 60));"
 ```
 
 ## Criar pasta tokens (Linux)
