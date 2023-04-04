@@ -516,40 +516,31 @@ module.exports = class Instace {
 								//
 								logger?.info('- QR Generated'.green);
 								//
+								const readQRCode = await QRCode.toDataURL(qr);
+								const base64Code = readQRCode.replace('data:image/png;base64,', '');
+								//
 								logger?.info(`- Número de tentativas de ler o qr-code: ${attempts}`);
 								//
 								logger?.info("- Captura do QR-Code");
 								//
+								webhooks?.wh_qrcode(SessionName);
+								this.exportQR(req.io, readQRCode, SessionName, attempts);
+								//
 								if (parseInt(config.VIEW_QRCODE_TERMINAL)) {
 									qrViewer.generate(qr, { small: true });
 								}
-				//
-								const readQRCode = await QRCode.toDataURL(qr);
-								const base64Code = readQRCode.replace('data:image/png;base64,', '');
 								//
 								let addJson = {
 									CodeurlCode: qr,
 									qrcode: readQRCode,
+									message: "Sistema aguardando leitura do QR-Code",
 									state: "QRCODE",
-									status: "qrRead",
-									message: "Sistema aguardando leitura do QR-Code"
+									status: "qrRead"
 								};
 								//
 								await Sessions?.addInfoSession(SessionName, addJson);
 								//
 								await updateStateDb(addJson?.state, addJson?.status, SessionName);
-								//
-								webhooks?.wh_qrcode(SessionName);
-								//this.exportQR(dataSessions?.funcoesSocket, readQRCode, SessionName, attempts, addJson?.state, addJson?.status);
-								//
-								dataSessions?.funcoesSocket?.qrCode(SessionName, {
-									SessionName: SessionName,
-									attempts: attempts,
-									data: addJson?.readQRCode,
-									state: addJson?.state,
-									status: addJson?.status,
-									message: addJson?.message
-								});
 								//
 								if (attempts >= 5) {
 									//
@@ -1077,16 +1068,17 @@ module.exports = class Instace {
 		//
 	}
 	//
-	static async exportQR(funcoesSocket, base64Code, SessionName, attempts, state, status) {
-		//
-		funcoesSocket?.qrCode(SessionName, {
-			SessionName: SessionName,
-			attempts: attempts,
-			data: base64Code,
-			state: state,
-			status: status,
-			message: 'QRCode Iniciado, Escanei por favor...'
-		});
-		//
+	//
+	static async exportQR(socket, qrCode, SessionName, attempts) {
+		qrCode = qrCode.replace('data:image/png;base64,', '');
+		const imageBuffer = Buffer.from(qrCode, 'base64');
+		socket.emit('qrCode',
+			{
+				data: 'data:image/png;base64,' + imageBuffer.toString('base64'),
+				SessionName: SessionName,
+				attempts: attempts,
+				message: 'QRCode Iniciado, Escanei por favor...'
+			}
+		);
 	};
 }
