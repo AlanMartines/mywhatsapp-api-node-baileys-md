@@ -542,7 +542,7 @@ module.exports = class Instace {
 								webhooks?.wh_qrcode(SessionName);
 								//this.exportQR(dataSessions?.funcoesSocket, readQRCode, SessionName, attempts, addJson?.state, addJson?.status);
 								//
-								funcoesSocket?.qrCode(SessionName, {
+								dataSessions?.funcoesSocket?.qrCode(SessionName, {
 									SessionName: SessionName,
 									attempts: attempts,
 									data: addJson?.readQRCode,
