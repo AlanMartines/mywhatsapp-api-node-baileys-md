@@ -61,7 +61,7 @@ module.exports = {
 		}
 	},
 	"paths": {
-		"/sistema/Start": {
+		"/instance/Start": {
 			"post": {
 				"tags": [
 					"Getting started"
@@ -236,7 +236,7 @@ module.exports = {
 				}
 			}
 		},
-		"/sistema/Status": {
+		"/instance/Status": {
 			"post": {
 				"tags": [
 					"Getting started"
@@ -360,7 +360,7 @@ module.exports = {
 				}
 			}
 		},
-		"/sistema/Close": {
+		"/instance/Close": {
 			"post": {
 				"tags": [
 					"Getting started"
@@ -432,7 +432,7 @@ module.exports = {
 				}
 			}
 		},
-		"/sistema/QRCode": {
+		"/instance/QRCode": {
 			"post": {
 				"tags": [
 					"Getting started"
