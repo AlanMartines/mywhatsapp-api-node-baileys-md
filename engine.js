@@ -1070,7 +1070,7 @@ module.exports = class Instace {
 	//
 	static async exportQR(funcoesSocket, base64Code, SessionName, attempts, state, status) {
 		//
-		funcoesSocket?.stateChange(SessionName, {
+		funcoesSocket?.qrCode(SessionName, {
 			SessionName: SessionName,
 			attempts: attempts,
 			data: base64Code,
