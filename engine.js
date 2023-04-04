@@ -530,9 +530,9 @@ module.exports = class Instace {
 								let addJson = {
 									CodeurlCode: qr,
 									qrcode: readQRCode,
-									message: "Sistema aguardando leitura do QR-Code",
 									state: "QRCODE",
-									status: "qrRead"
+									status: "qrRead",
+									message: "Sistema aguardando leitura do QR-Code"
 								};
 								//
 								await Sessions?.addInfoSession(SessionName, addJson);
@@ -540,7 +540,16 @@ module.exports = class Instace {
 								await updateStateDb(addJson?.state, addJson?.status, SessionName);
 								//
 								webhooks?.wh_qrcode(SessionName);
-								this.exportQR(dataSessions?.funcoesSocket, readQRCode, SessionName, attempts, addJson?.state, addJson?.status);
+								//this.exportQR(dataSessions?.funcoesSocket, readQRCode, SessionName, attempts, addJson?.state, addJson?.status);
+								//
+								funcoesSocket?.qrCode(SessionName, {
+									SessionName: SessionName,
+									attempts: attempts,
+									data: readQRCode,
+									state: addJson?.state,
+									status: addJson?.status,
+									message: addJson?.message
+								});
 								//
 								if (attempts >= 5) {
 									//
