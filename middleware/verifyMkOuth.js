@@ -18,6 +18,7 @@ function removeWithspace(string) {
 //
 exports.verify = async (req, res, next) => {
 	//
+	logger.info(`- mkauthPlaySms`);
 	let theTokenAuth;
 	//
 	if (!req?.body?.p) {

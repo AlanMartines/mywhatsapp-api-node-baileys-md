@@ -34,7 +34,7 @@ function soNumeros(string) {
 ╩  ┴└─└─┘└  ┴┴─┘└─┘  ╚  └─┘┘└┘└─┘ ┴ ┴└─┘┘└┘└─┘           
 */
 // Recuperar status de contato
-router.post("/mkauthPlaySms", upload.none(''), async (req, res, next) => {
+router.post("/mkauthPlaySms", upload.none(''), verifyToken.verify, async (req, res, next) => {
 console.log();
 //
 	const theTokenAuth = removeWithspace(req?.headers?.p);
