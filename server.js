@@ -159,6 +159,7 @@ FORCE_CONNECTION_USE_HERE=0
 			const instance = require("./router/instance");
 			const message = require("./router/message");
 			const retrieving = require("./router/retrieving");
+			const gateway = require("./router/gateway");
 			//
 			// Body Parser
 			app.use(cors());
@@ -227,6 +228,7 @@ FORCE_CONNECTION_USE_HERE=0
 			app.use("/group", group);
 			app.use("/retrieving", retrieving);
 			app.use("/profile", profile);
+			app.use("/gateway", gateway);
 			app.use("/api-doc", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 			//
 			app.get('/Start', function (req, res, next) {
