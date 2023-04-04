@@ -523,9 +523,6 @@ module.exports = class Instace {
 								//
 								logger?.info("- Captura do QR-Code");
 								//
-								webhooks?.wh_qrcode(SessionName);
-								this.exportQR(req.io, readQRCode, SessionName, attempts);
-								//
 								if (parseInt(config.VIEW_QRCODE_TERMINAL)) {
 									qrViewer.generate(qr, { small: true });
 								}
@@ -541,6 +538,9 @@ module.exports = class Instace {
 								await Sessions?.addInfoSession(SessionName, addJson);
 								//
 								await updateStateDb(addJson?.state, addJson?.status, SessionName);
+								//
+								webhooks?.wh_qrcode(SessionName);
+								this.exportQR(req.io, readQRCode, SessionName, attempts);
 								//
 								if (attempts >= 5) {
 									//
@@ -1069,13 +1069,11 @@ module.exports = class Instace {
 	}
 	//
 	//
-	static async exportQR(socket, qrCode, SessionName, attempts) {
-		qrCode = qrCode.replace('data:image/png;base64,', '');
-		const imageBuffer = Buffer.from(qrCode, 'base64');
+	static async exportQR(socket, readQRCode, SessionName, attempts) {
 		socket.emit('qrCode',
 			{
-				data: 'data:image/png;base64,' + imageBuffer.toString('base64'),
 				SessionName: SessionName,
+				data: readQRCode,
 				attempts: attempts,
 				message: 'QRCode Iniciado, Escanei por favor...'
 			}
