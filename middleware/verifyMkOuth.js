@@ -31,7 +31,6 @@ exports.verify = async (req, res, next) => {
 		});
 	} else {
 		theTokenAuth = removeWithspace(req?.body?.p);
-		logger.info(`- mkauthPlaySms: ${theTokenAuth}`);
 	}
 	//
 	//
@@ -109,6 +108,7 @@ exports.verify = async (req, res, next) => {
 	} else {
 		//
 		if (config.SECRET_KEY != theTokenAuth) {
+			logger.info(`- mkauthPlaySms: ${theTokenAuth}`);
 			res.setHeader('Content-Type', 'application/json');
 			return res.status(408).json({
 				"Status": {
