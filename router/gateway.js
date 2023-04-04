@@ -4,11 +4,12 @@ const express = require("express");
 const router = express.Router();
 const multer = require('multer');
 const upload = multer({});
-const verifyToken = require("../middleware/verifyToken");
+const verifyToken = require("../middleware/verifyMkOuth");
 const instance = require("../functions/instance");
+const message = require("../functions/message");
 const retrieving = require("../functions/retrieving");
-const gateway = require("../functions/gateway");
 const Sessions = require('../controllers/sessions');
+const { logger } = require("../utils/logger");
 const config = require('../config.global');
 //
 // ------------------------------------------------------------------------------------------------//
@@ -33,11 +34,100 @@ function soNumeros(string) {
 ╩  ┴└─└─┘└  ┴┴─┘└─┘  ╚  └─┘┘└┘└─┘ ┴ ┴└─┘┘└┘└─┘           
 */
 // Recuperar status de contato
-router.post("/mkauthPlaySms", upload.none(''), async (req, res, next) => {
+router.post("/mkauthPlaySms", upload.none(''), verifyToken.verify, async (req, res, next) => {
+//
+	const theTokenAuth = removeWithspace(req?.headers?.p);
+	const theSessionName = removeWithspace(req?.body?.u);
 	//
-	console.log(req.body);
-  const {u, p, to, msg} = req.body;
+	if (parseInt(config.VALIDATE_MYSQL) == true) {
+		var resSessionName = theTokenAuth;
+	} else {
+		var resSessionName = theSessionName;
+	}
 	//
+	try {
+		if (!resSessionName || !req.body.to || !req.body.msg) {
+			var validate = {
+				"erro": true,
+				"status": 400,
+				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			return res.status(validate.status).json({
+				"Status": validate
+			});
+			//
+		} else {
+			//
+			var Status = await instance?.Status(resSessionName);
+			var session = await Sessions?.getSession(resSessionName);
+			switch (Status.status) {
+				case 'inChat':
+				case 'qrReadSuccess':
+				case 'isLogged':
+				case 'chatsAvailable':
+					//
+					await session.waqueue.add(async () => {
+						var checkNumberStatus = await retrieving?.checkNumberStatus(
+							resSessionName,
+							soNumeros('+'+req.body.to).trim()
+						);
+						//
+						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+							//
+							var sendText = await message?.sendText(
+								resSessionName,
+								checkNumberStatus.number,
+								req.body.msg
+							);
+							//
+							res.setHeader('Content-Type', 'application/json');
+							return res.status(sendText.status).json({
+								"Status": sendText
+							});
+							//
+						} else {
+							//
+							res.setHeader('Content-Type', 'application/json');
+							return res.status(checkNumberStatus.status).json({
+								"Status": checkNumberStatus
+							});
+							//
+						}
+						//
+					});
+					break;
+				default:
+					//
+					var resultRes = {
+						"erro": true,
+						"status": 400,
+						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+					};
+					//
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(resultRes.status).json({
+						"Status": resultRes
+					});
+				//
+			}
+		}
+	} catch (error) {
+		//
+		logger?.error(`${error}`);
+		var resultRes = {
+			"erro": true,
+			"status": 403,
+			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		return res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	}
 }); //mkauthPlaySms
 //
 //
