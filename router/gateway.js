@@ -72,7 +72,7 @@ console.log();
 					await session.waqueue.add(async () => {
 						var checkNumberStatus = await retrieving?.checkNumberStatus(
 							resSessionName,
-							soNumeros('+'+req.body.to).trim()
+							req.body.to.trim()
 						);
 						//
 						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
