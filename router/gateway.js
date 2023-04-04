@@ -37,8 +37,8 @@ function soNumeros(string) {
 router.post("/mkauthPlaySms", upload.none(''), async (req, res, next) => {
 console.log();
 //
-	const theTokenAuth = removeWithspace(req?.headers?.p);
-	const theSessionName = removeWithspace(req?.body?.u);
+	const theTokenAuth = req?.headers?.p;
+	const theSessionName = req?.body?.u;
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		var resSessionName = theTokenAuth;
@@ -72,7 +72,7 @@ console.log();
 					await session.waqueue.add(async () => {
 						var checkNumberStatus = await retrieving?.checkNumberStatus(
 							resSessionName,
-							req.body.to.trim()
+							soNumeros('+'+req.body.to).trim()
 						);
 						//
 						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
