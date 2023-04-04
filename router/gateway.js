@@ -36,6 +36,7 @@ function soNumeros(string) {
 router.post("/mkauthPlaySms", upload.none(''), async (req, res, next) => {
 	//
 	console.log(req.body);
+  const {u, p, to, msg} = req.body;
 	//
 }); //mkauthPlaySms
 //
