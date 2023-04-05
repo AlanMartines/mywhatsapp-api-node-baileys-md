@@ -665,10 +665,12 @@ module.exports = class Instace {
 								//
 								attempts = 1;
 								//
+								/*
 								await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `app-*.json`);
 								await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `pre-*.json`);
 								await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `sender-*.json`);
 								await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `session-*.json`);
+								*/
 								//
 							} else if (connection === 'close') {
 								//
