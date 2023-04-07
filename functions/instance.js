@@ -503,6 +503,7 @@ module.exports = class Instance {
 				delete dataSessions?.funcoesSocket;
 				delete dataSessions?.store;
 				delete dataSessions?.client;
+				delete dataSessions?.waqueue;
 				//
 				return {
 					"erro": false,
