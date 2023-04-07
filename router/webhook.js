@@ -166,15 +166,14 @@ router.post("/setConfig", upload.none(''), verifyToken.verify, async (req, res, 
 						}
 					});
 					//
-					let dataSession = await Sessions?.getSession(resSessionName);
 					var resultRes = {
 						"erro": false,
 						"status": 200,
 						"webhook": {
-							wh_status: dataSession?.wh_status || null,
-							wh_message: dataSession?.wh_message || null,
-							wh_qrcode: dataSession?.wh_qrcode || null,
-							wh_connect: dataSession?.wh_connect || null
+							wh_status: req?.body?.wh_status != undefined ? req?.body?.wh_status : null,
+							wh_message: req?.body?.wh_message != undefined ? req?.body?.wh_message : null,
+							wh_qrcode: req?.body?.wh_qrcode != undefined ? req?.body?.wh_qrcode : null,
+							wh_connect: req?.body?.wh_connect != undefined ? req?.body?.wh_connect : null
 						},
 						"message": 'Configuração atualizada com sucesso'
 					};
