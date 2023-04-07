@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const cors = require('cors');
 const path = require('path');
+const boxen = require('boxen');
 const swaggerUi = require('swagger-ui-express')
 //const latest = require('github-latest-release'); // verifica a ultima release no github
 const latest = require('latest-version'); // verifica a ultima release no npm
@@ -46,7 +47,7 @@ logger?.info(
 );
 //
 //
-console.log(boxen('unicorn', {padding: 1}));
+logger?.info(boxen('unicorn', {padding: 1}));
 //
 //
 // ------------------------------------------------------------------------------------------------//
