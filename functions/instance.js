@@ -542,17 +542,21 @@ module.exports = class Instance {
 			//
 			if (dataSessions) {
 				//
-				await dataSessions?.session?.forEach(async (data) => {
+				const novoJson = dataSessions.map(data => {
 					//
-					console.log(data[0]);
+					delete data?.funcoesSocket;
+					delete data?.store;
+					delete data?.client;
+					delete data?.waqueue;
 					//
+					return data;
 				});
 				//
 				return {
 					"erro": false,
 					"status": 200,
 					"message": "Sessões carregadas com sucesso",
-					"session": CircularJSON.stringify(dataSessions, null, 2)
+					"session": novoJson
 				};
 				//
 			} else {
