@@ -47,7 +47,7 @@ logger?.info(
 );
 //
 //
-logger?.info(boxen('unicorn', {padding: 1}));
+console.log(boxen('unicorn', {padding: 1}));
 //
 //
 // ------------------------------------------------------------------------------------------------//
