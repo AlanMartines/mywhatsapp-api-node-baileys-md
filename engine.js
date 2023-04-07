@@ -236,6 +236,7 @@ module.exports = class Instace {
 		} else {
 			var SessionName = removeWithspace(theSessionName);
 		}
+		//
 		try {
 			//
 			let startupRes = {
@@ -280,10 +281,10 @@ module.exports = class Instace {
 			let newSession = {
 				funcoesSocket: funcoesSocket,
 				tokenPatch: tokenPatch,
-				wh_status: req?.body?.wh_status != undefined ? req?.body?.wh_status : '',
-				wh_message: req?.body?.wh_message != undefined ? req?.body?.wh_message : '',
-				wh_qrcode: req?.body?.wh_qrcode != undefined ? req?.body?.wh_qrcode : '',
-				wh_connect: req?.body?.wh_connect != undefined ? req?.body?.wh_connect : '',
+				wh_status: req?.body?.wh_status != undefined ? req?.body?.wh_status : null,
+				wh_message: req?.body?.wh_message != undefined ? req?.body?.wh_message : null,
+				wh_qrcode: req?.body?.wh_qrcode != undefined ? req?.body?.wh_qrcode : null,
+				wh_connect: req?.body?.wh_connect != undefined ? req?.body?.wh_connect : null,
 				state: 'STARTING',
 				status: "notLogged"
 			};
