@@ -509,7 +509,7 @@ module.exports = class Instance {
 					"erro": false,
 					"status": 200,
 					"message": "Sessão carregada com sucesso",
-					"session": JSON.stringify(JSON.parse(dataSessions), null, 2)
+					"session": dataSessions
 				};
 				//
 			} else {
