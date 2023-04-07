@@ -166,6 +166,7 @@ router.post("/setConfig", upload.none(''), verifyToken.verify, async (req, res, 
 						}
 					});
 					//
+					let dataSession = await Sessions?.getSession(resSessionName);
 					var resultRes = {
 						"erro": false,
 						"status": 200,
