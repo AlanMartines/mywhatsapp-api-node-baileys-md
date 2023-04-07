@@ -9,6 +9,7 @@ moment?.locale('pt-br');
 const pino = require("pino");
 const rmfr = require('rmfr');
 const colors = require('colors');
+const boxen = require('boxen');
 const { default: pQueue } = require('p-queue');
 const { release } = require('os');
 const NodeCache = require('node-cache');
@@ -622,6 +623,16 @@ module.exports = class Instace {
 								//
 								logger?.info('- Connected to WhatsApp'.green);
 								logger?.info(`- Connection status: ${connection}`.green);
+								//
+								logger?.info(
+									`
+									┌──────────────────────────────┐
+									│    CONNECTED TO WHATSAPP     │
+									└──────────────────────────────┘
+								`.replace(/^ +/gm, '  '),
+								);
+								//
+								console.log(boxen('unicorn', {padding: 1}));
 								//
 								let addJson = {};
 								//
