@@ -546,7 +546,7 @@ module.exports = class Instance {
 					"erro": false,
 					"status": 200,
 					"message": "Sessões carregadas com sucesso",
-					"session": dataSessions
+					"session": CircularJSON.stringify(dataSessions, null, 2)
 				};
 				//
 			} else {
