@@ -33,12 +33,14 @@ const {
 	yo
 } = require('yoo-hoo');
 //
+/*
 yo('My-WhatsApp', {
 	color: 'rainbow',
 	spacing: 1,
 });
+*/
 //
-console.log(boxen('My-WhatsApp', {padding: 1}));
+console.log(boxen('My-WhatsApp', {padding: 1, margin: 1, borderStyle: 'double'}));
 //
 //
 // ------------------------------------------------------------------------------------------------//
