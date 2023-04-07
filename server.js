@@ -164,6 +164,7 @@ FORCE_CONNECTION_USE_HERE=0
 			const instance = require("./router/instance");
 			const message = require("./router/message");
 			const retrieving = require("./router/retrieving");
+			const webhook = require("./router/webhook");
 			const gateway = require("./router/gateway");
 			//
 			// Body Parser
@@ -234,6 +235,7 @@ FORCE_CONNECTION_USE_HERE=0
 			app.use("/retrieving", retrieving);
 			app.use("/profile", profile);
 			app.use("/gateway", gateway);
+			app.use("/webhook", webhook);
 			app.use("/api-doc", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 			//
 			app.get('/Start', function (req, res, next) {
