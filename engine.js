@@ -4,6 +4,7 @@ const fs = require('fs-extra');
 const QRCode = require('qrcode');
 const qrViewer = require('qrcode-terminal');
 const moment = require('moment');
+const boxen = require('boxen');
 moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
 const pino = require("pino");
