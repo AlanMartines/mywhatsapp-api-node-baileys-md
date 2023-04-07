@@ -9,7 +9,6 @@ moment?.locale('pt-br');
 const pino = require("pino");
 const rmfr = require('rmfr');
 const colors = require('colors');
-const boxen = require('boxen');
 const { default: pQueue } = require('p-queue');
 const { release } = require('os');
 const NodeCache = require('node-cache');
@@ -620,6 +619,14 @@ module.exports = class Instace {
 								});
 								//
 							} else if (connection === 'open') {
+								//
+								logger?.info(
+									`
+									┌──────────────────────────────┐
+									│    CONNECTED TO WHATSAPP     │
+									└──────────────────────────────┘
+								`.replace(/^ +/gm, '  '),
+								);
 								//
 								logger?.info('- Connected to WhatsApp'.green);
 								logger?.info(`- Connection status: ${connection}`.green);

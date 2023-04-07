@@ -38,16 +38,7 @@ yo('My-WhatsApp', {
 	spacing: 1,
 });
 //
-logger?.info(
-	`
-	┌──────────────────────────────┐
-	│    CONNECTED TO WHATSAPP     │
-	└──────────────────────────────┘
-`.replace(/^ +/gm, '  '),
-);
-//
-//
-console.log(boxen('unicorn', {padding: 1}));
+console.log(boxen('My-WhatsApp', {padding: 1}));
 //
 //
 // ------------------------------------------------------------------------------------------------//
