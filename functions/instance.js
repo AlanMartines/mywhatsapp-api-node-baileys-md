@@ -101,7 +101,7 @@ module.exports = class Instance {
 
 		try {
 			let session = await Sessions?.getSession(resSessionName);
-			
+
 			if (session) {
 				//só adiciona se não existir
 				if (session.state == "CONNECTED") {
@@ -541,6 +541,12 @@ module.exports = class Instance {
 			let dataSessions = await Sessions?.getAll();
 			//
 			if (dataSessions) {
+				//
+				await forEach(dataSessions?.session, async (data) => {
+					//
+					console.log(data[0]);
+					//
+				});
 				//
 				return {
 					"erro": false,
