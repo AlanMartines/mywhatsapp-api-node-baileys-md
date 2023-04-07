@@ -496,15 +496,19 @@ module.exports = class Instance {
 	//
 	static async getSession(SessionName) {
 		try {
-			let data = await Sessions?.getSession(SessionName);
+			let dataSessions = await Sessions?.getSession(SessionName);
 			//
-			if (data) {
+			if (dataSessions) {
+				//
+				delete dataSessions?.funcoesSocket;
+				delete dataSessions?.store;
+				delete dataSessions?.client;
 				//
 				return {
 					"erro": false,
 					"status": 200,
 					"message": "Sessão carregada com sucesso",
-					"session": CircularJSON.stringify(data, null, 2)
+					"session": CircularJSON.stringify(dataSessions, null, 2)
 				};
 				//
 			} else {
@@ -533,15 +537,15 @@ module.exports = class Instance {
 	//
 	static async AllSessions(req, res, next) {
 		try {
-			let data = await Sessions?.getAll();
+			let dataSessions = await Sessions?.getAll();
 			//
-			if (data) {
+			if (dataSessions) {
 				//
 				return {
 					"erro": false,
 					"status": 200,
 					"message": "Sessões carregadas com sucesso",
-					"session": CircularJSON.stringify(data, null, 2)
+					"session": JSON.stringify(dataSessions, null, 2)
 				};
 				//
 			} else {
