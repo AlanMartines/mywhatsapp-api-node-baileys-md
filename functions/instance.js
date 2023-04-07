@@ -542,7 +542,7 @@ module.exports = class Instance {
 			//
 			if (dataSessions) {
 				//
-				await forEach(dataSessions?.session, async (data) => {
+				await dataSessions?.session?.forEach(async (data) => {
 					//
 					console.log(data[0]);
 					//
