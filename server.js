@@ -46,7 +46,7 @@ logger?.info(
 );
 //
 //
-logger?.info(boxen('unicorn', {padding: 1}));
+logger.info(boxen('unicorn', {padding: 1}));
 //
 //
 // ------------------------------------------------------------------------------------------------//
