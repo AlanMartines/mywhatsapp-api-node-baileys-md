@@ -624,16 +624,6 @@ module.exports = class Instace {
 								logger?.info('- Connected to WhatsApp'.green);
 								logger?.info(`- Connection status: ${connection}`.green);
 								//
-								logger?.info(
-									`
-									┌──────────────────────────────┐
-									│    CONNECTED TO WHATSAPP     │
-									└──────────────────────────────┘
-								`.replace(/^ +/gm, '  '),
-								);
-								//
-								console.log(boxen('unicorn', {padding: 1}));
-								//
 								let addJson = {};
 								//
 								// Wait 5 seg for linked qr process to whatsapp

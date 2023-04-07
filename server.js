@@ -45,6 +45,10 @@ logger?.info(
 `.replace(/^ +/gm, '  '),
 );
 //
+//
+logger?.info(boxen('unicorn', {padding: 1}));
+//
+//
 // ------------------------------------------------------------------------------------------------//
 //
 fs.access(".env", fs.constants.F_OK, async (err) => {
