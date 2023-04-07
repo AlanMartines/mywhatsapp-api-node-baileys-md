@@ -620,7 +620,15 @@ module.exports = class Instace {
 								//
 							} else if (connection === 'open') {
 								//
-								console?.log(boxen('CONNECTED TO WHATSAPP', {padding: 1}));
+								logger?.info(
+									`
+									┌──────────────────────────────┐
+									│    CONNECTED TO WHATSAPP     │
+									└──────────────────────────────┘
+								`.replace(/^ +/gm, '  '),
+								);
+								//
+								console.log(boxen('CONNECTED TO WHATSAPP', {padding: 1}));
 								//
 								logger?.info('- Connected to WhatsApp'.green);
 								logger?.info(`- Connection status: ${connection}`.green);
