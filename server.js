@@ -40,18 +40,6 @@ yo('My-WhatsApp', {
 //
 //console.log(boxen('My-WhatsApp', {padding: 1, margin: 1, borderStyle: 'double'}));
 //
-const bannerText = 'My-WhatsApp';
-const bannerStyle = {
-  padding: 1,
-  margin: 1,
-  borderStyle: 'round',
-  borderColor: 'green',
-  backgroundColor: '#555555',
-  color: 'white',
-  align: 'center',
-};
-//
-console.log(boxen(bannerText, bannerStyle));
 //
 //
 // ------------------------------------------------------------------------------------------------//
