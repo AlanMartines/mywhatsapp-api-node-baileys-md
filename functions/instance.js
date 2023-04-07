@@ -2,6 +2,7 @@ const moment = require('moment');
 moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
 const rmfr = require('rmfr');
+const CircularJSON = require('circular-json');
 const Sessions = require("../controllers/sessions");
 const { logger } = require("../utils/logger");
 const { Tokens } = require('../models');
@@ -503,7 +504,7 @@ module.exports = class Instance {
 					"erro": false,
 					"status": 200,
 					"message": "Sessão carregada com sucesso",
-					"session": JSON.stringify(data, null, 2)
+					"session": CircularJSON.stringify(data, null, 2)
 				};
 				//
 			} else {
@@ -540,7 +541,7 @@ module.exports = class Instance {
 					"erro": false,
 					"status": 200,
 					"message": "Sessões carregadas com sucesso",
-					"session": JSON.stringify(data, null, 2)
+					"session": CircularJSON.stringify(data, null, 2)
 				};
 				//
 			} else {
