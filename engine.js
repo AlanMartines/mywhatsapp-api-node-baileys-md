@@ -242,11 +242,11 @@ module.exports = class Instace {
 			let startupRes = {
 				"AuthorizationToken": theTokenAuth,
 				"SessionName": SessionName,
-				"setOnline": req?.body?.setOnline || true,
-				"wh_connect": req?.body?.wh_status || null,
-				"wh_qrcode": req?.body?.wh_status || null,
-				"wh_status": req?.body?.wh_status || null,
-				"wh_message": req?.body?.wh_status || null
+				"setOnline": req?.body?.setOnline ? req?.body?.setOnline : true,
+				"wh_status": req?.body?.wh_status ? req?.body?.wh_status : null,
+				"wh_message": req?.body?.wh_message ? req?.body?.wh_message : null,
+				"wh_qrcode": req?.body?.wh_qrcode ? req?.body?.wh_qrcode : null,
+				"wh_connect": req?.body?.wh_connect ? req?.body?.wh_connect : null,
 			};
 			//
 			fs.writeJson(`${config.PATCH_TOKENS}/${SessionName}.startup.json`, startupRes, (err) => {
@@ -281,10 +281,10 @@ module.exports = class Instace {
 			let newSession = {
 				funcoesSocket: funcoesSocket,
 				tokenPatch: tokenPatch,
-				wh_status: req?.body?.wh_status != undefined ? req?.body?.wh_status : null,
-				wh_message: req?.body?.wh_message != undefined ? req?.body?.wh_message : null,
-				wh_qrcode: req?.body?.wh_qrcode != undefined ? req?.body?.wh_qrcode : null,
-				wh_connect: req?.body?.wh_connect != undefined ? req?.body?.wh_connect : null,
+				wh_status: req?.body?.wh_status ? req?.body?.wh_status : null,
+				wh_message: req?.body?.wh_message ? req?.body?.wh_message : null,
+				wh_qrcode: req?.body?.wh_qrcode ? req?.body?.wh_qrcode : null,
+				wh_connect: req?.body?.wh_connect ? req?.body?.wh_connect : null,
 				state: 'STARTING',
 				status: "notLogged"
 			};
