@@ -46,7 +46,7 @@ class AllSessions {
 
 						const resBody = {
 							"SessionName": result.SessionName,
-							"setOnline": result.setOnlineue,
+							"setOnline": result.setOnline,
 							"wh_connect": result.wh_connect,
 							"wh_qrcode": result.wh_qrcode,
 							"wh_status": result.wh_status,
