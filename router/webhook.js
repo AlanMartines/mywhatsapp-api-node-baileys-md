@@ -61,10 +61,10 @@ router.post("/getConfig", verifyToken.verify, async (req, res, next) => {
 					"erro": false,
 					"status": 200,
 					"webhook": {
-						wh_status: dataSession?.wh_status || null,
-						wh_message: dataSession?.wh_message || null,
-						wh_qrcode: dataSession?.wh_qrcode || null,
-						wh_connect: dataSession?.wh_connect || null
+							"wh_connect": dataSession?.wh_connect ? dataSession?.wh_connect : null,
+							"wh_qrcode": dataSession?.wh_qrcode ? dataSession?.wh_qrcode : null,
+							"wh_status": dataSession?.wh_status ? dataSession?.wh_status : null,
+							"wh_message": dataSession?.wh_message ? dataSession?.wh_message : null
 					},
 					"message": 'Configuração obtida com sucesso'
 				};
@@ -143,11 +143,11 @@ router.post("/setConfig", upload.none(''), verifyToken.verify, async (req, res, 
 					let startupRes = {
 						"AuthorizationToken": theTokenAuth,
 						"SessionName": resSessionName,
-						"setOnline": dataSession?.setOnline || true,
-						"wh_connect": req?.body?.wh_status || null,
-						"wh_qrcode": req?.body?.wh_status || null,
-						"wh_status": req?.body?.wh_status || null,
-						"wh_message": req?.body?.wh_status || null
+						"setOnline": dataSession?.setOnline ? dataSession?.setOnline : true,
+						"wh_status": req?.body?.wh_status ? req?.body?.wh_status : null,
+						"wh_message": req?.body?.wh_message ? req?.body?.wh_message : null,
+						"wh_qrcode": req?.body?.wh_qrcode ? req?.body?.wh_qrcode : null,
+						"wh_connect": req?.body?.wh_connect ? req?.body?.wh_connect : null
 					};
 					//
 					fs.writeJson(`${config.PATCH_TOKENS}/${resSessionName}.startup.json`, startupRes, async (err) => {
@@ -157,10 +157,10 @@ router.post("/setConfig", upload.none(''), verifyToken.verify, async (req, res, 
 							logger?.info('- Success startup config for user file');
 							//
 							let newSession = {
-								wh_status: req?.body?.wh_status != undefined ? req?.body?.wh_status : null,
-								wh_message: req?.body?.wh_message != undefined ? req?.body?.wh_message : null,
-								wh_qrcode: req?.body?.wh_qrcode != undefined ? req?.body?.wh_qrcode : null,
-								wh_connect: req?.body?.wh_connect != undefined ? req?.body?.wh_connect : null
+								"wh_status": req?.body?.wh_status ? req?.body?.wh_status : null,
+								"wh_message": req?.body?.wh_message ? req?.body?.wh_message : null,
+								"wh_qrcode": req?.body?.wh_qrcode ? req?.body?.wh_qrcode : null,
+								"wh_connect": req?.body?.wh_connect ? req?.body?.wh_connect : null
 							};
 							await Sessions?.addInfoSession(resSessionName, newSession);
 						}
@@ -170,10 +170,10 @@ router.post("/setConfig", upload.none(''), verifyToken.verify, async (req, res, 
 						"erro": false,
 						"status": 200,
 						"webhook": {
-							wh_status: req?.body?.wh_status != undefined ? req?.body?.wh_status : null,
-							wh_message: req?.body?.wh_message != undefined ? req?.body?.wh_message : null,
-							wh_qrcode: req?.body?.wh_qrcode != undefined ? req?.body?.wh_qrcode : null,
-							wh_connect: req?.body?.wh_connect != undefined ? req?.body?.wh_connect : null
+								"wh_status": req?.body?.wh_status ? req?.body?.wh_status : null,
+								"wh_message": req?.body?.wh_message ? req?.body?.wh_message : null,
+								"wh_qrcode": req?.body?.wh_qrcode ? req?.body?.wh_qrcode : null,
+								"wh_connect": req?.body?.wh_connect ? req?.body?.wh_connect : null
 						},
 						"message": 'Configuração atualizada com sucesso'
 					};

@@ -45,12 +45,12 @@ class AllSessions {
 						let result = JSON.parse(await fs.readFile(filePath, 'utf-8'));
 
 						const resBody = {
-							"SessionName": result.SessionName,
-							"setOnline": result.setOnline,
-							"wh_connect": result.wh_connect,
-							"wh_qrcode": result.wh_qrcode,
-							"wh_status": result.wh_status,
-							"wh_message": result.wh_message
+							"SessionName": result?.SessionName,
+							"setOnline": result?.setOnline ? result?.setOnline : true,
+							"wh_connect": result?.wh_connect ? result?.wh_connect : null,
+							"wh_qrcode": result?.wh_qrcode ? result?.wh_qrcode : null,
+							"wh_status": result?.wh_status ? result?.wh_status : null,
+							"wh_message": result?.wh_message ? result?.wh_message : null
 						};
 
 						const options = {
