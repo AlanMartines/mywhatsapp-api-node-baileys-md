@@ -821,7 +821,7 @@ module.exports = class Events {
 		//
 		try {
 			// Listen when client has been added to a group
-			if (events.call) {
+			if (events?.call) {
 				const eventsCall = events?.call[0];
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Call event`);
