@@ -127,7 +127,7 @@ module.exports = class Webhooks {
 		}
 	}
 
-	static async wh_incomingCall(SessionName, response) {
+	static async wh_incomingCall(SessionName, object) {
 		let dataSessions = await Sessions?.getSession(SessionName);
 		try {
 			if (dataSessions?.wh_message != undefined && dataSessions?.wh_message != null && dataSessions?.wh_message != '') {
