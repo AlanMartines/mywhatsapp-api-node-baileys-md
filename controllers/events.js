@@ -825,7 +825,7 @@ module.exports = class Events {
 				const eventsCall = events.call;
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Call event`);
-				logger?.info(`- Call: ${JSON.stringify(eventsCall, null, 2)}`);
+				logger?.info(`- Call: ${JSON.stringify(eventsCall[0], null, 2)}`);
 				const _call = eventsCall[0];
 				if (_call.status == 'offer') {
 					dataSessions?.client?.rejectCall(_call.id);
