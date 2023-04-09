@@ -40,6 +40,12 @@ module.exports = class Sockets {
         return true;
     }
 		//
+    //Webhook para detecção de chamadas
+    eventCall(SessionName, data) {
+        this.io.emit('eventCall', data);
+        return true;
+    }
+		//
     //Webhook para detecção de alteracoes de status nas mensagens
     ack(SessionName, data) {
         this.io.emit('ack', data);

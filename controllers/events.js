@@ -822,14 +822,26 @@ module.exports = class Events {
 		try {
 			// Listen when client has been added to a group
 			if (events.call) {
-				const eventsCall = events.call;
+				const eventsCall = events?.call[0];
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Call event`);
-				logger?.info(`- Call: ${JSON.stringify(eventsCall[0], null, 2)}`);
-				const _call = eventsCall[0];
-				if (_call.status == 'offer') {
-					dataSessions?.client?.rejectCall(_call.id);
-				}
+				//logger?.info(`- Call: ${JSON.stringify(eventsCall, null, 2)}`);
+				//
+				let response = {
+					"wook": "INCOMING_CALL",
+					"id": eventsCall?.id,
+					"phone": eventsCall?.from,
+					"data": moment(eventsCall?.date)?.format('YYYY-MM-DD HH:mm:ss'),
+					"offline": eventsCall?.offline,
+					"status": eventsCall?.status,
+					"isVideo": eventsCall?.isVideo,
+					"isGroup": eventsCall?.isGroup,
+					"participants": eventsCall?.participants
+				};
+				//
+				dataSessions?.funcoesSocket?.eventCall(SessionName, response);
+				webhooks?.wh_messages(SessionName, response);
+				//
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);

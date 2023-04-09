@@ -132,16 +132,6 @@ module.exports = class Webhooks {
 		try {
 			if (dataSessions?.wh_message != undefined && dataSessions?.wh_message != null && dataSessions?.wh_message != '') {
 				logger.info(`- SessionName: ${SessionName}`);
-				let object = {
-					"wook": "INCOMING_CALL",
-					"statusCode": 200,
-					"id": response?.id,
-					"phone": response?.peerJid,
-					"data": moment?.unix(response?.offerTime)?.format('DD-MM-YYYY hh:mm:ss'),
-					"isVideo": response?.isVideo,
-					"isGroup": response?.isGroup,
-					"participants": response?.participants
-				};
 				let dataJson = JSON.stringify(object, null, 2);
 				await axios.post(dataSessions?.wh_message, dataJson, {
 					httpsAgent: new https.Agent({
@@ -150,13 +140,13 @@ module.exports = class Webhooks {
 					}),
 					headers: { 'Content-Type': 'application/json; charset=utf-8' }
 				}).then(response => {
-					logger.info('- Webhooks receive message')
+					logger.info('- Webhooks receive call')
 				}).catch(error => {
-					logger?.error(`- Error receive message: ${error.message}`);
+					logger?.error(`- Error receive call: ${error.message}`);
 				});
 
 			} else {
-				logger.info('- Webhook receive no defined');
+				logger.info('- Webhook receive call no defined');
 			}
 		} catch (error) {
 			logger?.error(`- Error: ${error.message}`);
