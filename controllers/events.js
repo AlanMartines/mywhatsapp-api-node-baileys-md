@@ -740,7 +740,7 @@ module.exports = class Events {
 		try {
 			if (events['blocklist.set']) {
 				const blocklistSet = events['blocklist.set'];
-				logger?.info(`- Blocklist: ${JSON.stringify(blocklistSet, null, 2)}`);
+				//logger?.info(`- Blocklist: ${JSON.stringify(blocklistSet, null, 2)}`);
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Blocklist set`);
 			}
@@ -810,7 +810,7 @@ module.exports = class Events {
 		try {
 			if (events['presence.update']) {
 				const presenceUpdate = events['presence.update'];
-				//logger?.info(`- Presence update: ${JSON.stringify(presenceUpdate, null, 2)}`);
+				logger?.info(`- Presence update: ${JSON.stringify(presenceUpdate, null, 2)}`);
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Presence update`);
 			}
