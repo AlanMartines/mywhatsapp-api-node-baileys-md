@@ -841,7 +841,7 @@ module.exports = class Events {
 				};
 				//
 				dataSessions?.funcoesSocket?.eventCall(SessionName, response);
-				webhooks?.wh_messages(SessionName, response);
+				webhooks?.wh_incomingCall(SessionName, response);
 				//
 			}
 		} catch (error) {
