@@ -740,7 +740,7 @@ module.exports = class Events {
 		try {
 			if (events['blocklist.set']) {
 				const blocklistSet = events['blocklist.set'];
-				//logger?.info(`- Chats update: ${JSON.stringify(blocklistSet, null, 2)}`);
+				logger?.info(`- Blocklist: ${JSON.stringify(blocklistSet, null, 2)}`);
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Blocklist set`);
 			}
