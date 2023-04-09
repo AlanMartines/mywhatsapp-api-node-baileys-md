@@ -829,9 +829,10 @@ module.exports = class Events {
 				//
 				let response = {
 					"wook": "INCOMING_CALL",
+					"type": 'call',
 					"id": eventsCall?.id,
-					"phone": eventsCall?.from,
-					"data": moment(eventsCall?.date)?.format('YYYY-MM-DD HH:mm:ss'),
+					"phone": eventsCall?.from?.split('@')[0],
+					"datetime": moment(eventsCall?.date)?.format('YYYY-MM-DD HH:mm:ss'),
 					"offline": eventsCall?.offline,
 					"status": eventsCall?.status,
 					"isVideo": eventsCall?.isVideo,
