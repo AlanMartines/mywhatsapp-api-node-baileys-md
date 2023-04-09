@@ -823,10 +823,10 @@ module.exports = class Events {
 			// Listen when client has been added to a group
 			if (events.call) {
 				const eventsCall = events.call;
-				//logger?.info(`- Call: ${JSON.stringify(eventsCall, null, 2)}`);
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Call event`);
-				const _call = m[0];
+				logger?.info(`- Call: ${JSON.stringify(eventsCall, null, 2)}`);
+				const _call = eventsCall[0];
 				if (_call.status == 'offer') {
 					dataSessions?.client?.rejectCall(_call.id);
 				}
