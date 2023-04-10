@@ -61,10 +61,10 @@ router.post("/getConfig", verifyToken.verify, async (req, res, next) => {
 					"erro": false,
 					"status": 200,
 					"webhook": {
-							"wh_connect": dataSession?.wh_connect ? dataSession?.wh_connect : null,
-							"wh_qrcode": dataSession?.wh_qrcode ? dataSession?.wh_qrcode : null,
 							"wh_status": dataSession?.wh_status ? dataSession?.wh_status : null,
-							"wh_message": dataSession?.wh_message ? dataSession?.wh_message : null
+							"wh_message": dataSession?.wh_message ? dataSession?.wh_message : null,
+							"wh_qrcode": dataSession?.wh_qrcode ? dataSession?.wh_qrcode : null,
+							"wh_connect": dataSession?.wh_connect ? dataSession?.wh_connect : null
 					},
 					"message": 'Configuração obtida com sucesso'
 				};
