@@ -1,7 +1,7 @@
 {
 	"_type": "export",
 	"__export_format": 4,
-	"__export_date": "2023-04-02T21:14:13.254Z",
+	"__export_date": "2023-04-10T19:03:08.603Z",
 	"__export_source": "insomnia.desktop.app:v2023.1.0",
 	"resources": [
 		{
@@ -28,7 +28,7 @@
 				{
 					"id": "pair_c6e3b96df9784d09bd4d6a3f81870f1a",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -88,7 +88,7 @@
 				{
 					"id": "pair_75ff5ab1949243549017e6741e44a6ad",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -96,7 +96,7 @@
 				"type": "apikey",
 				"disabled": true,
 				"key": "AuthorizationToken",
-				"value": "{{ _.AuthorizationToken }}",
+				"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 				"addTo": "header"
 			},
 			"metaSortKey": -1211746115387.25,
@@ -132,7 +132,7 @@
 				{
 					"id": "pair_3cc92d63e1844b099d6b029001ee58a9",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -170,7 +170,7 @@
 				{
 					"id": "pair_5cd48164d452448284d0318c71c35f17",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -208,7 +208,7 @@
 				{
 					"id": "pair_05098b1c8ad94dc8ae5d7f59ac6de9fa",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -246,7 +246,7 @@
 				{
 					"id": "pair_bb499c53538f4e0998d59a5f9eade254",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -284,7 +284,7 @@
 				{
 					"id": "pair_83d5006edcdb436c8736c7816fc4e97d",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -322,7 +322,7 @@
 				{
 					"id": "pair_638cdb6c7fa54ea19418c9071afa891e",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -360,7 +360,7 @@
 				{
 					"id": "pair_e7e608fdd2b443c6bf5489ceff8349ae",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -398,7 +398,7 @@
 				{
 					"id": "pair_b6a19b4d08fb4026b7e1932c858ac542",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -472,7 +472,7 @@
 				{
 					"id": "pair_e69e4b0d833e472e9f749048c17262dd",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -510,7 +510,7 @@
 				{
 					"id": "pair_282f45d51d2f43908e54d183128ec7ea",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -548,7 +548,7 @@
 				{
 					"id": "pair_de21f2eecce14beeb7f353d4d37d26ec",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -586,7 +586,7 @@
 				{
 					"id": "pair_b73e99ac406943ffa2f3da540d71cc39",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -624,7 +624,7 @@
 				{
 					"id": "pair_c512fb7af5c649369a51d714c9c8da14",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -662,7 +662,7 @@
 				{
 					"id": "pair_a07570b0654f466a8d9f15e3f1f82278",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -730,7 +730,7 @@
 				{
 					"id": "pair_88d98c2cbda74806a84eb37be76f193f",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -768,7 +768,7 @@
 				{
 					"id": "pair_822bac02821a4cc99f152a51578b8721",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -806,7 +806,7 @@
 				{
 					"id": "pair_e4f1b3faf0ad4f57827d26849fb9623d",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -874,7 +874,7 @@
 				{
 					"id": "pair_59859a20bc50458185572d4902d4e07d",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -912,7 +912,7 @@
 				{
 					"id": "pair_abb98fd6f267402298bd06fb6a6e7b51",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -950,7 +950,7 @@
 				{
 					"id": "pair_7538a4d4710141a7a275d657be3f43b0",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -988,7 +988,7 @@
 				{
 					"id": "pair_55377de3e46e47a5a0c7723dee92549c",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -1026,7 +1026,7 @@
 				{
 					"id": "pair_aa78cfcbb371439fae6104ac0fd91959",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -1064,7 +1064,7 @@
 				{
 					"id": "pair_7ed32bb91bce477694610737fabf5f53",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -1102,7 +1102,7 @@
 				{
 					"id": "pair_a7d54262e8074dc4ae4df12ef7465b01",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -1140,7 +1140,7 @@
 				{
 					"id": "pair_9dfd358267d2468ea82e7984c4aacfb4",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -1190,7 +1190,7 @@
 				{
 					"id": "pair_a84210e9aecb45fc9b059410b33d16b9",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -1252,7 +1252,7 @@
 				{
 					"id": "pair_2c60dc0b14c64604a82ac7b9ca4e606a",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -1290,7 +1290,7 @@
 				{
 					"id": "pair_4b344dfa76064fe1b6ebb75e6d6460e3",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -1328,7 +1328,7 @@
 				{
 					"id": "pair_dbf4e0e622ef4dcb8763bbfcd9f170c8",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -1366,7 +1366,7 @@
 				{
 					"id": "pair_6f2d8145172f4cea8c459f611a6f1388",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -1404,7 +1404,7 @@
 				{
 					"id": "pair_5b02aa77c0a649109e353f72bf222318",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -1472,7 +1472,7 @@
 				{
 					"id": "pair_ca8f5675bb6d40c4b1a39a12a95f5dd2",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -1510,7 +1510,7 @@
 				{
 					"id": "pair_896b997b61844994917415967edab1e2",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -1548,7 +1548,7 @@
 				{
 					"id": "pair_87be36c0a6a44858a455de27714b4ba3",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -1616,7 +1616,7 @@
 				{
 					"id": "pair_8519bfd0f2104f8092e49f76c8130fba",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -1654,7 +1654,7 @@
 				{
 					"id": "pair_7cfec8ae3d7042979a9e4331e838a966",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -1692,7 +1692,7 @@
 				{
 					"id": "pair_dbed941f960f4b68be51dfc9c1a4eb0a",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -1730,7 +1730,7 @@
 				{
 					"id": "pair_119b2957d97948158775218317055e29",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -1768,7 +1768,7 @@
 				{
 					"id": "pair_f4db80b294384a228b7362ad53fffe57",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -1806,7 +1806,7 @@
 				{
 					"id": "pair_38098e1bdf394bd99a024b7c407df8d0",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -1844,7 +1844,7 @@
 				{
 					"id": "pair_d021c65555444c44aff143f8cc226a2f",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -1882,7 +1882,7 @@
 				{
 					"id": "pair_6c80e71563354f1aa7a4ba21bc525a7b",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -1920,7 +1920,7 @@
 				{
 					"id": "pair_3ed812a872054d17972fb41f2ca83d0e",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -1958,7 +1958,7 @@
 				{
 					"id": "pair_e69559bcf0e0423f8f7d6812887a3c54",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -1996,7 +1996,7 @@
 				{
 					"id": "pair_4cda4a5a595e46a78d8134c543642ca6",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -2034,7 +2034,7 @@
 				{
 					"id": "pair_ed3f8811e265404eb38a0ce579a661d6",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -2072,7 +2072,7 @@
 				{
 					"id": "pair_aa4e3779a5364918afccfed001f575c0",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -2110,7 +2110,7 @@
 				{
 					"id": "pair_49b73ed2ec2742649969506c2b567107",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -2148,7 +2148,7 @@
 				{
 					"id": "pair_cd14d8bf9c0e400e81d781b59f17b384",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -2186,7 +2186,7 @@
 				{
 					"id": "pair_5f703d920be84ba192c385db437c2d4f",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -2224,7 +2224,7 @@
 				{
 					"id": "pair_66934d344cef4f69ae1a783ebabe518b",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -2262,7 +2262,7 @@
 				{
 					"id": "pair_4895816e21484bd3a37a5fc6229c7fe7",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -2300,7 +2300,7 @@
 				{
 					"id": "pair_fa7e09ce91834e888e3a3a5f5034837d",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -2338,7 +2338,7 @@
 				{
 					"id": "pair_bd2c2745e5d94a729afd44e0e3ddb1d4",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -2376,7 +2376,7 @@
 				{
 					"id": "pair_5e642530596d466fa486076139455246",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -2426,7 +2426,7 @@
 				{
 					"id": "pair_a9a04f16a05c49f5a48662da20413d4a",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -2464,7 +2464,7 @@
 				{
 					"id": "pair_9693e9ae87c646edb66b68d9da0dcb66",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -2502,7 +2502,7 @@
 				{
 					"id": "pair_57f62b19bfd442caaa21e62ff37dcce4",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -2540,12 +2540,50 @@
 				{
 					"id": "pair_4dd6d6cb597b4d9e9b26a24d32cf84d5",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
 			"authentication": {},
 			"metaSortKey": -24061364827.121094,
+			"isPrivate": false,
+			"settingStoreCookies": true,
+			"settingSendCookies": true,
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingRebuildPath": true,
+			"settingFollowRedirects": "global",
+			"_type": "request"
+		},
+		{
+			"_id": "req_06a8298f06f547cf822832115a44f466",
+			"parentId": "fld_31891b3f73bc45fdb354d9eefe6e7a30",
+			"modified": 1680485230946,
+			"created": 1680484798623,
+			"url": "{{ _.Localhost }}/retrieving/getMessage",
+			"name": "getMessage - ✔️📝",
+			"description": "",
+			"method": "POST",
+			"body": {
+				"mimeType": "application/json",
+				"text": "{\n\t\"SessionName\": \"{{ _.SessionName }}\",\n\t\"phonefull\": \"+55(67)9 9678-7854\",\n\t\"limit\": \"25\",\n\t\"cursor_id\": \"REDACTED\",\n\t\"cursor_fromMe\": true\n}"
+			},
+			"parameters": [],
+			"headers": [
+				{
+					"id": "pair_db0c91da2c874dcfbca1944b692c42c6",
+					"name": "Content-Type",
+					"value": "application/json"
+				},
+				{
+					"id": "pair_4dd6d6cb597b4d9e9b26a24d32cf84d5",
+					"name": "AuthorizationToken",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
+					"description": ""
+				}
+			],
+			"authentication": {},
+			"metaSortKey": -13016803907.730469,
 			"isPrivate": false,
 			"settingStoreCookies": true,
 			"settingSendCookies": true,
@@ -2578,7 +2616,7 @@
 				{
 					"id": "pair_6eeadf294fbe471ea1b7e10f3bb23b0f",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -2616,7 +2654,7 @@
 				{
 					"id": "pair_a81bcd8b66b74803a217ae323669b908",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -2654,7 +2692,7 @@
 				{
 					"id": "pair_a81bcd8b66b74803a217ae323669b908",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -2692,7 +2730,7 @@
 				{
 					"id": "pair_1c3eeb221c62465dbc1bbbb3c0717e5c",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -2742,7 +2780,7 @@
 				{
 					"id": "pair_232b42f45a10458a8bf4f52cc588c6e9",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -2780,7 +2818,7 @@
 				{
 					"id": "pair_e8f7b002fc204bd0a590366b3b3ae6e8",
 					"name": "AuthorizationToken",
-					"value": "{{ _.AuthorizationToken }}",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
 					"description": ""
 				}
 			],
@@ -2794,6 +2832,151 @@
 			"settingRebuildPath": true,
 			"settingFollowRedirects": "global",
 			"_type": "request"
+		},
+		{
+			"_id": "req_2ae701b15f7a4b8fb2950cf49d21f082",
+			"parentId": "fld_e71413871230488caa7b6acac4d116f3",
+			"modified": 1680904270084,
+			"created": 1680902079980,
+			"url": "{{ _.Localhost }}/webhook/getConfig",
+			"name": "getConfig - ✔️📝",
+			"description": "",
+			"method": "POST",
+			"body": {
+				"mimeType": "application/json",
+				"text": "{\n\t\"SessionName\": \"{{ _.SessionName }}\"\n}"
+			},
+			"parameters": [],
+			"headers": [
+				{
+					"description": "",
+					"id": "pair_b95f025e808a4c579d814c75acb05883",
+					"name": "Content-Type",
+					"value": "application/json"
+				},
+				{
+					"id": "pair_c6e3b96df9784d09bd4d6a3f81870f1a",
+					"name": "AuthorizationToken",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
+					"description": ""
+				}
+			],
+			"authentication": {},
+			"metaSortKey": -1211746115437.25,
+			"isPrivate": false,
+			"settingStoreCookies": true,
+			"settingSendCookies": true,
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingRebuildPath": true,
+			"settingFollowRedirects": "global",
+			"_type": "request"
+		},
+		{
+			"_id": "fld_e71413871230488caa7b6acac4d116f3",
+			"parentId": "wrk_91f05bda70a34fa48c8f34e4a6ceaeae",
+			"modified": 1680902085073,
+			"created": 1680902079966,
+			"name": "Getting webhook - ✔️📝",
+			"description": "",
+			"environment": {},
+			"environmentPropertyOrder": null,
+			"metaSortKey": -201957685451,
+			"_type": "request_group"
+		},
+		{
+			"_id": "req_576bd2c076af4f5d9c1edc90890e81bd",
+			"parentId": "fld_e71413871230488caa7b6acac4d116f3",
+			"modified": 1681153334506,
+			"created": 1680902079984,
+			"url": "{{ _.Localhost }}/webhook/setConfigSECRET_KEY_OR_TOKEN",
+			"name": "setConfig - ✔️📝",
+			"description": "",
+			"method": "POST",
+			"body": {
+				"mimeType": "application/json",
+				"text": "{\n\t\"SessionName\": \"{{ _.SessionName }}\",\n\t\"wh_status\": \"{{ _.WebHook }}\",\n\t\"wh_message\": \"{{ _.WebHook }}\",\n\t\"wh_qrcode\": \"{{ _.WebHook }}\",\n\t\"wh_connect\": \"{{ _.WebHook }}\"\n}"
+			},
+			"parameters": [],
+			"headers": [
+				{
+					"id": "pair_a139eed056024fa3be77f9acad4fd719",
+					"name": "Content-Type",
+					"value": "application/json"
+				},
+				{
+					"id": "pair_75ff5ab1949243549017e6741e44a6ad",
+					"name": "AuthorizationToken",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
+					"description": ""
+				}
+			],
+			"authentication": {
+				"type": "apikey",
+				"disabled": true,
+				"key": "AuthorizationToken",
+				"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
+				"addTo": "header"
+			},
+			"metaSortKey": -1211746115387.25,
+			"isPrivate": false,
+			"settingStoreCookies": true,
+			"settingSendCookies": true,
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingRebuildPath": true,
+			"settingFollowRedirects": "global",
+			"_type": "request"
+		},
+		{
+			"_id": "req_64dd81e758284863b7b59bf394c9228d",
+			"parentId": "fld_ee4eca71ccaf490293e0e12dad73945a",
+			"modified": 1680907605062,
+			"created": 1680614622686,
+			"url": "{{ _.Localhost }}/gateway/mkauthPlaySms",
+			"name": "mkauthPlaySms - ✔️📝",
+			"description": "",
+			"method": "POST",
+			"body": {
+				"mimeType": "application/json",
+				"text": "{\n\t\"u\":\"{{ _.SessionName }}\",\n\t\"p\":\"{{ _.SECRET_KEY_OR_TOKEN }}\",\n\t\"to\":\"+55(67)9 9678-7854\",\n\t\"msg\":\"Teste\"\n}"
+			},
+			"parameters": [],
+			"headers": [
+				{
+					"id": "pair_a139eed056024fa3be77f9acad4fd719",
+					"name": "Content-Type",
+					"value": "application/json"
+				},
+				{
+					"id": "pair_1c3eeb221c62465dbc1bbbb3c0717e5c",
+					"name": "AuthorizationToken",
+					"value": "{{ _.SECRET_KEY_OR_TOKEN }}",
+					"description": ""
+				}
+			],
+			"authentication": {},
+			"metaSortKey": -201957685419.75,
+			"isPrivate": false,
+			"settingStoreCookies": true,
+			"settingSendCookies": true,
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingRebuildPath": true,
+			"settingFollowRedirects": "global",
+			"_type": "request"
+		},
+		{
+			"_id": "fld_ee4eca71ccaf490293e0e12dad73945a",
+			"parentId": "wrk_91f05bda70a34fa48c8f34e4a6ceaeae",
+			"modified": 1680614474756,
+			"created": 1680614454982,
+			"name": "Gateways SMS - ✔️📝",
+			"description": "",
+			"environment": {},
+			"environmentPropertyOrder": null,
+			"metaSortKey": -201957685426,
+			"_type": "request_group"
 		},
 		{
 			"_id": "env_3f3bc67a73cd4b22828b0be276a8124c",
@@ -2830,7 +3013,7 @@
 		{
 			"_id": "env_70e9972f761840fdb1d5ef99d8d38a73",
 			"parentId": "env_3f3bc67a73cd4b22828b0be276a8124c",
-			"modified": 1680470022242,
+			"modified": 1681153374816,
 			"created": 1661697571081,
 			"name": "Connect API",
 			"data": {
@@ -2838,9 +3021,9 @@
 				"domain": "localhost",
 				"port": "9009",
 				"Localhost": "{{ _.encript }}{{ _.domain }}:{{ _.port }}",
-				"WebHook": "https://api.reliablewebhook.com/h/ffx32an726usretq",
-				"AuthorizationToken": "llxoSDUz2ucnYx3Ui3yXg0Ooakhxcfw",
-				"SessionName": "Session_Name"
+				"WebHook": "https://webhook.site/99f4ada2-717d-4341-b280-07248fe18c27",
+				"SECRET_KEY_OR_TOKEN": "pcsjGQBsBVXwK2RXRDIuwv5",
+				"SessionName": "AlanMartines"
 			},
 			"dataPropertyOrder": {
 				"&": [
@@ -2849,7 +3032,7 @@
 					"port",
 					"Localhost",
 					"WebHook",
-					"AuthorizationToken",
+					"SECRET_KEY_OR_TOKEN",
 					"SessionName"
 				]
 			},

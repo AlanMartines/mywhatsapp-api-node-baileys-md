@@ -394,20 +394,21 @@ USE `mywhatsapp-api`;
 CREATE TABLE IF NOT EXISTS `tokens` (
   `ID` int unsigned NOT NULL AUTO_INCREMENT,
   `token` char(255) NOT NULL,
+  `datafinal` date NOT NULL,
   `active` char(5) NOT NULL DEFAULT 'true',
-  `state` char(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT 'DISCONNECTED',
-  `status` char(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT 'notLogged',
-  `webhook` varchar(255) DEFAULT NULL,
+  `state` char(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'DISCONNECTED',
+  `status` char(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'notLogged',
+	`userconnected` char(50) DEFAULT NULL,
   `wh_status` varchar(255) DEFAULT NULL,
   `wh_message` varchar(255) DEFAULT NULL,
   `wh_qrcode` varchar(255) DEFAULT NULL,
   `wh_connect` varchar(255) DEFAULT NULL,
-  `lastactivit` timestamp NULL DEFAULT NULL,
+  `lastactivity` timestamp NULL DEFAULT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `ID` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=908 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 ```
 
 ## Rotas
@@ -431,7 +432,7 @@ await fetch("http://localhost:9001/sistema/Start", {
   headers: {
     "Accept": "application/json",
     "Content-Type": "application/json",
-    "AuthorizationToken": "a56ad842-c707-4446-871c-e570240cd730",
+    "AuthorizationToken": "SECRET_KEY_OR_TOKEN",
   },
   body: JSON.stringify({
     "SessionName": "Teste"
@@ -450,7 +451,7 @@ await fetch("http://localhost:9001/sistema/QRCode", {
   headers: {
     "Accept": "application/json",
     "Content-Type": "application/json",
-    "AuthorizationToken": "a56ad842-c707-4446-871c-e570240cd730",
+    "AuthorizationToken": "SECRET_KEY_OR_TOKEN",
   },
   body: JSON.stringify({
     "SessionName": "Teste"
@@ -470,7 +471,7 @@ await fetch("http://localhost:9001/sistema/Close", {
   headers: {
     "Accept": "application/json",
     "Content-Type": "application/json",
-    "AuthorizationToken": "a56ad842-c707-4446-871c-e570240cd730",
+    "AuthorizationToken": "SECRET_KEY_OR_TOKEN",
   },
   body: JSON.stringify({
     "SessionName": "Teste"
