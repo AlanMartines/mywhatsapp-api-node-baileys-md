@@ -205,7 +205,7 @@ module.exports = class Sessions {
     const newVersionLog =
       `Há uma nova versão da ${chalk.bold(`My Whatsapp`)} ${chalk.gray(current)} ➜  ${chalk.bold.green(latest)}\n` +
       `Atualize sua API executando:\n\n` +
-      `${chalk.bold('\>')} ${chalk.blueBright('git pull; npm install')}`;
+      `${chalk.bold('\>')} ${chalk.blueBright('git pull && npm install')}`;
     console.log(boxen(newVersionLog, { padding: 1 }));
     console.log(
       `Para mais informações visite: ${chalk.underline(

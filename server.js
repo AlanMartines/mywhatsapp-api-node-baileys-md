@@ -7,9 +7,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const cors = require('cors');
 const path = require('path');
-const boxen = require('boxen');
 const swaggerUi = require('swagger-ui-express')
-//const latest = require('github-latest-release'); // verifica a ultima release no github
 const latest = require('latest-version'); // verifica a ultima release no npm
 const { version } = require('./package.json');
 const { logger } = require("./utils/logger");
@@ -298,9 +296,9 @@ FORCE_CONNECTION_USE_HERE=0
 						newVersion: undefined,
 						message: `Verificando Atualizações`
 					});
-
+					//
 					let repoVersion = await latest('mywhatsapp-api-node-baileys-md');
-					if (Sessions.upToDate(version, repoVersion)) {
+					if (await Sessions.upToDate(version, repoVersion)) {
 						logger?.info(`- API esta Atualizada com a versão mais recente`);
 						io.emit('version', {
 							newVersion: false,
@@ -312,7 +310,7 @@ FORCE_CONNECTION_USE_HERE=0
 							newVersion: true,
 							message: `Há uma nova versão disponível`
 						});
-						Sessions.logUpdateAvailable(version, repoVersion);
+						await Sessions.logUpdateAvailable(version, repoVersion);
 					}
 				}
 				//
