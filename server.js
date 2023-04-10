@@ -44,7 +44,7 @@ yo('My-WhatsApp', {
 //
 fs.access(".env", fs.constants.F_OK, async (err) => {
 	if (err && err.code === 'ENOENT') {
-		logger.error('- Arquivo ".env"');
+		logger.error(`- Arquivo ".env" não encontrado, segue modelo de configuração:`);
 		var modelo = `
 NODE_EN=production
 #
