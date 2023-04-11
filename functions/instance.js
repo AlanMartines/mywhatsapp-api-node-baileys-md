@@ -1,3 +1,5 @@
+const osUtils = require('os-utils');
+const os = require('os');
 const moment = require('moment');
 moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
