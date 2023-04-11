@@ -1,5 +1,7 @@
 'use strict';
 // Configuração dos módulos
+const osUtils = require('os-utils');
+const os = require('os');
 const fs = require('fs-extra');
 const QRCode = require('qrcode');
 const qrViewer = require('qrcode-terminal');
