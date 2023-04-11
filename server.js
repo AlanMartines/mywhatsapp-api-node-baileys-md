@@ -363,7 +363,7 @@ process.on('uncaughtException', err => {
 });
 // Evento é emitido Quando uma Promise é rejeitada ou não é satisfeita
 process.on('unhandledRejection', (reason, promise) => {
-	logger.error('- Unhandled rejection at ', promise, `reason: ${err.message}`)
+	logger.error('- Unhandled rejection at ', promise, `reason: ${reason}`)
 	process.exit(1);
 });
 
