@@ -538,7 +538,7 @@ cp .env-example .env
 docker build -t alanmartines/mywhatsapp-api-node-baileys-md:1.0.0 -f Dockerfile.backend .
 
 # Criar contêiner
-docker run -d -p 9001:9001 --name ApiWPPconnect \
+docker run -d -p 9001:9001 --name ApiBaileysMd \
   --restart=unless-stopped \
 	-v ${PWD}:/home/ApiBaileysMd \
 	-v /usr/local/tokens:/usr/local/tokens \
