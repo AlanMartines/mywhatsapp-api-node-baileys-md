@@ -6,7 +6,7 @@ services:
     container_name: ${HOST_NAME:-'ApiBaileysMd'}
     hostname: ${HOST_NAME:-'ApiBaileysMd'}
     network_mode: bridge
-    image: alanmartines/mywhatsapp-api-node-api-baileys-md:${TAG}
+    image: alanmartines/mywhatsapp-api-node-baileys-md:${TAG}
     build:
       context: .
       dockerfile: Dockerfile.backend
