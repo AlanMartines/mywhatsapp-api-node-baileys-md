@@ -39,7 +39,6 @@ module.exports = class Webhooks {
 		try {
 			var object = {
 				"wook": 'STATUS_CONNECT',
-				'statusCode': 200,
 				'SessionName': SessionName,
 				'state': dataSessions?.state,
 				'status': dataSessions?.status,
@@ -98,7 +97,6 @@ module.exports = class Webhooks {
 		try {
 			let object = {
 				"wook": 'QRCODE',
-				'statusCode': 200,
 				'session': dataSessions?.SessionName,
 				'state': dataSessions?.state,
 				'status': dataSessions?.status,
