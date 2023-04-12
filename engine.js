@@ -1082,6 +1082,7 @@ module.exports = class Instace {
 	}
 	//
 	//
+	/*
 	static async exportQR(socket, readQRCode, SessionName, attempts) {
 		socket.emit('qrCode',
 			{
@@ -1092,4 +1093,5 @@ module.exports = class Instace {
 			}
 		);
 	};
+	*/
 }
