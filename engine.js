@@ -528,12 +528,12 @@ module.exports = class Instace {
 									qrViewer.generate(qr, { small: true });
 								}
 								//
-								var readQRCode = await QRCode.toDataURL(qr);
-								//let base64Code = readQRCode.replace('data:image/png;base64,', '');
+								var readCode = await QRCode.toDataURL(qr);
+								//let base64Code = readCode.replace('data:image/png;base64,', '');
 								//
 								let addJson = {
 									CodeurlCode: qr,
-									//qrcode: readQRCode,
+									qrcode: readCode,
 									message: "Sistema aguardando leitura do QR-Code",
 									state: "QRCODE",
 									status: "qrRead"
