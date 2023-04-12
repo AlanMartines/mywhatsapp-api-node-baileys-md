@@ -134,8 +134,8 @@ async function updateStateDb(state, status, AuthorizationToken) {
 			}).then(async (entries) => {
 				logger?.info('- Status atualizado');
 			}).catch(async (err) => {
-				logger?.error('- Status não atualizado');
-				logger?.error(`- Error: ${err}`);
+				console.log('- Status não atualizado');
+				console.log(`- Error: ${err}`);
 			}).finally(async () => {
 				//Tokens.release();
 			});
@@ -165,8 +165,8 @@ async function updateUserConDb(userconnected, AuthorizationToken) {
 			}).then(async (entries) => {
 				logger?.info('- User connection atualizado');
 			}).catch(async (err) => {
-				logger?.error('- User connection não atualizado');
-				logger?.error(`- Error: ${err}`);
+				console.log('- User connection não atualizado');
+				console.log(`- Error: ${err}`);
 			}).finally(() => {
 				//Tokens.release();
 			});
@@ -185,7 +185,7 @@ async function deletaPastaToken(filePath, filename) {
 		//
 	}).catch((erro) => {
 		//
-		logger?.error(`- Erro ao remover pasta "${filePath}/${filename}"`);
+		console.log(`- Erro ao remover pasta "${filePath}/${filename}"`);
 		//
 	});
 	//
@@ -201,7 +201,7 @@ async function deletaToken(filePath, filename) {
 		//
 	}).catch((erro) => {
 		//
-		logger?.error(`- Erro ao remover arquivo "${filename}"`);
+		console.log(`- Erro ao remover arquivo "${filename}"`);
 		//
 	});
 	//
@@ -214,13 +214,13 @@ async function resContacts(SessionName, contacts) {
 	try {
 		fs.writeJson(`${tokenPatch}/${SessionName}.contacts.json`, `${JSON.stringify(contacts, null, 2)}`, (err) => {
 			if (err) {
-				logger?.error(`- Erro: ${err}`);
+				console.log(`- Erro: ${err}`);
 			} else {
 				//logger?.info('- Success create contacts file');
 			}
 		});
 	} catch (error) {
-		logger?.error(`- Error create contacts file: ${error}`);
+		console.log(`- Error create contacts file: ${error}`);
 	}
 	//
 }
@@ -253,13 +253,13 @@ module.exports = class Instace {
 			//
 			fs.writeJson(`${config.PATCH_TOKENS}/${SessionName}.startup.json`, startupRes, (err) => {
 				if (err) {
-					logger?.error(`- Erro: ${err}`);
+					console.log(`- Erro: ${err}`);
 				} else {
 					logger?.info('- Success startup config for user file');
 				}
 			});
 		} catch (error) {
-			logger?.error('- Error startup config for user file');
+			console.log('- Error startup config for user file');
 		}
 		//
 		let data = await Sessions?.getSession(SessionName);
@@ -334,7 +334,7 @@ module.exports = class Instace {
 			store?.readFromFile(`${tokenPatch}/${SessionName}.store.json`);
 			//
 		} catch (error) {
-			logger?.error(`- Error read store file: ${error}`);
+			console.log(`- Error read store file: ${error}`);
 		};
 		//
 		// save every 10s
@@ -561,21 +561,21 @@ module.exports = class Instace {
 										// close WebSocket connection
 										await client.ws.close();
 									} catch (erro) {
-										logger?.error(`- Error close: ${erro}`);
+										console.log(`- Error close: ${erro}`);
 									}
 									//
 									try {
 										// End WebSocket connection
 										//await client.ws.end();
 									} catch (erro) {
-										logger?.error(`- Error end: ${erro}`);
+										console.log(`- Error end: ${erro}`);
 									}
 									//
 									try {
 										// remove all events
 										await client.ev.removeAllListeners();
 									} catch (erro) {
-										logger?.error(`- Error removeAllListeners: ${erro}`);
+										console.log(`- Error removeAllListeners: ${erro}`);
 									}
 									//
 									attempts = 1;
@@ -709,14 +709,14 @@ module.exports = class Instace {
 											// close WebSocket connection
 											await client.ws.close();
 										} catch (erro) {
-											logger?.error(`- Error close: ${erro}`);
+											console.log(`- Error close: ${erro}`);
 										}
 										//
 										try {
 											// remove all events
 											await client.ev.removeAllListeners();
 										} catch (erro) {
-											logger?.error(`- Error removeAllListeners: ${erro}`);
+											console.log(`- Error removeAllListeners: ${erro}`);
 										}
 										//
 										//await Sessions?.deleteSession(SessionName);
@@ -779,7 +779,7 @@ module.exports = class Instace {
 												//
 												return result;
 											}).catch(async (erro) => {
-												logger?.error(`- Error reconnecting connection: ${erro}`);
+												console.log(`- Error reconnecting connection: ${erro}`);
 											});
 										}, 500);
 										//
@@ -810,7 +810,7 @@ module.exports = class Instace {
 											//
 												return result;
 											}).catch(async (erro) => {
-												logger?.error(`- Error reconnecting connection: ${erro}`);
+												console.log(`- Error reconnecting connection: ${erro}`);
 											});
 										}, 500);
 										*/
@@ -849,7 +849,7 @@ module.exports = class Instace {
 												//
 												return result;
 											}).catch(async (erro) => {
-												logger?.error(`- Error reconnecting connection: ${erro}`);
+												console.log(`- Error reconnecting connection: ${erro}`);
 											});
 										}, 500);
 										//
@@ -864,21 +864,21 @@ module.exports = class Instace {
 											// close WebSocket connection
 											await client.ws.close();
 										} catch (erro) {
-											logger?.error(`- Error close: ${erro}`);
+											console.log(`- Error close: ${erro}`);
 										}
 										//
 										try {
 											// End WebSocket connection
 											//await client.ws.end();
 										} catch (erro) {
-											logger?.error(`- Error end: ${erro}`);
+											console.log(`- Error end: ${erro}`);
 										}
 										//
 										try {
 											// remove all events
 											await client.ev.removeAllListeners();
 										} catch (erro) {
-											logger?.error(`- Error removeAllListeners: ${erro}`);
+											console.log(`- Error removeAllListeners: ${erro}`);
 										}
 										//
 										await deletaPastaToken(`${tokenPatch}`, `${SessionName}.data.json`);
@@ -916,7 +916,7 @@ module.exports = class Instace {
 												//
 												return result;
 											}).catch(async (erro) => {
-												logger?.error(`- Error reconnecting connection: ${erro}`);
+												console.log(`- Error reconnecting connection: ${erro}`);
 											});
 										}, 500);
 										//
@@ -967,7 +967,7 @@ module.exports = class Instace {
 												//
 												return result;
 											}).catch(async (erro) => {
-												logger?.error(`- Error reconnecting connection: ${erro}`);
+												console.log(`- Error reconnecting connection: ${erro}`);
 											});
 										}, 500);
 										//
@@ -987,7 +987,7 @@ module.exports = class Instace {
 												//
 												return result;
 											}).catch(async (erro) => {
-												logger?.error(`- Error reconnecting connection: ${erro}`);
+												console.log(`- Error reconnecting connection: ${erro}`);
 											});
 										}, 500);
 										//
@@ -1007,7 +1007,7 @@ module.exports = class Instace {
 												//
 												return result;
 											}).catch(async (erro) => {
-												logger?.error(`- Error reconnecting connection: ${erro}`);
+												console.log(`- Error reconnecting connection: ${erro}`);
 											});
 										}, 500);
 									//
@@ -1016,7 +1016,7 @@ module.exports = class Instace {
 							} else if (typeof connection === undefined) {
 								//
 								logger?.info(`- SessionName: ${SessionName}`);
-								logger?.error(`- Connection undefined`.yellow);
+								console.log(`- Connection undefined`.yellow);
 								//
 							}
 							//
@@ -1053,12 +1053,12 @@ module.exports = class Instace {
 				//
 				return result;
 			}).catch(async (erro) => {
-				logger?.error(`- startSock ${erro}`);
+				console.log(`- startSock ${erro}`);
 			});
 			//
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
-			logger?.error(`- Instância não criada: ${error.message}`);
+			console.log(`- Instância não criada: ${error.message}`);
 			//
 			let addJson = {
 				client: false,
