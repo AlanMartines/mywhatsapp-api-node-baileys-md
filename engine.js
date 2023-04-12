@@ -520,9 +520,6 @@ module.exports = class Instace {
 								//
 								logger?.info('- QR Generated'.green);
 								//
-								const readQRCode = await QRCode.toDataURL(qr);
-								const base64Code = readQRCode.replace('data:image/png;base64,', '');
-								//
 								logger?.info(`- Número de tentativas de ler o qr-code: ${attempts}`);
 								//
 								logger?.info("- Captura do QR-Code");
@@ -530,6 +527,9 @@ module.exports = class Instace {
 								if (parseInt(config.VIEW_QRCODE_TERMINAL)) {
 									qrViewer.generate(qr, { small: true });
 								}
+								//
+								let readQRCode = await QRCode.toDataURL(qr);
+								let base64Code = readQRCode.replace('data:image/png;base64,', '');
 								//
 								let addJson = {
 									CodeurlCode: qr,
