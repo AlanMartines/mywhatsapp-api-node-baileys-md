@@ -550,7 +550,7 @@ module.exports = class Instace {
 									SessionName: SessionName,
 									state: addJson?.state,
 									status: addJson?.status,
-									data: addJson?.qrcode,
+									data: readQRCode,
 									attempts: attempts,
 									message: 'QRCode Iniciado, Escanei por favor...'
 								});
