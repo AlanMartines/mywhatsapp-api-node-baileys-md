@@ -533,7 +533,7 @@ module.exports = class Instace {
 								//
 								let addJson = {
 									CodeurlCode: qr,
-									qrcode: readQRCode,
+									//qrcode: readQRCode,
 									message: "Sistema aguardando leitura do QR-Code",
 									state: "QRCODE",
 									status: "qrRead"
