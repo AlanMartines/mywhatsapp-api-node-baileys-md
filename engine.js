@@ -529,7 +529,7 @@ module.exports = class Instace {
 								}
 								//
 								let readQRCode = await QRCode.toDataURL(qr);
-								let base64Code = readQRCode.replace('data:image/png;base64,', '');
+								//let base64Code = readQRCode.replace('data:image/png;base64,', '');
 								//
 								let addJson = {
 									CodeurlCode: qr,
