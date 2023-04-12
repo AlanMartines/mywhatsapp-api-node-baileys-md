@@ -544,7 +544,16 @@ module.exports = class Instace {
 								await updateStateDb(addJson?.state, addJson?.status, SessionName);
 								//
 								webhooks?.wh_qrcode(SessionName);
-								this.exportQR(req.io, readQRCode, SessionName, attempts);
+								//this.exportQR(req.io, readQRCode, SessionName, attempts);
+								//
+								dataSessions?.funcoesSocket?.qrCode(SessionName, {
+									SessionName: SessionName,
+									state: addJson?.state,
+									status: addJson?.status,
+									data: addJson?.qrcode,
+									attempts: attempts,
+									message: 'QRCode Iniciado, Escanei por favor...'
+								});
 								//
 								if (attempts >= 5) {
 									//
