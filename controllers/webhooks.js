@@ -100,8 +100,8 @@ module.exports = class Webhooks {
 				'session': dataSessions?.SessionName,
 				'state': dataSessions?.state,
 				'status': dataSessions?.status,
-				'qrcode': readQRCode,
-				'urlCode': urlCode
+				'qrcode': dataSessions?.qrcode,
+				'urlCode': dataSessions?.urlCode
 			}
 			if (dataSessions?.wh_qrcode != undefined && dataSessions?.wh_qrcode != null && dataSessions?.wh_qrcode != '') {
 				let dataJson = JSON.stringify(object, null, 2);
