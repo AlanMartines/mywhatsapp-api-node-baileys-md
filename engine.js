@@ -646,16 +646,16 @@ module.exports = class Instace {
 								let phone = await client?.user?.id.split(":")[0];
 								//
 								const ppUrl = await session?.client?.profilePictureUrl(number, 'image').then(async (result) => {
-											//
-											return result;
-											//
-										}).catch((erro) => {
-											logger?.error(`- Error profilePictureUrl: ${erro?.message}`);
-											//
-											return null;
-											//
-										});
-										//
+									//
+									return result;
+									//
+								}).catch((erro) => {
+									logger?.error(`- Error profilePictureUrl: ${erro?.message}`);
+									//
+									return null;
+									//
+								});
+								//
 								//
 								attempts = 1;
 								//
