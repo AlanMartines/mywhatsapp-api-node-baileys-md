@@ -645,7 +645,7 @@ module.exports = class Instace {
 								//
 								let phone = await client?.user?.id.split(":")[0];
 								//
-								const ppUrl = await session?.client?.profilePictureUrl(client?.user?.id, 'image').then(async (result) => {
+								const ppUrl = await client?.client?.profilePictureUrl(client?.user?.id, 'image').then(async (result) => {
 									//
 									return result;
 									//
