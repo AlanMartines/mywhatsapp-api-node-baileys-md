@@ -146,7 +146,7 @@ async function updateStateDb(state, status, AuthorizationToken) {
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
-async function updateUserConDb(userconnected, AuthorizationToken) {
+async function updateUserConDb(userconnected, profilepicture, AuthorizationToken) {
 	//
 	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
 	//logger?.info(`- Date: ${date_now}`);
@@ -156,6 +156,7 @@ async function updateUserConDb(userconnected, AuthorizationToken) {
 		//
 		await Tokens.update({
 			userconnected: userconnected,
+			profile: profilepicture,
 			lastactivity: date_now,
 		},
 			{
@@ -604,7 +605,7 @@ module.exports = class Instace {
 									//
 									logger?.info("- Navegador fechado automaticamente");
 									//
-									//await updateStateDb(session.state, session.status, session.AuthorizationToken);
+									await updateStateDb(addJson?.state, addJson?.status, SessionName);
 								}
 								//
 								attempts++;
@@ -644,6 +645,18 @@ module.exports = class Instace {
 								//
 								let phone = await client?.user?.id.split(":")[0];
 								//
+								const ppUrl = await session?.client?.profilePictureUrl(number, 'image').then(async (result) => {
+											//
+											return result;
+											//
+										}).catch((erro) => {
+											logger?.error(`- Error profilePictureUrl: ${erro?.message}`);
+											//
+											return null;
+											//
+										});
+										//
+								//
 								attempts = 1;
 								//
 								logger?.info("- Sessão criada com sucesso");
@@ -654,6 +667,7 @@ module.exports = class Instace {
 									qrcode: null,
 									CodeurlCode: null,
 									phone: phone,
+									profilepicture: ppUrl,
 									state: "CONNECTED",
 									status: "inChat",
 									message: "Sistema iniciado e disponivel para uso"
@@ -664,6 +678,7 @@ module.exports = class Instace {
 								dataSessions?.funcoesSocket?.stateChange(SessionName, {
 									SessionName: SessionName,
 									phone: addJson?.phone,
+									profilepicture: addJson?.profilepicture,
 									state: addJson?.state,
 									status: addJson?.status,
 									message: addJson?.message,
@@ -673,7 +688,7 @@ module.exports = class Instace {
 								webhooks?.wh_connect(SessionName);
 								//
 								if (phone) {
-									await updateUserConDb(phone, addJson?.AuthorizationToken);
+									await updateUserConDb(phone, addJson?.profilepicture, addJson?.AuthorizationToken);
 								}
 								//
 								attempts = 1;
