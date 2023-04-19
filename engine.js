@@ -645,7 +645,7 @@ module.exports = class Instace {
 								//
 								let phone = await client?.user?.id.split(":")[0];
 								//
-								const ppUrl = await client?.client?.profilePictureUrl(`${phone}@s.whatsapp.net`, 'image').then(async (result) => {
+								const ppUrl = await client?.profilePictureUrl(`${phone}@s.whatsapp.net`, 'image').then(async (result) => {
 									//
 									return result;
 									//
@@ -655,6 +655,8 @@ module.exports = class Instace {
 									return null;
 									//
 								});
+								//
+								console.log();
 								//
 								//
 								attempts = 1;
