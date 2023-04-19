@@ -649,15 +649,20 @@ module.exports = class Instace {
 									//
 									return result;
 									//
-								}).catch((erro) => {
-									logger?.error(`- Error profilePictureUrl: ${erro?.message}`);
+								}).catch(async (erro) => {
+									logger?.error(`- Error profilePictureUrl in Full-Res image: ${erro?.message}`);
 									//
-									return 'https://w7.pngwing.com/pngs/178/595/png-transparent-user-profile-computer-icons-login-user-avatars-thumbnail.png';
-									//
+									return await client?.profilePictureUrl(`${phone}@s.whatsapp.net`).then(async (result) => {
+										//
+										return result;
+										//
+									}).catch((erro) => {
+										logger?.error(`- Error profilePictureUrl: ${erro?.message}`);
+										//
+										return 'https://w7.pngwing.com/pngs/178/595/png-transparent-user-profile-computer-icons-login-user-avatars-thumbnail.png';
+										//
+									});
 								});
-								//
-								console.log();
-								//
 								//
 								attempts = 1;
 								//
