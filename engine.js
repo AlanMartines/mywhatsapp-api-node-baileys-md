@@ -652,7 +652,7 @@ module.exports = class Instace {
 								}).catch((erro) => {
 									logger?.error(`- Error profilePictureUrl: ${erro?.message}`);
 									//
-									return null;
+									return 'https://w7.pngwing.com/pngs/178/595/png-transparent-user-profile-computer-icons-login-user-avatars-thumbnail.png';
 									//
 								});
 								//
