@@ -156,7 +156,7 @@ async function updateUserConDb(userconnected, profilepicture, AuthorizationToken
 		//
 		await Tokens.update({
 			userconnected: userconnected,
-			profile: profilepicture,
+			profilepicture: profilepicture,
 			lastactivity: date_now,
 		},
 			{

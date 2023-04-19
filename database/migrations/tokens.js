@@ -12,6 +12,10 @@ module.exports = {
         allowNull: false,
         type: DataTypes.CHAR(255),
       },
+      sessionToken: {
+        allowNull: true,
+        type: DataTypes.TEXT,
+      },
       datafinal: {
         allowNull: false,
         type: DataTypes.DATE,
@@ -34,6 +38,10 @@ module.exports = {
       userconnected: {
         allowNull: true,
         type: DataTypes.CHAR(20),
+      },
+      profilepicture: {
+        allowNull: true,
+        type: DataTypes.TEXT,
       },
       webhook: {
         allowNull: true,

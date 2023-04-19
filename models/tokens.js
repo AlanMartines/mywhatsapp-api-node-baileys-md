@@ -8,6 +8,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.CHAR(255),
       allowNull: false
     },
+    sessionToken: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
     datafinal: {
       type: DataTypes.DATE,
       allowNull: false
@@ -27,6 +31,10 @@ module.exports = (sequelize, DataTypes) => {
     userconnected: {
       type: DataTypes.CHAR(20),
       allowNull: false
+    },
+    profilepicture: {
+      type: DataTypes.TEXT,
+      allowNull: true
     },
     webhook: {
       type: DataTypes.STRING(255),
