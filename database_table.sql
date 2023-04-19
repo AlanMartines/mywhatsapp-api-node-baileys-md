@@ -6,11 +6,13 @@ USE `mywhatsapp-api`;
 CREATE TABLE IF NOT EXISTS `tokens` (
   `ID` int unsigned NOT NULL AUTO_INCREMENT,
   `token` char(255) NOT NULL,
+  `sessionToken` text DEFAULT NULL,
   `datafinal` date NOT NULL,
   `active` char(5) NOT NULL DEFAULT 'true',
   `state` char(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'DISCONNECTED',
   `status` char(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'notLogged',
 	`userconnected` char(50) DEFAULT NULL,
+  `profilepicture` text DEFAULT NULL,
   `wh_status` varchar(255) DEFAULT NULL,
   `wh_message` varchar(255) DEFAULT NULL,
   `wh_qrcode` varchar(255) DEFAULT NULL,
@@ -22,5 +24,5 @@ CREATE TABLE IF NOT EXISTS `tokens` (
   UNIQUE KEY `ID` (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
-INSERT INTO `tokens` (`ID`, `token`, `datafinal`, `active`, `state`, `status`, `webhook`, `wh_status`, `wh_message`, `wh_qrcode`, `wh_connect`, `lastactivity`, `created`, `modified`) VALUES
-	(1, 'HDFTRE88776SBHGHFGYYT', '2100-01-01', 'true', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NOW(), NOW(), NOW());
+INSERT INTO `tokens` (`ID`, `token`, `sessionToken`, `datafinal`, `active`, `state`, `status`, `userconnected`, `profilepicture`, `wh_status`, `wh_message`, `wh_qrcode`, `wh_connect`, `lastactivity`, `created`, `modified`) VALUES
+	(1, 'HDFTRE88776SBHGHFGYYT', NULL, '9999-12-31', 'true', 'DISCONNECTED', 'notLogged', NULL, NULL, NULL, NULL, NULL, NOW(), NOW(), NOW());
