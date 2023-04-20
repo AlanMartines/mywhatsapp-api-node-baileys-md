@@ -35,7 +35,7 @@
   },
   "homepage": "https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md#readme",
   "dependencies": {
-		"@adiwajshing/baileys": "github:adiwajshing/Baileys",
+		"@adiwajshing/baileys": "github:WhiskeysSockets/Baileys",
 		"@adiwajshing/keyed-db": "^0.2.4",
 		"@ffmpeg-installer/ffmpeg": "^1.1.0",
 		"@hapi/boom": "^10.0.1",

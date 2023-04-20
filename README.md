@@ -4,7 +4,7 @@
 
 # API - My WhatsApp
 
-Este projeto usa como base o [Baileys](https://github.com/adiwajshing/Baileys "Baileys"), um navegador virtual sem interface gráfica que abre o whatsapp web e executa todos os comandos via código possibilitando assim a automação de todas as funções.
+Este projeto usa como base o [Baileys](https://github.com/WhiskeysSockets/Baileys "Baileys"), um navegador virtual sem interface gráfica que abre o whatsapp web e executa todos os comandos via código possibilitando assim a automação de todas as funções.
 
 ![](https://img.shields.io/github/stars/AlanMartines/mywhatsapp-api-node-baileys-md.svg) ![](https://img.shields.io/github/tag/AlanMartines/mywhatsapp-api-node-baileys-md.svg) ![](https://img.shields.io/github/v/release/AlanMartines/mywhatsapp-api-node-baileys-md.svg) ![](https://img.shields.io/github/issues/AlanMartines/mywhatsapp-api-node-baileys-md.svg) ![](https://img.shields.io/badge/express-v4.17.2-green.svg) ![](https://img.shields.io/badge/node-v14.0-green.svg) ![](https://img.shields.io/badge/npm-v8.3.2-green.svg) ![](https://img.shields.io/github/license/AlanMartines/mywhatsapp-api-node-baileys-md) ![](https://img.shields.io/github/downloads/AlanMartines/mywhatsapp-api-node-baileys-md/total) ![](https://img.shields.io/github/forks/AlanMartines/mywhatsapp-api-node-baileys-md)
 
