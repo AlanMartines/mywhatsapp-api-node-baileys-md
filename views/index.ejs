@@ -426,10 +426,10 @@
 							window.scrollTo(0, 0);
 						}
 					}).catch(function (error) {
-						console.log(error.response.status);
+						console.log(error.response.data);
 						let Status = error.response.data.Status;
 						if (Status.status == 422) {
-							$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-on.png');
+							$('#imageQrcode').attr("src", '/imagens/body/readqrcode.png');
 							$("#description").html(Status.message);
 
 							window.scrollTo(0, 0);
@@ -512,10 +512,10 @@
 						window.scrollTo(0, 0);
 					}
 				}).catch(function (error) {
-					console.log(error.response.status);
+					console.log(error.response.data);
 					let Status = error.response.data.Status;
 					if (Status.status == 422) {
-						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-on.png');
+						$('#imageQrcode').attr("src", '/imagens/body/readqrcode.png');
 						$("#description").html(Status.message);
 
 						window.scrollTo(0, 0);
@@ -589,10 +589,10 @@
 						window.scrollTo(0, 0);
 					}
 				}).catch(function (error) {
-					console.log(error.response.status);
+					console.log(error.response.data);
 					let Status = error.response.data.Status;
 					if (Status.status == 422) {
-						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-on.png');
+						$('#imageQrcode').attr("src", '/imagens/body/readqrcode.png');
 						$("#description").html(Status.message);
 
 						window.scrollTo(0, 0);
@@ -671,10 +671,10 @@
 						window.scrollTo(0, 0);
 					}
 				}).catch(function (error) {
-					console.log(error.response.status);
+					console.log(error.response);
 					let Status = error.response.data.Status;
 					if (Status.status == 422) {
-						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-on.png');
+						$('#imageQrcode').attr("src", '/imagens/body/readqrcode.png');
 						$("#description").html(Status.message);
 
 						window.scrollTo(0, 0);
