@@ -370,7 +370,7 @@ BROWSER_WSENDPOINT=
 MAX_CONCURRENT_SESSIONS=1
 #
 # Set name instace for use ecosystem.config.js
-NAME_INSTANCES=ApiWPPConnectCluster
+NAME_INSTANCES=ApiBaileysMdCluster
 #
 # Set count instace for use ecosystem.config.js
 INSTANCES=1
