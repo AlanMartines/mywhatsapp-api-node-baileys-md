@@ -408,8 +408,8 @@
 						console.log(response.data);
 						let Status = response.data.Status;
 						if (Status.erro == false && Status.status == 200) {
-							$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-on.png');
-							$("#description").html("Sistema iniciado com sucesso.");
+							$('#imageQrcode').attr("src", '/imagens/body/loading.gif');
+							$("#description").html("Por favor aguarde, sistema iniciando.");
 
 							window.scrollTo(0, 0);
 						} else if (Status.state == 'DISCONNECTED') {
