@@ -363,7 +363,7 @@ module.exports = class Instace {
 				//
 				const SocketConfig = {
 					/** the WS url to connect to WA */
-					waWebSocketUrl: config.WA_URL || undefined,
+					waWebSocketUrl: config.WA_URL,
 					/** Fails the connection if the socket times out in this interval */
 					connectTimeoutMs: 60000,
 					/** Default timeout for queries, undefined for no timeout */
