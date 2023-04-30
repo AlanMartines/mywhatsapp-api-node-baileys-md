@@ -366,32 +366,45 @@
 						required: "Por favor, Informe uma opção."
 					}
 				},
-				errorPlacement: function (error, element) {
+				errorPlacement: async function (error, element) {
 					$(element).closest('.form-group').find('.help-block').html(error.html());
 				},
-				highlight: function (element) {
+				highlight: async function (element) {
 					$(element).closest('.form-control').removeClass('is-valid').addClass('is-invalid');
 					$(element).closest('.custom-select').removeClass('is-valid').addClass('is-invalid');
 				},
-				unhighlight: function (element, errorClass, validClass) {
+				unhighlight: async function (element, errorClass, validClass) {
 					$(element).closest('.form-group').find('.help-block').html('');
 					$(element).closest('.form-control').removeClass('is-invalid').addClass('is-valid');
 					$(element).closest('.custom-select').removeClass('is-invalid').addClass('is-valid');
 				},
-				submitHandler: function () {
+				submitHandler: async function () {
 					event.preventDefault();
 					//
 					//let data = $("#start-form").serialize();
-					let jsonData = JSON.stringify($("#start-form").serializeJSON(), null, 2);
-					let inputValue = $('#AuthorizationToken').val();
+					//let jsonData = JSON.stringify($("#start-form").serializeJSON(), null, 2);
+					let AuthorizationToken = $('#AuthorizationToken').val();
+					let SessionName = $('#SessionName').val();
+					let setOnline = $('#setOnline').val();
+					let wh_status = $('#wh_status').val();
+					let wh_message = $('#wh_message').val();
+					let wh_qrcode = $('#wh_qrcode').val();
+					let wh_connect = $('#wh_connect').val();
 					//
-					axios.post(`${url}/instance/Start`, jsonData, {
+					await axios.post(`${url}/instance/Start`, {
+									"SessionName": "{{ _.SessionName }}",
+									"setOnline": setOnline ? true : false,
+									"wh_status": wh_status ? wh_status : null,
+									"wh_message": wh_message ? wh_message : null,
+									"wh_qrcode": wh_qrcode ? wh_qrcode : null,
+									"wh_connect": wh_connect ? wh_connect : null
+								}, {
 						headers: {
 							// Overwrite Axios's automatically set Content-Type
 							'Content-Type': 'application/json',
-							'AuthorizationToken': inputValue,
+							'AuthorizationToken': AuthorizationToken,
 						}
-					}).then(function (response) {
+					}).then(async function (response) {
 						console.log(response.data);
 						let Status = response.data.Status;
 						if (Status.erro == false && Status.status == 200) {
@@ -425,7 +438,7 @@
 
 							window.scrollTo(0, 0);
 						}
-					}).catch(function (error) {
+					}).catch(async function (error) {
 						console.log(error.response.data);
 						let Status = error.response.data.Status;
 						if (Status.status == 422) {
@@ -465,19 +478,19 @@
 			//---------------------------------------------------------------------------------------------------------------------------------------------------//
 			//
 			//
-			$("#wa_status").on("click", function () {
+			$("#wa_status").on("click", async function () {
 				event.preventDefault();
 				//let data = $("#start-form").serialize();
 				let jsonData = JSON.stringify($("#start-form").serializeJSON(), null, 2);
 				let inputValue = $('#AuthorizationToken').val();
 				//
-				axios.post(`${url}/instance/Status`, jsonData, {
+				await axios.post(`${url}/instance/Status`, jsonData, {
 					headers: {
 						// Overwrite Axios's automatically set Content-Type
 						'Content-Type': 'application/json',
 						'AuthorizationToken': inputValue,
 					}
-				}).then(function (response) {
+				}).then(async function (response) {
 					console.log(response.data);
 					let Status = response.data.Status;
 					if (Status.state == 'CONNECTED') {
@@ -511,7 +524,7 @@
 
 						window.scrollTo(0, 0);
 					}
-				}).catch(function (error) {
+				}).catch(async function (error) {
 					console.log(error.response.data);
 					let Status = error.response.data.Status;
 					if (Status.status == 422) {
@@ -547,13 +560,13 @@
 				//
 			});
 			//
-			$("#wa_close").on("click", function () {
+			$("#wa_close").on("click", async function () {
 				event.preventDefault();
 				//
 				let jsonData = JSON.stringify($("#start-form").serializeJSON(), null, 2);
 				let inputValue = $('#AuthorizationToken').val();
 				//
-				axios.post(`${url}/instance/Close`, jsonData, {
+				await axios.post(`${url}/instance/Close`, jsonData, {
 					headers: {
 						// Overwrite Axios's automatically set Content-Type
 						'Content-Type': 'application/json',
@@ -588,7 +601,7 @@
 
 						window.scrollTo(0, 0);
 					}
-				}).catch(function (error) {
+				}).catch(async function (error) {
 					console.log(error.response.data);
 					let Status = error.response.data.Status;
 					if (Status.status == 422) {
@@ -624,19 +637,19 @@
 				//
 			});
 			//
-			$("#wa_logout").on("click", function () {
+			$("#wa_logout").on("click", async function () {
 				event.preventDefault();
 				//let data = $("#start-form").serialize();
 				let jsonData = JSON.stringify($("#start-form").serializeJSON(), null, 2);
 				let inputValue = $('#AuthorizationToken').val();
 				//
-				axios.post(`${url}/instance/Logout`, jsonData, {
+				await axios.post(`${url}/instance/Logout`, jsonData, {
 					headers: {
 						// Overwrite Axios's automatically set Content-Type
 						'Content-Type': 'application/json',
 						'AuthorizationToken': inputValue,
 					}
-				}).then(function (response) {
+				}).then(async function (response) {
 					console.log(response.data);
 					let Status = response.data.Status;
 					if (Status.state == 'CONNECTED') {
@@ -670,7 +683,7 @@
 
 						window.scrollTo(0, 0);
 					}
-				}).catch(function (error) {
+				}).catch(async function (error) {
 					console.log(error.response);
 					let Status = error.response.data.Status;
 					if (Status.status == 422) {
