@@ -392,7 +392,7 @@
 					let wh_connect = $('#wh_connect').val();
 					//
 					await axios.post(`${url}/instance/Start`, {
-									"SessionName": "{{ _.SessionName }}",
+									"SessionName": SessionName,
 									"setOnline": setOnline ? true : false,
 									"wh_status": wh_status ? wh_status : null,
 									"wh_message": wh_message ? wh_message : null,
