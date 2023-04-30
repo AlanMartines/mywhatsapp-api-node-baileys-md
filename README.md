@@ -319,6 +319,13 @@ HOST_NAME='ApiBaileysMd'
 #
 WA_VERSION=
 #
+# Defina a url do whatsapp a ser usada.
+# CASO DE NÃO SER CONFIGURADO UM LINK MATENHA A VARIAVEL WA_URL VAZIA
+# Exemplos:
+# WA_URL='web.whatsapp.com'
+# WA_URL=
+WA_URL=
+#
 # Auto close
 AUTO_CLOSE=10
 #
