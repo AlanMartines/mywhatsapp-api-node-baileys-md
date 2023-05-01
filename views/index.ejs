@@ -480,15 +480,21 @@
 			//
 			$("#wa_status").on("click", async function () {
 				event.preventDefault();
+				//
 				//let data = $("#start-form").serialize();
-				let jsonData = JSON.stringify($("#start-form").serializeJSON(), null, 2);
-				let inputValue = $('#AuthorizationToken').val();
+				//let jsonData = JSON.stringify($("#start-form").serializeJSON(), null, 2);
+				let AuthorizationToken = $('#AuthorizationToken').val();
+				let SessionName = $('#SessionName').val();
+				//
+				let jsonData = {
+								"SessionName": SessionName
+							};
 				//
 				await axios.post(`${url}/instance/Status`, jsonData, {
 					headers: {
 						// Overwrite Axios's automatically set Content-Type
 						'Content-Type': 'application/json',
-						'AuthorizationToken': inputValue,
+						'AuthorizationToken': AuthorizationToken,
 					}
 				}).then(async function (response) {
 					console.log(response.data);
@@ -563,14 +569,20 @@
 			$("#wa_close").on("click", async function () {
 				event.preventDefault();
 				//
-				let jsonData = JSON.stringify($("#start-form").serializeJSON(), null, 2);
-				let inputValue = $('#AuthorizationToken').val();
+				//let data = $("#start-form").serialize();
+				//let jsonData = JSON.stringify($("#start-form").serializeJSON(), null, 2);
+				let AuthorizationToken = $('#AuthorizationToken').val();
+				let SessionName = $('#SessionName').val();
+				//
+				let jsonData = {
+								"SessionName": SessionName
+							};
 				//
 				await axios.post(`${url}/instance/Close`, jsonData, {
 					headers: {
 						// Overwrite Axios's automatically set Content-Type
 						'Content-Type': 'application/json',
-						'AuthorizationToken': inputValue,
+						'AuthorizationToken': AuthorizationToken,
 					}
 				}).then(function (response) {
 					console.log(response.data);
@@ -639,15 +651,21 @@
 			//
 			$("#wa_logout").on("click", async function () {
 				event.preventDefault();
+				//
 				//let data = $("#start-form").serialize();
-				let jsonData = JSON.stringify($("#start-form").serializeJSON(), null, 2);
-				let inputValue = $('#AuthorizationToken').val();
+				//let jsonData = JSON.stringify($("#start-form").serializeJSON(), null, 2);
+				let AuthorizationToken = $('#AuthorizationToken').val();
+				let SessionName = $('#SessionName').val();
+				//
+				let jsonData = {
+								"SessionName": SessionName
+							};
 				//
 				await axios.post(`${url}/instance/Logout`, jsonData, {
 					headers: {
 						// Overwrite Axios's automatically set Content-Type
 						'Content-Type': 'application/json',
-						'AuthorizationToken': inputValue,
+						'AuthorizationToken': AuthorizationToken,
 					}
 				}).then(async function (response) {
 					console.log(response.data);
