@@ -24,15 +24,19 @@ const config = require('../config.global');
 // ------------------------------------------------------------------------------------------------//
 //
 function removeWithspace(string) {
-	var string = string.replace(/\r?\n|\r|\s+/g, ""); /* replace all newlines and with a space */
+	if (string.match(/\r?\n|\r|\s+/g)) {
+		string = string.replace(/\r?\n|\r|\s+/g, "");
+	}
 	return string;
 }
 //
 // ------------------------------------------------------------------------------------------------//
 //
 function soNumeros(string) {
-	var numbers = string.replace(/[^0-9]/g, '');
-	return numbers;
+	if (/^\d+$/.test(string)) {
+		string = string.replace(/[^0-9]/g, '');
+	}
+	return string;
 }
 //
 // ------------------------------------------------------------------------------------------------//
