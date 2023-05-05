@@ -24,19 +24,27 @@ const config = require('../config.global');
 // ------------------------------------------------------------------------------------------------//
 //
 function removeWithspace(string) {
-	if (string.match(/\r?\n|\r|\s+/g)) {
-		string = string.replace(/\r?\n|\r|\s+/g, "");
+	try {
+		logger.info(`- Removendo todas as quebras de linha e espaços`);
+		let result = string.replace(/\r?\n|\r|\s+/g, ""); /* replace all newlines and with a space */
+		return result;
+	} catch (error) {
+		logger.error(`- Erro ao remover todas as quebras de linha e espaços: ${error?.message}`);
+		return string;
 	}
-	return string;
 }
 //
 // ------------------------------------------------------------------------------------------------//
 //
 function soNumeros(string) {
-	if (/^\d+$/.test(string)) {
-		string = string.replace(/[^0-9]/g, '');
+	try {
+		logger.info(`- Removendo todos os caracteres que não são números`);
+		let result = string.replace(/[^0-9]/g, '');
+		return result;
+	} catch (error) {
+		logger.error(`- Erro ao remover todos os caracteres que não são números: ${error?.message}`);
+		return string;
 	}
-	return string;
 }
 //
 // ------------------------------------------------------------------------------------------------//
