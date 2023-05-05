@@ -87,7 +87,7 @@ router.post("/sendContactVcard", upload.none(''), verifyToken.verify, async (req
 					await session.waqueue.add(async () => {
 						var checkNumberStatus = await retrieving?.checkNumberStatus(
 							resSessionName,
-							soNumeros(req.body.phonefull).trim()
+							soNumeros(req.body.phonefull)
 						);
 						//
 						if (checkNumberStatus.status == 200 && checkNumberStatus.erro == false) {
@@ -208,7 +208,7 @@ router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req,
 						await session.waqueue.add(async () => {
 							var checkNumberStatus = await retrieving?.checkNumberStatus(
 								resSessionName,
-								soNumeros(req.body.phonefull).trim()
+								soNumeros(req.body.phonefull)
 							);
 							//
 							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
@@ -310,7 +310,7 @@ router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req,
 					await session.waqueue.add(async () => {
 						var checkNumberStatus = await retrieving?.checkNumberStatus(
 							resSessionName,
-							soNumeros(req.body.phonefull).trim()
+							soNumeros(req.body.phonefull)
 						);
 						//
 						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
@@ -433,7 +433,7 @@ router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (
 						await session.waqueue.add(async () => {
 							var checkNumberStatus = await retrieving?.checkNumberStatus(
 								resSessionName,
-								soNumeros(req.body.phonefull).trim()
+								soNumeros(req.body.phonefull)
 							);
 							//
 							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
@@ -534,7 +534,7 @@ router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, n
 					await session.waqueue.add(async () => {
 						var checkNumberStatus = await retrieving?.checkNumberStatus(
 							resSessionName,
-							soNumeros(req.body.phonefull).trim()
+							soNumeros(req.body.phonefull)
 						);
 						//
 						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
@@ -634,7 +634,7 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
 					await session.waqueue.add(async () => {
 						var checkNumberStatus = await retrieving?.checkNumberStatus(
 							resSessionName,
-							soNumeros(req.body.phonefull).trim()
+							soNumeros(req.body.phonefull)
 						);
 						//
 						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
@@ -752,7 +752,7 @@ router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, n
 						//
 						var checkNumberStatus = await retrieving?.checkNumberStatus(
 							resSessionName,
-							soNumeros(req.body.phonefull).trim()
+							soNumeros(req.body.phonefull)
 						);
 						//
 						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
@@ -871,7 +871,7 @@ router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req,
 						await session.waqueue.add(async () => {
 							var checkNumberStatus = await retrieving?.checkNumberStatus(
 								resSessionName,
-								soNumeros(req.body.phonefull).trim()
+								soNumeros(req.body.phonefull)
 							);
 							//
 							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
@@ -995,7 +995,7 @@ router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req,
 					await session.waqueue.add(async () => {
 						var checkNumberStatus = await retrieving?.checkNumberStatus(
 							resSessionName,
-							soNumeros(req.body.phonefull).trim()
+							soNumeros(req.body.phonefull)
 						);
 						//
 						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
@@ -1102,7 +1102,7 @@ router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (
 					await session.waqueue.add(async () => {
 						var checkNumberStatus = await retrieving?.checkNumberStatus(
 							resSessionName,
-							soNumeros(req.body.phonefull).trim()
+							soNumeros(req.body.phonefull)
 						);
 						//
 						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
@@ -1190,7 +1190,7 @@ router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, 
 				await session.waqueue.add(async () => {
 					var checkNumberStatus = await retrieving?.checkNumberStatus(
 						resSessionName,
-						soNumeros(req.body.phonefull).trim()
+						soNumeros(req.body.phonefull)
 					);
 					//
 					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
@@ -1276,7 +1276,7 @@ router.post("/sendFileUrl", upload.none(''), verifyToken.verify, async (req, res
 				await session.waqueue.add(async () => {
 					var checkNumberStatus = await retrieving?.checkNumberStatus(
 						resSessionName,
-						soNumeros(req.body.phonefull).trim()
+						soNumeros(req.body.phonefull)
 					);
 					//
 					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
@@ -1368,7 +1368,7 @@ router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, 
 					//
 					var checkNumberStatus = await retrieving?.checkNumberStatus(
 						resSessionName,
-						soNumeros(req.body.phonefull).trim()
+						soNumeros(req.body.phonefull)
 					);
 					//
 					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
@@ -1453,7 +1453,7 @@ router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (r
 				await session.waqueue.add(async () => {
 					var checkNumberStatus = await retrieving?.checkNumberStatus(
 						resSessionName,
-						soNumeros(req.body.phonefull).trim()
+						soNumeros(req.body.phonefull)
 					);
 					//
 					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
@@ -1540,7 +1540,7 @@ router.post("/sendButton", upload.none(''), verifyToken.verify, async (req, res,
 				await session.waqueue.add(async () => {
 					var checkNumberStatus = await retrieving?.checkNumberStatus(
 						resSessionName,
-						soNumeros(req.body.phonefull).trim()
+						soNumeros(req.body.phonefull)
 					);
 					//
 					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
@@ -1623,7 +1623,7 @@ router.post("/sendTemplate", upload.none(''), verifyToken.verify, async (req, re
 				await session.waqueue.add(async () => {
 					var checkNumberStatus = await retrieving?.checkNumberStatus(
 						resSessionName,
-						soNumeros(req.body.phonefull).trim()
+						soNumeros(req.body.phonefull)
 					);
 					//
 					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
@@ -1706,7 +1706,7 @@ router.post("/sendListMessage", upload.none(''), verifyToken.verify, async (req,
 				await session.waqueue.add(async () => {
 					var checkNumberStatus = await retrieving?.checkNumberStatus(
 						resSessionName,
-						soNumeros(req.body.phonefull).trim()
+						soNumeros(req.body.phonefull)
 					);
 					//
 					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
