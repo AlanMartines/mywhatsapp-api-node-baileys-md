@@ -26,6 +26,7 @@ config.START_ALL_SESSIONS = process.env.START_ALL_SESSIONS || 0;
 config.USE_HERE = process.env.FORCE_CONNECTION_USE_HERE || 0;
 config.CONCURRENCY = process.env.CONCURRENCY || 1;
 config.INDOCKER = process.env.INDOCKER || 0;
+config.DELETE_FILE_UNUSED = process.env.DELETE_FILE_UNUSED || 0;
 //
 config.tokenPatch = "/usr/local/tokens";
 //
