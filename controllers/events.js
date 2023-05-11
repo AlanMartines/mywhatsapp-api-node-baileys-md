@@ -429,7 +429,7 @@ module.exports = class Events {
 							//
 							break;
 						case 'documentWithCaptionMessage':
-							logger?.info('- Message document');
+							logger?.info('- Message documentWithCaptionMessage');
 							//
 							var buffer = await downloadMediaMessage(msg, 'buffer');
 							var string64 = buffer.toString('base64');
@@ -444,14 +444,14 @@ module.exports = class Events {
 								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
-								"caption": msg?.message?.documentMessage?.caption ? msg?.message?.documentMessage?.caption : null,
-								"fileName": msg?.message?.documentMessage?.fileName ? msg?.message?.documentMessage?.fileName : null,
-								"mimetype": msg?.message?.documentMessage?.mimetype ? msg?.message?.documentMessage?.mimetype : null,
-								"fileLength": msg?.message?.documentMessage?.fileLength ? await convertBytes(msg?.message?.documentMessage?.fileLength) : null,
+								"caption": msg?.message?.documentWithCaptionMessage?.documentMessage?.caption ? msg?.message?.documentWithCaptionMessage?.documentMessage?.caption : null,
+								"fileName": msg?.message?.documentWithCaptionMessage?.documentMessage?.fileName ? msg?.message?.documentWithCaptionMessage?.documentMessage?.fileName : null,
+								"mimetype": msg?.message?.documentWithCaptionMessage?.documentMessage?.mimetype ? msg?.message?.documentWithCaptionMessage?.documentMessage?.mimetype : null,
+								"fileLength": msg?.message?.documentWithCaptionMessage?.documentMessage?.fileLength ? await convertBytes(msg?.message?.documentWithCaptionMessage?.documentMessage?.fileLength) : null,
 								"base64": string64,
-								"jpegThumbnail":  msg?.message?.documentMessage?.jpegThumbnail ? msg?.message?.documentMessage?.jpegThumbnail : null,
-								"thumbnailHeight":  msg?.message?.documentMessage?.thumbnailHeight ? msg?.message?.documentMessage?.thumbnailHeight : null,
-								"thumbnailWidth":  msg?.message?.documentMessage?.thumbnailWidth ? msg?.message?.documentMessage?.thumbnailWidth : null,
+								"jpegThumbnail":  msg?.message?.documentWithCaptionMessage?.documentMessage?.jpegThumbnail ? msg?.message?.documentWithCaptionMessage?.documentMessage?.jpegThumbnail : null,
+								"thumbnailHeight":  msg?.message?.documentWithCaptionMessage?.documentMessage?.thumbnailHeight ? msg?.message?.documentWithCaptionMessage?.documentMessage?.thumbnailHeight : null,
+								"thumbnailWidth":  msg?.message?.documentWithCaptionMessage?.documentMessage?.thumbnailWidth ? msg?.message?.documentWithCaptionMessage?.documentMessage?.thumbnailWidth : null,
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							//
