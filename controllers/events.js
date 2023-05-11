@@ -196,6 +196,8 @@ module.exports = class Events {
 						type = 'image';
 					} else if (msg?.message?.documentMessage) {
 						type = 'document';
+					} else if (msg?.message?.documentWithCaptionMessage) {
+						type = 'documentWithCaptionMessage';
 					} else if (msg?.message?.audioMessage) {
 						type = 'audio';
 					} else if (msg?.message?.contactMessage) {
@@ -270,12 +272,12 @@ module.exports = class Events {
 								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
-								"caption": msg?.message?.imageMessage?.caption != undefined ? msg?.message?.imageMessage?.caption : null,
-								"mimetype": msg?.message?.imageMessage?.mimetype != undefined ? msg?.message?.imageMessage?.mimetype : null,
+								"caption": msg?.message?.imageMessage?.caption ? msg?.message?.imageMessage?.caption : null,
+								"mimetype": msg?.message?.imageMessage?.mimetype ? msg?.message?.imageMessage?.mimetype : null,
 								"fileLength": msg?.message?.imageMessage?.fileLength ? await convertBytes(msg?.message?.imageMessage?.fileLength) : null,
 								"base64": string64,
-								"height": msg?.message?.imageMessage?.height != undefined ? msg?.message?.imageMessage?.height : null,
-								"width": msg?.message?.imageMessage?.width != undefined ? msg?.message?.imageMessage?.width : null,
+								"height": msg?.message?.imageMessage?.height ? msg?.message?.imageMessage?.height : null,
+								"width": msg?.message?.imageMessage?.width ? msg?.message?.imageMessage?.width : null,
 								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
@@ -296,13 +298,13 @@ module.exports = class Events {
 								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
-								"caption": msg?.message?.stickerMessage?.caption != undefined ? msg?.message?.stickerMessage?.caption : null,
-								"mimetype": msg?.message?.stickerMessage?.mimetype != undefined ? msg?.message?.stickerMessage?.mimetype : null,
+								"caption": msg?.message?.stickerMessage?.caption ? msg?.message?.stickerMessage?.caption : null,
+								"mimetype": msg?.message?.stickerMessage?.mimetype ? msg?.message?.stickerMessage?.mimetype : null,
 								"fileLength": msg?.message?.stickerMessage?.fileLength ? await convertBytes(msg?.message?.stickerMessage?.fileLength) : null,
 								"isAnimated": msg?.message?.stickerMessage?.isAnimated,
 								"base64": string64,
-								"height": msg?.message?.stickerMessage?.height != undefined ? msg?.message?.stickerMessage?.height : null,
-								"width": msg?.message?.stickerMessage?.width != undefined ? msg?.message?.stickerMessage?.width : null,
+								"height": msg?.message?.stickerMessage?.height ? msg?.message?.stickerMessage?.height : null,
+								"width": msg?.message?.stickerMessage?.width ? msg?.message?.stickerMessage?.width : null,
 								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
@@ -325,7 +327,7 @@ module.exports = class Events {
 								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
-								"mimetype": msg?.message?.audioMessage?.mimetype != undefined ? msg?.message?.audioMessage?.mimetype : null,
+								"mimetype": msg?.message?.audioMessage?.mimetype ? msg?.message?.audioMessage?.mimetype : null,
 								"fileLength": msg?.message?.audioMessage?.fileLength ? await convertBytes(msg?.message?.audioMessage?.fileLength) : null,
 								"time": convertHMS(msg?.message?.audioMessage?.seconds),
 								"base64": string64,
@@ -352,8 +354,8 @@ module.exports = class Events {
 								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
-								"caption": msg?.message?.videoMessage?.caption != undefined ? msg?.message?.videoMessage?.caption : null,
-								"mimetype": msg?.message?.videoMessage?.mimetype != undefined ? msg?.message?.videoMessage?.mimetype : null,
+								"caption": msg?.message?.videoMessage?.caption ? msg?.message?.videoMessage?.caption : null,
+								"mimetype": msg?.message?.videoMessage?.mimetype ? msg?.message?.videoMessage?.mimetype : null,
 								"fileLength": msg?.message?.videoMessage?.fileLength ? await convertBytes(msg?.message?.videoMessage?.fileLength) : null,
 								"base64": string64,
 								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
@@ -406,6 +408,7 @@ module.exports = class Events {
 							//
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"type": 'document',
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
@@ -413,11 +416,42 @@ module.exports = class Events {
 								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
-								"caption": msg?.message?.documentMessage?.caption != undefined ? msg?.message?.documentMessage?.caption : null,
-								"mimetype": msg?.message?.documentMessage?.mimetype != undefined ? msg?.message?.documentMessage?.mimetype : null,
+								"caption": msg?.message?.documentMessage?.caption ? msg?.message?.documentMessage?.caption : null,
+								"fileName": msg?.message?.documentMessage?.fileName ? msg?.message?.documentMessage?.fileName : null,
+								"mimetype": msg?.message?.documentMessage?.mimetype ? msg?.message?.documentMessage?.mimetype : null,
 								"fileLength": msg?.message?.documentMessage?.fileLength ? await convertBytes(msg?.message?.documentMessage?.fileLength) : null,
 								"base64": string64,
+								"jpegThumbnail":  msg?.message?.documentMessage?.jpegThumbnail ? msg?.message?.documentMessage?.jpegThumbnail : null,
+								"thumbnailHeight":  msg?.message?.documentMessage?.thumbnailHeight ? msg?.message?.documentMessage?.thumbnailHeight : null,
+								"thumbnailWidth":  msg?.message?.documentMessage?.thumbnailWidth ? msg?.message?.documentMessage?.thumbnailWidth : null,
+								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
+							}
+							//
+							break;
+						case 'documentWithCaptionMessage':
+							logger?.info('- Message document');
+							//
+							var buffer = await downloadMediaMessage(msg, 'buffer');
+							var string64 = buffer.toString('base64');
+							//
+							response = {
+								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
+								"type": 'document',
+								"fromMe": msg?.key?.fromMe,
+								"id": msg?.key?.id,
+								"name": msg?.pushName || msg?.verifiedBizName || null,
+								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
+								"caption": msg?.message?.documentMessage?.caption ? msg?.message?.documentMessage?.caption : null,
+								"fileName": msg?.message?.documentMessage?.fileName ? msg?.message?.documentMessage?.fileName : null,
+								"mimetype": msg?.message?.documentMessage?.mimetype ? msg?.message?.documentMessage?.mimetype : null,
+								"fileLength": msg?.message?.documentMessage?.fileLength ? await convertBytes(msg?.message?.documentMessage?.fileLength) : null,
+								"base64": string64,
+								"jpegThumbnail":  msg?.message?.documentMessage?.jpegThumbnail ? msg?.message?.documentMessage?.jpegThumbnail : null,
+								"thumbnailHeight":  msg?.message?.documentMessage?.thumbnailHeight ? msg?.message?.documentMessage?.thumbnailHeight : null,
+								"thumbnailWidth":  msg?.message?.documentMessage?.thumbnailWidth ? msg?.message?.documentMessage?.thumbnailWidth : null,
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							//
