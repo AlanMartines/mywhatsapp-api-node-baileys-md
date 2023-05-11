@@ -245,6 +245,7 @@ module.exports = class Events {
 							//
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"type": 'text',
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
@@ -253,7 +254,6 @@ module.exports = class Events {
 								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"content": msg?.message?.conversation,
-								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							break;
@@ -265,6 +265,7 @@ module.exports = class Events {
 							//
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"type": 'image',
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
@@ -278,7 +279,6 @@ module.exports = class Events {
 								"base64": string64,
 								"height": msg?.message?.imageMessage?.height ? msg?.message?.imageMessage?.height : null,
 								"width": msg?.message?.imageMessage?.width ? msg?.message?.imageMessage?.width : null,
-								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							//
@@ -291,6 +291,7 @@ module.exports = class Events {
 							//
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"type": 'image',
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
@@ -305,7 +306,6 @@ module.exports = class Events {
 								"base64": string64,
 								"height": msg?.message?.stickerMessage?.height ? msg?.message?.stickerMessage?.height : null,
 								"width": msg?.message?.stickerMessage?.width ? msg?.message?.stickerMessage?.width : null,
-								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							//
@@ -318,6 +318,7 @@ module.exports = class Events {
 							//
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"type": 'audio',
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
@@ -332,7 +333,6 @@ module.exports = class Events {
 								"time": convertHMS(msg?.message?.audioMessage?.seconds),
 								"base64": string64,
 								"ptt": msg?.message?.audioMessage?.ptt,
-								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							//
@@ -347,6 +347,7 @@ module.exports = class Events {
 							//
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"type": 'video',
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
@@ -358,7 +359,6 @@ module.exports = class Events {
 								"mimetype": msg?.message?.videoMessage?.mimetype ? msg?.message?.videoMessage?.mimetype : null,
 								"fileLength": msg?.message?.videoMessage?.fileLength ? await convertBytes(msg?.message?.videoMessage?.fileLength) : null,
 								"base64": string64,
-								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							//
@@ -367,6 +367,7 @@ module.exports = class Events {
 							logger?.info('- Message location');
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"type": 'location',
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
@@ -377,7 +378,6 @@ module.exports = class Events {
 								"loc": msg?.message?.locationMessage?.degreesLatitude,
 								"lat": msg?.message?.locationMessage?.degreesLongitude,
 								"url": "https://maps.google.com/maps?q=" + msg?.message?.locationMessage?.degreesLatitude + "," + msg?.message?.locationMessage?.degreesLongitude,
-								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							break;
@@ -385,6 +385,7 @@ module.exports = class Events {
 							logger?.info('- Message liveLocation');
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"type": 'liveLocation',
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
@@ -396,7 +397,6 @@ module.exports = class Events {
 								"lat": msg?.message?.liveLocationMessage?.degreesLongitude,
 								"caption": msg?.message?.liveLocationMessage?.caption,
 								"url": "https://maps.google.com/maps?q=" + msg?.message?.liveLocationMessage?.degreesLatitude + "," + msg?.message?.liveLocationMessage?.degreesLongitude,
-								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							break;
@@ -460,6 +460,7 @@ module.exports = class Events {
 							logger?.info('- Message vcard');
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"type": 'vcard',
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
@@ -469,13 +470,13 @@ module.exports = class Events {
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"displayName": msg?.message?.contactMessage?.displayName,
 								"vcard": msg?.message?.contactMessage?.vcard,
-								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							break;
 						case 'button':
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"type": 'button',
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
@@ -484,13 +485,13 @@ module.exports = class Events {
 								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"buttonsMessage": msg?.message?.viewOnceMessage?.message?.buttonsMessage,
-								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							break;
 						case 'buttonsResponse':
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"type": 'buttonsResponse',
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
@@ -499,13 +500,13 @@ module.exports = class Events {
 								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"selectedButtonId": msg?.message?.buttonsResponseMessage.selectedButtonId,
 								"selectedDisplayText": msg?.message?.buttonsResponseMessage.selectedDisplayText,
-								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							break;
 						case 'templateMessage':
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"type": 'templateMessage',
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
@@ -514,13 +515,13 @@ module.exports = class Events {
 								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"templateMessage": msg?.message?.templateMessage?.hydratedTemplate?.hydratedButtons,
-								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							break;
 						case 'templateResponse':
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"type": 'templateResponse',
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
@@ -530,13 +531,13 @@ module.exports = class Events {
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"selectedId": msg?.message?.templateButtonReplyMessage?.selectedId,
 								"selectedDisplayText": msg?.message?.templateButtonReplyMessage?.selectedDisplayText,
-								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							break;
 						case 'listMessage':
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"type": 'listMessage',
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
@@ -545,13 +546,13 @@ module.exports = class Events {
 								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"listMessage": msg?.message?.viewOnceMessage?.message?.listMessage,
-								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							break;
 						case 'listResponseMessage':
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"type": 'listResponseMessage',
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
@@ -560,7 +561,6 @@ module.exports = class Events {
 								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"listResponseMessage": msg?.message?.listResponseMessage,
-								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							break;
@@ -568,6 +568,7 @@ module.exports = class Events {
 							logger?.info('- Message extended');
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"type": 'extended',
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
@@ -581,7 +582,6 @@ module.exports = class Events {
 								"description": msg?.message?.extendedTextMessage?.description,
 								"title": msg?.message?.extendedTextMessage?.title,
 								"content": msg?.message?.extendedTextMessage?.text,
-								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							break;
@@ -590,13 +590,13 @@ module.exports = class Events {
 							//
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"type": 'historySync',
 								"fromMe": msg?.key?.fromMe,
 								"id": msg?.key?.id,
 								"name": msg?.pushName || msg?.verifiedBizName || null,
 								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
-								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							//
@@ -606,13 +606,13 @@ module.exports = class Events {
 							//
 							response = {
 								"wook": msg?.message?.reactionMessage?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+								"status": msg?.message?.reactionMessage?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"type": 'reactionMessage',
 								"fromMe": msg?.message?.reactionMessage?.key?.fromMe,
 								"id": msg?.message?.reactionMessage?.key?.id,
 								"from": msg?.message?.reactionMessage?.key?.fromMe == true ? phone : msg?.message?.reactionMessage?.key?.remoteJid?.split('@')[0],
 								"to": msg?.message?.reactionMessage?.key?.fromMe == false ? phone : msg?.message?.reactionMessage?.key?.remoteJid?.split('@')[0],
 								"content": msg?.message?.reactionMessage?.text,
-								"status": msg?.message?.reactionMessage?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.message?.reactionMessage?.senderTimestampMs * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							//
@@ -625,6 +625,7 @@ module.exports = class Events {
 						//
 						response = {
 							"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+							"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 							"type": 'undefined',
 							"fromMe": msg?.key?.fromMe,
 							"id": msg?.key?.id,
@@ -632,7 +633,6 @@ module.exports = class Events {
 							"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
 							"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 							"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
-							"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 							"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 						}
 						*/
