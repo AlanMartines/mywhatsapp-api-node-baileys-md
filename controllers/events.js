@@ -430,6 +430,7 @@ module.exports = class Events {
 							break;
 						case 'documentWithCaptionMessage':
 							logger?.info('- Message documentWithCaptionMessage');
+							logger?.info(msg?.message);
 							//
 							var buffer = await downloadMediaMessage(msg, 'buffer');
 							var string64 = buffer.toString('base64');
