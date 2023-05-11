@@ -421,7 +421,7 @@ module.exports = class Events {
 								"mimetype": msg?.message?.documentMessage?.mimetype ? msg?.message?.documentMessage?.mimetype : null,
 								"fileLength": msg?.message?.documentMessage?.fileLength ? await convertBytes(msg?.message?.documentMessage?.fileLength) : null,
 								"base64": string64,
-								"jpegThumbnail":  msg?.message?.documentMessage?.jpegThumbnail ? msg?.message?.documentMessage?.jpegThumbnail : null,
+								"jpegThumbnailBase64":  msg?.message?.documentMessage?.jpegThumbnail ? msg?.message?.documentMessage?.jpegThumbnail?.toString('base64') : null,
 								"thumbnailHeight":  msg?.message?.documentMessage?.thumbnailHeight ? msg?.message?.documentMessage?.thumbnailHeight : null,
 								"thumbnailWidth":  msg?.message?.documentMessage?.thumbnailWidth ? msg?.message?.documentMessage?.thumbnailWidth : null,
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
@@ -449,7 +449,7 @@ module.exports = class Events {
 								"mimetype": msg?.message?.documentWithCaptionMessage?.message?.documentMessage?.mimetype ? msg?.message?.documentWithCaptionMessage?.message?.documentMessage?.mimetype : null,
 								"fileLength": msg?.message?.documentWithCaptionMessage?.message?.documentMessage?.fileLength ? await convertBytes(msg?.message?.documentWithCaptionMessage?.message?.documentMessage?.fileLength) : null,
 								"base64": string64,
-								"jpegThumbnail":  msg?.message?.documentWithCaptionMessage?.message?.documentMessage?.jpegThumbnail ? msg?.message?.documentWithCaptionMessage?.message?.documentMessage?.jpegThumbnail : null,
+								"jpegThumbnailBase64":  msg?.message?.documentWithCaptionMessage?.message?.documentMessage?.jpegThumbnail ? msg?.message?.documentWithCaptionMessage?.message?.documentMessage?.jpegThumbnail?.toString('base64') : null,
 								"thumbnailHeight":  msg?.message?.documentWithCaptionMessage?.message?.documentMessage?.thumbnailHeight ? msg?.message?.documentWithCaptionMessage?.message?.documentMessage?.thumbnailHeight : null,
 								"thumbnailWidth":  msg?.message?.documentWithCaptionMessage?.message?.documentMessage?.thumbnailWidth ? msg?.message?.documentWithCaptionMessage?.message?.documentMessage?.thumbnailWidth : null,
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
