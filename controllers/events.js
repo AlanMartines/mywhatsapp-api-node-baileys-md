@@ -272,7 +272,7 @@ module.exports = class Events {
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"caption": msg?.message?.imageMessage?.caption != undefined ? msg?.message?.imageMessage?.caption : null,
 								"mimetype": msg?.message?.imageMessage?.mimetype != undefined ? msg?.message?.imageMessage?.mimetype : null,
-								//"fileLength": await convertBytes(msg?.message?.audioMessage?.fileLength),
+								"fileLengthFormat": await convertBytes(msg?.message?.audioMessage?.fileLength),
 								"fileLength": msg?.message?.audioMessage?.fileLength,
 								"base64": string64,
 								"height": msg?.message?.imageMessage?.height != undefined ? msg?.message?.imageMessage?.height : null,
