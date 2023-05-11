@@ -375,8 +375,8 @@ module.exports = class Events {
 								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
-								"loc": msg?.message?.locationMessage?.degreesLatitude,
-								"lat": msg?.message?.locationMessage?.degreesLongitude,
+								"lat": msg?.message?.locationMessage?.degreesLatitude,
+								"long": msg?.message?.locationMessage?.degreesLongitude,
 								"url": "https://maps.google.com/maps?q=" + msg?.message?.locationMessage?.degreesLatitude + "," + msg?.message?.locationMessage?.degreesLongitude,
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
@@ -393,8 +393,8 @@ module.exports = class Events {
 								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
-								"loc": msg?.message?.liveLocationMessage?.degreesLatitude,
-								"lat": msg?.message?.liveLocationMessage?.degreesLongitude,
+								"lat": msg?.message?.liveLocationMessage?.degreesLatitude,
+								"long": msg?.message?.liveLocationMessage?.degreesLongitude,
 								"caption": msg?.message?.liveLocationMessage?.caption,
 								"url": "https://maps.google.com/maps?q=" + msg?.message?.liveLocationMessage?.degreesLatitude + "," + msg?.message?.liveLocationMessage?.degreesLongitude,
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
