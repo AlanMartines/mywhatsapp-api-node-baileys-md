@@ -415,6 +415,7 @@ module.exports = class Events {
 								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 								"caption": msg?.message?.documentMessage?.caption != undefined ? msg?.message?.documentMessage?.caption : null,
 								"mimetype": msg?.message?.documentMessage?.mimetype != undefined ? msg?.message?.documentMessage?.mimetype : null,
+								"fileLength": msg?.message?.documentMessage?.fileLength ? await convertBytes(msg?.message?.documentMessage?.fileLength) : null,
 								"base64": string64,
 								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
