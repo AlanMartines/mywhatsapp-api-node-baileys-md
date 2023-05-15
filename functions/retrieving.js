@@ -405,6 +405,56 @@ module.exports = class Retrieving {
 	// Verificar o status do número
 	static async checkNumberStatus(
 		SessionName,
+		groupID
+	) {
+		logger?.info("- Validando numero");
+		logger?.info(`- SessionName: ${SessionName}`);
+		//
+		var session = await Sessions?.getSession(SessionName);
+		return await session?.client?.isJidGroup(groupID).then(([result]) => {
+			//logger?.info('Result: ', result); //return object success
+			//
+			if (result?.exists == true) {
+				//
+				return {
+					"erro": false,
+					"status": 200,
+					"number": result?.jid,
+					"message": "O grupo informado é valido"
+				};
+				//
+			} else {
+				//
+				return {
+					"erro": false,
+					"status": 400,
+					"number": number,
+					"message": "O grupo informado é invalido"
+				};
+				//
+			}
+			//
+		}).catch((erro) => {
+			logger?.error(`- Error when: ${erro}`);
+			//
+			return {
+				"erro": true,
+				"status": 404,
+				"number": number,
+				"message": "Erro ao verificar grupo informado"
+			};
+			//
+		});
+	} //checkNumberStatus
+	//
+	// ------------------------------------------------------------------------------------------------//
+	//
+	//
+	// ------------------------------------------------------------------------------------------------//
+	//
+	// Verificar o status do número
+	static async checkGroupStatus(
+		SessionName,
 		number
 	) {
 		logger?.info("- Validando numero");

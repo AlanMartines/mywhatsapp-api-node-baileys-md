@@ -2092,7 +2092,7 @@ router.post("/addParticipant", upload.none(''), verifyToken.verify, async (req, 
 						//
 						if (numero.length !== 0) {
 							//
-							var checkNumberStatus = await group?.checkNumberStatus(
+							var checkNumberStatus = await retrieving?.checkNumberStatus(
 								resSessionName,
 								soNumeros(numero)
 							);
