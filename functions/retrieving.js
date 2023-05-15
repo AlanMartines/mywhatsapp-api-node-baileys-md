@@ -403,7 +403,7 @@ module.exports = class Retrieving {
 	// ------------------------------------------------------------------------------------------------//
 	//
 	// Verificar o status do número
-	static async checkNumberStatus(
+	static async checkGroupStatus(
 		SessionName,
 		groupID
 	) {
@@ -445,7 +445,7 @@ module.exports = class Retrieving {
 			};
 			//
 		});
-	} //checkNumberStatus
+	} //checkGroupStatus
 	//
 	// ------------------------------------------------------------------------------------------------//
 	//
@@ -453,7 +453,7 @@ module.exports = class Retrieving {
 	// ------------------------------------------------------------------------------------------------//
 	//
 	// Verificar o status do número
-	static async checkGroupStatus(
+	static async checkNumberStatus(
 		SessionName,
 		number
 	) {
