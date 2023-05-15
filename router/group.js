@@ -2108,7 +2108,7 @@ router.post("/addParticipant", upload.none(''), verifyToken.verify, async (req, 
 						//
 					}
 					//
-					var addParticipant = await Sessions.addParticipant(
+					var addParticipant = await group?.addParticipant(
 						resSessionName,
 						req.body.groupId + '@g.us',
 						contactlistValid,
@@ -2368,7 +2368,7 @@ router.post("/getGroupInfoFromInviteLink", upload.none(''), verifyToken.verify, 
 			case 'chatsAvailable':
 				//
 				await session.waqueue.add(async () => {
-					var getGroupInfoFromInviteLink = await Sessions.getGroupInfoFromInviteLink(
+					var getGroupInfoFromInviteLink = await group?.getGroupInfoFromInviteLink(
 						resSessionName,
 						req.body.inviteCode
 					);
