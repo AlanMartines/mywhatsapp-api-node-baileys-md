@@ -596,7 +596,7 @@ router.post("/sendLinkGrupo", upload.none(''), verifyToken.verify, async (req, r
 				case 'chatsAvailable':
 					//
 					await session.waqueue.add(async () => {
-						if (!validUrl.isUri(req.body.link)) {
+						if (!await Sessions.isURL(req.body.link)) {
 							var validate = {
 								"erro": true,
 								"status": 401,
