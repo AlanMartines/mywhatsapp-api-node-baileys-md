@@ -841,4 +841,47 @@ module.exports = class Mensagens {
 	//
 	// ------------------------------------------------------------------------------------------------//
 	//
+	//Enviar enquete
+	static async sendPoll(
+		SessionName,
+		number,
+		poll
+	) {
+		logger?.info("- Enviando lista.");
+		logger?.info(`- SessionName: ${SessionName}`);
+		//
+		var session = await Sessions?.getSession(SessionName);
+		// Send basic text
+		return await session?.client?.sendMessage(
+			number,
+			poll
+		).then(async (result) => {
+			//logger?.info("Result: ", result); //return object success
+			//
+			var result = {
+				"erro": false,
+				"status": 200,
+				"message": "Mensagem enviada com sucesso."
+			};
+			//
+			return result;
+			//
+		}).catch((erro) => {
+			logger?.error(`- Error when: ${erro}`);
+			//return { result: 'error', state: session.state, message: "Erro ao enviar menssagem" };
+			//return (erro);
+			//
+			var result = {
+				"erro": true,
+				"status": 404,
+				"message": "Erro ao enviar menssagem"
+			};
+			//
+			return result;
+			//
+		});
+	} //sendListMessage
+	//
+	// ------------------------------------------------------------------------------------------------//
+	//
 }

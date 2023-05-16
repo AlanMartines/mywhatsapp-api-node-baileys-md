@@ -1752,6 +1752,89 @@ router.post("/sendListMessage", upload.none(''), verifyToken.verify, async (req,
 //
 // ------------------------------------------------------------------------------------------------//
 //
+//Enviar lista
+router.post("/sendPoll", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
+	//
+	if (parseInt(config.VALIDATE_MYSQL) == true) {
+		var resSessionName = theTokenAuth;
+	} else {
+		var resSessionName = theSessionName;
+	}
+	//
+	if (!resSessionName || !req.body.phonefull || !req.body.poll) {
+		var resultRes = {
+			"erro": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		return res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		//
+		var Status = await instance?.Status(resSessionName);
+		var session = await Sessions?.getSession(resSessionName);
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+				await session.waqueue.add(async () => {
+					var checkNumberStatus = await retrieving?.checkNumberStatus(
+						resSessionName,
+						soNumeros(req.body.phonefull)
+					);
+					//
+					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+						//
+						var sendPoll = await message?.sendPoll(
+							resSessionName,
+							checkNumberStatus.number,
+							req.body.poll,
+						);
+						//
+						res.setHeader('Content-Type', 'application/json');
+						return res.status(sendPoll.status).json({
+							"Status": sendPoll
+						});
+						//
+					} else {
+						//
+						res.setHeader('Content-Type', 'application/json');
+						return res.status(checkNumberStatus.status).json({
+							"Status": checkNumberStatus
+						});
+						//
+					}
+					//
+				});
+				break;
+			default:
+				//
+				var resultRes = {
+					"erro": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+}); //sendListMessage
+//
+// ------------------------------------------------------------------------------------------------//
+//
 // rota url erro
 router.all('*', (req, res) => {
 	//
