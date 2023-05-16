@@ -319,12 +319,6 @@ DELETE_FILE_UNUSED=0
 				//
 				if (parseInt(config.START_ALL_SESSIONS) == true) {
 					let result = await AllSessions.startAllSessions();
-					if (result != undefined) {
-						//logger.error(result);
-						logger?.info(`- AllSessions:\n ${result}`);
-					}else{
-						logger?.info(`- AllSessions not work`);
-					}
 				}
 
 			});
