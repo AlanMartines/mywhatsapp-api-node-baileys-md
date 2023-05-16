@@ -193,7 +193,7 @@ module.exports = class Events {
 				if (msg?.key?.remoteJid != 'status@broadcast') {
 					//
 					//if (m.type === 'notify' || m.type === 'append') {
-					logger?.info(`- Message type: ${m?.type}`);
+					logger?.info(`- Message of type: ${m?.type}`);
 					//
 					if (msg?.message?.locationMessage) {
 						type = 'location';
