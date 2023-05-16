@@ -63,17 +63,7 @@ const {
 	MessageRetryMap
 } = require('@adiwajshing/baileys');
 //
-let tokenPatch;
-if (parseInt(config.INDOCKER)) {
-	//
-	const containerHostname = os.hostname();
-	tokenPatch = `${config.PATCH_TOKENS}/${containerHostname}`;
-	//
-} else {
-	//
-	tokenPatch = `${config.PATCH_TOKENS}`;
-	//
-}
+const tokenPatch = parseInt(config.INDOCKER) ? path.join(config.PATCH_TOKENS, os.hostname()) : config.PATCH_TOKENS;
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
@@ -252,7 +242,7 @@ module.exports = class Instace {
 				"wh_connect": req?.body?.wh_connect ? req?.body?.wh_connect : null,
 			};
 			//
-			fs.writeJson(`${config.PATCH_TOKENS}/${SessionName}.startup.json`, startupRes, (err) => {
+			fs.writeJson(`${tokenPatch}/${SessionName}.startup.json`, startupRes, (err) => {
 				if (err) {
 					logger?.error(`- Erro: ${err}`);
 				} else {

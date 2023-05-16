@@ -19,7 +19,6 @@ if (!fs.existsSync(tokenPatch)) {
 class AllSessions {
 	static async getAllSessions() {
 		logger?.info(` - Getting sessions to auto start`);
-		logger?.info(` - Patch: ${tokenPatch}`);
 		let startup = [];
 		try {
 			const files = await fs.readdir(tokenPatch);
