@@ -1,6 +1,7 @@
 const moment = require('moment');
 moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
+const retrieving = require("../functions/retrieving");
 const Sessions = require("../controllers/sessions");
 const { logger } = require("../utils/logger");
 //
@@ -181,6 +182,8 @@ module.exports = class Groups {
 	) {
 		logger?.info("- Obtendo membros do grupo");
 		logger?.info(`- SessionName: ${SessionName}`);
+		//
+		let isGroup = await retrieving?.checkGroupStatus(SessionName, groupId);
 		//
 		var session = await Sessions?.getSession(SessionName);
 		return await session?.client?.groupMetadata(groupId).then(async (result) => {

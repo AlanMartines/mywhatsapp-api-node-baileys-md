@@ -402,7 +402,7 @@ module.exports = class Retrieving {
 	//
 	// ------------------------------------------------------------------------------------------------//
 	//
-	// Verificar o status do número
+	// Verificar grupo
 	static async checkGroupStatus(
 		SessionName,
 		groupID
@@ -412,8 +412,9 @@ module.exports = class Retrieving {
 		//
 		var session = await Sessions?.getSession(SessionName);
 		return await session?.client?.isJidGroup(groupID).then(([result]) => {
-			//logger?.info('Result: ', result); //return object success
+			logger?.info('Result: ', result); //return object success
 			//
+			/*
 			if (result?.exists == true) {
 				//
 				return {
@@ -433,6 +434,7 @@ module.exports = class Retrieving {
 				};
 				//
 			}
+			*/
 			//
 		}).catch((erro) => {
 			logger?.error(`- Error when: ${erro}`);
@@ -446,9 +448,6 @@ module.exports = class Retrieving {
 			//
 		});
 	} //checkGroupStatus
-	//
-	// ------------------------------------------------------------------------------------------------//
-	//
 	//
 	// ------------------------------------------------------------------------------------------------//
 	//
