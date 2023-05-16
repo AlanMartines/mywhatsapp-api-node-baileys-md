@@ -202,7 +202,7 @@ module.exports = class Groups {
 				"status": 200,
 				"groupId": groupId,
 				"groupMembers": groupMembers,
-				"message": 'Membros do grupo obtids com sucesso'
+				"message": 'Membros do grupo obtido com sucesso'
 			};
 			//
 			return resultRes;
