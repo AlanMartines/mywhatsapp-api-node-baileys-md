@@ -188,7 +188,7 @@ module.exports = class Groups {
 			//
 			var groupMembers = [];
 			//
-			await forEach(result?.participants, async (resultGroupMembers) => {
+			await result?.participants.forEach(async (resultGroupMembers) => {
 				//
 				groupMembers.push({
 					"user": resultGroupMembers?.id,
