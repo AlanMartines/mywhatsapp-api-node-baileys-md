@@ -176,12 +176,12 @@ module.exports = class Events {
 		try {
 			if (events['messages.upsert']) {
 				const m = events['messages.upsert'];
+				const msg = m?.messages[0];
 				//
 				//logger?.info(`- receiveMessage\n ${JSON.stringify(msg, null, 2)}`);
 				//
 				let type = null;
 				let response = {};
-				const msg = m?.messages[0];
 				let phone = dataSessions?.client?.user?.id?.split(":")[0];
 				//
 				if (msg?.key?.remoteJid != 'status@broadcast') {
