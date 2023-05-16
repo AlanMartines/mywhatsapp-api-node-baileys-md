@@ -523,6 +523,7 @@ module.exports = class Groups {
 		var session = await Sessions?.getSession(SessionName);
 		return await session?.client?.groupGetInviteInfo(inviteCode).then(async (result) => {
 			//logger?.info('Result: ', result); //return object success
+			//
 			return {
 				"erro": false,
 				"status": 200,
