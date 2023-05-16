@@ -804,9 +804,9 @@ module.exports = class Events {
 		try {
 			if (events['groups.upsert']) {
 				const groupsUpsert = events['groups.upsert'];
-				logger?.info(`- Groups upsert:\n ${JSON.stringify(groupsUpsert, null, 2)}`);
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Groups upsert`);
+				logger?.info(`- Groups upsert:\n ${JSON.stringify(groupsUpsert, null, 2)}`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -816,9 +816,9 @@ module.exports = class Events {
 		try {
 			if (events['groups.update']) {
 				const groupsUpdate = events['groups.update'];
-				logger?.info(`- Groups update:\n ${JSON.stringify(groupsUpdate, null, 2)}`);
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Groups update`);
+				logger?.info(`- Groups update:\n ${JSON.stringify(groupsUpdate, null, 2)}`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -828,9 +828,9 @@ module.exports = class Events {
 		try {
 			if (events['group-participants.update']) {
 				const participantsUpdate = events['group-participants.update'];
-				logger?.info(`- Group-participants update:\n ${JSON.stringify(participantsUpdate, null, 2)}`);
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Group participants update`);
+				logger?.info(`- Group-participants update:\n ${JSON.stringify(participantsUpdate, null, 2)}`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
