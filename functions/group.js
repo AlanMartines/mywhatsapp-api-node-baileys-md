@@ -183,8 +183,6 @@ module.exports = class Groups {
 		logger?.info("- Obtendo membros do grupo");
 		logger?.info(`- SessionName: ${SessionName}`);
 		//
-		let isGroup = await retrieving?.checkGroupStatus(SessionName, groupId);
-		//
 		var session = await Sessions?.getSession(SessionName);
 		return await session?.client?.groupMetadata(groupId).then(async (result) => {
 			//logger?.info('Result: ', result); //return object success
