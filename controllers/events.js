@@ -239,7 +239,7 @@ module.exports = class Events {
 					//
 					switch (type) {
 						case 'text':
-							logger?.info(`- Message type: ${type}`);
+							logger?.info('- Message text');
 							//
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
