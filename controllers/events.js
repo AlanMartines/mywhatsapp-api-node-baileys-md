@@ -229,7 +229,7 @@ module.exports = class Events {
 					} else {
 						type = undefined;
 						//
-						logger?.info(`- Desculpe, estamos sem nenhuma resposta.`);
+						logger?.info(`- Desculpe, estamos sem nenhuma resposta no momento.`);
 						logger?.error(msg?.message);
 						//
 					}
