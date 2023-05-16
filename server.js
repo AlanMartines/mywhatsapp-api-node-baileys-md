@@ -346,7 +346,7 @@ process.on('beforeExit', code => {
 });
 // Emitido na saída de um processo do Node
 process.on('exit', code => {
-	logger?.info(` - Process exited with code: ${code}`)
+	logger?.info(`- Process exited with code: ${code}`)
 });
 // Evento emitido pelo Sistema Operacional ou gerenciador de processos como PM2 envia sinal para terminar o processo node
 process.on('SIGTERM', signal => {
@@ -355,7 +355,7 @@ process.on('SIGTERM', signal => {
 });
 // Evento emitido pelo Sistema Operacional ou gerenciador de processos como PM2 interrompe o processo node
 process.on('SIGINT', signal => {
-	logger?.info(` - Process ${process.pid} has been interrupted`)
+	logger?.info(`- Process ${process.pid} has been interrupted`)
 	process.exit(0);
 });
 // Evento é emitido Quando um erro de JavaScript não é tratado corretamente
