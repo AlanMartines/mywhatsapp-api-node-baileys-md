@@ -175,6 +175,9 @@ module.exports = class Events {
 		let dataSessions = await Sessions?.getSession(SessionName);
 		try {
 			if (events['messages.upsert']) {
+					//
+					logger?.info(`- SessionName: ${SessionName}`);
+					//
 				const m = events['messages.upsert'];
 				const msg = m?.messages[0];
 				//
@@ -229,6 +232,7 @@ module.exports = class Events {
 					} else {
 						type = undefined;
 						//
+						logger?.info(`- Message type: ${type}`);
 						logger?.info(`- Desculpe, estamos sem nenhuma resposta no momento.`);
 						logger?.error(msg?.message);
 						//
@@ -236,12 +240,9 @@ module.exports = class Events {
 					//
 					// }
 					//
-					logger?.info(`- SessionName: ${SessionName}`);
-					logger?.info(`- Message type: ${type}`);
-					//
 					switch (type) {
 						case 'text':
-							logger?.info('- Message text');
+							logger?.info('- Message type: text');
 							//
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
@@ -258,7 +259,7 @@ module.exports = class Events {
 							}
 							break;
 						case 'image':
-							logger?.info('- Message image');
+							logger?.info('- Message type: image');
 							//
 							var buffer = await downloadMediaMessage(msg, 'buffer');
 							var string64 = buffer.toString('base64');
@@ -284,7 +285,7 @@ module.exports = class Events {
 							//
 							break;
 						case 'sticker':
-							logger?.info('- Message sticker');
+							logger?.info('- Message type: sticker');
 							//
 							var buffer = await downloadMediaMessage(msg, 'buffer');
 							var string64 = buffer.toString('base64');
@@ -311,7 +312,7 @@ module.exports = class Events {
 							//
 							break;
 						case 'audio':
-							logger?.info('- Message audio');
+							logger?.info('- Message type: audio');
 							//
 							var buffer = await downloadMediaMessage(msg, 'buffer');
 							var string64 = buffer.toString('base64');
@@ -336,11 +337,9 @@ module.exports = class Events {
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							//
-							//await transcription.transAudio(response?.mimetype, response?.base64);
-							//
 							break;
 						case 'video':
-							logger?.info('- Message video');
+							logger?.info('- Message type: video');
 							//
 							var buffer = await downloadMediaMessage(msg, 'buffer');
 							var string64 = buffer.toString('base64');
@@ -364,7 +363,7 @@ module.exports = class Events {
 							//
 							break;
 						case 'location':
-							logger?.info('- Message location');
+							logger?.info('- Message type: location');
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
@@ -382,7 +381,7 @@ module.exports = class Events {
 							}
 							break;
 						case 'liveLocation':
-							logger?.info('- Message liveLocation');
+							logger?.info('- Message type: liveLocation');
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
@@ -401,7 +400,7 @@ module.exports = class Events {
 							}
 							break;
 						case 'document':
-							logger?.info('- Message document');
+							logger?.info('- Message type: document');
 							//
 							var buffer = await downloadMediaMessage(msg, 'buffer');
 							var string64 = buffer.toString('base64');
@@ -426,7 +425,7 @@ module.exports = class Events {
 							//
 							break;
 						case 'documentWithCaptionMessage':
-							logger?.info('- Message documentWithCaptionMessage');
+							logger?.info('- Message type: documentWithCaptionMessage');
 							//
 							var buffer = await downloadMediaMessage(msg, 'buffer');
 							var string64 = buffer.toString('base64');
@@ -451,7 +450,7 @@ module.exports = class Events {
 							//
 							break;
 						case 'vcard':
-							logger?.info('- Message vcard');
+							logger?.info('- Message type: vcard');
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
@@ -468,6 +467,7 @@ module.exports = class Events {
 							}
 							break;
 						case 'button':
+							logger?.info('- Message type: button');
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
@@ -483,6 +483,7 @@ module.exports = class Events {
 							}
 							break;
 						case 'buttonsResponse':
+							logger?.info('- Message type: buttonsResponse');
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
@@ -498,6 +499,7 @@ module.exports = class Events {
 							}
 							break;
 						case 'templateMessage':
+							logger?.info('- Message type: templateMessage');
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
@@ -513,6 +515,7 @@ module.exports = class Events {
 							}
 							break;
 						case 'templateResponse':
+							logger?.info('- Message type: templateResponse');
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
@@ -529,6 +532,7 @@ module.exports = class Events {
 							}
 							break;
 						case 'listMessage':
+							logger?.info('- Message type: listMessage');
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
@@ -544,6 +548,7 @@ module.exports = class Events {
 							}
 							break;
 						case 'listResponseMessage':
+							logger?.info('- Message type: listResponseMessage');
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
@@ -559,7 +564,7 @@ module.exports = class Events {
 							}
 							break;
 						case 'extended':
-							logger?.info('- Message extended');
+							logger?.info('- Message type: extended');
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
@@ -580,7 +585,7 @@ module.exports = class Events {
 							}
 							break;
 						case 'historySync':
-							logger?.info('- Message historySync');
+							logger?.info('- Message type: historySync');
 							//
 							response = {
 								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
@@ -596,7 +601,7 @@ module.exports = class Events {
 							//
 							break;
 						case 'reactionMessage':
-							logger?.info('- Message reactionMessage');
+							logger?.info('- Message type: reactionMessage');
 							//
 							response = {
 								"wook": msg?.message?.reactionMessage?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
