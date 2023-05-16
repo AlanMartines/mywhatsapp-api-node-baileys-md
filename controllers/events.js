@@ -192,7 +192,8 @@ module.exports = class Events {
 				//
 				if (msg?.key?.remoteJid != 'status@broadcast') {
 					//
-					//if (m.type === 'notify' || m.type === 'append') {
+					//if (m.type === 'notify' || m.type === 'append') { }
+					//
 					logger?.info(`- Message of type: ${m?.type}`);
 					//
 					if (msg?.message?.locationMessage) {
@@ -243,7 +244,75 @@ module.exports = class Events {
 						//
 					}
 					//
-					// }
+					switch (m?.type) {
+						case 'location':
+							type = 'location';
+							break;
+						case 'liveLocation':
+							type = 'liveLocation';
+							break;
+						case 'image':
+							type = 'image';
+							break;
+						case 'document':
+							type = 'document';
+							break;
+						case 'documentWithCaptionMessage':
+							type = 'documentWithCaptionMessage';
+							break;
+						case 'audio':
+							type = 'audio';
+							break;
+						case 'vcard':
+							type = 'vcard';
+							break;
+						case 'text':
+							type = 'text';
+							break;
+						case 'extended':
+							type = 'extended';
+							break;
+						case 'video':
+							type = 'video';
+							break;
+						case 'sticker':
+							type = 'sticker';
+							break;
+						case 'button':
+							type = 'button';
+							break;
+						case 'buttonsResponse':
+							type = 'buttonsResponse';
+							break;
+						case 'templateMessage':
+							type = 'templateMessage';
+							break;
+						case 'templateResponse':
+							type = 'templateResponse';
+							break;
+						case 'listMessage':
+							type = 'listMessage';
+							break;
+						case 'listResponseMessage':
+							type = 'listResponseMessage';
+							break;
+						case 'historySync':
+							type = 'historySync';
+							break;
+						case 'reactionMessage':
+							type = 'reactionMessage';
+							break;
+						case 'poll':
+							type = 'poll';
+							break;
+						default:
+							type = undefined;
+							//
+							logger?.info(`- Desculpe, estamos sem nenhuma resposta no momento.`);
+							logger?.error(msg?.message);
+							//
+							break;
+					}
 					//
 					switch (type) {
 						case 'text':
@@ -650,7 +719,7 @@ module.exports = class Events {
 						//
 					}
 					//
-				}else{
+				} else {
 					//
 					logger?.info(`- SessionName: ${SessionName}`);
 					logger?.info(`- Message type: status@broadcast`);
