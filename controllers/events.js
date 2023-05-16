@@ -244,6 +244,7 @@ module.exports = class Events {
 						//
 					}
 					//
+					/*
 					switch (m?.type) {
 						case 'location':
 							type = 'location';
@@ -313,6 +314,7 @@ module.exports = class Events {
 							//
 							break;
 					}
+					*/
 					//
 					switch (type) {
 						case 'text':
