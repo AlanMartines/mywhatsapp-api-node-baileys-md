@@ -805,7 +805,7 @@ module.exports = class Events {
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
-			logger?.error(`- Error blocklist set event ${error}`);
+			logger?.error(`- Error groups upsert event ${error}`);
 		}
 		//
 		try {
@@ -817,19 +817,19 @@ module.exports = class Events {
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
-			logger?.error(`- Error chats deleted event ${error}`);
+			logger?.error(`- Error groups update event ${error}`);
 		}
 		//
 		try {
 			if (events['group-participants.update']) {
 				const participantsUpdate = events['group-participants.update'];
-				//logger?.info(`- Proup-participants update: ${JSON.stringify(participantsUpdate, null, 2)}`);
+				//logger?.info(`- Group-participants update: ${JSON.stringify(participantsUpdate, null, 2)}`);
 				logger?.info(`- SessionName: ${SessionName}`);
-				logger?.info(`- Proup-participants update`);
+				logger?.info(`- Group participants update`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
-			logger?.error(`- Error chats deleted event ${error}`);
+			logger?.error(`- Error group participants update event ${error}`);
 		}
 		//
 	}
