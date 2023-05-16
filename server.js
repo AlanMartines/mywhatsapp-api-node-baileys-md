@@ -148,6 +148,9 @@ START_ALL_SESSIONS=1
 # Caso queira forçar a reconexão da API em caso de desconexão do WhatsApp defina true
 FORCE_CONNECTION_USE_HERE=0
 #
+# Deleta os arquivos não usados do Baileys
+DELETE_FILE_UNUSED=0
+#
 `;
 		logger?.info(`- Modelo do arquivo de configuração:\n ${modelo}`);
 		process.exit(1);
