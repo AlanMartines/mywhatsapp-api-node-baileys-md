@@ -187,7 +187,6 @@ module.exports = class Events {
 				if (msg?.key?.remoteJid != 'status@broadcast') {
 					//
 					//if (m.type === 'notify' || m.type === 'append') {
-					logger?.info(`- Type: ${SessionName}`);
 					//
 					if (msg?.message?.locationMessage) {
 						type = 'location';
@@ -236,6 +235,9 @@ module.exports = class Events {
 					}
 					//
 					// }
+					//
+					logger?.info(`- SessionName: ${SessionName}`);
+					logger?.info(`- Message type: ${type}`);
 					//
 					switch (type) {
 						case 'text':
