@@ -193,6 +193,7 @@ module.exports = class Events {
 				if (msg?.key?.remoteJid != 'status@broadcast') {
 					//
 					//if (m.type === 'notify' || m.type === 'append') {
+					logger?.info(`- Message type: ${m?.type}`);
 					//
 					if (msg?.message?.locationMessage) {
 						type = 'location';
@@ -232,10 +233,11 @@ module.exports = class Events {
 						type = 'historySync';
 					} else if (msg?.message?.reactionMessage) {
 						type = 'reactionMessage';
+					} else if (msg?.message?.pollCreationMessageV3) {
+						type = 'poll';
 					} else {
 						type = undefined;
 						//
-						logger?.info(`- Message type: ${type}`);
 						logger?.info(`- Desculpe, estamos sem nenhuma resposta no momento.`);
 						logger?.error(msg?.message);
 						//
