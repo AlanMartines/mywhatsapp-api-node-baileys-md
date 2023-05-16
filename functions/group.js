@@ -191,7 +191,7 @@ module.exports = class Groups {
 			await result?.participants.forEach(async (resultGroupMembers) => {
 				//
 				groupMembers.push({
-					"user": resultGroupMembers?.id,
+					"user": resultGroupMembers?.id.split('@')[0],
 					"admin": resultGroupMembers?.admin
 				});
 				//
