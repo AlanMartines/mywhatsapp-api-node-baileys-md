@@ -411,7 +411,7 @@ module.exports = class Retrieving {
 		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = await Sessions?.getSession(SessionName);
-		return await session?.client?.isJidGroup(groupID).then(([result]) => {
+		return await isJidGroup(groupID).then(async (result) => {
 			logger?.info('Result: ', result); //return object success
 			//
 			/*
