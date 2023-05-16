@@ -319,6 +319,8 @@ FORCE_CONNECTION_USE_HERE=0
 					if (result != undefined) {
 						//logger.error(result);
 						logger?.info(` - AllSessions:\n ${result}`);
+					}else{
+						logger?.info(` - AllSessions not work`);
 					}
 				}
 
