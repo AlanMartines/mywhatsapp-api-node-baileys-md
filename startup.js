@@ -24,6 +24,7 @@ class AllSessions {
 		try {
 			const files = await fs.readdir(tokenPatch);
 			files.forEach(file => {
+				logger?.info(`- File: ${file}`);
 				if (file.includes('.startup.json')) {
 					startup.push(file.split('.')[0]);
 				}
