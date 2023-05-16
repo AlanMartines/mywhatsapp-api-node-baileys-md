@@ -234,7 +234,7 @@ module.exports = class Events {
 						type = 'historySync';
 					} else if (msg?.message?.reactionMessage) {
 						type = 'reactionMessage';
-					} else if (msg?.message?.pollCreationMessageV3) {
+					} else if (msg?.message?.pollUpdateMessage) {
 						type = 'poll';
 					} else {
 						type = undefined;
