@@ -62,7 +62,8 @@ module.exports = class Events {
 			if (events['messages.update']) {
 				const message = events['messages.update'];
 				logger?.info(`- SessionName: ${SessionName}`);
-				//logger?.info(`- Messages update: ${JSON.stringify(message, null, 2)}`);
+				logger?.info(`- Messages update`);
+				//logger?.info(`${JSON.stringify(message, null, 2)}`);
 				// logic of your application...
 				let phone = dataSessions?.client?.user?.id?.split(":")[0];
 				let onAck = message[0]?.update?.status;
@@ -103,7 +104,7 @@ module.exports = class Events {
 			}
 		} catch (error) {
 			logger?.error(`- SessionName: ${SessionName}`);
-			logger?.error(`- Error onAck ${error}`);
+			logger?.error(`- Error messages update event ${error}`);
 		}
 	}
 	//
@@ -113,24 +114,25 @@ module.exports = class Events {
 		try {
 			if (events['contacts.set']) {
 				const contacts = JSON.parse(events['contacts.set']);
-				//logger?.info(`- Contacts upsert: ${JSON.stringify(contacts, null, 2)}`);
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Contacts set`);
+				//logger?.info(`${JSON.stringify(contacts, null, 2)}`);
 				//
 
 				//
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
-			logger?.error(`- Error message-receipt update event ${error}`);
+			logger?.error(`- Error contacts set event ${error}`);
 		}
 		//
 		try {
 			if (events['contacts.upsert']) {
-				const contacts = JSON.parse(events['contacts.upsert']);
-				//logger?.info(`- Contacts upsert: ${JSON.stringify(contacts, null, 2)}`);
+				//const contacts = JSON.parse(events['contacts.upsert']);
+				const contacts = events['contacts.upsert'];
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Contacts upsert`);
+				//logger?.info(`${JSON.stringify(contacts, null, 2)}`);
 				//
 				/*
 				try {
@@ -149,7 +151,7 @@ module.exports = class Events {
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
-			logger?.error(`- Error message-receipt update event ${error}`);
+			logger?.error(`- Error contacts upsert event ${error}`);
 		}
 		//
 		try {
@@ -175,9 +177,10 @@ module.exports = class Events {
 		let dataSessions = await Sessions?.getSession(SessionName);
 		try {
 			if (events['messages.upsert']) {
-					//
-					logger?.info(`- SessionName: ${SessionName}`);
-					//
+				//
+				logger?.info(`- SessionName: ${SessionName}`);
+				logger?.info(`- Messages upsert`);
+				//
 				const m = events['messages.upsert'];
 				const msg = m?.messages[0];
 				//
@@ -654,7 +657,7 @@ module.exports = class Events {
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
-			logger?.error(`- Error onAnyMessage: ${error}`);
+			logger?.error(`- Error messages upsert: ${error}`);
 		}
 		//
 		try {
@@ -739,9 +742,9 @@ module.exports = class Events {
 		try {
 			if (events['chats.upsert']) {
 				const chatsUpsert = events['chats.upsert'];
-				//logger?.info(`- Chats upsert: ${JSON.stringify(chatsUpsert, null, 2)}`);
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Chats upsert`);
+				//logger?.info(`${JSON.stringify(chatsUpsert, null, 2)}`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -751,9 +754,9 @@ module.exports = class Events {
 		try {
 			if (events['chats.update']) {
 				const chatsUpdate = events['chats.update'];
-				//logger?.info(`- Chats update: ${JSON.stringify(chatsUpdate, null, 2)}`);
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Chats update`);
+				//logger?.info(`${JSON.stringify(chatsUpdate, null, 2)}`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -763,9 +766,9 @@ module.exports = class Events {
 		try {
 			if (events['chats.delete']) {
 				const chatsDelete = events['chats.delete'];
-				//logger?.info(`- Chats deleted: ${JSON.stringify(chatsDelete, null, 2)}`);
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Chats deleted`);
+				//logger?.info(`${JSON.stringify(chatsDelete, null, 2)}`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -780,9 +783,9 @@ module.exports = class Events {
 		try {
 			if (events['blocklist.set']) {
 				const blocklistSet = events['blocklist.set'];
-				//logger?.info(`- Blocklist: ${JSON.stringify(blocklistSet, null, 2)}`);
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Blocklist set`);
+				//logger?.info(`${JSON.stringify(blocklistSet, null, 2)}`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -792,9 +795,9 @@ module.exports = class Events {
 		try {
 			if (events['blocklist.update']) {
 				const blocklistUpdate = events['blocklist.update'];
-				//logger?.info(`- Blocklist update: ${JSON.stringify(blocklistUpdate, null, 2)}`);
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Blocklist update`);
+				//logger?.info(`${JSON.stringify(blocklistUpdate, null, 2)}`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
