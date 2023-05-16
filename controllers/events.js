@@ -811,7 +811,7 @@ module.exports = class Events {
 				const groupsUpsert = events['groups.upsert'];
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Groups upsert`);
-				logger?.info(`- Groups upsert:\n ${JSON.stringify(groupsUpsert, null, 2)}`);
+				//logger?.info(`${JSON.stringify(groupsUpsert, null, 2)}`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -823,7 +823,7 @@ module.exports = class Events {
 				const groupsUpdate = events['groups.update'];
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Groups update`);
-				logger?.info(`- Groups update:\n ${JSON.stringify(groupsUpdate, null, 2)}`);
+				//logger?.info(`${JSON.stringify(groupsUpdate, null, 2)}`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -835,7 +835,7 @@ module.exports = class Events {
 				const participantsUpdate = events['group-participants.update'];
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Group participants update`);
-				logger?.info(`- Group-participants update:\n ${JSON.stringify(participantsUpdate, null, 2)}`);
+				//logger?.info(`${JSON.stringify(participantsUpdate, null, 2)}`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
