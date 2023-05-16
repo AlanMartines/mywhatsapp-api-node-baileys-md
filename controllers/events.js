@@ -640,6 +640,11 @@ module.exports = class Events {
 						//
 					}
 					//
+				}else{
+					//
+					logger?.info(`- SessionName: ${SessionName}`);
+					logger?.info(`- Message type: status@broadcast`);
+					//
 				}
 			}
 		} catch (error) {
