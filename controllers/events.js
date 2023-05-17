@@ -77,21 +77,27 @@ module.exports = class Events {
 				logger?.info(`- Messages update`);
 				//logger?.info(`${JSON.stringify(message, null, 2)}`);
 				//
-				/*
-				for (const { key, update } of message) {
-					if (update.pollUpdates) {
-						const pollCreation = await getMessage(dataSessions, key)
-						if (pollCreation) {
-							console.log('got poll update, aggregation: ',
-								getAggregateVotesInPollMessage({
-									message: pollCreation,
-									pollUpdates: update.pollUpdates,
-								})
-							)
-						}
-					}
-				}
-				*/
+        for (const { key, update } of message) {
+            if (update.pollUpdates) {
+                const pollCreation = await getMessage(dataSessions, key);
+                if (pollCreation) {
+                    const pollMessage = await getAggregateVotesInPollMessage({
+                        message: pollCreation,
+                        pollUpdates: update.pollUpdates,
+                    })
+                    const [messageCtx] = m;
+
+                    let payload = {
+                        ...messageCtx,
+                        body: pollMessage.find(poll => poll.voters.length > 0)?.name || '',
+                        from: key.remoteJid,
+                        voters: pollCreation,
+                        type: 'poll'
+                    };
+										logger?.info(`${JSON.stringify(payload, null, 2)}`);
+                }
+            }
+        }
 				//
 				// logic of your application...
 				let phone = dataSessions?.client?.user?.id?.split(":")[0];
