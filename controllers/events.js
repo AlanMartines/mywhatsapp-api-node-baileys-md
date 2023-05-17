@@ -1,5 +1,5 @@
 //
-const { downloadMediaMessage, getAggregateVotesInPollMessage } = require('@adiwajshing/baileys');
+const { downloadMediaMessage, getAggregateVotesInPollMessage, proto } = require('@adiwajshing/baileys');
 //
 const webhooks = require('./webhooks');
 const Sessions = require('./sessions');
@@ -38,9 +38,9 @@ function convertHMS(value) {
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
-async function getMessage(key) {
-  if (store) {
-    const msg = await store.loadMessage(key.remoteJid, key.id);
+async function getMessage(dataSessions, key) {
+  if (dataSessions?.client) {
+    const msg = await dataSessions?.client?.loadMessage(key.remoteJid, key.id);
     return msg?.message || undefined;
   }
 
@@ -723,7 +723,7 @@ module.exports = class Events {
 							/*
 							for (const { key, update } of msg) {
 								if (update.pollUpdates) {
-									const pollCreation = await getMessage(key)
+									const pollCreation = await getMessage(dataSessions, key)
 									if (pollCreation) {
 										console.log('got poll update, aggregation: ',
 											getAggregateVotesInPollMessage({
