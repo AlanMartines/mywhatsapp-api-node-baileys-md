@@ -72,7 +72,8 @@ module.exports = class Events {
 		let dataSessions = await Sessions?.getSession(SessionName);
 		try {
 			if (events['messages.update']) {
-				const message = events['messages.update'];
+				//const message = events['messages.update'];
+				const { messages, key } = events['messages.update'];
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Messages update`);
 				//logger?.info(`${JSON.stringify(message, null, 2)}`);
@@ -101,7 +102,7 @@ module.exports = class Events {
 				//
 				// logic of your application...
 				let phone = dataSessions?.client?.user?.id?.split(":")[0];
-				let onAck = message[0]?.update?.status;
+				let onAck = messages[0]?.update?.status;
 				//logger?.info(`- onAck: ${onAck}`);
 				let status;
 				switch (onAck) {
@@ -128,9 +129,9 @@ module.exports = class Events {
 				let response = {
 					"wook": 'MESSAGE_STATUS',
 					"status": status,
-					"id": message[0]?.key?.id,
-					"from": message[0]?.key?.fromMe == true ? phone : message[0]?.key?.remoteJid?.split(':')[0].split('@')[0],
-					"to": message[0]?.key?.fromMe == false ? phone : message[0]?.key?.remoteJid?.split(':')[0].split('@')[0],
+					"id": messages[0]?.key?.id,
+					"from": messages[0]?.key?.fromMe == true ? phone : messages[0]?.key?.remoteJid?.split(':')[0].split('@')[0],
+					"to": messages[0]?.key?.fromMe == false ? phone : messages[0]?.key?.remoteJid?.split(':')[0].split('@')[0],
 					"dateTime": moment(new Date())?.format('YYYY-MM-DD HH:mm:ss')
 				}
 				dataSessions?.funcoesSocket?.ack(SessionName, response);
