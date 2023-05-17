@@ -705,7 +705,7 @@ module.exports = class Events {
 						case 'pollVote':
 							logger?.info('- Message type: pollVote');
 							//
-							logger?.info(msg?);
+							logger?.info(msg);
 							//
 							/*
 							for (const { key, update } of msg) {
