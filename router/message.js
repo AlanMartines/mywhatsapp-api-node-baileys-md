@@ -1797,7 +1797,7 @@ router.post("/sendPoll", upload.none(''), verifyToken.verify, async (req, res, n
 						var sendPoll = await message?.sendPoll(
 							resSessionName,
 							checkNumberStatus.number,
-							req.body.poll,
+							req.body.PollMessageOptions,
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
