@@ -76,6 +76,21 @@ module.exports = class Events {
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Messages update`);
 				//logger?.info(`${JSON.stringify(message, null, 2)}`);
+				//
+				for (const { key, update } of message) {
+					if (update.pollUpdates) {
+						const pollCreation = await getMessage(dataSessions, key)
+						if (pollCreation) {
+							console.log('got poll update, aggregation: ',
+								getAggregateVotesInPollMessage({
+									message: pollCreation,
+									pollUpdates: update.pollUpdates,
+								})
+							)
+						}
+					}
+				}
+				//
 				// logic of your application...
 				let phone = dataSessions?.client?.user?.id?.split(":")[0];
 				let onAck = message[0]?.update?.status;
@@ -772,34 +787,6 @@ module.exports = class Events {
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
 			logger?.error(`- Error message delete event ${error}`);
-		}
-		//
-		try {
-			if (events['message.update']) {
-				const messageupdate = events['message.update'];
-				logger?.info(`- SessionName: ${SessionName}`);
-				logger?.info(`- Message update`);
-				logger?.info(`${JSON.stringify(messageupdate, null, 2)}`);
-				//
-				/*
-				for (const { key, update } of messageupdate) {
-					if (update.pollUpdates) {
-						const pollCreation = await getMessage(dataSessions, key)
-						if (pollCreation) {
-							console.log('got poll update, aggregation: ',
-								getAggregateVotesInPollMessage({
-									message: pollCreation,
-									pollUpdates: update.pollUpdates,
-								})
-							)
-						}
-					}
-				}
-				*/
-			}
-		} catch (error) {
-			logger?.info(`- SessionName: ${SessionName}`);
-			logger?.error(`- Error message update event ${error}`);
 		}
 		//
 		try {
