@@ -1764,7 +1764,7 @@ router.post("/sendPoll", upload.none(''), verifyToken.verify, async (req, res, n
 		var resSessionName = theSessionName;
 	}
 	//
-	if (!resSessionName || !req.body.phonefull || !req.body.poll) {
+	if (!resSessionName || !req.body.phonefull || !req.body.PollMessageOptions) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
