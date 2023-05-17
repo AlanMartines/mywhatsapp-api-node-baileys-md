@@ -699,7 +699,7 @@ module.exports = class Events {
 						case 'poll':
 							logger?.info('- Message type: poll');
 							//
-							logger?.info(JSON.stringify(msg?.message));
+							logger?.info(msg?.message);
 							//
 							break;
 						default:
@@ -760,7 +760,7 @@ module.exports = class Events {
 				const messageupdate = events['message.update'];
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Message update`);
-				//logger?.info(`- Message update: ${JSON.stringify(messageupdate, null, 2)}`);
+				logger?.info(`- Message update: ${JSON.stringify(messageupdate, null, 2)}`);
 				//
 				for (const { key, update } of messageupdate) {
 					if (update.pollUpdates) {
