@@ -38,6 +38,18 @@ function convertHMS(value) {
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
+async function getMessage(key) {
+  if (store) {
+    const msg = await store.loadMessage(key.remoteJid, key.id);
+    return msg?.message || undefined;
+  }
+
+  // apenas se o store estiver presente
+  return proto.Message.fromObject({});
+}
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
 module.exports = class Events {
 	//
 	static async statusConnection(SessionName, events) {
