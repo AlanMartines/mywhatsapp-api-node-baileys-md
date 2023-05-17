@@ -59,7 +59,10 @@ const {
 	useMultiFileAuthState,
 	makeCacheableSignalKeyStore,
 	isJidBroadcast,
-	MessageRetryMap
+	MessageRetryMap,
+	getAggregateVotesInPollMessage, 
+	WAMessageContent, 
+	WAMessageKey
 } = require('@adiwajshing/baileys');
 //
 const tokenPatch = parseInt(config.INDOCKER) ? path.join(config.PATCH_TOKENS, os.hostname()) : config.PATCH_TOKENS;

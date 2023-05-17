@@ -1,5 +1,5 @@
 //
-const { downloadMediaMessage } = require('@adiwajshing/baileys');
+const { downloadMediaMessage, getAggregateVotesInPollMessage } = require('@adiwajshing/baileys');
 //
 const webhooks = require('./webhooks');
 const Sessions = require('./sessions');
@@ -699,7 +699,21 @@ module.exports = class Events {
 						case 'poll':
 							logger?.info('- Message type: poll');
 							//
-							logger?.info(msg?.message);
+							logger?.info(JSON.stringify(msg?.message));
+							//
+							for(const { key, update } of events['messages.update']) {
+								if(update.pollUpdates) {
+									const pollCreation = await getMessage(key)
+									if(pollCreation) {
+										console.log('got poll update, aggregation: ',
+											getAggregateVotesInPollMessage({
+												message: pollCreation,
+												pollUpdates: update.pollUpdates,
+											})
+										)
+									}
+								}
+							}
 							//
 							break;
 						default:
