@@ -234,7 +234,11 @@ module.exports = class Events {
 						type = 'historySync';
 					} else if (msg?.message?.reactionMessage) {
 						type = 'reactionMessage';
-					} else if (msg?.message?.pollUpdateMessage) {
+					} else if (msg?.message?.pollCreationMessage) {
+						type = 'poll';
+					} else if (msg?.message?.pollCreationMessageV2) {
+						type = 'poll';
+					} else if (msg?.message?.pollCreationMessageV3) {
 						type = 'poll';
 					} else {
 						type = undefined;
