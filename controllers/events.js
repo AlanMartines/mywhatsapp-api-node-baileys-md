@@ -720,22 +720,6 @@ module.exports = class Events {
 							//
 							logger?.info(msg);
 							//
-							/*
-							for (const { key, update } of msg) {
-								if (update.pollUpdates) {
-									const pollCreation = await getMessage(dataSessions, key)
-									if (pollCreation) {
-										console.log('got poll update, aggregation: ',
-											getAggregateVotesInPollMessage({
-												message: pollCreation,
-												pollUpdates: update.pollUpdates,
-											})
-										)
-									}
-								}
-							}
-							*/
-							//
 							break;
 						default:
 						//
@@ -796,6 +780,22 @@ module.exports = class Events {
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Message update`);
 				logger?.info(`${JSON.stringify(messageupdate, null, 2)}`);
+				//
+				/*
+				for (const { key, update } of messageupdate) {
+					if (update.pollUpdates) {
+						const pollCreation = await getMessage(dataSessions, key)
+						if (pollCreation) {
+							console.log('got poll update, aggregation: ',
+								getAggregateVotesInPollMessage({
+									message: pollCreation,
+									pollUpdates: update.pollUpdates,
+								})
+							)
+						}
+					}
+				}
+				*/
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
