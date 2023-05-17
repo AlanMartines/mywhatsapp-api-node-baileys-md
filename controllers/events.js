@@ -238,8 +238,8 @@ module.exports = class Events {
 						type = 'poll';
 					} else if (msg?.message?.pollCreationMessageV2) {
 						type = 'poll';
-					} else if (msg?.message?.pollCreationMessageV3) {
-						type = 'poll';
+					} else if (msg?.message?.pollUpdateMessage) {
+						type = 'pollVote';
 					} else {
 						type = undefined;
 						//
@@ -702,6 +702,28 @@ module.exports = class Events {
 							logger?.info(msg?.message);
 							//
 							break;
+						case 'pollVote':
+							logger?.info('- Message type: pollVote');
+							//
+							logger?.info(msg?);
+							//
+							/*
+							for (const { key, update } of msg) {
+								if (update.pollUpdates) {
+									const pollCreation = await getMessage(key)
+									if (pollCreation) {
+										console.log('got poll update, aggregation: ',
+											getAggregateVotesInPollMessage({
+												message: pollCreation,
+												pollUpdates: update.pollUpdates,
+											})
+										)
+									}
+								}
+							}
+							*/
+							//
+							break;
 						default:
 						//
 						/*
@@ -760,22 +782,7 @@ module.exports = class Events {
 				const messageupdate = events['message.update'];
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Message update`);
-				logger?.info(`- Message update: ${JSON.stringify(messageupdate, null, 2)}`);
-				//
-				for (const { key, update } of messageupdate) {
-					if (update.pollUpdates) {
-						const pollCreation = await getMessage(key)
-						if (pollCreation) {
-							console.log('got poll update, aggregation: ',
-								getAggregateVotesInPollMessage({
-									message: pollCreation,
-									pollUpdates: update.pollUpdates,
-								})
-							)
-						}
-					}
-				}
-				//
+				//logger?.info(`- Message update: ${JSON.stringify(messageupdate, null, 2)}`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
