@@ -77,6 +77,7 @@ module.exports = class Events {
 				logger?.info(`- Messages update`);
 				//logger?.info(`${JSON.stringify(message, null, 2)}`);
 				//
+				/*
 				for (const { key, update } of message) {
 					if (update.pollUpdates) {
 						const pollCreation = await getMessage(dataSessions, key)
@@ -90,6 +91,7 @@ module.exports = class Events {
 						}
 					}
 				}
+				*/
 				//
 				// logic of your application...
 				let phone = dataSessions?.client?.user?.id?.split(":")[0];
