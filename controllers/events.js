@@ -72,8 +72,7 @@ module.exports = class Events {
 		let dataSessions = await Sessions?.getSession(SessionName);
 		try {
 			if (events['messages.update']) {
-				//const message = events['messages.update'];
-				const { messages, key } = events['messages.update'];
+				const messages = events['messages.update'];
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Messages update`);
 				//logger?.info(`${JSON.stringify(message, null, 2)}`);
