@@ -699,7 +699,7 @@ module.exports = class Events {
 						case 'poll':
 							logger?.info('- Message type: poll');
 							//
-							console.log(msg?.message);
+							logger?.info(msg?.message);
 							//
 							break;
 						default:
