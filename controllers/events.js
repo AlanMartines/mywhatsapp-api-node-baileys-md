@@ -689,6 +689,7 @@ module.exports = class Events {
 								"type": 'reactionMessage',
 								"fromMe": msg?.message?.reactionMessage?.key?.fromMe,
 								"id": msg?.message?.reactionMessage?.key?.id,
+								"name": msg?.pushName || msg?.verifiedBizName || null,
 								"from": msg?.message?.reactionMessage?.key?.fromMe == true ? phone : msg?.message?.reactionMessage?.key?.remoteJid?.split('@')[0],
 								"to": msg?.message?.reactionMessage?.key?.fromMe == false ? phone : msg?.message?.reactionMessage?.key?.remoteJid?.split('@')[0],
 								"content": msg?.message?.reactionMessage?.text,
@@ -782,7 +783,7 @@ module.exports = class Events {
 				const messageupdate = events['message.update'];
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Message update`);
-				//logger?.info(`- Message update: ${JSON.stringify(messageupdate, null, 2)}`);
+				logger?.info(`- Message update: ${JSON.stringify(messageupdate, null, 2)}`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
