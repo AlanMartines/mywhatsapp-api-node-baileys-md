@@ -727,9 +727,31 @@ module.exports = class Events {
 						case 'poll':
 							logger?.info('- Message type: poll');
 							//
+							logger?.info(msg);
+							//
+							/*
+							logger?.info(`- Desculpe, estamos sem nenhuma resposta.`);
+							logger?.error(msg?.message);
+							//
+							response = {
+								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
+								"type": 'undefined',
+								"fromMe": msg?.key?.fromMe,
+								"id": msg?.key?.id,
+								"name": msg?.pushName || msg?.verifiedBizName || null,
+								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
+								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
+							}
+							*/
+							//
 							break;
 						case 'pollVote':
 							logger?.info('- Message type: pollVote');
+							//
+							//logger?.info(msg);
 							//
 							break;
 						default:
