@@ -78,7 +78,7 @@ module.exports = class Events {
 				logger?.info(`- Messages update`);
 				//logger?.info(`${JSON.stringify(message, null, 2)}`);
 				//
-        for (const { key, update } of message) {
+        for (const { key, update } of messages) {
             if (update.pollUpdates) {
                 const pollCreation = await getMessage(dataSessions, key);
                 if (pollCreation) {
