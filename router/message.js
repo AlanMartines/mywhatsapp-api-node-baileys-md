@@ -1764,7 +1764,7 @@ router.post("/sendPoll", upload.none(''), verifyToken.verify, async (req, res, n
 		var resSessionName = theSessionName;
 	}
 	//
-	if (!resSessionName || !req.body.phonefull || !req.body.PollMessageOptions) {
+	if (!resSessionName || !req.body.phonefull || !req.body.poll) {
 		var resultRes = {
 			"erro": true,
 			"status": 400,
@@ -1797,7 +1797,7 @@ router.post("/sendPoll", upload.none(''), verifyToken.verify, async (req, res, n
 						var sendPoll = await message?.sendPoll(
 							resSessionName,
 							checkNumberStatus.number,
-							req.body.PollMessageOptions,
+							req.body.poll,
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
