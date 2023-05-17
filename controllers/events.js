@@ -701,20 +701,6 @@ module.exports = class Events {
 							//
 							logger?.info(JSON.stringify(msg?.message));
 							//
-							for(const { key, update } of m) {
-								if(update.pollUpdates) {
-									const pollCreation = await getMessage(key)
-									if(pollCreation) {
-										console.log('got poll update, aggregation: ',
-											getAggregateVotesInPollMessage({
-												message: pollCreation,
-												pollUpdates: update.pollUpdates,
-											})
-										)
-									}
-								}
-							}
-							//
 							break;
 						default:
 						//
@@ -760,9 +746,9 @@ module.exports = class Events {
 		try {
 			if (events['messages.delete']) {
 				const messagesdelete = events['messages.delete'];
-				//logger?.info(`- Message delete: ${JSON.stringify(messagesdelete, null, 2)}`);
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Message delete`);
+				//logger?.info(`- Message delete: ${JSON.stringify(messagesdelete, null, 2)}`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -772,9 +758,24 @@ module.exports = class Events {
 		try {
 			if (events['message.update']) {
 				const messageupdate = events['message.update'];
-				//logger?.info(`- Message update: ${JSON.stringify(messageupdate, null, 2)}`);
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Message update`);
+				//logger?.info(`- Message update: ${JSON.stringify(messageupdate, null, 2)}`);
+				//
+				for (const { key, update } of messageupdate) {
+					if (update.pollUpdates) {
+						const pollCreation = await getMessage(key)
+						if (pollCreation) {
+							console.log('got poll update, aggregation: ',
+								getAggregateVotesInPollMessage({
+									message: pollCreation,
+									pollUpdates: update.pollUpdates,
+								})
+							)
+						}
+					}
+				}
+				//
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -784,9 +785,9 @@ module.exports = class Events {
 		try {
 			if (events['messages.media-update']) {
 				const messagesmedia = events['messages.media-update'];
-				//logger?.info(`- Message-media update: ${JSON.stringify(messagesmedia, null, 2)}`);
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Message-media update`);
+				//logger?.info(`- Message-media update: ${JSON.stringify(messagesmedia, null, 2)}`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -796,9 +797,9 @@ module.exports = class Events {
 		try {
 			if (events['messages.reaction']) {
 				const reaction = events['messages.reaction'];
-				//logger?.info(`- Messages reaction: ${JSON.stringify(receipt, null, 2)}`);
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Messages reaction`);
+				//logger?.info(`- Messages reaction: ${JSON.stringify(receipt, null, 2)}`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -809,9 +810,9 @@ module.exports = class Events {
 			// history received
 			if (events['message-receipt.update']) {
 				const messagereceipt = events['message-receipt.update'];
-				//logger?.info(`- Messages receipt: ${JSON.stringify(messagereceipt, null, 2)}`);
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Messages receipt`);
+				//logger?.info(`- Messages receipt: ${JSON.stringify(messagereceipt, null, 2)}`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -822,7 +823,6 @@ module.exports = class Events {
 			// history received
 			if (events['messaging-history.set']) {
 				const { chats, contacts, messages, isLatest } = events['messaging-history.set'];
-				//logger?.info(`- Recv ${chats.length} chats, ${contacts.length} contacts, ${messages.length} msgs (is latest: ${isLatest})`);
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Messaging History recv ${chats.length} chats, ${contacts.length} contacts, ${messages.length} msgs (is latest: ${isLatest})`);
 			}
