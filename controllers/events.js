@@ -727,13 +727,9 @@ module.exports = class Events {
 						case 'poll':
 							logger?.info('- Message type: poll');
 							//
-							logger?.info(msg?.message);
-							//
 							break;
 						case 'pollVote':
 							logger?.info('- Message type: pollVote');
-							//
-							logger?.info(msg);
 							//
 							break;
 						default:
