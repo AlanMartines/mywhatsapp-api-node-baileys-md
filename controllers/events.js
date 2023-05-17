@@ -771,7 +771,7 @@ module.exports = class Events {
 				const messagesdelete = events['messages.delete'];
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Message delete`);
-				//logger?.info(`- Message delete: ${JSON.stringify(messagesdelete, null, 2)}`);
+				//logger?.info(`${JSON.stringify(messagesdelete, null, 2)}`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -783,7 +783,7 @@ module.exports = class Events {
 				const messageupdate = events['message.update'];
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Message update`);
-				logger?.info(`- Message update: ${JSON.stringify(messageupdate, null, 2)}`);
+				logger?.info(`${JSON.stringify(messageupdate, null, 2)}`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
