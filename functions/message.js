@@ -854,7 +854,7 @@ module.exports = class Mensagens {
 		// Send basic text
 		return await session?.client?.sendMessage(
 			number,
-			{ text: poll }
+			{ poll: poll }
 		).then(async (result) => {
 			//logger?.info("Result: ", result); //return object success
 			//
