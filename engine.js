@@ -63,7 +63,7 @@ const {
 	getAggregateVotesInPollMessage, 
 	WAMessageContent, 
 	WAMessageKey
-} = require('@adiwajshing/baileys');
+} = require('@whiskeysockets/baileys');
 //
 const tokenPatch = parseInt(config.INDOCKER) ? path.join(config.PATCH_TOKENS, os.hostname()) : config.PATCH_TOKENS;
 //

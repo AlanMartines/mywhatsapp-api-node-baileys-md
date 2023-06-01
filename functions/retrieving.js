@@ -4,7 +4,7 @@ moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
 const Sessions = require("../controllers/sessions");
 const { logger } = require("../utils/logger");
-const { isJidGroup } = require('@adiwajshing/baileys');
+const { isJidGroup } = require('@whiskeysockets/baileys');
 //
 //
 // ------------------------------------------------------------------------------------------------//

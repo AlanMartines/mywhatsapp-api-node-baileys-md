@@ -1,5 +1,5 @@
 //
-const { downloadMediaMessage, getAggregateVotesInPollMessage, proto } = require('@adiwajshing/baileys');
+const { downloadMediaMessage, getAggregateVotesInPollMessage, proto } = require('@whiskeysockets/baileys');
 //
 const webhooks = require('./webhooks');
 const Sessions = require('./sessions');
