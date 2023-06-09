@@ -67,7 +67,7 @@ RUN apt-get update && \
 	net-tools && \
 	apt-get autoremove -y
 
-RUN npm install -g npm@latest
+#RUN npm install -g npm@latest
 
 WORKDIR /home/ApiBaileysMd
 
