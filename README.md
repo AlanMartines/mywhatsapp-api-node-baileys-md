@@ -151,7 +151,7 @@ cd ~
 curl -sL https://rpm.nodesource.com/setup_16.x | sudo -E bash -
 
 # Instalar o pacote Node.js
-sudo yum install -y git nodejs yarn gcc g++ tar make vim curl python python3
+sudo yum install -y git nodejs yarn gcc g++ tar make vim curl python3
 
 # Remover pacotes que não são mais necessários
 sudo yum autoremove -y
@@ -233,6 +233,7 @@ git clone https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md.git Api
 cd ApiBaileysMd
 
 # Instale as dependências
+env NODE_OPTIONS=" --dns-result-order=ipv4first "
 npm install --allow-root --unsafe-perm=true
 
 # Configuração inicial
