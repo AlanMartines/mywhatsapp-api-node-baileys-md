@@ -7,8 +7,10 @@ const logger = pino({
 	timestamp: false,
 	levelFirst: true,
 	transport: {
-		target: 'pino-pretty',
-		options: {
+    target: pinoGelf,
+    options: {
+      host: config.GRAYLOGSERVER,
+      port: config.GRAYLOGPORT,
 			errorProps: '*',
 			ignore: "pid,hostname",
 			translateTime: "SYS:yyyy-mm-dd HH:MM:ss",
