@@ -1,12 +1,16 @@
 const pino = require("pino");
 const pretty = require('pino-pretty');
+const pinoGelf = require('pino-gelf');
+const config = require('../config.global');
 
 const logger = pino({
 	timestamp: false,
 	levelFirst: true,
 	transport: {
-		target: 'pino-pretty',
+		target: pinoGelf,
 		options: {
+      host: config.GRAYLOGSERVER,
+      port: config.GRAYLOGPORT,
 			errorProps: '*',
 			ignore: "pid,hostname",
 			translateTime: "SYS:yyyy-mm-dd HH:MM:ss",

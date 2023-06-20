@@ -49,7 +49,7 @@ services:
 #    logging:
 #      driver: gelf
 #      options:
-#        gelf-address: "udp://${GRAYLOGSERVER:-127.0.0.1}:${GRAYLOG_PORT:-12201}"
+#        gelf-address: "udp://${GRAYLOGSERVER:-127.0.0.1}:${GRAYLOGPORT:-12201}"
 
 #mysql:
 #    container_name: ApiDatabase
