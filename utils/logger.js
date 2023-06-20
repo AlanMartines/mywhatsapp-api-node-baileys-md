@@ -1,6 +1,5 @@
 const pino = require("pino");
 const pretty = require('pino-pretty');
-const pinoGelf = require('pino-gelf');
 
 const logger = pino({
 	timestamp: false,
