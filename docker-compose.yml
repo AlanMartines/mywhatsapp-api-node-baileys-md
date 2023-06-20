@@ -46,6 +46,11 @@ services:
     expose:
       - ${PORT:-9001}
 
+#    logging:
+#      driver: gelf
+#      options:
+#        gelf-address: "udp://${GRAYLOGSERVER:-127.0.0.1}:${GRAYLOG_PORT:-12201}"
+
 #mysql:
 #    container_name: ApiDatabase
 #    hostname: ApiDatabase
