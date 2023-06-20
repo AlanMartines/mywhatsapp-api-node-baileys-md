@@ -1,5 +1,6 @@
 const pino = require("pino");
 const pretty = require('pino-pretty');
+const pinoGelf = require('pino-gelf');
 
 const logger = pino({
 	timestamp: false,
@@ -27,7 +28,7 @@ const logger = pino({
 				const fileLine = stackTrace[1].match(/\(([^)]+)\)/)[1];
 				const fileName = fileLine.split(':')[0];
 				const lineNumber = fileLine.split(':')[1];
-
+				//
 				return {
 					stack: error.stack,
 					message: error.message,
@@ -35,7 +36,7 @@ const logger = pino({
 					file: fileName
 				};
 			}
-
+			//
 			return error;
 		},
 	},

@@ -73,6 +73,8 @@ COPY package*.json ./
 
 ENV NODE_OPTIONS=" --dns-result-order=ipv4first "
 
+RUN npm install -g pino-gelf
+
 RUN npm install --allow-root --unsafe-perm=true
 
 EXPOSE 9001/tcp
