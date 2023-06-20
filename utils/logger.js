@@ -5,7 +5,7 @@ const logger = pino({
 	timestamp: false,
 	levelFirst: true,
 	transport: {
-		target: pretty,
+		target: 'pino-pretty',
 		options: {
 			errorProps: '*',
 			ignore: "pid,hostname",
