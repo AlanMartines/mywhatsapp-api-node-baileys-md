@@ -44,37 +44,21 @@ const logger = pino({
 
 exports.logger = logger;
 */
+
 const pino = require('pino');
-const gelfStream = require('gelf-stream');
+const gelfStream = require('pino-gelf') // você precisa instalar este módulo
 const config = require('../config.global');
 
-const stream = gelfStream.forBunyan(config.GRAYLOGSERVER, config.GRAYLOGPORT); // Substitua 'localhost' e '12201' pelo seu host e porta do Graylog
-
 const logger = pino({
-    level: 'info',
-    messageKey: 'message',
-    formatters: {
-        level(label, number) {
-            return { level: label };
-        },
-        log(object) {
-            if (object.err && object.err.stack) {
-                const stackTrace = object.err.stack.split('\n');
-                const fileLine = stackTrace[1].match(/\(([^)]+)\)/)[1];
-                const fileName = fileLine.split(':')[0];
-                const lineNumber = fileLine.split(':')[1];
-                //
-                return {
-                    stack: object.err.stack,
-                    message: object.err.message,
-                    line: lineNumber,
-                    file: fileName
-                };
-            }
-            //
-            return object;
-        },
-    },
-}, stream);
+  level: 'info',
+  // aqui nós configuramos o pino para escrever para o gelfStream
+  transport: {
+    target: gelfStream,
+    options: {
+      host: config.GRAYLOGSERVER, // substitua por seu host Graylog
+      port: config.GRAYLOGPORT // substitua pela sua porta Graylog
+    }
+  }
+});
 
-exports.logger = logger;
+logger.info('Olá Graylog!');

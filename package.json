@@ -71,6 +71,7 @@
 		"p-queue": "^6.6.2",
 		"pino": "^8.11.0",
 		"pino-pretty": "^10.0.0",
+		"pino-gelf": "^2.1.0",
 		"qrcode": "^1.5.1",
 		"qrcode-terminal": "^0.12.0",
 		"redis": "^4.6.5",
