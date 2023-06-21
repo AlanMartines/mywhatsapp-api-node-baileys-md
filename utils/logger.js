@@ -61,7 +61,7 @@ const logger = pino({
 		log(object) {
 			return {
 				version: '1.1',
-				host: `${config.GRAYLOGSERVER}:${config.GRAYLOGPORT}}`,
+				host: 'example.com',
 				short_message: object.message,
 				full_message: JSON.stringify(object),
 				timestamp: object.time,
@@ -94,8 +94,8 @@ const logger = pino({
 });
 
 const gelfStream = gelf.createWriteStream({
-	host: 'graylog-server',
-	port: 12201
+	host: config.GRAYLOGSERVER,
+	port: config.GRAYLOGPORT
 });
 
 logger.pipe(gelfStream);
