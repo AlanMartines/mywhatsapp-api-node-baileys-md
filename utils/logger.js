@@ -51,10 +51,6 @@ const config = require('../config.global');
 const gelfStream = require('pino-gelf')({
       host: config.GRAYLOGSERVER, // substitua por seu host Graylog
       port: config.GRAYLOGPORT, // substitua pela sua porta Graylog, se diferente
-      fields: { // campos adicionais que você deseja adicionar a cada mensagem de log
-        application: 'ApiWhatsApp', // nome da sua aplicação
-        environment: 'production' // ambiente (por exemplo, 'production', 'development', etc.)
-      },
 });
 
 const logger = pino({
