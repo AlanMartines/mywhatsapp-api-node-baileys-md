@@ -46,22 +46,28 @@ exports.logger = logger;
 */
 
 const pino = require('pino');
-const pinoGelf = require('pino-gelf');
 const config = require('../config.global');
+
+const gelfStream = require('pino-gelf')({
+      host: config.GRAYLOGSERVER, // substitua por seu host Graylog
+      port: config.GRAYLOGPORT, // substitua pela sua porta Graylog, se diferente
+      fields: { // campos adicionais que você deseja adicionar a cada mensagem de log
+        application: 'ApiWhatsApp', // nome da sua aplicação
+        environment: 'production' // ambiente (por exemplo, 'production', 'development', etc.)
+      },
+});
 
 const logger = pino({
   transport: {
-    target: pinoGelf,
-    options: {
-      host: config.GRAYLOGSERVER, // substitua por seu host Graylog
-      port: config.GRAYLOGPORT, // substitua pela sua porta Graylog, se diferente
+		target: 'pino-pretty',
+		options: {
 			errorProps: '*',
 			ignore: "pid,hostname",
 			translateTime: "SYS:yyyy-mm-dd HH:MM:ss",
 			colorize: true
 		}
 	}
-}, {
+}, gelfStream, {
 	// Opções de log de erro
 	level: 'error',
 	messageKey: 'message',
