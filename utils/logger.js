@@ -1,7 +1,7 @@
 const pino = require("pino");
 const pretty = require('pino-pretty');
 const config = require('../config.global');
-//
+
 const logger = pino({
 	timestamp: false,
 	levelFirst: true,
@@ -15,7 +15,6 @@ const logger = pino({
 		}
 	}
 }, {
-	// Opções de log de erro
 	level: 'error',
 	messageKey: 'message',
 	formatters: {
@@ -25,10 +24,13 @@ const logger = pino({
 		error(error) {
 			if (error && error.stack) {
 				const stackTrace = error.stack.split('\n');
-				const fileLine = stackTrace[1].match(/\(([^)]+)\)/)[1];
-				const fileName = fileLine.split(':')[0];
-				const lineNumber = fileLine.split(':')[1];
-				//
+				let fileLine, fileName, lineNumber;
+				try {
+					fileLine = stackTrace[1].match(/\(([^)]+)\)/)[1];
+					[fileName, lineNumber] = fileLine.split(':');
+				} catch (err) {
+					console.error("Erro ao processar a stack trace", err);
+				}
 				return {
 					stack: error.stack,
 					message: error.message,
@@ -36,10 +38,11 @@ const logger = pino({
 					file: fileName
 				};
 			}
-			//
 			return error;
 		},
 	},
 });
+//
+//module.exports = { logger };
 //
 exports.logger = logger;
