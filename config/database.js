@@ -24,6 +24,6 @@ module.exports = {
 		evict: 15000,
 		acquire: 30000
 	},
-	timezone: '+00:00',
+	timezone: config.MYSQL_TIMEZONE,
 };
 //
