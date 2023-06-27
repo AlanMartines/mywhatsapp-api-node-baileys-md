@@ -41,6 +41,8 @@ services:
     volumes:
       - .:/home/ApiBaileysMd:rw
       - ${PATCH_TOKENS:-/usr/local/tokensHomologacao}:/usr/local/tokens:rw
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     ports:
       - ${PORT:-1000}:9001
     expose:

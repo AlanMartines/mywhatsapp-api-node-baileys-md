@@ -551,10 +551,15 @@ cp .env-example .env
 docker build -t alanmartines/mywhatsapp-api-node-baileys-md:1.0.0 -f Dockerfile.backend .
 
 # Criar contêiner
-docker run -d --name ApiBaileysMdMyWhatsapp -p 9001:9001 \
+docker run -d \
+	--name ApiBaileysMdMyWhatsapp \
+	--hostname ApiBaileysMdMyWhatsapp \
+	-p 9001:9001 \
 	--restart=unless-stopped \
 	-v ${PWD}:/home/ApiBaileysMdMyWhatsapp \
 	-v /usr/local/tokens:/usr/local/tokens \
+	-v /etc/timezone:/etc/timezone \
+	-v /etc/timezone:/etc/timezone \
 	-e NODE_EN=production \
 	-e HOST=0.0.0.0 \
 	-e PORT=9001 \
