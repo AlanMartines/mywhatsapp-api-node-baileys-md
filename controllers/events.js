@@ -97,6 +97,8 @@ module.exports = class Events {
 		}
 	}
 	//
+	// ------------------------------------------------------------------------------------------------------- //
+	//
 	static async statusMessage(SessionName, events) {
 		let dataSessions = await Sessions?.getSession(SessionName);
 		try {
@@ -172,6 +174,8 @@ module.exports = class Events {
 		}
 	}
 	//
+	// ------------------------------------------------------------------------------------------------------- //
+	//
 	static async contactsEvents(SessionName, events) {
 		let dataSessions = await Sessions.getSession(SessionName);
 		//
@@ -236,6 +240,8 @@ module.exports = class Events {
 		}
 		//
 	}
+	//
+	// ------------------------------------------------------------------------------------------------------- //
 	//
 	static async messagesEvents(SessionName, events) {
 		let dataSessions = await Sessions?.getSession(SessionName);
@@ -890,6 +896,8 @@ module.exports = class Events {
 		//
 	}
 	//
+	// ------------------------------------------------------------------------------------------------------- //
+	//
 	static async chatsEvents(SessionName, events) {
 		let dataSessions = await Sessions?.getSession(SessionName);
 		//
@@ -931,6 +939,8 @@ module.exports = class Events {
 		//
 	}
 	//
+	// ------------------------------------------------------------------------------------------------------- //
+	//
 	static async blocklistEvents(SessionName, events) {
 		let dataSessions = await Sessions?.getSession(SessionName);
 		//
@@ -959,6 +969,8 @@ module.exports = class Events {
 		}
 		//
 	}
+	//
+	// ------------------------------------------------------------------------------------------------------- //
 	//
 	static async groupsEvents(SessionName, events) {
 		let dataSessions = await Sessions?.getSession(SessionName);
@@ -1000,6 +1012,8 @@ module.exports = class Events {
 		}
 		//
 	}
+	//
+	// ------------------------------------------------------------------------------------------------------- //
 	//
 	static async extraEvents(SessionName, events) {
 		let dataSessions = await Sessions?.getSession(SessionName);
@@ -1046,4 +1060,7 @@ module.exports = class Events {
 			logger?.error(`- Error recv call event ${error}`);
 		}
 	}
+	//
+	// ------------------------------------------------------------------------------------------------------- //
+	//
 }
