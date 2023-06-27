@@ -688,7 +688,7 @@ module.exports = class Instace {
 								webhooks?.wh_connect(SessionName);
 								//
 								if (phone) {
-									await updateUserConDb(phone, addJson?.profilepicture, addJson?.AuthorizationToken);
+									await updateUserConDb(phone, addJson?.profilepicture, SessionName);
 								}
 								//
 								attempts = 1;
