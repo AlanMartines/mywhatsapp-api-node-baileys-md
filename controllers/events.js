@@ -4,6 +4,7 @@ const { downloadMediaMessage, getAggregateVotesInPollMessage, proto } = require(
 const webhooks = require('./webhooks');
 const Sessions = require('./sessions');
 const { logger } = require("../utils/logger");
+const { Statistics } = require('../models');
 const config = require('../config.global');
 const moment = require('moment');
 moment()?.format('YYYY-MM-DD HH:mm:ss');
