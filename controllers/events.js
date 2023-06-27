@@ -4,6 +4,7 @@ const { downloadMediaMessage, getAggregateVotesInPollMessage, proto } = require(
 const webhooks = require('./webhooks');
 const Sessions = require('./sessions');
 const { logger } = require("../utils/logger");
+const config = require('../config.global');
 const moment = require('moment');
 moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
@@ -38,14 +39,42 @@ function convertHMS(value) {
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
+async function updateStatisticsDb(status, type, SessionName) {
+	//
+	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
+	//logger?.info(`- Date: ${date_now}`);
+	//
+	if (parseInt(config.VALIDATE_MYSQL) == true) {
+		logger?.info('- Atualizando statistics');
+		//
+		await Statistics.create({
+			SessionName: SessionName,
+			status: status,
+			type: type,
+			lastactivity: date_now,
+		}).then(async (entries) => {
+			logger?.info('- Statistics atualizado');
+		}).catch(async (err) => {
+			logger?.error('- Statistics não atualizado');
+			logger?.error(`- Error: ${err}`);
+		}).finally(async () => {
+			//Tokens.release();
+		});
+		//
+	}
+	//
+}
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
 async function getMessage(dataSessions, key) {
-  if (dataSessions?.client) {
-    const msg = await dataSessions?.client?.loadMessage(key.remoteJid, key.id);
-    return msg?.message || undefined;
-  }
+	if (dataSessions?.client) {
+		const msg = await dataSessions?.client?.loadMessage(key.remoteJid, key.id);
+		return msg?.message || undefined;
+	}
 
-  // apenas se o store estiver presente
-  return proto.Message.fromObject({});
+	// apenas se o store estiver presente
+	return proto.Message.fromObject({});
 }
 //
 // ------------------------------------------------------------------------------------------------------- //
@@ -77,27 +106,27 @@ module.exports = class Events {
 				logger?.info(`- Messages update`);
 				//logger?.info(`${JSON.stringify(message, null, 2)}`);
 				//
-        for (const { key, update } of messages) {
-            if (update.pollUpdates) {
-                const pollCreation = await getMessage(dataSessions, key);
-                if (pollCreation) {
-                    const pollMessage = await getAggregateVotesInPollMessage({
-                        message: pollCreation,
-                        pollUpdates: update.pollUpdates,
-                    })
-                    const [messageCtx] = m;
+				for (const { key, update } of messages) {
+					if (update.pollUpdates) {
+						const pollCreation = await getMessage(dataSessions, key);
+						if (pollCreation) {
+							const pollMessage = await getAggregateVotesInPollMessage({
+								message: pollCreation,
+								pollUpdates: update.pollUpdates,
+							})
+							const [messageCtx] = m;
 
-                    let payload = {
-                        ...messageCtx,
-                        body: pollMessage.find(poll => poll.voters.length > 0)?.name || '',
-                        from: key.remoteJid,
-                        voters: pollCreation,
-                        type: 'poll'
-                    };
-										logger?.info(`${JSON.stringify(payload, null, 2)}`);
-                }
-            }
-        }
+							let payload = {
+								...messageCtx,
+								body: pollMessage.find(poll => poll.voters.length > 0)?.name || '',
+								from: key.remoteJid,
+								voters: pollCreation,
+								type: 'poll'
+							};
+							logger?.info(`${JSON.stringify(payload, null, 2)}`);
+						}
+					}
+				}
 				//
 				// logic of your application...
 				let phone = dataSessions?.client?.user?.id?.split(":")[0];
@@ -781,7 +810,8 @@ module.exports = class Events {
 					if (Object.keys(response).length !== 0) {
 						//
 						dataSessions?.funcoesSocket?.message(SessionName, response);
-						webhooks?.wh_messages(SessionName, response);
+						await webhooks?.wh_messages(SessionName, response);
+						await updateStatisticsDb(response?.status, response?.type, SessionName);
 						//
 					}
 					//
@@ -1008,7 +1038,7 @@ module.exports = class Events {
 				};
 				//
 				dataSessions?.funcoesSocket?.eventCall(SessionName, response);
-				webhooks?.wh_incomingCall(SessionName, response);
+				await webhooks?.wh_incomingCall(SessionName, response);
 				//
 			}
 		} catch (error) {
