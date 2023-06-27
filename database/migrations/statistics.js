@@ -8,7 +8,7 @@ module.exports = {
         unique: true,
         type: DataTypes.INTEGER.UNSIGNED,
       },
-      SessionName: {
+      sessionname: {
         allowNull: false,
         type: DataTypes.CHAR(255),
       },

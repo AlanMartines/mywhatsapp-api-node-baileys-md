@@ -49,7 +49,7 @@ async function updateStatisticsDb(status, type, SessionName) {
 		logger?.info('- Atualizando statistics');
 		//
 		await Statistics.create({
-			SessionName: SessionName,
+			sessionname: SessionName,
 			status: status,
 			type: type,
 			lastactivity: date_now,
