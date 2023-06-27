@@ -24,9 +24,6 @@ module.exports = {
 		evict: 15000,
 		acquire: 30000
 	},
-	timezone: '-03:00',
-	dialectOptions: {
-			useUTC: false
-	}
+	timezone: '+00:00',
 };
 //
