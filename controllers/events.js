@@ -288,7 +288,7 @@ module.exports = class Events {
 						type = 'extended';
 					} else if (msg?.message?.videoMessage) {
 						type = 'video';
-					} else if (msg?.message?.viewOnceMessageV2.message.videoMessage) {
+					} else if (msg?.message?.viewOnceMessageV2?.message?.videoMessage) {
 						type = 'videoV2';
 					} else if (msg?.message?.stickerMessage) {
 						type = 'sticker';
