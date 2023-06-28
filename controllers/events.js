@@ -287,6 +287,8 @@ module.exports = class Events {
 						type = 'extended';
 					} else if (msg?.message?.videoMessage) {
 						type = 'video';
+					} else if (msg?.message?.viewOnceMessageV2.message.videoMessage) {
+						type = 'videoV2';
 					} else if (msg?.message?.stickerMessage) {
 						type = 'sticker';
 					} else if (msg?.message?.viewOnceMessage?.message?.buttonsMessage) {
@@ -508,6 +510,31 @@ module.exports = class Events {
 								"caption": msg?.message?.videoMessage?.caption ? msg?.message?.videoMessage?.caption : '',
 								"mimetype": msg?.message?.videoMessage?.mimetype ? msg?.message?.videoMessage?.mimetype : null,
 								"fileLength": msg?.message?.videoMessage?.fileLength ? await convertBytes(msg?.message?.videoMessage?.fileLength) : null,
+								"base64": string64,
+								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
+							}
+							//
+							break;
+						case 'videoV2':
+							logger?.info('- Message type: video');
+							//
+							var buffer = await downloadMediaMessage(msg, 'buffer');
+							var string64 = buffer.toString('base64');
+							//
+							response = {
+								"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+								"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
+								"type": 'video',
+								"fromMe": msg?.key?.fromMe,
+								"id": msg?.key?.id,
+								"name": msg?.pushName || msg?.verifiedBizName || null,
+								"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
+								"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
+								"caption": msg?.message?.viewOnceMessageV2?.message?.videoMessage?.caption ? msg?.message?.viewOnceMessageV2?.message?.videoMessage?.caption : '',
+								"mimetype": msg?.message?.viewOnceMessageV2?.message?.videoMessage?.mimetype ? msg?.message?.viewOnceMessageV2?.message?.videoMessage?.mimetype : null,
+								"fileLength": msg?.message?.viewOnceMessageV2?.message?.videoMessage?.fileLength ? await convertBytes(msg?.message?.viewOnceMessageV2?.message?.videoMessage?.fileLength) : null,
+								"seconds": msg?.message?.viewOnceMessageV2?.message?.videoMessage?.seconds ? msg?.message?.viewOnceMessageV2?.message?.videoMessage?.seconds : 0,
 								"base64": string64,
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
