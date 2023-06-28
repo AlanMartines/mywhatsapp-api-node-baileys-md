@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.CHAR(20),
       allowNull: false
     },
+    isgroup: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false
+    },
 		created: 'TIMESTAMP',
 		modified: 'TIMESTAMP',
 	});

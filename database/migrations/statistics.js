@@ -20,6 +20,11 @@ module.exports = {
         allowNull: false,
         type: DataTypes.CHAR(20),
       },
+      isgroup: {
+        allowNull: false,
+        type: DataTypes.BOOLEAN,
+    		defaultValue: false,
+      },
       created: {
         allowNull: false,
         type: 'TIMESTAMP',
