@@ -46,7 +46,7 @@ router.post("/getPerfilStatus", upload.none(''), verifyToken.verify, async (req,
 	//
 	if (!resSessionName || !req.body.phonefull) {
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -99,7 +99,7 @@ router.post("/getPerfilStatus", upload.none(''), verifyToken.verify, async (req,
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -130,7 +130,7 @@ router.post("/setProfileStatus", upload.none(''), verifyToken.verify, async (req
 	//
 	if (!resSessionName || !req.body.ProfileStatus) {
 		var validate = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -166,7 +166,7 @@ router.post("/setProfileStatus", upload.none(''), verifyToken.verify, async (req
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -231,7 +231,7 @@ router.post("/setProfileName", upload.none(''), verifyToken.verify, async (req, 
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -251,7 +251,7 @@ router.post("/setProfileName", upload.none(''), verifyToken.verify, async (req, 
 router.all('*', upload.none(''), async (req, res, next) => {
 	//
 	var resultRes = {
-		"erro": true,
+		"error": true,
 		"status": 404,
 		"message": 'Não foi possivel executar a ação, verifique a url informada.'
 	};
@@ -269,7 +269,7 @@ router.all('*', upload.none(''), async (req, res, next) => {
 router.all('*', (req, res) => {
 	//
 	var resultRes = {
-		"erro": true,
+		"error": true,
 		"status": 404,
 		"message": 'Não foi possivel executar a ação, verifique a url informada.'
 	};

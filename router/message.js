@@ -64,7 +64,7 @@ router.post("/sendContactVcard", upload.none(''), verifyToken.verify, async (req
 	try {
 		if (!resSessionName || !req.body.phonefull || !req.body.contact || !req.body.namecontact) {
 			var resultRes = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
@@ -117,7 +117,7 @@ router.post("/sendContactVcard", upload.none(''), verifyToken.verify, async (req
 				default:
 					//
 					var resultRes = {
-						"erro": true,
+						"error": true,
 						"status": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
@@ -133,7 +133,7 @@ router.post("/sendContactVcard", upload.none(''), verifyToken.verify, async (req
 		//
 		logger?.error(`${error}`);
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
@@ -165,7 +165,7 @@ router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req,
 	try {
 		if (!resSessionName || !req.body.phonefull || !req.file) {
 			var validate = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
@@ -185,7 +185,7 @@ router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req,
 			if (acceptedTypes !== "audio") {
 				//
 				var validate = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Arquivo selecionado não permitido, apenas arquivo de audio'
 				};
@@ -239,7 +239,7 @@ router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req,
 					default:
 						//
 						var resultRes = {
-							"erro": true,
+							"error": true,
 							"status": 400,
 							"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 						};
@@ -256,7 +256,7 @@ router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req,
 		//
 		logger?.error(`${error}`);
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
@@ -287,7 +287,7 @@ router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req,
 	try {
 		if (!resSessionName || !req.body.phonefull || !req.body.base64 || !req.body.originalname) {
 			var validate = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
@@ -344,7 +344,7 @@ router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req,
 				default:
 					//
 					var resultRes = {
-						"erro": true,
+						"error": true,
 						"status": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
@@ -360,7 +360,7 @@ router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req,
 		//
 		logger?.error(`${error}`);
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
@@ -390,7 +390,7 @@ router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (
 	try {
 		if (!resSessionName || !req.body.phonefull || !req.body.base64 || !req.body.mimetype || !req.body.originalname) {
 			var validate = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
@@ -410,7 +410,7 @@ router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (
 			if (acceptedTypes !== "audio") {
 				//
 				var validate = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Arquivo selecionado não permitido, apenas arquivo de audio'
 				};
@@ -464,7 +464,7 @@ router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (
 					default:
 						//
 						var resultRes = {
-							"erro": true,
+							"error": true,
 							"status": 400,
 							"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 						};
@@ -481,7 +481,7 @@ router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (
 		//
 		logger?.error(`${error}`);
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
@@ -511,7 +511,7 @@ router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, n
 	try {
 		if (!resSessionName || !req.body.phonefull || !req.body.msg) {
 			var validate = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
@@ -564,7 +564,7 @@ router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, n
 				default:
 					//
 					var resultRes = {
-						"erro": true,
+						"error": true,
 						"status": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
@@ -580,7 +580,7 @@ router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, n
 		//
 		logger?.error(`${error}`);
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
@@ -611,7 +611,7 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
 		if (!resSessionName || !req.body.phonefull || !req.body.lat || !req.body.long || !req.body.local) {
 			//
 			var validate = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
@@ -668,7 +668,7 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
 				default:
 					//
 					var resultRes = {
-						"erro": true,
+						"error": true,
 						"status": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
@@ -684,7 +684,7 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
 		//
 		logger?.error(`${error}`);
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
@@ -715,7 +715,7 @@ router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, n
 		if (!resSessionName || !req.body.phonefull || !req.body.link || !req.body.descricao) {
 			//
 			var validate = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
@@ -738,7 +738,7 @@ router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, n
 					await session.waqueue.add(async () => {
 						if (!await Sessions.isURL(req.body.link)) {
 							var validate = {
-								"erro": true,
+								"error": true,
 								"status": 401,
 								"message": 'O link informado é invalido, verifique e tente novamente.'
 							};
@@ -783,7 +783,7 @@ router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, n
 				default:
 					//
 					var resultRes = {
-						"erro": true,
+						"error": true,
 						"status": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
@@ -798,7 +798,7 @@ router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, n
 	} catch (error) {
 		//
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
@@ -828,7 +828,7 @@ router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req,
 	try {
 		if (!resSessionName || !req.body.phonefull || !req.file) {
 			var validate = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
@@ -848,7 +848,7 @@ router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req,
 			if (acceptedTypes !== "image") {
 				//
 				var validate = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Arquivo selecionado não permitido, apenas arquivo do tipo imagem'
 				};
@@ -904,7 +904,7 @@ router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req,
 					default:
 						//
 						var resultRes = {
-							"erro": true,
+							"error": true,
 							"status": 400,
 							"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 						};
@@ -921,7 +921,7 @@ router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req,
 		//
 		logger?.error(`${error}`);
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
@@ -951,7 +951,7 @@ router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req,
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.base64 || !req.body.originalname || !req.body.caption) {
 		var validate = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -972,7 +972,7 @@ router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req,
 		if (acceptedTypes !== "image") {
 			//
 			var validate = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'Arquivo selecionado não permitido, apenas arquivo do tipo imagem'
 			};
@@ -1027,7 +1027,7 @@ router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req,
 				default:
 					//
 					var resultRes = {
-						"erro": true,
+						"error": true,
 						"status": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
@@ -1058,7 +1058,7 @@ router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.base64 || !req.body.mimetype || !req.body.originalname || !req.body.caption) {
 		var validate = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -1079,7 +1079,7 @@ router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (
 		if (acceptedTypes !== "image") {
 			//
 			var validate = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'Arquivo selecionado não permitido, apenas arquivo do tipo imagem'
 			};
@@ -1135,7 +1135,7 @@ router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (
 				default:
 					//
 					var resultRes = {
-						"erro": true,
+						"error": true,
 						"status": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
@@ -1167,7 +1167,7 @@ router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, 
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.caption || !req.file) {
 		var validate = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -1222,7 +1222,7 @@ router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, 
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -1253,7 +1253,7 @@ router.post("/sendFileUrl", upload.none(''), verifyToken.verify, async (req, res
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.url || !req.body.caption) {
 		var validate = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -1308,7 +1308,7 @@ router.post("/sendFileUrl", upload.none(''), verifyToken.verify, async (req, res
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -1338,7 +1338,7 @@ router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, 
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.base64 || !req.body.originalname || !req.body.caption) {
 		var validate = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -1400,7 +1400,7 @@ router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, 
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -1430,7 +1430,7 @@ router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (r
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.base64 || !req.body.mimetype || !req.body.originalname || !req.body.caption) {
 		var validate = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -1486,7 +1486,7 @@ router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (r
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -1517,7 +1517,7 @@ router.post("/sendButton", upload.none(''), verifyToken.verify, async (req, res,
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.buttonMessage) {
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -1570,7 +1570,7 @@ router.post("/sendButton", upload.none(''), verifyToken.verify, async (req, res,
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -1600,7 +1600,7 @@ router.post("/sendTemplate", upload.none(''), verifyToken.verify, async (req, re
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.templateMessage) {
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -1653,7 +1653,7 @@ router.post("/sendTemplate", upload.none(''), verifyToken.verify, async (req, re
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -1683,7 +1683,7 @@ router.post("/sendListMessage", upload.none(''), verifyToken.verify, async (req,
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.listMessage) {
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -1736,7 +1736,7 @@ router.post("/sendListMessage", upload.none(''), verifyToken.verify, async (req,
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -1766,7 +1766,7 @@ router.post("/sendPoll", upload.none(''), verifyToken.verify, async (req, res, n
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.poll) {
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -1819,7 +1819,7 @@ router.post("/sendPoll", upload.none(''), verifyToken.verify, async (req, res, n
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -1839,7 +1839,7 @@ router.post("/sendPoll", upload.none(''), verifyToken.verify, async (req, res, n
 router.all('*', (req, res) => {
 	//
 	var resultRes = {
-		"erro": true,
+		"error": true,
 		"status": 404,
 		"message": 'Não foi possivel executar a ação, verifique a url informada.'
 	};

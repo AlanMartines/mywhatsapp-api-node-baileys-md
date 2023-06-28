@@ -48,7 +48,7 @@ router.post("/mkauthPlaySms", upload.none(''), verifyToken.verify, async (req, r
 	try {
 		if (!resSessionName || !req.body.to || !req.body.msg) {
 			var validate = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
@@ -101,7 +101,7 @@ router.post("/mkauthPlaySms", upload.none(''), verifyToken.verify, async (req, r
 				default:
 					//
 					var resultRes = {
-						"erro": true,
+						"error": true,
 						"status": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
@@ -117,7 +117,7 @@ router.post("/mkauthPlaySms", upload.none(''), verifyToken.verify, async (req, r
 		//
 		logger?.error(`${error}`);
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
@@ -137,7 +137,7 @@ router.post("/mkauthPlaySms", upload.none(''), verifyToken.verify, async (req, r
 router.all('*', (req, res) => {
 	//
 	var resultRes = {
-		"erro": true,
+		"error": true,
 		"status": 404,
 		"message": 'Não foi possivel executar a ação, verifique a url informada.'
 	};

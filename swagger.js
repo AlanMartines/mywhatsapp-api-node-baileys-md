@@ -116,7 +116,7 @@ module.exports = {
 									"type": "object",
 									"example": {
 										"Status": {
-											"erro": false,
+											"error": false,
 											"status": 200,
 											"message": "Sistema iniciado e disponivel para uso"
 										}
@@ -134,7 +134,7 @@ module.exports = {
 									"type": "object",
 									"example": {
 										"Status": {
-											"erro": false,
+											"error": false,
 											"status": 201,
 											"message": "Sistema iniciando"
 										}
@@ -152,7 +152,7 @@ module.exports = {
 									"type": "object",
 									"example": {
 										"Status": {
-											"erro": true,
+											"error": true,
 											"status": 400,
 											"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 										}
@@ -170,7 +170,7 @@ module.exports = {
 									"type": "object",
 									"example": {
 										"Status": {
-											"erro": true,
+											"error": true,
 											"status": 402,
 											"message": 'Erro ao obter status, verifique e tente novamente.'
 										}
@@ -188,7 +188,7 @@ module.exports = {
 									"type": "object",
 									"example": {
 										"Status": {
-											"erro": true,
+											"error": true,
 											"status": 403,
 											"message": "Não foi possivel executar a ação, verifique e tente novamente"
 										}
@@ -206,7 +206,7 @@ module.exports = {
 									"type": "object",
 									"example": {
 										"Status": {
-											"erro": true,
+											"error": true,
 											"status": 404,
 											"message": "Token não encontrado, verifique e tente novamente"
 										}
@@ -224,7 +224,7 @@ module.exports = {
 									"type": "object",
 									"example": {
 										"Status": {
-											"erro": true,
+											"error": true,
 											"status": 422,
 											"message": "Token não informado, verifique e tente novamente"
 										}
@@ -276,7 +276,7 @@ module.exports = {
 									"type": "object",
 									"example": {
 										"Status": {
-											"erro": false,
+											"error": false,
 											"status": 200,
 											"message": "Sistema iniciado e disponivel para uso"
 										}
@@ -294,7 +294,7 @@ module.exports = {
 									"type": "object",
 									"example": {
 										"Status": {
-											"erro": true,
+											"error": true,
 											"status": 400,
 											"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 										}
@@ -312,7 +312,7 @@ module.exports = {
 									"type": "object",
 									"example": {
 										"Status": {
-											"erro": true,
+											"error": true,
 											"status": 403,
 											"message": "Não foi possivel executar a ação, verifique e tente novamente"
 										}
@@ -330,7 +330,7 @@ module.exports = {
 									"type": "object",
 									"example": {
 										"Status": {
-											"erro": true,
+											"error": true,
 											"status": 404,
 											"message": "Token não encontrado, verifique e tente novamente"
 										}
@@ -348,7 +348,7 @@ module.exports = {
 									"type": "object",
 									"example": {
 										"Status": {
-											"erro": true,
+											"error": true,
 											"status": 422,
 											"message": "Token não informado, verifique e tente novamente"
 										}

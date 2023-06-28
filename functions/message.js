@@ -45,7 +45,7 @@ module.exports = class Mensagens {
 			//logger?.info('Result: ', result); //return object success
 			//
 			var result = {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"message": "Contato envido com sucesso."
 			};
@@ -56,7 +56,7 @@ module.exports = class Mensagens {
 			logger?.error(`- Error when: ${erro}`);
 			//
 			var result = {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao enviar contato"
 			};
@@ -93,7 +93,7 @@ module.exports = class Mensagens {
 				//logger?.info("Result: ", result); //return object success
 				//
 				let returnResult = {
-					"erro": false,
+					"error": false,
 					"status": 200,
 					"message": "Audio enviado com sucesso."
 				};
@@ -108,7 +108,7 @@ module.exports = class Mensagens {
 				//return (erro);
 				//
 				let returnResult = {
-					"erro": true,
+					"error": true,
 					"status": 404,
 					"message": "Erro ao enviar audio"
 				};
@@ -144,7 +144,7 @@ module.exports = class Mensagens {
 			//logger?.info("Result: ", result); //return object success
 			//
 			let returnResult = {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"message": "Audio enviado com sucesso."
 			};
@@ -160,7 +160,7 @@ module.exports = class Mensagens {
 			//return (erro);
 			//
 			let returnResult = {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao enviar audio"
 			};
@@ -191,7 +191,7 @@ module.exports = class Mensagens {
 			//logger?.info("Result: ", result); //return object success
 			//
 			return {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"message": "Mensagem enviada com sucesso."
 			};
@@ -200,7 +200,7 @@ module.exports = class Mensagens {
 			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao enviar menssagem"
 			};
@@ -239,7 +239,7 @@ module.exports = class Mensagens {
 			//return (result);
 			//
 			let returnResult = {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"message": "Localização enviada com sucesso."
 			};
@@ -252,7 +252,7 @@ module.exports = class Mensagens {
 			//return (erro);
 			//
 			let returnResult = {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao enviar localização."
 			};
@@ -287,7 +287,7 @@ module.exports = class Mensagens {
 			//logger?.info("Result: ", result); //return object success
 			//
 			return {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"message": "Mensagem enviada com sucesso."
 			};
@@ -296,7 +296,7 @@ module.exports = class Mensagens {
 			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao enviar menssagem"
 			};
@@ -331,7 +331,7 @@ module.exports = class Mensagens {
 			//return (result);
 			//
 			let returnResult = {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"message": "Mensagem enviada com sucesso."
 			};
@@ -343,7 +343,7 @@ module.exports = class Mensagens {
 			//return (erro);
 			//
 			let returnResult = {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao enviar menssagem"
 			};
@@ -385,7 +385,7 @@ module.exports = class Mensagens {
 					//return (result);
 					//
 					return {
-						"erro": false,
+						"error": false,
 						"status": 200,
 						"message": "Arquivo enviado com sucesso."
 					};
@@ -395,7 +395,7 @@ module.exports = class Mensagens {
 					//return (erro);
 					//
 					return {
-						"erro": true,
+						"error": true,
 						"status": 404,
 						"message": "Erro ao enviar arquivo"
 					};
@@ -415,7 +415,7 @@ module.exports = class Mensagens {
 					//return (result);
 					//
 					return {
-						"erro": false,
+						"error": false,
 						"status": 200,
 						"message": "Arquivo enviado com sucesso."
 					};
@@ -425,7 +425,7 @@ module.exports = class Mensagens {
 					//return (erro);
 					//
 					return {
-						"erro": true,
+						"error": true,
 						"status": 404,
 						"message": "Erro ao enviar arquivo"
 					};
@@ -449,7 +449,7 @@ module.exports = class Mensagens {
 							//return (result);
 							//
 							return {
-								"erro": false,
+								"error": false,
 								"status": 200,
 								"message": "Arquivo enviado com sucesso."
 							};
@@ -459,7 +459,7 @@ module.exports = class Mensagens {
 							//return (erro);
 							//
 							return {
-								"erro": true,
+								"error": true,
 								"status": 404,
 								"message": "Erro ao enviar arquivo"
 							};
@@ -481,7 +481,7 @@ module.exports = class Mensagens {
 							//return (result);
 							//
 							return {
-								"erro": false,
+								"error": false,
 								"status": 200,
 								"message": "Arquivo enviado com sucesso."
 							};
@@ -491,7 +491,7 @@ module.exports = class Mensagens {
 							//return (erro);
 							//
 							return {
-								"erro": true,
+								"error": true,
 								"status": 404,
 								"message": "Erro ao enviar arquivo"
 							};
@@ -514,7 +514,7 @@ module.exports = class Mensagens {
 							//return (result);
 							//
 							return {
-								"erro": false,
+								"error": false,
 								"status": 200,
 								"message": "Arquivo enviado com sucesso."
 							};
@@ -524,7 +524,7 @@ module.exports = class Mensagens {
 							//return (erro);
 							//
 							return {
-								"erro": true,
+								"error": true,
 								"status": 404,
 								"message": "Erro ao enviar arquivo"
 							};
@@ -546,7 +546,7 @@ module.exports = class Mensagens {
 							//return (result);
 							//
 							return {
-								"erro": false,
+								"error": false,
 								"status": 200,
 								"message": "Arquivo enviado com sucesso."
 							};
@@ -556,7 +556,7 @@ module.exports = class Mensagens {
 							//return (erro);
 							//
 							return {
-								"erro": true,
+								"error": true,
 								"status": 404,
 								"message": "Erro ao enviar arquivo"
 							};
@@ -578,7 +578,7 @@ module.exports = class Mensagens {
 							//return (result);
 							//
 							return {
-								"erro": false,
+								"error": false,
 								"status": 200,
 								"message": "Arquivo enviado com sucesso."
 							};
@@ -588,7 +588,7 @@ module.exports = class Mensagens {
 							//return (erro);
 							//
 							return {
-								"erro": true,
+								"error": true,
 								"status": 404,
 								"message": "Erro ao enviar arquivo"
 							};
@@ -610,7 +610,7 @@ module.exports = class Mensagens {
 							//return (result);
 							//
 							return {
-								"erro": false,
+								"error": false,
 								"status": 200,
 								"message": "Arquivo enviado com sucesso."
 							};
@@ -620,7 +620,7 @@ module.exports = class Mensagens {
 							//return (erro);
 							//
 							return {
-								"erro": true,
+								"error": true,
 								"status": 404,
 								"message": "Erro ao enviar arquivo"
 							};
@@ -640,7 +640,7 @@ module.exports = class Mensagens {
 							//return (result);
 							//
 							return {
-								"erro": false,
+								"error": false,
 								"status": 200,
 								"message": "Arquivo enviado com sucesso."
 							};
@@ -650,7 +650,7 @@ module.exports = class Mensagens {
 							//return (erro);
 							//
 							return {
-								"erro": true,
+								"error": true,
 								"status": 404,
 								"message": "Erro ao enviar arquivo"
 							};
@@ -692,7 +692,7 @@ module.exports = class Mensagens {
 			//return (result);
 			//
 			return {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"message": "Arquivo envido com sucesso."
 			};
@@ -702,7 +702,7 @@ module.exports = class Mensagens {
 			//return (erro);
 			//
 			return {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao enviar arquivo"
 			};
@@ -730,7 +730,7 @@ module.exports = class Mensagens {
 			//logger?.info("Result: ", result); //return object success
 			//
 			let returnResult = {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"message": "Mensagem enviada com sucesso."
 			};
@@ -743,7 +743,7 @@ module.exports = class Mensagens {
 			//return (erro);
 			//
 			let returnResult = {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao enviar menssagem"
 			};
@@ -773,7 +773,7 @@ module.exports = class Mensagens {
 			//logger?.info("Result: ", result); //return object success
 			//
 			let returnResult = {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"message": "Mensagem enviada com sucesso."
 			};
@@ -786,7 +786,7 @@ module.exports = class Mensagens {
 			//return (erro);
 			//
 			let returnResult = {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao enviar menssagem"
 			};
@@ -816,7 +816,7 @@ module.exports = class Mensagens {
 			//logger?.info("Result: ", result); //return object success
 			//
 			var result = {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"message": "Mensagem enviada com sucesso."
 			};
@@ -829,7 +829,7 @@ module.exports = class Mensagens {
 			//return (erro);
 			//
 			var result = {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao enviar menssagem"
 			};
@@ -859,7 +859,7 @@ module.exports = class Mensagens {
 			//logger?.info("Result: ", result); //return object success
 			//
 			var result = {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"message": "Mensagem enviada com sucesso."
 			};
@@ -872,7 +872,7 @@ module.exports = class Mensagens {
 			//return (erro);
 			//
 			var result = {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao enviar menssagem"
 			};

@@ -45,7 +45,7 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 	try {
 		if (!resSessionName) {
 			var resultRes = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 			};
@@ -68,7 +68,7 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 					case 'qrRead':
 						//
 						var resultRes = {
-							"erro": false,
+							"error": false,
 							"status": 200,
 							"message": 'Sistema iniciado'
 						};
@@ -95,7 +95,7 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 						engine?.Start(req, res, next);
 						//
 						var resultRes = {
-							"erro": false,
+							"error": false,
 							"status": 200,
 							"message": 'Sistema iniciando, por favor aguarde'
 						};
@@ -108,7 +108,7 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 						break;
 					default:
 						var resultRes = {
-							"erro": true,
+							"error": true,
 							"status": 400,
 							"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 						};
@@ -125,7 +125,7 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 				engine.Start(req, res, next);
 				//
 				var resultRes = {
-					"erro": false,
+					"error": false,
 					"status": 200,
 					"message": 'Sistema iniciando, por favor aguarde'
 				};
@@ -141,7 +141,7 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 		logger?.error(error);
 		//
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
@@ -172,7 +172,7 @@ router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, nex
 	try {
 		if (!resSessionName) {
 			var resultRes = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
@@ -195,7 +195,7 @@ router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, nex
 			} catch (erro) {
 				logger?.error(`- Erro ao obter status: ${erro}`);
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Erro ao obter status'
 				};
@@ -211,7 +211,7 @@ router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, nex
 		logger?.error(`${error}`);
 		//
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
@@ -240,7 +240,7 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 	try {
 		if (!resSessionName) {
 			var resultRes = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
@@ -273,7 +273,7 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 					default:
 						//
 						var resultRes = {
-							"erro": true,
+							"error": true,
 							"status": 400,
 							"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 						};
@@ -287,7 +287,7 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 			} catch (erro) {
 				logger?.error(`- Erro ao fechar navegador\n ${erro}`);
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Erro ao fechar navegador, verifique e tente novamente'
 				};
@@ -303,7 +303,7 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 		logger?.error(`${error}`);
 		//
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
@@ -332,7 +332,7 @@ router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, nex
 	try {
 		if (!resSessionName) {
 			var resultRes = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
@@ -362,7 +362,7 @@ router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, nex
 				default:
 					//
 					var resultRes = {
-						"erro": true,
+						"error": true,
 						"status": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
@@ -378,7 +378,7 @@ router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, nex
 		logger?.error(`${error}`);
 		//
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
@@ -407,7 +407,7 @@ router.post("/restartToken", upload.none(''), verifyToken.verify, async (req, re
 	try {
 		if (!resSessionName) {
 			var resultRes = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
@@ -453,7 +453,7 @@ router.post("/restartToken", upload.none(''), verifyToken.verify, async (req, re
 		logger?.error(`${error}`);
 		//
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
@@ -484,7 +484,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 	try {
 		if (!resSessionName) {
 			var resultRes = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
@@ -503,7 +503,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 				case 'isLogged':
 				case 'chatsAvailable':
 					//
-					var resultRes = { "erro": false, "statusCode": 200, ...Status };
+					var resultRes = { "error": false, "statusCode": 200, ...Status };
 					res.setHeader('Content-Type', 'application/json');
 					return res.status(resultRes.statusCode).json({
 						"Status": resultRes
@@ -528,7 +528,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 							return res.end(imageBuffer);
 							//
 						} else {
-							var resultRes = { "erro": true, "statusCode": 400, ...Status };
+							var resultRes = { "error": true, "statusCode": 400, ...Status };
 							res.setHeader('Content-Type', 'application/json');
 							return res.status(resultRes.statusCode).json({
 								"Status": resultRes
@@ -537,7 +537,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 						}
 					} else if (req.body.View === false) {
 						var resultRes = {
-							"erro": false,
+							"error": false,
 							"statusCode": 200,
 							"state": session.state,
 							"status": session.status,
@@ -560,7 +560,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 				case 'deleteToken':
 					//
 					var resultRes = {
-						"erro": true,
+						"error": true,
 						"status": 401,
 						"message": 'Não foi possivel executar a ação, inicie o sistema'
 					};
@@ -574,7 +574,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 				default:
 					//
 					var resultRes = {
-						"erro": true,
+						"error": true,
 						"status": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
@@ -590,7 +590,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 		logger?.error(`${error}`);
 		//
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
@@ -619,7 +619,7 @@ router.post("/getSession", upload.none(''), verifyToken.verify, async (req, res,
 	try {
 		if (!resSessionName) {
 			var resultRes = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
@@ -642,7 +642,7 @@ router.post("/getSession", upload.none(''), verifyToken.verify, async (req, res,
 		logger?.error(`${error}`);
 		//
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
@@ -670,7 +670,7 @@ router.post("/getAllSessions", upload.none(''), verifyToken.verify, async (req, 
 		//
 	} else {
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Nenhuma sessão criada'
 		};
@@ -712,7 +712,7 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 		const cpuUsage = process.cpuUsage();
 
 		const resultRes = {
-			"erro": false,
+			"error": false,
 			"status": 200,
 			"noformat": {
 				"uptime": os.uptime(),
@@ -743,7 +743,7 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 		//
 		logger?.error(`${error}`);
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
@@ -762,7 +762,7 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 router.all('*', (req, res) => {
 	//
 	var resultRes = {
-		"erro": true,
+		"error": true,
 		"status": 404,
 		"message": 'Não foi possivel executar a ação, verifique a url informada.'
 	};

@@ -51,7 +51,7 @@ router.post("/sendContactVcardGrupo", upload.none(''), verifyToken.verify, async
 	try {
 		if (!resSessionName || !req.body.groupId || !req.body.contact || !req.body.namecontact) {
 			var resultRes = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
@@ -89,7 +89,7 @@ router.post("/sendContactVcardGrupo", upload.none(''), verifyToken.verify, async
 				default:
 					//
 					var resultRes = {
-						"erro": true,
+						"error": true,
 						"status": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
@@ -105,7 +105,7 @@ router.post("/sendContactVcardGrupo", upload.none(''), verifyToken.verify, async
 		//
 		logger?.error(`${error}`);
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
@@ -137,7 +137,7 @@ router.post("/sendVoiceGrupo", upload.single('file'), verifyToken.verify, async 
 	try {
 		if (!resSessionName || !req.body.groupId || !req.file) {
 			var validate = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
@@ -157,7 +157,7 @@ router.post("/sendVoiceGrupo", upload.single('file'), verifyToken.verify, async 
 			if (acceptedTypes !== "audio") {
 				//
 				var validate = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Arquivo selecionado não permitido, apenas arquivo de audio'
 				};
@@ -196,7 +196,7 @@ router.post("/sendVoiceGrupo", upload.single('file'), verifyToken.verify, async 
 					default:
 						//
 						var resultRes = {
-							"erro": true,
+							"error": true,
 							"status": 400,
 							"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 						};
@@ -213,7 +213,7 @@ router.post("/sendVoiceGrupo", upload.single('file'), verifyToken.verify, async 
 		//
 		logger?.error(`${error}`);
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
@@ -244,7 +244,7 @@ router.post("/sendVoiceBase64Grupo", upload.none(''), verifyToken.verify, async 
 	try {
 		if (!resSessionName || !req.body.groupId || !req.body.base64 || !req.body.originalname) {
 			var validate = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
@@ -285,7 +285,7 @@ router.post("/sendVoiceBase64Grupo", upload.none(''), verifyToken.verify, async 
 				default:
 					//
 					var resultRes = {
-						"erro": true,
+						"error": true,
 						"status": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
@@ -301,7 +301,7 @@ router.post("/sendVoiceBase64Grupo", upload.none(''), verifyToken.verify, async 
 		//
 		logger?.error(`${error}`);
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
@@ -331,7 +331,7 @@ router.post("/sendVoiceFromBase64Grupo", upload.none(''), verifyToken.verify, as
 	try {
 		if (!resSessionName || !req.body.groupId || !req.body.base64 || !req.body.mimetype || !req.body.originalname) {
 			var validate = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
@@ -351,7 +351,7 @@ router.post("/sendVoiceFromBase64Grupo", upload.none(''), verifyToken.verify, as
 			if (acceptedTypes !== "audio") {
 				//
 				var validate = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Arquivo selecionado não permitido, apenas arquivo de audio'
 				};
@@ -389,7 +389,7 @@ router.post("/sendVoiceFromBase64Grupo", upload.none(''), verifyToken.verify, as
 					default:
 						//
 						var resultRes = {
-							"erro": true,
+							"error": true,
 							"status": 400,
 							"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 						};
@@ -406,7 +406,7 @@ router.post("/sendVoiceFromBase64Grupo", upload.none(''), verifyToken.verify, as
 		//
 		logger?.error(`${error}`);
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
@@ -435,7 +435,7 @@ router.post("/sendTextGrupo", upload.none(''), verifyToken.verify, async (req, r
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.msg) {
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -473,7 +473,7 @@ router.post("/sendTextGrupo", upload.none(''), verifyToken.verify, async (req, r
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -504,7 +504,7 @@ router.post("/sendLocationGrupo", upload.none(''), verifyToken.verify, async (re
 	if (!resSessionName || !req.body.groupId || !req.body.lat || !req.body.long || !req.body.local) {
 		//
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -543,7 +543,7 @@ router.post("/sendLocationGrupo", upload.none(''), verifyToken.verify, async (re
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -575,7 +575,7 @@ router.post("/sendLinkGrupo", upload.none(''), verifyToken.verify, async (req, r
 		if (!resSessionName || !req.body.groupId || !req.body.link || !req.body.descricao) {
 			//
 			var validate = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
@@ -598,7 +598,7 @@ router.post("/sendLinkGrupo", upload.none(''), verifyToken.verify, async (req, r
 					await session.waqueue.add(async () => {
 						if (!await Sessions.isURL(req.body.link)) {
 							var validate = {
-								"erro": true,
+								"error": true,
 								"status": 401,
 								"message": 'O link informado é invalido, verifique e tente novamente.'
 							};
@@ -627,7 +627,7 @@ router.post("/sendLinkGrupo", upload.none(''), verifyToken.verify, async (req, r
 				default:
 					//
 					var resultRes = {
-						"erro": true,
+						"error": true,
 						"status": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
@@ -642,7 +642,7 @@ router.post("/sendLinkGrupo", upload.none(''), verifyToken.verify, async (req, r
 	} catch (error) {
 		//
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
@@ -672,7 +672,7 @@ router.post("/sendImageGrupo", upload.single('file'), verifyToken.verify, async 
 	try {
 		if (!resSessionName || !req.body.groupId || !req.file) {
 			var validate = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
@@ -692,7 +692,7 @@ router.post("/sendImageGrupo", upload.single('file'), verifyToken.verify, async 
 			if (acceptedTypes !== "image") {
 				//
 				var validate = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Arquivo selecionado não permitido, apenas arquivo do tipo imagem'
 				};
@@ -732,7 +732,7 @@ router.post("/sendImageGrupo", upload.single('file'), verifyToken.verify, async 
 					default:
 						//
 						var resultRes = {
-							"erro": true,
+							"error": true,
 							"status": 400,
 							"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 						};
@@ -749,7 +749,7 @@ router.post("/sendImageGrupo", upload.single('file'), verifyToken.verify, async 
 		//
 		logger?.error(`${error}`);
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
@@ -779,7 +779,7 @@ router.post("/sendImageBase64Grupo", upload.none(''), verifyToken.verify, async 
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.base64 || !req.body.originalname || !req.body.caption) {
 		var validate = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -800,7 +800,7 @@ router.post("/sendImageBase64Grupo", upload.none(''), verifyToken.verify, async 
 		if (acceptedTypes !== "image") {
 			//
 			var validate = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'Arquivo selecionado não permitido, apenas arquivo do tipo imagem'
 			};
@@ -840,7 +840,7 @@ router.post("/sendImageBase64Grupo", upload.none(''), verifyToken.verify, async 
 				default:
 					//
 					var resultRes = {
-						"erro": true,
+						"error": true,
 						"status": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
@@ -871,7 +871,7 @@ router.post("/sendImageFromBase64Grupo", upload.none(''), verifyToken.verify, as
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.base64 || !req.body.mimetype || !req.body.originalname || !req.body.caption) {
 		var validate = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -892,7 +892,7 @@ router.post("/sendImageFromBase64Grupo", upload.none(''), verifyToken.verify, as
 		if (acceptedTypes !== "image") {
 			//
 			var validate = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'Arquivo selecionado não permitido, apenas arquivo do tipo imagem'
 			};
@@ -932,7 +932,7 @@ router.post("/sendImageFromBase64Grupo", upload.none(''), verifyToken.verify, as
 				default:
 					//
 					var resultRes = {
-						"erro": true,
+						"error": true,
 						"status": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
@@ -964,7 +964,7 @@ router.post("/sendFileGrupo", upload.single('file'), verifyToken.verify, async (
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.caption || !req.file) {
 		var validate = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -1005,7 +1005,7 @@ router.post("/sendFileGrupo", upload.single('file'), verifyToken.verify, async (
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -1036,7 +1036,7 @@ router.post("/sendFileUrlGrupo", upload.none(''), verifyToken.verify, async (req
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.url || !req.body.caption) {
 		var validate = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -1077,7 +1077,7 @@ router.post("/sendFileUrlGrupo", upload.none(''), verifyToken.verify, async (req
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -1107,7 +1107,7 @@ router.post("/sendFileBase64Grupo", upload.none(''), verifyToken.verify, async (
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.base64 || !req.body.originalname || !req.body.caption) {
 		var validate = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -1148,7 +1148,7 @@ router.post("/sendFileBase64Grupo", upload.none(''), verifyToken.verify, async (
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -1178,7 +1178,7 @@ router.post("/sendFileFromBase64Grupo", upload.none(''), verifyToken.verify, asy
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.base64 || !req.body.mimetype || !req.body.originalname || !req.body.caption) {
 		var validate = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -1218,7 +1218,7 @@ router.post("/sendFileFromBase64Grupo", upload.none(''), verifyToken.verify, asy
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -1249,7 +1249,7 @@ router.post("/sendButtonGrupo", upload.none(''), verifyToken.verify, async (req,
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.buttonMessage) {
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -1286,7 +1286,7 @@ router.post("/sendButtonGrupo", upload.none(''), verifyToken.verify, async (req,
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -1316,7 +1316,7 @@ router.post("/sendTemplateGrupo", upload.none(''), verifyToken.verify, async (re
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.templateMessage) {
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -1353,7 +1353,7 @@ router.post("/sendTemplateGrupo", upload.none(''), verifyToken.verify, async (re
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -1383,7 +1383,7 @@ router.post("/sendListMessageGrupo", upload.none(''), verifyToken.verify, async 
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.listMessage) {
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -1420,7 +1420,7 @@ router.post("/sendListMessageGrupo", upload.none(''), verifyToken.verify, async 
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -1450,7 +1450,7 @@ router.post("/leaveGroup", upload.none(''), verifyToken.verify, async (req, res,
 	//
 	if (!resSessionName || !req.body.groupId) {
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -1484,7 +1484,7 @@ router.post("/leaveGroup", upload.none(''), verifyToken.verify, async (req, res,
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -1514,7 +1514,7 @@ router.post("/createGroup", upload.none(''), verifyToken.verify, async (req, res
 	//
 	if (!resSessionName || !req.body.title || !req.body.participants) {
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -1528,7 +1528,7 @@ router.post("/createGroup", upload.none(''), verifyToken.verify, async (req, res
 		//
 		if (req.body.title.length >= 25) {
 			var validate = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'O nome do grupo não pode exceder 25 caracter.'
 			};
@@ -1593,7 +1593,7 @@ router.post("/createGroup", upload.none(''), verifyToken.verify, async (req, res
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -1623,7 +1623,7 @@ router.post("/updateGroupTitle", upload.none(''), verifyToken.verify, async (req
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.title) {
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -1637,7 +1637,7 @@ router.post("/updateGroupTitle", upload.none(''), verifyToken.verify, async (req
 		//
 		if (req.body.title.length >= 25) {
 			var validate = {
-				"erro": true,
+				"error": true,
 				"status": 400,
 				"message": 'O nome do grupo não pode exceder 25 caracter.'
 			};
@@ -1674,7 +1674,7 @@ router.post("/updateGroupTitle", upload.none(''), verifyToken.verify, async (req
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -1704,7 +1704,7 @@ router.post("/updateGroupDesc", upload.none(''), verifyToken.verify, async (req,
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.desc) {
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -1741,7 +1741,7 @@ router.post("/updateGroupDesc", upload.none(''), verifyToken.verify, async (req,
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -1771,7 +1771,7 @@ router.post("/getGroupMembers", upload.none(''), verifyToken.verify, async (req,
 	//
 	if (!resSessionName || !req.body.groupId) {
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -1807,7 +1807,7 @@ router.post("/getGroupMembers", upload.none(''), verifyToken.verify, async (req,
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -1837,7 +1837,7 @@ router.post("/getGroupInviteLink", upload.none(''), verifyToken.verify, async (r
 	//
 	if (!resSessionName || !req.body.groupId) {
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -1871,7 +1871,7 @@ router.post("/getGroupInviteLink", upload.none(''), verifyToken.verify, async (r
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -1901,7 +1901,7 @@ router.post("/getGroupRevokeInviteLink", upload.none(''), verifyToken.verify, as
 	//
 	if (!resSessionName || !req.body.groupId) {
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -1935,7 +1935,7 @@ router.post("/getGroupRevokeInviteLink", upload.none(''), verifyToken.verify, as
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -1964,7 +1964,7 @@ router.post("/removeParticipant", upload.none(''), verifyToken.verify, async (re
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.participants) {
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -2029,7 +2029,7 @@ router.post("/removeParticipant", upload.none(''), verifyToken.verify, async (re
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -2060,7 +2060,7 @@ router.post("/addParticipant", upload.none(''), verifyToken.verify, async (req, 
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.participants) {
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -2125,7 +2125,7 @@ router.post("/addParticipant", upload.none(''), verifyToken.verify, async (req, 
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -2156,7 +2156,7 @@ router.post("/promoteParticipant", upload.none(''), verifyToken.verify, async (r
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.participants) {
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -2221,7 +2221,7 @@ router.post("/promoteParticipant", upload.none(''), verifyToken.verify, async (r
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -2252,7 +2252,7 @@ router.post("/demoteParticipant", upload.none(''), verifyToken.verify, async (re
 	//
 	if (!resSessionName || !req.body.groupId || !req.body.participants) {
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -2317,7 +2317,7 @@ router.post("/demoteParticipant", upload.none(''), verifyToken.verify, async (re
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -2348,7 +2348,7 @@ router.post("/getGroupInfoFromInviteLink", upload.none(''), verifyToken.verify, 
 	//
 	if (!resSessionName || !req.body.inviteCode) {
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -2381,7 +2381,7 @@ router.post("/getGroupInfoFromInviteLink", upload.none(''), verifyToken.verify, 
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -2411,7 +2411,7 @@ router.post("/joinGroup", upload.none(''), verifyToken.verify, async (req, res, 
 	//
 	if (!resSessionName || !req.body.inviteCode) {
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -2444,7 +2444,7 @@ router.post("/joinGroup", upload.none(''), verifyToken.verify, async (req, res, 
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -2464,7 +2464,7 @@ router.post("/joinGroup", upload.none(''), verifyToken.verify, async (req, res, 
 router.all('*', (req, res) => {
 	//
 	var resultRes = {
-		"erro": true,
+		"error": true,
 		"status": 404,
 		"message": 'Não foi possivel executar a ação, verifique a url informada.'
 	};

@@ -253,7 +253,7 @@ DELETE_FILE_UNUSED=0
 			app.all('*', (req, res) => {
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 404,
 					"message": 'Não foi possivel executar a ação, verifique a url informada.'
 				};

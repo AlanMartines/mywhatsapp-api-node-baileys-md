@@ -29,7 +29,7 @@ module.exports = class Retrieving {
 			//logger?.info('Result: ', result); //return object success
 			//
 			return {
-				"erro": true,
+				"error": true,
 				"status": 200,
 				"number": number,
 				"message": "Status do número informado obtido com sucesso",
@@ -41,7 +41,7 @@ module.exports = class Retrieving {
 			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"number": number,
 				"message": "Erro ao verificar status do número informado"
@@ -87,7 +87,7 @@ module.exports = class Retrieving {
 				if (!contactsList.length) {
 					//
 					let returnResult = {
-						"erro": true,
+						"error": true,
 						"status": 400,
 						"message": "Nenhum contato recuperado"
 					};
@@ -98,7 +98,7 @@ module.exports = class Retrieving {
 			} else {
 				//
 				let returnResult = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": "Nenhum contato recuperado"
 				};
@@ -108,7 +108,7 @@ module.exports = class Retrieving {
 			}
 			//
 			let returnResult = {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"getAllContacts": contactsList
 			};
@@ -119,7 +119,7 @@ module.exports = class Retrieving {
 			logger?.error(`- Error when: ${erro}`);
 			//
 			let returnResult = {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao recuperar contatos"
 			};
@@ -169,7 +169,7 @@ module.exports = class Retrieving {
 			} else {
 				//
 				let returnResult = {
-					"erro": true,
+					"error": true,
 					"status": 404,
 					"message": "Erro ao recuperar contatos"
 				};
@@ -179,7 +179,7 @@ module.exports = class Retrieving {
 			}
 			//
 			let returnResult = {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"getAllChats": allchat
 			};
@@ -190,7 +190,7 @@ module.exports = class Retrieving {
 			logger?.error(`- Error when: ${erro}`);
 			//
 			let returnResult = {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao recuperar chats"
 			};
@@ -239,7 +239,7 @@ module.exports = class Retrieving {
 			} else {
 				//
 				let returnResult = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": "Erro ao recuperar mensagens"
 				};
@@ -249,7 +249,7 @@ module.exports = class Retrieving {
 			}
 			//
 			let returnResult = {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"getAllMessage": allmessages
 			};
@@ -260,7 +260,7 @@ module.exports = class Retrieving {
 			logger?.error(`- Error when: ${erro}`);
 			//
 			let returnResult = {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao recuperar contatos"
 			};
@@ -299,7 +299,7 @@ module.exports = class Retrieving {
 			messages = await session?.store?.loadMessages(number, limit, useCursor);
 			//
 			let returnResult = {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"getMessage": messages
 			};
@@ -310,7 +310,7 @@ module.exports = class Retrieving {
 			logger?.error(`- Error when: ${erro}`);
 			//
 			let returnResult = {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao recuperar contatos"
 			};
@@ -377,7 +377,7 @@ module.exports = class Retrieving {
 			*/
 			//
 			let returnResult = {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"message": "Lista de grupos obtida com sucesso.",
 				"getAllGroups": getAllGroups
@@ -389,7 +389,7 @@ module.exports = class Retrieving {
 			logger?.info('Error when sending: ', erro);
 			//
 			let returnResult = {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao recuperar grupos"
 			};
@@ -418,7 +418,7 @@ module.exports = class Retrieving {
 			if (result?.exists == true) {
 				//
 				return {
-					"erro": false,
+					"error": false,
 					"status": 200,
 					"number": result?.jid,
 					"message": "O grupo informado é valido"
@@ -427,7 +427,7 @@ module.exports = class Retrieving {
 			} else {
 				//
 				return {
-					"erro": false,
+					"error": false,
 					"status": 400,
 					"number": number,
 					"message": "O grupo informado é invalido"
@@ -440,7 +440,7 @@ module.exports = class Retrieving {
 			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"number": number,
 				"message": "Erro ao verificar grupo informado"
@@ -466,7 +466,7 @@ module.exports = class Retrieving {
 			if (result?.exists == true) {
 				//
 				return {
-					"erro": false,
+					"error": false,
 					"status": 200,
 					"number": result?.jid,
 					"message": "O número informado pode receber mensagens via whatsapp"
@@ -475,7 +475,7 @@ module.exports = class Retrieving {
 			} else {
 				//
 				return {
-					"erro": false,
+					"error": false,
 					"status": 400,
 					"number": number,
 					"message": "O número informado não pode receber mensagens via whatsapp"
@@ -487,7 +487,7 @@ module.exports = class Retrieving {
 			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"number": number,
 				"message": "Erro ao verificar número informado"
@@ -511,7 +511,7 @@ module.exports = class Retrieving {
 			//logger?.info('Result: ', result); //return object success
 			//
 			let returnResult = {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"profilepicture": result,
 				"message": "Foto do perfil obtido com sucesso."
@@ -523,7 +523,7 @@ module.exports = class Retrieving {
 			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao obtendo a foto do perfil no servidor"
 			};

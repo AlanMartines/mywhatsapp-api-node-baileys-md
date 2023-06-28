@@ -30,7 +30,7 @@ module.exports = class Groups {
 			//logger?.info('Result: ', result); //return object success
 			//
 			return {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"message": "Grupo deixado com sucesso"
 			};
@@ -39,7 +39,7 @@ module.exports = class Groups {
 			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao deixar o grupo"
 			};
@@ -65,7 +65,7 @@ module.exports = class Groups {
 			//
 			if (result?.id) {
 				return {
-					"erro": false,
+					"error": false,
 					"status": 200,
 					"groupId": result?.id,
 					"contactlistValid": contactlistValid,
@@ -75,7 +75,7 @@ module.exports = class Groups {
 			} else {
 				//
 				return {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"groupId": null,
 					"contactlistValid": contactlistValid,
@@ -89,7 +89,7 @@ module.exports = class Groups {
 			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"groupId": null,
 				"contactlistValid": contactlistValid,
@@ -116,7 +116,7 @@ module.exports = class Groups {
 			//logger?.info('Result: ', result); //return object success
 			//
 			return {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"message": "Titulo do grupo atualizado com sucesso"
 			};
@@ -125,7 +125,7 @@ module.exports = class Groups {
 			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao atualizar titulo do grupo"
 			};
@@ -149,7 +149,7 @@ module.exports = class Groups {
 			//logger?.info('Result: ', result); //return object success
 			//
 			return {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"message": "Descrição do grupo atualizado com sucesso"
 			};
@@ -158,7 +158,7 @@ module.exports = class Groups {
 			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao atualizar descrição do grupo"
 			};
@@ -192,7 +192,7 @@ module.exports = class Groups {
 			});
 			//
 			var resultRes = {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"groupId": groupId,
 				"groupMembers": groupMembers,
@@ -205,7 +205,7 @@ module.exports = class Groups {
 			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"groupId": groupId,
 				"message": "Erro ao obter membros do grupo"
@@ -229,7 +229,7 @@ module.exports = class Groups {
 			//logger?.info('Result: ', result); //return object success
 			//
 			return {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"inviteCode": result,
 				"inviteUrl": 'https://chat.whatsapp.com/' + result,
@@ -240,7 +240,7 @@ module.exports = class Groups {
 			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"inviteCode": null,
 				"inviteUrl": null,
@@ -265,7 +265,7 @@ module.exports = class Groups {
 			//logger?.info('Result: ', result); //return object success
 			//
 			return {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"inviteCode": result,
 				"inviteUrl": 'https://chat.whatsapp.com/' + result,
@@ -276,7 +276,7 @@ module.exports = class Groups {
 			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"inviteCode": null,
 				"inviteUrl": null,
@@ -308,7 +308,7 @@ module.exports = class Groups {
 			//
 			if (result?.status == 200) {
 				return {
-					"erro": false,
+					"error": false,
 					"status": 200,
 					"contactlistValid": contactlistValid,
 					"contactlistInvalid": contactlistInvalid,
@@ -317,7 +317,7 @@ module.exports = class Groups {
 			} else {
 				//
 				return {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"contactlistValid": contactlistValid,
 					"contactlistInvalid": contactlistInvalid,
@@ -330,7 +330,7 @@ module.exports = class Groups {
 			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"contactlistValid": contactlistValid,
 				"contactlistInvalid": contactlistInvalid,
@@ -362,7 +362,7 @@ module.exports = class Groups {
 			//
 			if (result?.status == 200) {
 				return {
-					"erro": false,
+					"error": false,
 					"status": 200,
 					"contactlistValid": contactlistValid,
 					"contactlistInvalid": contactlistInvalid,
@@ -371,7 +371,7 @@ module.exports = class Groups {
 			} else {
 				//
 				return {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"contactlistValid": contactlistValid,
 					"contactlistInvalid": contactlistInvalid,
@@ -384,7 +384,7 @@ module.exports = class Groups {
 			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"contactlistValid": contactlistValid,
 				"contactlistInvalid": contactlistInvalid,
@@ -416,7 +416,7 @@ module.exports = class Groups {
 			//
 			if (result?.status == 200) {
 				return {
-					"erro": false,
+					"error": false,
 					"status": 200,
 					"contactlistValid": contactlistValid,
 					"contactlistInvalid": contactlistInvalid,
@@ -425,7 +425,7 @@ module.exports = class Groups {
 			} else {
 				//
 				return {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"contactlistValid": contactlistValid,
 					"contactlistInvalid": contactlistInvalid,
@@ -438,7 +438,7 @@ module.exports = class Groups {
 			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"contactlistValid": contactlistValid,
 				"contactlistInvalid": contactlistInvalid,
@@ -471,7 +471,7 @@ module.exports = class Groups {
 			//
 			if (result?.status == 200) {
 				return {
-					"erro": false,
+					"error": false,
 					"status": 200,
 					"contactlistValid": contactlistValid,
 					"contactlistInvalid": contactlistInvalid,
@@ -480,7 +480,7 @@ module.exports = class Groups {
 			} else {
 				//
 				return {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"contactlistValid": contactlistValid,
 					"contactlistInvalid": contactlistInvalid,
@@ -493,7 +493,7 @@ module.exports = class Groups {
 			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"contactlistValid": contactlistValid,
 				"contactlistInvalid": contactlistInvalid,
@@ -518,7 +518,7 @@ module.exports = class Groups {
 			//logger?.info('Result: ', result); //return object success
 			//
 			return {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"infoInvite": result,
 				"message": "Informação do link de convite"
@@ -527,7 +527,7 @@ module.exports = class Groups {
 		}).catch((erro) => {
 			logger?.error(`- Error when: ${erro}`);
 			return {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao obter informação do link de convite"
 			};
@@ -549,7 +549,7 @@ module.exports = class Groups {
 		return await session?.client?.groupAcceptInvite(inviteCode).then(async (result) => {
 			//logger?.info('Result: ', result); //return object success
 			return {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"message": "Join grupo com sucesso"
 			};
@@ -557,7 +557,7 @@ module.exports = class Groups {
 		}).catch((erro) => {
 			logger?.error(`- Error when: ${erro}`);
 			return {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao Join grupo"
 			};

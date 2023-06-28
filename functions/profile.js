@@ -26,7 +26,7 @@ module.exports = class Command {
 			//logger?.info('Result: ', result); //return object success
 			//
 			let returnResult = {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"statusperfil": result,
 				"message": "Status do perfil obtido com sucesso."
@@ -38,7 +38,7 @@ module.exports = class Command {
 			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao obtendo a foto do perfil no servidor"
 			};
@@ -62,7 +62,7 @@ module.exports = class Command {
 			//logger?.info('Result: ', result); //return object success
 			//
 			return {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"message": "Profile status alterado com sucesso."
 			};
@@ -71,7 +71,7 @@ module.exports = class Command {
 			logger?.error(`- Error when: ${erro}`);
 			//return erro;
 			return {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao alterar profile status."
 			};
@@ -94,7 +94,7 @@ module.exports = class Command {
 			//logger?.info('Result: ', result); //return object success
 			//
 			return {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"message": "Profile name alterado com sucesso."
 			};
@@ -103,7 +103,7 @@ module.exports = class Command {
 			logger?.error(`- Error when: ${erro}`);
 			//return erro;
 			return {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao alterar profile name."
 			};

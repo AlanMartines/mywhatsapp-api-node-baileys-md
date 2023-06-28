@@ -46,7 +46,7 @@ router.post("/getStatus", upload.none(''), verifyToken.verify, async (req, res, 
 	//
 	if (!resSessionName || !req.body.phonefull) {
 		var validate = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -98,7 +98,7 @@ router.post("/getStatus", upload.none(''), verifyToken.verify, async (req, res, 
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -128,7 +128,7 @@ router.post("/getAllContacts", upload.none(''), verifyToken.verify, async (req, 
 	//
 	if (!resSessionName) {
 		var validate = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -163,7 +163,7 @@ router.post("/getAllContacts", upload.none(''), verifyToken.verify, async (req, 
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -193,7 +193,7 @@ router.post("/getAllChats", upload.none(''), verifyToken.verify, async (req, res
 	//
 	if (!resSessionName) {
 		var validate = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -228,7 +228,7 @@ router.post("/getAllChats", upload.none(''), verifyToken.verify, async (req, res
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -258,7 +258,7 @@ router.post("/getAllMessage", upload.none(''), verifyToken.verify, async (req, r
 	//
 	if (!resSessionName) {
 		var validate = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -293,7 +293,7 @@ router.post("/getAllMessage", upload.none(''), verifyToken.verify, async (req, r
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -323,7 +323,7 @@ router.post("/getMessage", upload.none(''), verifyToken.verify, async (req, res,
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.limit || !req.body.cursor_id || !req.body.cursor_fromMe) {
 		var validate = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -378,7 +378,7 @@ router.post("/getMessage", upload.none(''), verifyToken.verify, async (req, res,
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -408,7 +408,7 @@ router.post("/getAllGroups", upload.none(''), verifyToken.verify, async (req, re
 	//
 	if (!resSessionName) {
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -443,7 +443,7 @@ router.post("/getAllGroups", upload.none(''), verifyToken.verify, async (req, re
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -473,7 +473,7 @@ router.post("/getProfilePicFromServer", upload.none(''), verifyToken.verify, asy
 	//
 	if (!resSessionName || !req.body.phonefull) {
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -525,7 +525,7 @@ router.post("/getProfilePicFromServer", upload.none(''), verifyToken.verify, asy
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -555,7 +555,7 @@ router.post("/checkNumberStatus", upload.none(''), verifyToken.verify, async (re
 	//
 	if (!resSessionName || !req.body.phonefull) {
 		var resultRes = {
-			"erro": true,
+			"error": true,
 			"status": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
@@ -602,7 +602,7 @@ router.post("/checkNumberStatus", upload.none(''), verifyToken.verify, async (re
 			default:
 				//
 				var resultRes = {
-					"erro": true,
+					"error": true,
 					"status": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
@@ -622,7 +622,7 @@ router.post("/checkNumberStatus", upload.none(''), verifyToken.verify, async (re
 router.all('*', (req, res) => {
 	//
 	var resultRes = {
-		"erro": true,
+		"error": true,
 		"status": 404,
 		"message": 'Não foi possivel executar a ação, verifique a url informada.'
 	};

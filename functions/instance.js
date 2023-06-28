@@ -338,7 +338,7 @@ module.exports = class Instance {
 			});
 			//
 			let result = {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"message": "Sessão fechada com sucesso"
 			};
@@ -350,7 +350,7 @@ module.exports = class Instance {
 			logger?.error(`- Erro ao fechar navegador ${error}`);
 			//
 			let result = {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao fechar navegador"
 			};
@@ -391,7 +391,7 @@ module.exports = class Instance {
 			//await Sessions?.deleteSession(SessionName);
 			//
 			let result = {
-				"erro": false,
+				"error": false,
 				"status": 200,
 				"message": "Sessão desconetada com sucesso"
 			};
@@ -402,7 +402,7 @@ module.exports = class Instance {
 			logger?.error(`- Error ao desconetar sessão: ${error}`);
 			//
 			let result = {
-				"erro": true,
+				"error": true,
 				"status": 404,
 				"message": "Erro ao desconetar sessão"
 			};
@@ -467,7 +467,7 @@ module.exports = class Instance {
 				engine?.Start(req, res, next);
 				//
 				return {
-					"erro": false,
+					"error": false,
 					"status": 200,
 					"message": "Sistema reiniciado com sucesso"
 				};
@@ -478,7 +478,7 @@ module.exports = class Instance {
 				session.client = false;
 				//
 				return {
-					"erro": false,
+					"error": false,
 					"status": 404,
 					"message": 'Sistema Off-line'
 				};
@@ -487,7 +487,7 @@ module.exports = class Instance {
 			//
 		} else {
 			return {
-				"erro": false,
+				"error": false,
 				"status": 404,
 				"message": 'Sistema Off-line'
 			};
@@ -508,7 +508,7 @@ module.exports = class Instance {
 				delete dataSessions?.waqueue;
 				//
 				return {
-					"erro": false,
+					"error": false,
 					"status": 200,
 					"message": "Sessão carregada com sucesso",
 					"session": dataSessions
@@ -517,7 +517,7 @@ module.exports = class Instance {
 			} else {
 				//
 				return {
-					"erro": false,
+					"error": false,
 					"status": 200,
 					"message": "Sessão não encontrada"
 				};
@@ -527,7 +527,7 @@ module.exports = class Instance {
 			logger?.error(`- Error when: ${error}`);
 			//
 			return {
-				"erro": false,
+				"error": false,
 				"status": 404,
 				"message": 'Erro ao carregar sessão'
 			};
@@ -555,7 +555,7 @@ module.exports = class Instance {
 				});
 				//
 				return {
-					"erro": false,
+					"error": false,
 					"status": 200,
 					"message": "Sessões carregadas com sucesso",
 					"session": novoJson
@@ -564,7 +564,7 @@ module.exports = class Instance {
 			} else {
 				//
 				return {
-					"erro": false,
+					"error": false,
 					"status": 200,
 					"message": "Sessões não encontradas"
 				};
@@ -574,7 +574,7 @@ module.exports = class Instance {
 			logger?.error(`- Error when: ${error}`);
 			//
 			return {
-				"erro": false,
+				"error": false,
 				"status": 404,
 				"message": 'Erro ao carregar sessões'
 			};
