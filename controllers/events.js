@@ -40,7 +40,7 @@ function convertHMS(value) {
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
-async function updateStatisticsDb(status, type, SessionName) {
+async function updateStatisticsDb(status, type, isGroup, SessionName) {
 	//
 	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
 	//logger?.info(`- Date: ${date_now}`);
@@ -52,6 +52,7 @@ async function updateStatisticsDb(status, type, SessionName) {
 			sessionname: SessionName,
 			status: status,
 			type: type,
+			isgroup: isGroup,
 			lastactivity: date_now,
 		}).then(async (entries) => {
 			logger?.info('- Statistics atualizado');
@@ -845,7 +846,7 @@ module.exports = class Events {
 						//
 						dataSessions?.funcoesSocket?.message(SessionName, response);
 						await webhooks?.wh_messages(SessionName, response);
-						await updateStatisticsDb(response?.status, response?.type, SessionName);
+						await updateStatisticsDb(response?.status, response?.type, response?.isGroup, SessionName);
 						//
 					}
 					//
