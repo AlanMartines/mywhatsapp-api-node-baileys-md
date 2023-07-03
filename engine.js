@@ -706,6 +706,8 @@ module.exports = class Instace {
 								//
 								let resDisconnectReason = {
 									loggedOut: 401,
+									bannedTimetamp: 402,
+									bannedTemporary: 403,
 									timedOut: 408,
 									connectionLost: 408,
 									multideviceMismatch: 411,
@@ -714,7 +716,8 @@ module.exports = class Instace {
 									badSession: 500,
 									restartRequired: 515,
 								};
-								//
+								// Banned status codes are 403 and 402 temporary
+								// The status code 402 has a banned timetamp
 								const statusCode = lastDisconnect.error ? lastDisconnect.error?.output?.statusCode : 0;
 								switch (statusCode) {
 									case resDisconnectReason.loggedOut:
@@ -761,6 +764,65 @@ module.exports = class Instace {
 											status: addJson?.status,
 											message: addJson?.message,
 										});
+										//
+										break;
+									case resDisconnectReason.bannedTemporary:
+										//
+										logger?.info(`- SessionName: ${SessionName}`);
+										logger?.info(`- User banned temporary`.red);
+										//
+										session.state = "BANNED";
+										session.status = "notLogged";
+										session.message = 'Dispositivo desconectado';
+										//
+										await updateStateDb(session.state, session.status, session.AuthorizationToken);
+										//
+										socket.emit('status',
+											{
+												SessionName: SessionName,
+												status: session.status
+											}
+										);
+										/*
+										setTimeout(async function () {
+											return await startSock(SessionName).then(async (result) => {
+												session.client = result;
+												return result;
+											}).catch(async (erro) => {
+												logger?.error(`- Error reconnecting connection: ${erro}`);
+											});
+										}, 500);
+										*/
+										//
+										break;
+									case resDisconnectReason.bannedTimetamp:
+										//
+										logger?.info(`- SessionName: ${SessionName}`);
+										logger?.info(`- User banned timestamp`.red);
+										//
+										session.state = "BANNED";
+										session.status = "notLogged";
+										session.message = 'Dispositivo desconectado';
+										//
+										await updateStateDb(session.state, session.status, session.AuthorizationToken);
+										//
+										socket.emit('status',
+											{
+												SessionName: SessionName,
+												status: session.status
+											}
+										);
+										//
+										/*
+										setTimeout(async function () {
+											return await startSock(SessionName).then(async (result) => {
+												session.client = result;
+												return result;
+											}).catch(async (erro) => {
+												logger?.error(`- Error reconnecting connection: ${erro}`);
+											});
+										}, 500);
+										*/
 										//
 										break;
 									case resDisconnectReason.timedOut:
