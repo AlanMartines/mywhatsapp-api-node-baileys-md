@@ -136,6 +136,18 @@ module.exports = class Instance {
 						status: "notLogged",
 						message: "Navegador interno fechado"
 					};
+				} else if (session.state == "CLOSED") {
+					return {
+						state: "CLOSED",
+						status: "notLogged",
+						message: "Navegador interno fechado"
+					};
+				} else if (session.state == "BANNED") {
+					return {
+						state: "BANNED",
+						status: "notLogged",
+						message: "Esta conta está impedida de usar o WhatsApp, conta banida"
+					};
 				} else {
 					switch (session.status) {
 						case 'isLogged':
