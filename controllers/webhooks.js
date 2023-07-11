@@ -19,7 +19,10 @@ module.exports = class Webhooks {
 						rejectUnauthorized: false,
 						keepAlive: true
 					}),
-					headers: { 'Content-Type': 'application/json; charset=utf-8' }
+					headers: {
+            'Content-type': 'application/json; charset=utf-8',
+            'Accept': 'application/json; charset=utf-8'
+         }
 				}).then(response => {
 					logger.info('- Webhooks receive message');
 				}).catch(error => {
@@ -52,7 +55,10 @@ module.exports = class Webhooks {
 						rejectUnauthorized: false,
 						keepAlive: true
 					}),
-					headers: { 'Content-Type': 'application/json; charset=utf-8' }
+					headers: {
+            'Content-type': 'application/json; charset=utf-8',
+            'Accept': 'application/json; charset=utf-8'
+         }
 				}).then(response => {
 					logger.info('- Webhooks connect status');
 				}).catch(error => {
@@ -77,7 +83,10 @@ module.exports = class Webhooks {
 						rejectUnauthorized: false,
 						keepAlive: true
 					}),
-					headers: { 'Content-Type': 'application/json; charset=utf-8' }
+					headers: {
+            'Content-type': 'application/json; charset=utf-8',
+            'Accept': 'application/json; charset=utf-8'
+         }
 				}).then(response => {
 					logger.info('- Webhooks status message')
 				}).catch(error => {
@@ -110,7 +119,10 @@ module.exports = class Webhooks {
 						rejectUnauthorized: false,
 						keepAlive: true
 					}),
-					headers: { 'Content-Type': 'application/json; charset=utf-8' }
+					headers: {
+            'Content-type': 'application/json; charset=utf-8',
+            'Accept': 'application/json; charset=utf-8'
+         }
 				}).then(response => {
 					logger.info('- Webhooks status message send')
 				}).catch(error => {
@@ -136,7 +148,10 @@ module.exports = class Webhooks {
 						rejectUnauthorized: false,
 						keepAlive: true
 					}),
-					headers: { 'Content-Type': 'application/json; charset=utf-8' }
+					headers: {
+            'Content-type': 'application/json; charset=utf-8',
+            'Accept': 'application/json; charset=utf-8'
+         }
 				}).then(response => {
 					logger.info('- Webhooks receive call')
 				}).catch(error => {
