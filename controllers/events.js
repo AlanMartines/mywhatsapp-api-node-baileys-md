@@ -166,8 +166,11 @@ module.exports = class Events {
 					"to": messages[0]?.key?.fromMe == false ? phone : messages[0]?.key?.remoteJid?.split(':')[0].split('@')[0],
 					"dateTime": moment(new Date())?.format('YYYY-MM-DD HH:mm:ss')
 				}
-				dataSessions?.funcoesSocket?.ack(SessionName, response);
-				await webhooks?.wh_status(SessionName, response);
+
+				if(status){
+					dataSessions?.funcoesSocket?.ack(SessionName, response);
+					await webhooks?.wh_status(SessionName, response);
+				}
 				//
 			}
 		} catch (error) {
