@@ -161,7 +161,7 @@ module.exports = class Events {
 					default:
 						//
 						status = null;
-					//
+						//
 				}
 				logger?.info(`- Listen to ack ${onAck}, status ${status}`);
 				let response = {
