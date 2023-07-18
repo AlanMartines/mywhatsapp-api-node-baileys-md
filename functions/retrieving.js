@@ -458,9 +458,7 @@ module.exports = class Retrieving {
 		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = await Sessions?.getSession(SessionName);
-		//return await session?.client?.groupMetadata(groipId).then((result) => {
-		try{
-			let result = await session?.client?.groupMetadata(groipId);
+		return await session?.client?.groupMetadata(groipId).then((result) => {
 			logger?.info('- Result: ', result); //return object success
 			logger?.info(`- Result: \n ${JSON.stringify(result, null, 2)}`);
 			//
@@ -484,7 +482,7 @@ module.exports = class Retrieving {
 				//
 			}
 			//
-		}catch(erro){
+		}).catch((erro) => {
 			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
@@ -494,7 +492,7 @@ module.exports = class Retrieving {
 				"message": "Erro ao verificar o grupo informado"
 			};
 			//
-		};
+		});
 	} //checkNumberStatus
 	//
 	// ------------------------------------------------------------------------------------------------//
