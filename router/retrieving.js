@@ -618,6 +618,83 @@ router.post("/checkNumberStatus", upload.none(''), verifyToken.verify, async (re
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
+// Verificar o status do grupo
+router.post("/checkGroupStatus", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const theSessionName = removeWithspace(req?.body?.SessionName);
+	//
+	if (parseInt(config.VALIDATE_MYSQL) == true) {
+		var resSessionName = theTokenAuth;
+	} else {
+		var resSessionName = theSessionName;
+	}
+	//
+	if (!resSessionName || !req.body.groupId) {
+		var resultRes = {
+			"error": true,
+			"status": 400,
+			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		return res.status(resultRes.status).json({
+			"Status": resultRes
+		});
+		//
+	} else {
+		//
+		var Status = await instance?.Status(resSessionName);
+		var session = await Sessions?.getSession(resSessionName);
+		switch (Status.status) {
+			case 'inChat':
+			case 'qrReadSuccess':
+			case 'isLogged':
+			case 'chatsAvailable':
+				//
+				await session.waqueue.add(async () => {
+					var checkGroup = await retrieving?.checkGroupStatus(
+						resSessionName,
+						req.body.groupId.trim()
+					);
+					//
+					if (checkGroup.status === 200 && checkGroup.erro === false) {
+						//
+						res.setHeader('Content-Type', 'application/json');
+						return res.status(checkGroup.status).json({
+							"Status": checkGroup
+						});
+						//
+					} else {
+						//
+						res.setHeader('Content-Type', 'application/json');
+						return res.status(checkGroup.status).json({
+							"Status": checkGroup
+						});
+						//
+					}
+					//
+				});
+				break;
+			default:
+				//
+				var resultRes = {
+					"error": true,
+					"status": 400,
+					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+				};
+				//
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(resultRes.status).json({
+					"Status": resultRes
+				});
+			//
+		}
+	}
+}); //checkNumberStatus
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
 // rota url erro
 router.all('*', (req, res) => {
 	//

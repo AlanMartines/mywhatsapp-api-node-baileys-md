@@ -402,55 +402,6 @@ module.exports = class Retrieving {
 	//
 	// ------------------------------------------------------------------------------------------------//
 	//
-	// Verificar grupo
-	static async checkGroupStatus(
-		SessionName,
-		groupID
-	) {
-		logger?.info("- Validando numero");
-		logger?.info(`- SessionName: ${SessionName}`);
-		//
-		var session = await Sessions?.getSession(SessionName);
-		return await isJidGroup(groupID).then(async (result) => {
-			logger?.info('Result: ', result); //return object success
-			//
-			/*
-			if (result?.exists == true) {
-				//
-				return {
-					"error": false,
-					"status": 200,
-					"number": result?.jid,
-					"message": "O grupo informado é valido"
-				};
-				//
-			} else {
-				//
-				return {
-					"error": false,
-					"status": 400,
-					"number": number,
-					"message": "O grupo informado é invalido"
-				};
-				//
-			}
-			*/
-			//
-		}).catch((erro) => {
-			logger?.error(`- Error when: ${erro}`);
-			//
-			return {
-				"error": true,
-				"status": 404,
-				"number": number,
-				"message": "Erro ao verificar grupo informado"
-			};
-			//
-		});
-	} //checkGroupStatus
-	//
-	// ------------------------------------------------------------------------------------------------//
-	//
 	// Verificar o status do número
 	static async checkNumberStatus(
 		SessionName,
@@ -507,16 +458,16 @@ module.exports = class Retrieving {
 		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = await Sessions?.getSession(SessionName);
-		return await session?.client?.onWhatsApp(number).then(([result]) => {
+		return await session?.client?.chatExists(groipId).then((result) => {
 			//logger?.info('Result: ', result); //return object success
 			//
-			if (result?.exists == true) {
+			if (result) {
 				//
 				return {
 					"error": false,
 					"status": 200,
-					"number": result?.jid,
-					"message": "O número informado pode receber mensagens via whatsapp"
+					"groipid": groipId + '@g.us',
+					"message": "O grupo informado existe"
 				};
 				//
 			} else {
@@ -524,8 +475,8 @@ module.exports = class Retrieving {
 				return {
 					"error": false,
 					"status": 400,
-					"number": number,
-					"message": "O número informado não pode receber mensagens via whatsapp"
+					"groipid": groipId + '@g.us',
+					"message": "O grupo informado não existe"
 				};
 				//
 			}
@@ -536,8 +487,8 @@ module.exports = class Retrieving {
 			return {
 				"error": true,
 				"status": 404,
-				"number": number,
-				"message": "Erro ao verificar número informado"
+				"groipid": groipId + '@g.us',
+				"message": "Erro ao verificar o grupo informado"
 			};
 			//
 		});
