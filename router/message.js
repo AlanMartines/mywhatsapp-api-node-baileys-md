@@ -90,11 +90,11 @@ router.post("/sendContactVcard", upload.none(''), verifyToken.verify, async (req
 							soNumeros(req.body.phonefull)
 						);
 						//
-						if (checkNumberStatus.status == 200 && checkNumberStatus.erro == false) {
+						if (checkNumber.Status.status == 200 && checkNumber.Status.erro == false) {
 							//
 							var sendContactVcard = await message?.sendContactVcard(
 								resSessionName,
-								checkNumberStatus.number,
+								checkNumber.Status.number,
 								soNumeros(req.body.contact),
 								req.body.namecontact
 							);
@@ -211,11 +211,11 @@ router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req,
 								soNumeros(req.body.phonefull)
 							);
 							//
-							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+							if (checkNumber.Status.status === 200 && checkNumber.Status.erro === false) {
 								//
 								var sendPtt = await message?.sendPtt(
 									resSessionName,
-									checkNumberStatus.number,
+									checkNumber.Status.number,
 									req.file.buffer,
 									req.file.mimetype,
 									req.body.caption
@@ -229,7 +229,7 @@ router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req,
 							} else {
 								//
 								res.setHeader('Content-Type', 'application/json');
-								return res.status(checkNumberStatus.status).json({
+								return res.status(checkNumber.Status.status).json({
 									"Status": checkNumberStatus
 								});
 								//
@@ -313,13 +313,13 @@ router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req,
 							soNumeros(req.body.phonefull)
 						);
 						//
-						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+						if (checkNumber.Status.status === 200 && checkNumber.Status.erro === false) {
 							//
 							var mimeType = mime.lookup(req.body.originalname);
 							//
 							var sendPtt = await message?.sendPtt(
 								resSessionName,
-								checkNumberStatus.number,
+								checkNumber.Status.number,
 								Buffer.from(req.body.base64, 'base64'),
 								mimeType,
 								req.body.caption
@@ -333,7 +333,7 @@ router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req,
 						} else {
 							//
 							res.setHeader('Content-Type', 'application/json');
-							return res.status(checkNumberStatus.status).json({
+							return res.status(checkNumber.Status.status).json({
 								"Status": checkNumberStatus
 							});
 							//
@@ -436,11 +436,11 @@ router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (
 								soNumeros(req.body.phonefull)
 							);
 							//
-							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+							if (checkNumber.Status.status === 200 && checkNumber.Status.erro === false) {
 								//
 								var sendPtt = await message?.sendPtt(
 									resSessionName,
-									checkNumberStatus.number,
+									checkNumber.Status.number,
 									Buffer.from(req.body.base64, 'base64'),
 									req.body.mimetype
 								);
@@ -453,7 +453,7 @@ router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (
 							} else {
 								//
 								res.setHeader('Content-Type', 'application/json');
-								return res.status(checkNumberStatus.status).json({
+								return res.status(checkNumber.Status.status).json({
 									"Status": checkNumberStatus
 								});
 								//
@@ -537,11 +537,11 @@ router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, n
 							soNumeros(req.body.phonefull)
 						);
 						//
-						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+						if (checkNumber.Status.status === 200 && checkNumber.Status.erro === false) {
 							//
 							var sendText = await message?.sendText(
 								resSessionName,
-								checkNumberStatus.number,
+								checkNumber.Status.number,
 								req.body.msg
 							);
 							//
@@ -553,7 +553,7 @@ router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, n
 						} else {
 							//
 							res.setHeader('Content-Type', 'application/json');
-							return res.status(checkNumberStatus.status).json({
+							return res.status(checkNumber.Status.status).json({
 								"Status": checkNumberStatus
 							});
 							//
@@ -637,11 +637,11 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
 							soNumeros(req.body.phonefull)
 						);
 						//
-						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+						if (checkNumber.Status.status === 200 && checkNumber.Status.erro === false) {
 							//
 							var sendLocation = await message?.sendLocation(
 								resSessionName,
-								checkNumberStatus.number,
+								checkNumber.Status.number,
 								req.body.lat,
 								req.body.long,
 								req.body.local
@@ -657,7 +657,7 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
 							//
 							//console?.log(result);
 							res.setHeader('Content-Type', 'application/json');
-							return res.status(checkNumberStatus.status).json({
+							return res.status(checkNumber.Status.status).json({
 								"Status": checkNumberStatus
 							});
 							//
@@ -755,11 +755,11 @@ router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, n
 							soNumeros(req.body.phonefull)
 						);
 						//
-						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+						if (checkNumber.Status.status === 200 && checkNumber.Status.erro === false) {
 							//
 							var sendLink = await message?.sendLink(
 								resSessionName,
-								checkNumberStatus.number,
+								checkNumber.Status.number,
 								req.body.link,
 								req.body.descricao
 							);
@@ -772,7 +772,7 @@ router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, n
 						} else {
 							//
 							res.setHeader('Content-Type', 'application/json');
-							return res.status(checkNumberStatus.status).json({
+							return res.status(checkNumber.Status.status).json({
 								"Status": checkNumberStatus
 							});
 							//
@@ -874,11 +874,11 @@ router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req,
 								soNumeros(req.body.phonefull)
 							);
 							//
-							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+							if (checkNumber.Status.status === 200 && checkNumber.Status.erro === false) {
 								//
 								var sendPtt = await message?.sendImage(
 									resSessionName,
-									checkNumberStatus.number,
+									checkNumber.Status.number,
 									req.file.buffer,
 									req.file.mimetype,
 									req.file.originalname,
@@ -893,7 +893,7 @@ router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req,
 							} else {
 								//
 								res.setHeader('Content-Type', 'application/json');
-								return res.status(checkNumberStatus.status).json({
+								return res.status(checkNumber.Status.status).json({
 									"Status": checkNumberStatus
 								});
 								//
@@ -998,11 +998,11 @@ router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req,
 							soNumeros(req.body.phonefull)
 						);
 						//
-						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+						if (checkNumber.Status.status === 200 && checkNumber.Status.erro === false) {
 							//
 							var sendFileBase64 = await message?.sendImage(
 								resSessionName,
-								checkNumberStatus.number,
+								checkNumber.Status.number,
 								Buffer.from(req.body.base64, 'base64'),
 								req.body.originalname,
 								mimeType,
@@ -1017,7 +1017,7 @@ router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req,
 						} else {
 							//
 							res.setHeader('Content-Type', 'application/json');
-							return res.status(checkNumberStatus.status).json({
+							return res.status(checkNumber.Status.status).json({
 								"Status": checkNumberStatus
 							});
 						}
@@ -1105,11 +1105,11 @@ router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (
 							soNumeros(req.body.phonefull)
 						);
 						//
-						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+						if (checkNumber.Status.status === 200 && checkNumber.Status.erro === false) {
 							//
 							var sendFileFromBase64 = await message?.sendImage(
 								resSessionName,
-								checkNumberStatus.number,
+								checkNumber.Status.number,
 								Buffer.from(req.body.base64, 'base64'),
 								req.body.originalname,
 								req.body.mimetype,
@@ -1124,7 +1124,7 @@ router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (
 						} else {
 							//
 							res.setHeader('Content-Type', 'application/json');
-							return res.status(checkNumberStatus.status).json({
+							return res.status(checkNumber.Status.status).json({
 								"Status": checkNumberStatus
 							});
 							//
@@ -1193,11 +1193,11 @@ router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, 
 						soNumeros(req.body.phonefull)
 					);
 					//
-					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+					if (checkNumber.Status.status === 200 && checkNumber.Status.erro === false) {
 						//
 						var sendFile = await message?.sendFile(
 							resSessionName,
-							checkNumberStatus.number,
+							checkNumber.Status.number,
 							req.file.buffer,
 							req.file.originalname,
 							req.file.mimetype,
@@ -1212,7 +1212,7 @@ router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, 
 					} else {
 						//console?.log(result);
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(checkNumberStatus.status).json({
+						return res.status(checkNumber.Status.status).json({
 							"Status": checkNumberStatus
 						});
 					}
@@ -1279,11 +1279,11 @@ router.post("/sendFileUrl", upload.none(''), verifyToken.verify, async (req, res
 						soNumeros(req.body.phonefull)
 					);
 					//
-					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+					if (checkNumber.Status.status === 200 && checkNumber.Status.erro === false) {
 						//
 						var sendFile = await message?.sendFileUrl(
 							resSessionName,
-							checkNumberStatus.number,
+							checkNumber.Status.number,
 							req.body.url,
 							req.body.url.split('/').slice(-1)[0],
 							mime.lookup(req.body.url.split('.').slice(-1)[0]),
@@ -1298,7 +1298,7 @@ router.post("/sendFileUrl", upload.none(''), verifyToken.verify, async (req, res
 					} else {
 						//console?.log(result);
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(checkNumberStatus.status).json({
+						return res.status(checkNumber.Status.status).json({
 							"Status": checkNumberStatus
 						});
 					}
@@ -1371,11 +1371,11 @@ router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, 
 						soNumeros(req.body.phonefull)
 					);
 					//
-					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+					if (checkNumber.Status.status === 200 && checkNumber.Status.erro === false) {
 						//
 						var sendFileBase64 = await message?.sendFile(
 							resSessionName,
-							checkNumberStatus.number,
+							checkNumber.Status.number,
 							Buffer.from(req.body.base64, 'base64'),
 							req.body.originalname,
 							mimeType,
@@ -1390,7 +1390,7 @@ router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, 
 					} else {
 						//
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(checkNumberStatus.status).json({
+						return res.status(checkNumber.Status.status).json({
 							"Status": checkNumberStatus
 						});
 					}
@@ -1456,11 +1456,11 @@ router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (r
 						soNumeros(req.body.phonefull)
 					);
 					//
-					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+					if (checkNumber.Status.status === 200 && checkNumber.Status.erro === false) {
 						//
 						var sendFileFromBase64 = await message?.sendFile(
 							resSessionName,
-							checkNumberStatus.number,
+							checkNumber.Status.number,
 							Buffer.from(req.body.base64, 'base64'),
 							req.body.originalname,
 							req.body.mimetype,
@@ -1475,7 +1475,7 @@ router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (r
 					} else {
 						//
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(checkNumberStatus.status).json({
+						return res.status(checkNumber.Status.status).json({
 							"Status": checkNumberStatus
 						});
 						//
@@ -1543,11 +1543,11 @@ router.post("/sendButton", upload.none(''), verifyToken.verify, async (req, res,
 						soNumeros(req.body.phonefull)
 					);
 					//
-					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+					if (checkNumber.Status.status === 200 && checkNumber.Status.erro === false) {
 						//
 						var sendButton = await message?.sendButton(
 							resSessionName,
-							checkNumberStatus.number,
+							checkNumber.Status.number,
 							req.body.buttonMessage,
 						);
 						//
@@ -1559,7 +1559,7 @@ router.post("/sendButton", upload.none(''), verifyToken.verify, async (req, res,
 					} else {
 						//
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(checkNumberStatus.status).json({
+						return res.status(checkNumber.Status.status).json({
 							"Status": checkNumberStatus
 						});
 						//
@@ -1626,11 +1626,11 @@ router.post("/sendTemplate", upload.none(''), verifyToken.verify, async (req, re
 						soNumeros(req.body.phonefull)
 					);
 					//
-					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+					if (checkNumber.Status.status === 200 && checkNumber.Status.erro === false) {
 						//
 						var sendTemplate = await message?.sendTemplate(
 							resSessionName,
-							checkNumberStatus.number,
+							checkNumber.Status.number,
 							req.body.templateMessage,
 						);
 						//
@@ -1642,7 +1642,7 @@ router.post("/sendTemplate", upload.none(''), verifyToken.verify, async (req, re
 					} else {
 						//
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(checkNumberStatus.status).json({
+						return res.status(checkNumber.Status.status).json({
 							"Status": checkNumberStatus
 						});
 						//
@@ -1709,11 +1709,11 @@ router.post("/sendListMessage", upload.none(''), verifyToken.verify, async (req,
 						soNumeros(req.body.phonefull)
 					);
 					//
-					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+					if (checkNumber.Status.status === 200 && checkNumber.Status.erro === false) {
 						//
 						var sendListMessage = await message?.sendListMessage(
 							resSessionName,
-							checkNumberStatus.number,
+							checkNumber.Status.number,
 							req.body.listMessage,
 						);
 						//
@@ -1725,7 +1725,7 @@ router.post("/sendListMessage", upload.none(''), verifyToken.verify, async (req,
 					} else {
 						//
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(checkNumberStatus.status).json({
+						return res.status(checkNumber.Status.status).json({
 							"Status": checkNumberStatus
 						});
 						//
@@ -1792,11 +1792,11 @@ router.post("/sendPoll", upload.none(''), verifyToken.verify, async (req, res, n
 						soNumeros(req.body.phonefull)
 					);
 					//
-					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+					if (checkNumber.Status.status === 200 && checkNumber.Status.erro === false) {
 						//
 						var sendPoll = await message?.sendPoll(
 							resSessionName,
-							checkNumberStatus.number,
+							checkNumber.Status.number,
 							req.body.poll,
 						);
 						//
@@ -1808,7 +1808,7 @@ router.post("/sendPoll", upload.none(''), verifyToken.verify, async (req, res, n
 					} else {
 						//
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(checkNumberStatus.status).json({
+						return res.status(checkNumber.Status.status).json({
 							"Status": checkNumberStatus
 						});
 						//
