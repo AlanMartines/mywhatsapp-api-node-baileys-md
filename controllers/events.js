@@ -141,23 +141,27 @@ module.exports = class Events {
 				let status;
 				switch (onAck) {
 					case 5:
-						status = 'PLAYED'
+						status = 'PLAYED';
 						break;
 					case 4:
-						status = 'READ'
+						status = 'READ';
 						break;
 					case 3:
-						status = 'RECEIVED'
+						status = 'RECEIVED';
 						break;
 					case 2:
-						status = 'SEND'
+						status = 'SEND';
 						break;
 					case 1:
-						status = 'PENDING'
+						status = 'PENDING';
 						break;
 					case 0:
-						status = 'ERROR'
+						status = 'ERROR';
 						break;
+					default:
+						//
+						status = null;
+					//
 				}
 				logger?.info(`- Listen to ack ${onAck}, status ${status}`);
 				let response = {
@@ -169,7 +173,7 @@ module.exports = class Events {
 					"dateTime": moment(new Date())?.format('YYYY-MM-DD HH:mm:ss')
 				}
 
-				if(status){
+				if (status) {
 					dataSessions?.funcoesSocket?.ack(SessionName, response);
 					await webhooks?.wh_status(SessionName, response);
 				}
