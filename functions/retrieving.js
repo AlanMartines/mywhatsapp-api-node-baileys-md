@@ -459,7 +459,7 @@ module.exports = class Retrieving {
 		//
 		var session = await Sessions?.getSession(SessionName);
 		return await session?.client?.chatExists(groipId).then((result) => {
-			//logger?.info('Result: ', result); //return object success
+			logger?.info('- Result: ', result); //return object success
 			//
 			if (result) {
 				//
