@@ -454,11 +454,13 @@ module.exports = class Retrieving {
 		SessionName,
 		groipId
 	) {
-		logger?.info("- Validando numero");
+		logger?.info("- Validando ID grupo");
 		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = await Sessions?.getSession(SessionName);
-		return await session?.client?.groupMetadata(groipId).then((result) => {
+		//return await session?.client?.groupMetadata(groipId).then((result) => {
+		try{
+			let result = session?.client?.groupMetadata(groipId);
 			logger?.info('- Result: ', result); //return object success
 			logger?.info(`- Result: \n ${JSON.stringify(result, null, 2)}`);
 			//
@@ -482,7 +484,7 @@ module.exports = class Retrieving {
 				//
 			}
 			//
-		}).catch((erro) => {
+		}catch(erro){
 			logger?.error(`- Error when: ${erro}`);
 			//
 			return {
@@ -492,7 +494,7 @@ module.exports = class Retrieving {
 				"message": "Erro ao verificar o grupo informado"
 			};
 			//
-		});
+		};
 	} //checkNumberStatus
 	//
 	// ------------------------------------------------------------------------------------------------//
