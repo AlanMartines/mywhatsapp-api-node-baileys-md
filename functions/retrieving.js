@@ -460,7 +460,7 @@ module.exports = class Retrieving {
 		var session = await Sessions?.getSession(SessionName);
 		//return await session?.client?.groupMetadata(groipId).then((result) => {
 		try{
-			let result = session?.client?.groupMetadata(groipId);
+			let result = await session?.client?.groupMetadata(groipId);
 			logger?.info('- Result: ', result); //return object success
 			logger?.info(`- Result: \n ${JSON.stringify(result, null, 2)}`);
 			//
