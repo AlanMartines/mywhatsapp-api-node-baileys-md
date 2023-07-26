@@ -93,7 +93,7 @@ AUTO_CLOSE=10
 SECRET_KEY=096e402586e2faa8db20d6b033c60
 #
 # Validate in terminal false or true
-VALIDATE_MYSQL=1
+VALIDATE_MYSQL=0
 #
 CONCURRENCY=5
 #
