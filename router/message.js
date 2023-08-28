@@ -25,7 +25,7 @@ const config = require('../config.global');
 //
 function removeWithspace(string) {
 	try {
-		logger.info(`- Removendo todas as quebras de linha e espaços`);
+		//logger.info(`- Removendo todas as quebras de linha e espaços`);
 		let result = string.replace(/\r?\n|\r|\s+/g, ""); /* replace all newlines and with a space */
 		return result;
 	} catch (error) {
