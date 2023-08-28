@@ -86,21 +86,30 @@ HOST_NAME='ApiBaileysMd'
 #
 WA_VERSION=
 #
+# Defina a url do whatsapp a ser usada.
+# CASO DE NÃO SER CONFIGURADO UM LINK MATENHA A VARIAVEL WA_URL VAZIA
+# Exemplos:
+# WA_URL='web.whatsapp.com'
+# WA_URL=
+WA_URL=
+#
 # Auto close
 AUTO_CLOSE=10
 #
 # Chave de segurança para validação
 SECRET_KEY=096e402586e2faa8db20d6b033c60
 #
-# Validate in terminal false or true
+# Defina se vai ser usando um bando de dados ou não.
+# CASO DE NÃO SER CONFIGURADO A VARIAVEL VALIDATE_MYSQL DEVE SER 0
 VALIDATE_MYSQL=0
 #
+# Defina a quantidade de processo simultaneo na fila.
 CONCURRENCY=5
 #
-# mysql ou mariabd
+# Defina qual bando de dados usado, mysql ou mariabd
 MYSQL_ENGINE=mysql
 #
-# Vesão
+# Defina qual versão do bando de dados usado para uso no docker
 MYSQL_VERSION=latest
 #
 # O host do banco. Ex: localhost
@@ -116,10 +125,10 @@ MYSQL_USER=root
 MYSQL_PASSWORD='aG3JirkjCtAA@'
 #
 # A base de dados a qual a p-queue irá se conectar. Ex: node_mysql
-MYSQL_DATABASE=mywhatsapp-api
+MYSQL_DATABASE=mywhatsapp-db
 #
 # A base de dados a qual a aplicação irá se conectar. Ex: node_mysql
-MYSQL_DATABASE_QUEUE=mywhatsapp-api-queue
+MYSQL_DATABASE_QUEUE=mywhatsapp-db-queue
 #
 # Time Zone
 MYSQL_TIMEZONE='-04:00'
@@ -137,7 +146,7 @@ BROWSER_WSENDPOINT=
 MAX_CONCURRENT_SESSIONS=1
 #
 # Set name instace for use ecosystem.config.js
-NAME_INSTANCES=ApiWPPConnectCluster
+NAME_INSTANCES=ApiBaileysMdCluster
 #
 # Set count instace for use ecosystem.config.js
 INSTANCES=1
@@ -150,6 +159,12 @@ FORCE_CONNECTION_USE_HERE=0
 #
 # Deleta os arquivos não usados do Baileys
 DELETE_FILE_UNUSED=0
+#
+# Host do servidor do Graylog
+GRAYLOGSERVER=127.0.0.1
+#
+# Porta do servidor do  Graylog
+GRAYLOGPORT=12201
 #
 `;
 		logger?.info(`- Modelo do arquivo de configuração:\n ${modelo}`);
