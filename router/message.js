@@ -29,7 +29,7 @@ function removeWithspace(string) {
 		let result = string.replace(/\r?\n|\r|\s+/g, ""); /* replace all newlines and with a space */
 		return result;
 	} catch (error) {
-		logger.error(`- Erro ao remover todas as quebras de linha e espaços: ${error?.message}`);
+		//logger.error(`- Erro ao remover todas as quebras de linha e espaços: ${error?.message}`);
 		return string;
 	}
 }
