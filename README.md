@@ -274,7 +274,7 @@ node -e "console.log(require('crypto').randomBytes(45).toString('base64').slice(
 mkdir /usr/local/tokens
 
 #Setar permição na pasta tokens
-chmod -R 777 /usr/local/tokens
+chmod -R 775 /usr/local/tokens
 ```
 
 ## Configuração inicial do arquivo ".env-example"
