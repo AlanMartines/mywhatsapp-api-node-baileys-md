@@ -65,7 +65,6 @@ $IPTABLES -A INPUT -p tcp --dport ssh -m conntrack --ctstate NEW -m recent --upd
 
 #
 #
-#
 # Syn-flood protection
 $IPTABLES -A INPUT -p tcp --syn -m limit --limit 1/s --limit-burst 3 -j RETURN
 $IPTABLES -A INPUT -p tcp --syn -j DROP
