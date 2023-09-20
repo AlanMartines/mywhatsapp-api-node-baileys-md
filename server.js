@@ -16,6 +16,7 @@ const Sessions = require('./controllers/sessions');
 const config = require('./config.global');
 const swaggerDocument = require('./swagger');//
 const http = require('http').Server(app);
+const httpv6 = require('http').Server(app);
 // https://www.scaleway.com/en/docs/tutorials/socket-io/
 const io = require('socket.io')(http, {
 	cors: {
@@ -48,13 +49,21 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 		var modelo = `
 NODE_EN=production
 #
-# Defina o HOST aqui caso voce utilize uma VPS deve ser colocado o IP da VPS
+# Defina o IPV4 aqui caso voce utilize uma VPS deve ser colocado o IP da VPS
 # Exemplos:
-# HOST=204.202.54.2 => IP da VPS, caso esteja usando virtualização via hospedagem
-# HOST=10.0.0.10 => IP da VM, caso esteja usando virtualização
-# HOST=localhost => caso esteja usando na sua proprima maquina local
-# HOST=0.0.0.0 => caso esteja usando em um cotainer
-HOST=localhost
+# IPV4=204.202.54.2 => IP da VPS, caso esteja usando virtualização via hospedagem
+# IPV4=10.0.0.10 => IP da VM, caso esteja usando virtualização
+# IPV4=127.0.0.1 => caso esteja usando na sua proprima maquina local
+# IPV4=0.0.0.0 => caso esteja usando em um cotainer
+IPV4=127.0.0.1
+#
+# Defina o IPV6 aqui caso voce utilize uma VPS deve ser colocado o IP da VPS
+# Exemplos:
+# IPV6=FEDC:2D9D:DC28:7654:3210:FC57:D4C8:1FFF => IP da VPS, caso esteja usando virtualização via hospedagem
+# IPV6=2001:0DB8:85A3:08D3:1319:8A2E:0370:7344 => IP da VM, caso esteja usando virtualização
+# IPV6=0:0:0:0:0:0:0:1 => caso esteja usando na sua proprima maquina local
+# IPV6=0:0:0:0:0:0:0:0 => caso esteja usando em um cotainer
+IPV6=0:0:0:0:0:0:0:1
 #
 # Defina o numero da porta a ser usada pela API.
 PORT=9009
@@ -299,44 +308,67 @@ GRAYLOGPORT=12201
 				});
 			});
 			//
-			http.listen(config.PORT, config.HOST, async function (err) {
+			http.listen(config.PORT, config.IPV4, async function (err) {
 				if (err) {
 					logger?.error(err);
 				} else {
-					let hostUrl = config.HOST == '0.0.0.0' ? '127.0.0.1' : `${config.HOST}`;
+					const address = http.address().address;
+					const port = http.address().port;
+					let hostUrl = config.IPV4 == '0.0.0.0' ? '127.0.0.1' : `${config.IPV4}`;
 					let host = config.DOMAIN_SSL == '' ? `http://${hostUrl}:${config.PORT}` : `https://${config.DOMAIN_SSL}`;
 					logger?.info(`- HTTP Server running on`);
 					logger?.info(`- To start: ${host}/Start`);
 					logger?.info(`- To doc: ${host}/api-doc`);
 					//
-					logger?.info(`- Verificando Atualizações`);
-					io.emit('version', {
-						newVersion: undefined,
-						message: `Verificando Atualizações`
-					});
-					//
-					let repoVersion = await latest('mywhatsapp-api-node-baileys-md');
-					if (await Sessions.upToDate(version, repoVersion)) {
-						logger?.info(`- API esta Atualizada com a versão mais recente`);
-						io.emit('version', {
-							newVersion: false,
-							message: `API esta Atualizada com a versão mais recente`
-						});
-					} else {
-						logger?.info(`- Há uma nova versão disponível`);
-						io.emit('version', {
-							newVersion: true,
-							message: `Há uma nova versão disponível`
-						});
-						await Sessions.logUpdateAvailable(version, repoVersion);
-					}
 				}
 				//
-				if (parseInt(config.START_ALL_SESSIONS) == true) {
-					let result = await AllSessions.startAllSessions();
-				}
-
 			});
+			logger?.info(`- Verificando Atualizações`);
+			io.emit('version', {
+				newVersion: undefined,
+				message: `Verificando Atualizações`
+			});
+			//
+			httpv6.listen(config.PORT, config.IPV6, async function (err) {
+				if (err) {
+					logger?.error(err);
+				} else {
+					const address = httpv6.address().address;
+					const port = httpv6.address().port;
+					let hostUrl = config.IPV6 == '0:0:0:0:0:0:0:0' ? '0:0:0:0:0:0:0:1' : `${config.IPV6}`;
+					let host = config.DOMAIN_SSL == '' ? `http://${hostUrl}:${config.PORT}` : `https://${config.DOMAIN_SSL}`;
+					logger?.info(`- HTTP Server running on`);
+					logger?.info(`- To start: ${host}/Start`);
+					logger?.info(`- To doc: ${host}/api-doc`);
+					//
+				}
+				//
+			});
+			logger?.info(`- Verificando Atualizações`);
+			io.emit('version', {
+				newVersion: undefined,
+				message: `Verificando Atualizações`
+			});
+			//
+			let repoVersion = await latest('mywhatsapp-api-node-baileys-md');
+			if (await Sessions.upToDate(version, repoVersion)) {
+				logger?.info(`- API esta Atualizada com a versão mais recente`);
+				io.emit('version', {
+					newVersion: false,
+					message: `API esta Atualizada com a versão mais recente`
+				});
+			} else {
+				logger?.info(`- Há uma nova versão disponível`);
+				io.emit('version', {
+					newVersion: true,
+					message: `Há uma nova versão disponível`
+				});
+				await Sessions.logUpdateAvailable(version, repoVersion);
+			}
+			//
+			if (parseInt(config.START_ALL_SESSIONS) == true) {
+				let result = await AllSessions.startAllSessions();
+			}
 			//
 		} catch (error) {
 			logger?.error(`- Não foi fossivel iniciar o sistema`);

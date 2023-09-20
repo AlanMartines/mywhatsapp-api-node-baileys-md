@@ -2,7 +2,8 @@ require('dotenv').config();
 const config = module.exports = {};
 //
 config.NODE_ENV = process.env.NODE_ENV || 'production';
-config.HOST = process.env.HOST || 'localhost';
+config.IPV4 = process.env.IPV4 || '127.0.0.1';
+config.IPV6 = process.env.IPV6 || '::';
 config.PORT = process.env.PORT || '9001';
 config.DOMAIN_SSL = process.env.DOMAIN_SSL || '';
 config.VIEW_QRCODE_TERMINAL = process.env.VIEW_QRCODE_TERMINAL || 1;
