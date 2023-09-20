@@ -334,11 +334,6 @@ GRAYLOGPORT=12201
 				}
 				//
 			});
-			logger?.info(`- Verificando Atualizações`);
-			io.emit('version', {
-				newVersion: undefined,
-				message: `Verificando Atualizações`
-			});
 			//
 			httpv6.listen(config.PORT, config.IPV6, async function (err) {
 				if (err) {
@@ -355,6 +350,7 @@ GRAYLOGPORT=12201
 				}
 				//
 			});
+			//
 			logger?.info(`- Verificando Atualizações`);
 			io.emit('version', {
 				newVersion: undefined,
