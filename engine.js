@@ -746,7 +746,7 @@ module.exports = class Instace {
 								});
 								//
 								await updateStateDb(addJson?.state, addJson?.status, theTokenAuth, SessionName);
-								await updateWebhookDb(session?.wh_status, session?.wh_message, session?.wh_qrcode, session?.wh_connect, AuthorizationToken, SessionName);
+								await updateWebhookDb(data?.wh_status, data?.wh_message, data?.wh_qrcode, data?.wh_connect, theTokenAuth, SessionName);
 								webhooks?.wh_connect(SessionName);
 								//
 								if (phone) {
@@ -833,16 +833,21 @@ module.exports = class Instace {
 										logger?.info(`- SessionName: ${SessionName}`);
 										logger?.info(`- User banned temporary`.red);
 										//
-										session.state = "BANNED";
-										session.status = "notLogged";
-										session.message = 'Dispositivo desconectado';
+										addJson = {
+											client: false,
+											state: "BANNED",
+											status: "notLogged",
+											message: "Sistema desconectado"
+										};
 										//
-										await updateStateDb(session.state, session.status, session.AuthorizationToken);
+										await Sessions?.addInfoSession(SessionName, addJson);
+										//
+										await updateStateDb(addJson?.state, addJson?.status, theTokenAuth, SessionName);
 										//
 										socket.emit('status',
 											{
 												SessionName: SessionName,
-												status: session.status
+												status: addJson?.status
 											}
 										);
 										/*
@@ -862,11 +867,16 @@ module.exports = class Instace {
 										logger?.info(`- SessionName: ${SessionName}`);
 										logger?.info(`- User banned timestamp`.red);
 										//
-										session.state = "BANNED";
-										session.status = "notLogged";
-										session.message = 'Dispositivo desconectado';
+										addJson = {
+											client: false,
+											state: "BANNED",
+											status: "notLogged",
+											message: "Sistema desconectado"
+										};
 										//
-										await updateStateDb(session.state, session.status, session.AuthorizationToken);
+										await Sessions?.addInfoSession(SessionName, addJson);
+										//
+										await updateStateDb(addJson?.state, addJson?.status, theTokenAuth, SessionName);
 										//
 										socket.emit('status',
 											{
