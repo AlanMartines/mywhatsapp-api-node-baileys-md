@@ -48,6 +48,8 @@ async function updateStatisticsDb(status, type, isGroup, SessionName) {
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		logger?.info('- Atualizando statistics');
 		//
+		logger?.info({status, type, isGroup, SessionName});
+		//
 		await Statistics.create({
 			sessionname: SessionName,
 			status: status,
