@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, DataTypes) => {
-    return queryInterface.createTable('Statistics', {
+    return queryInterface.createTable('Sessions', {
       ID: {
         allowNull: false,
         autoIncrement: true,
@@ -16,18 +16,39 @@ module.exports = {
         allowNull: false,
         type: DataTypes.CHAR(255),
       },
-      status: {
-        allowNull: false,
-        type: DataTypes.CHAR(10),
-      },
-      type: {
+      state: {
         allowNull: false,
         type: DataTypes.CHAR(20),
+				defaultValue: "DISCONNECTED",
       },
-      isgroup: {
+      status: {
         allowNull: false,
-        type: DataTypes.BOOLEAN,
-    		defaultValue: false,
+        type: DataTypes.CHAR(20),
+				defaultValue: "notLogged",
+      },
+      userconnected: {
+        allowNull: true,
+        type: DataTypes.CHAR(20),
+      },
+      profilepicture: {
+        allowNull: true,
+        type: DataTypes.TEXT,
+      },
+      wh_status: {
+        allowNull: true,
+        type: DataTypes.STRING(255),
+      },
+      wh_message: {
+        allowNull: true,
+        type: DataTypes.STRING(255),
+      },
+      wh_qrcode: {
+        allowNull: true,
+        type: DataTypes.STRING(255),
+      },
+      wh_connect: {
+        allowNull: true,
+        type: DataTypes.STRING(255),
       },
       created: {
         allowNull: false,
@@ -43,6 +64,6 @@ module.exports = {
   },
 
   down: (queryInterface) => {
-    return queryInterface.dropTable('Statistics');
+    return queryInterface.dropTable('Tokens');
   }
 };

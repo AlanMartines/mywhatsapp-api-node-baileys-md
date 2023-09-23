@@ -40,9 +40,9 @@ exports.verify = async (req, res, next) => {
 			//
 			const row = await Tokens.findOne({
 				limit: 1,
-				attributes: ['token', 'datafinal', 'active'],
+				attributes: ['AuthorizationToken', 'datafinal', 'active'],
 				where: {
-					token: theTokenAuth
+					AuthorizationToken: theTokenAuth
 				}
 			}).then(async (entries) => {
 				return entries;
@@ -55,7 +55,7 @@ exports.verify = async (req, res, next) => {
 			//
 			if (row) {
 				//
-				const tokenToken = row.token;
+				const tokenToken = row.AuthorizationToken;
 				const tokenEndDate = row.datafinal;
 				const tokenActive = Boolean(row.active);
 				//

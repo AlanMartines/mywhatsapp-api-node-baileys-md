@@ -3,7 +3,7 @@ const config = require('./config.global');
 if (config.DOMAIN_SSL) {
 	var serverURL = `https://${config.DOMAIN_SSL}`;
 } else {
-	var serverURL = `http://${config.HOST}:${config.PORT}`;
+	var serverURL = `http://${config.IPV4}:${config.PORT}`;
 }
 module.exports = {
 	"openapi": "3.0.3",

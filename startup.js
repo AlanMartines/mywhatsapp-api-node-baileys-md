@@ -35,7 +35,7 @@ class AllSessions {
 	}
 
 	static async startAllSessions() {
-		const hostUrl = config.HOST == '0.0.0.0' ? '127.0.0.1' : config.HOST;
+		const hostUrl = config.IPV4 == '0.0.0.0' ? '127.0.0.1' : config.IPV4;
 		const host = config.DOMAIN_SSL == '' ? `http://${hostUrl}:${config.PORT}` : `https://${config.DOMAIN_SSL}`;
 		const dados = await this.getAllSessions();
 		if (dados?.length) {
@@ -47,6 +47,7 @@ class AllSessions {
 						let result = JSON.parse(await fs.readFile(filePath, 'utf-8'));
 
 						const resBody = {
+							"AuthorizationToken": result?.AuthorizationToken,
 							"SessionName": result?.SessionName,
 							"setOnline": result?.setOnline ? result?.setOnline : true,
 							"wh_connect": result?.wh_connect ? result?.wh_connect : null,
@@ -60,7 +61,7 @@ class AllSessions {
 							rejectUnauthorized: false,
 							headers: {
 								'Content-Type': 'application/json',
-								AuthorizationToken: parseInt(config.VALIDATE_MYSQL) ? item : config.SECRET_KEY
+								AuthorizationToken: parseInt(config.VALIDATE_MYSQL) ? result?.AuthorizationToken : config.SECRET_KEY
 							},
 							json: true,
 							url: `${host}/instance/Start`,
