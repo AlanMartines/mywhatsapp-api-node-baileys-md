@@ -103,7 +103,8 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 //
 router.post("/setConfig", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-const resSessionName = removeWithspace(req?.body?.SessionName);
+	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+	const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
 		if (!resSessionName) {
