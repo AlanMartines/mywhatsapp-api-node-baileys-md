@@ -163,7 +163,7 @@ async function updateUserConDb(userconnected, profilepicture, AuthorizationToken
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
-async function updateStateDb(state, status, AuthorizationToken) {
+async function updateStateDb(state, status, AuthorizationToken, SessionName) {
 	//
 	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
 	//logger?.info(`- Date: ${date_now}`);
@@ -177,7 +177,8 @@ async function updateStateDb(state, status, AuthorizationToken) {
 		},
 			{
 				where: {
-					authorizationtoken: AuthorizationToken
+					authorizationtoken: AuthorizationToken,
+					sessionname: SessionName
 				},
 			}).then(async (entries) => {
 				logger?.info('- Status atualizado');
@@ -556,7 +557,7 @@ module.exports = class Instace {
 								//
 								await Sessions?.addInfoSession(SessionName, addJson);
 								//
-								await updateStateDb(addJson?.state, addJson?.status, SessionName);
+								await updateStateDb(addJson?.state, addJson?.status, theTokenAuth, SessionName);
 								//
 								webhooks?.wh_qrcode(SessionName);
 								//this.exportQR(req.io, readQRCode, SessionName, attempts);
@@ -619,7 +620,7 @@ module.exports = class Instace {
 									//
 									logger?.info("- Navegador fechado automaticamente");
 									//
-									await updateStateDb(addJson?.state, addJson?.status, SessionName);
+									await updateStateDb(addJson?.state, addJson?.status, theTokenAuth, SessionName);
 								}
 								//
 								attempts++;
@@ -706,7 +707,7 @@ module.exports = class Instace {
 									message: addJson?.message,
 								});
 								//
-								await updateStateDb(addJson?.state, addJson?.status, SessionName);
+								await updateStateDb(addJson?.state, addJson?.status, theTokenAuth, SessionName);
 								webhooks?.wh_connect(SessionName);
 								//
 								if (phone) {
@@ -778,7 +779,7 @@ module.exports = class Instace {
 										//
 										await Sessions?.addInfoSession(SessionName, addJson);
 										//
-										await updateStateDb(addJson?.state, addJson?.status, SessionName);
+										await updateStateDb(addJson?.state, addJson?.status, theTokenAuth, SessionName);
 										//
 										dataSessions?.funcoesSocket?.stateChange(SessionName, {
 											SessionName: SessionName,
@@ -860,7 +861,7 @@ module.exports = class Instace {
 										//
 										await Sessions?.addInfoSession(SessionName, addJson);
 										//
-										await updateStateDb(addJson?.state, addJson?.status, SessionName);
+										await updateStateDb(addJson?.state, addJson?.status, theTokenAuth, SessionName);
 										//
 										dataSessions?.funcoesSocket?.stateChange(SessionName, {
 											SessionName: SessionName,
@@ -937,7 +938,7 @@ module.exports = class Instace {
 										//
 										await Sessions?.addInfoSession(SessionName, addJson);
 										//
-										await updateStateDb(addJson?.state, addJson?.status, SessionName);
+										await updateStateDb(addJson?.state, addJson?.status, theTokenAuth, SessionName);
 										//
 										setTimeout(async function () {
 											return await startSock(SessionName).then(async (result) => {
@@ -997,7 +998,7 @@ module.exports = class Instace {
 										//
 										await Sessions?.addInfoSession(SessionName, addJson);
 										//
-										await updateStateDb(addJson?.state, addJson?.status, SessionName);
+										await updateStateDb(addJson?.state, addJson?.status, theTokenAuth, SessionName);
 										//
 										dataSessions?.funcoesSocket?.stateChange(SessionName, {
 											SessionName: SessionName,
@@ -1048,7 +1049,7 @@ module.exports = class Instace {
 										//
 										await Sessions?.addInfoSession(SessionName, addJson);
 										//
-										await updateStateDb(addJson?.state, addJson?.status, SessionName);
+										await updateStateDb(addJson?.state, addJson?.status, theTokenAuth, SessionName);
 										//
 										dataSessions?.funcoesSocket?.stateChange(SessionName, {
 											SessionName: SessionName,
