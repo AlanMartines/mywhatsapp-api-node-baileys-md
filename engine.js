@@ -75,13 +75,6 @@ if (!fs.existsSync(tokenPatch)) { // verifica se o diretório já existe
 //
 // ------------------------------------------------------------------------------------------------//
 //
-function removeWithspace(string) {
-	var string = string.replace(/\r?\n|\r|\s+/g, ""); /* replace all newlines and with a space */
-	return string;
-}
-//
-// ------------------------------------------------------------------------------------------------//
-//
 async function saudacao() {
 	//
 	let data = new Date();
@@ -116,12 +109,11 @@ async function updateStateDb(state, status, AuthorizationToken) {
 		//
 		await Tokens.update({
 			state: state,
-			status: status,
-			lastactivity: date_now,
+			status: status
 		},
 			{
 				where: {
-					token: AuthorizationToken
+					AuthorizationToken: AuthorizationToken
 				},
 			}).then(async (entries) => {
 				logger?.info('- Status atualizado');
@@ -149,11 +141,10 @@ async function updateUserConDb(userconnected, profilepicture, AuthorizationToken
 		await Tokens.update({
 			userconnected: userconnected,
 			profilepicture: profilepicture,
-			lastactivity: date_now,
 		},
 			{
 				where: {
-					token: AuthorizationToken
+					AuthorizationToken: AuthorizationToken
 				},
 			}).then(async (entries) => {
 				logger?.info('- User connection atualizado');
@@ -1155,7 +1146,6 @@ module.exports = class Instace {
 		}
 		//
 	}
-	//
 	//
 	static async exportQR(socket, readQRCode, SessionName, attempts) {
 		socket.emit('qrCode',
