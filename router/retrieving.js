@@ -35,14 +35,7 @@ function soNumeros(string) {
 // Recuperar status do contatos
 router.post("/getStatus", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
-	const theSessionName = removeWithspace(req?.body?.SessionName);
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-	}
+const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (!resSessionName || !req.body.phonefull) {
 		var validate = {
@@ -117,14 +110,7 @@ router.post("/getStatus", upload.none(''), verifyToken.verify, async (req, res, 
 // Recuperar contatos
 router.post("/getAllContacts", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
-	const theSessionName = removeWithspace(req?.body?.SessionName);
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-	}
+const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (!resSessionName) {
 		var validate = {
@@ -182,14 +168,7 @@ router.post("/getAllContacts", upload.none(''), verifyToken.verify, async (req, 
 // Recuperar chats
 router.post("/getAllChats", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
-	const theSessionName = removeWithspace(req?.body?.SessionName);
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-	}
+const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (!resSessionName) {
 		var validate = {
@@ -247,14 +226,7 @@ router.post("/getAllChats", upload.none(''), verifyToken.verify, async (req, res
 // Recuperar mensagens
 router.post("/getAllMessage", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
-	const theSessionName = removeWithspace(req?.body?.SessionName);
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-	}
+const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (!resSessionName) {
 		var validate = {
@@ -312,14 +284,7 @@ router.post("/getAllMessage", upload.none(''), verifyToken.verify, async (req, r
 // Recuperar mensagens
 router.post("/getMessage", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
-	const theSessionName = removeWithspace(req?.body?.SessionName);
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-	}
+const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (!resSessionName || !req.body.phonefull || !req.body.limit || !req.body.cursor_id || !req.body.cursor_fromMe) {
 		var validate = {
@@ -397,14 +362,7 @@ router.post("/getMessage", upload.none(''), verifyToken.verify, async (req, res,
 // Recuperar grupos
 router.post("/getAllGroups", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
-	const theSessionName = removeWithspace(req?.body?.SessionName);
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-	}
+const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (!resSessionName) {
 		var resultRes = {
@@ -462,14 +420,7 @@ router.post("/getAllGroups", upload.none(''), verifyToken.verify, async (req, re
 // Obter o perfil do número
 router.post("/getProfilePicFromServer", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
-	const theSessionName = removeWithspace(req?.body?.SessionName);
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-	}
+const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (!resSessionName || !req.body.phonefull) {
 		var resultRes = {
@@ -544,14 +495,7 @@ router.post("/getProfilePicFromServer", upload.none(''), verifyToken.verify, asy
 // Verificar o status do número
 router.post("/checkNumberStatus", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
-	const theSessionName = removeWithspace(req?.body?.SessionName);
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-	}
+const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (!resSessionName || !req.body.phonefull) {
 		var resultRes = {
@@ -621,14 +565,7 @@ router.post("/checkNumberStatus", upload.none(''), verifyToken.verify, async (re
 // Verificar o status do grupo
 router.post("/checkGroupStatus", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
-	const theSessionName = removeWithspace(req?.body?.SessionName);
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-	}
+const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	if (!resSessionName || !req.body.groupId) {
 		var resultRes = {

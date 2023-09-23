@@ -29,14 +29,7 @@ function removeWithspace(string) {
 //
 router.post("/getConfig", verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
-	const theSessionName = removeWithspace(req?.body?.SessionName);
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-	}
+const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
 		if (!resSessionName) {
@@ -110,14 +103,7 @@ router.post("/getConfig", verifyToken.verify, async (req, res, next) => {
 //
 router.post("/setConfig", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
-	const theSessionName = removeWithspace(req?.body?.SessionName);
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-	}
+const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
 		if (!resSessionName) {

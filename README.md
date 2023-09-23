@@ -569,7 +569,8 @@ docker run -d \
 	-v /etc/timezone:/etc/timezone \
 	-v /etc/timezone:/etc/timezone \
 	-e NODE_EN=production \
-	-e HOST=0.0.0.0 \
+	-e IPV4=0.0.0.0 \
+	-e IPV6= \
 	-e PORT=9001 \
 	-e DOMAIN_SSL= \
 	-e VIEW_QRCODE_TERMINAL=0 \

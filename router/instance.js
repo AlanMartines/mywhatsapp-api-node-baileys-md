@@ -48,14 +48,7 @@ const getCircularReplacer = () => {
 //
 router.post("/Start", verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
-	const theSessionName = removeWithspace(req?.body?.SessionName);
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-	}
+	const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
 		if (!resSessionName) {
@@ -175,14 +168,7 @@ router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, nex
 	//
 	logger?.info("- Obtendo status");
 	//
-	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
-	const theSessionName = removeWithspace(req?.body?.SessionName);
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-	}
+const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
 		if (!resSessionName) {
@@ -243,14 +229,7 @@ router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, nex
 //
 router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
-	const theSessionName = removeWithspace(req?.body?.SessionName);
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-	}
+const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
 		if (!resSessionName) {
@@ -335,14 +314,7 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 //
 router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
-	const theSessionName = removeWithspace(req?.body?.SessionName);
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-	}
+const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
 		if (!resSessionName) {
@@ -410,14 +382,7 @@ router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, nex
 //
 router.post("/restartToken", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
-	const theSessionName = removeWithspace(req?.body?.SessionName);
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-	}
+const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
 		if (!resSessionName) {
@@ -487,14 +452,7 @@ router.post("/restartToken", upload.none(''), verifyToken.verify, async (req, re
 router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	logger?.info(`- getQRCode`);
 	//
-	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
-	const theSessionName = removeWithspace(req?.body?.SessionName);
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-	}
+const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
 		if (!resSessionName) {
@@ -622,14 +580,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 //
 router.post("/getSession", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
-	const theSessionName = removeWithspace(req?.body?.SessionName);
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		var resSessionName = theTokenAuth;
-	} else {
-		var resSessionName = theSessionName;
-	}
+const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
 		if (!resSessionName) {
