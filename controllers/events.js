@@ -40,7 +40,7 @@ function convertHMS(value) {
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
-async function updateStatisticsDb(status, type, isGroup, SessionName) {
+async function updateStatisticsDb(status, type, isGroup, AuthorizationToken, SessionName) {
 	//
 	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
 	//logger?.info(`- Date: ${date_now}`);
@@ -48,9 +48,8 @@ async function updateStatisticsDb(status, type, isGroup, SessionName) {
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		logger?.info('- Atualizando statistics');
 		//
-		logger?.info({status, type, isGroup, SessionName});
-		//
 		await Statistics.create({
+			AuthorizationToken: AuthorizationToken,
 			sessionname: SessionName,
 			status: status,
 			type: type,
@@ -85,7 +84,7 @@ async function getMessage(dataSessions, key) {
 //
 module.exports = class Events {
 	//
-	static async statusConnection(SessionName, events) {
+	static async statusConnection(AuthorizationToken, SessionName, events) {
 		let dataSessions = await Sessions?.getSession(SessionName);
 		if (events['connection.update']) {
 			const conn = events['connection.update'];
@@ -857,7 +856,7 @@ module.exports = class Events {
 						//
 						dataSessions?.funcoesSocket?.message(SessionName, response);
 						await webhooks?.wh_messages(SessionName, response);
-						await updateStatisticsDb(response?.status, response?.type, response?.isGroup, SessionName);
+						await updateStatisticsDb(response?.status, response?.type, response?.isGroup, AuthorizationToken, SessionName);
 						//
 					}
 					//

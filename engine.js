@@ -224,13 +224,7 @@ module.exports = class Instace {
 	static async Start(req, res, next) {
 		//
 		const theTokenAuth = req?.headers?.authorizationtoken;
-		const theSessionName = req?.body?.SessionName;
-		//
-		if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var SessionName = removeWithspace(theTokenAuth);
-		} else {
-			var SessionName = removeWithspace(theSessionName);
-		}
+		const SessionName = req?.body?.SessionName;
 		//
 		try {
 			//
@@ -259,6 +253,7 @@ module.exports = class Instace {
 		const funcoesSocket = new fnSocket(req.io);
 		//
 		funcoesSocket.start(SessionName, {
+			AuthorizationToken: theTokenAuth,
 			SessionName: SessionName,
 			state: 'STARTING',
 			status: "notLogged",
@@ -293,6 +288,7 @@ module.exports = class Instace {
 	//
 	static async initSession(req, res, next) {
 		//
+		let theTokenAuth = req?.headers?.authorizationtoken;
 		let SessionName = req?.body?.SessionName;
 		let setOnline = req?.body?.setOnline;
 		let dataSessions = await Sessions?.getSession(SessionName);
@@ -457,7 +453,7 @@ module.exports = class Instace {
 								},
 							};
 						}
-
+						//
 						return message;
 					},
 				};
@@ -1107,14 +1103,14 @@ module.exports = class Instace {
 							await saveCreds();
 						}
 						//
-						eventsSend?.statusConnection(SessionName, events);
-						eventsSend?.statusMessage(SessionName, events);
-						eventsSend?.contactsEvents(SessionName, events);
-						eventsSend?.messagesEvents(SessionName, events);
-						eventsSend?.chatsEvents(SessionName, events);
-						eventsSend?.blocklistEvents(SessionName, events);
-						eventsSend?.groupsEvents(SessionName, events);
-						eventsSend?.extraEvents(SessionName, events);
+						eventsSend?.statusConnection(theTokenAuth, SessionName, events);
+						eventsSend?.statusMessage(theTokenAuth, SessionName, events);
+						eventsSend?.contactsEvents(theTokenAuth, SessionName, events);
+						eventsSend?.messagesEvents(theTokenAuth, SessionName, events);
+						eventsSend?.chatsEvents(theTokenAuth, SessionName, events);
+						eventsSend?.blocklistEvents(theTokenAuth, SessionName, events);
+						eventsSend?.groupsEvents(theTokenAuth, SessionName, events);
+						eventsSend?.extraEvents(theTokenAuth, SessionName, events);
 						//
 					}
 				);
