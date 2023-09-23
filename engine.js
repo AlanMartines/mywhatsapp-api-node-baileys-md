@@ -99,7 +99,7 @@ async function saudacao() {
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
-async function addUserConDb(AuthorizationToken, SessionName) {
+async function addUserConDb(AuthorizationToken, SessionName, wh_status, wh_message, wh_qrcode, wh_connect) {
 	//
 	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
 	//logger?.info(`- Date: ${date_now}`);
@@ -114,7 +114,11 @@ async function addUserConDb(AuthorizationToken, SessionName) {
 			},
 			defaults: {//object containing fields and values to apply
 				authorizationtoken: AuthorizationToken,
-				sessionname: SessionName
+				sessionname: SessionName,
+				wh_status: wh_status,
+				wh_message: wh_message,
+				wh_qrcode: wh_qrcode,
+				wh_connect: wh_connect
 			},
 		}).then(async (entries) => {
 			logger?.info('- User connection adicionado');
@@ -195,6 +199,40 @@ async function updateStateDb(state, status, AuthorizationToken, SessionName) {
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
+async function updateWebhookDb(wh_status, wh_message, wh_qrcode, wh_connect, AuthorizationToken, SessionName) {
+	//
+	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
+	//logger?.info(`- Date: ${date_now}`);
+	//
+	if (parseInt(config.VALIDATE_MYSQL) == true) {
+		logger?.info('- Atualizando status');
+		//
+		await Sessionwa.update({
+			wh_status: wh_status,
+			wh_message: wh_message,
+			wh_qrcode: wh_qrcode,
+			wh_connect: wh_connect
+		},
+			{
+				where: {
+					authorizationtoken: AuthorizationToken,
+					sessionname: SessionName
+				},
+			}).then(async (entries) => {
+				logger?.info('- Status atualizado');
+			}).catch(async (err) => {
+				logger?.error('- Status não atualizado');
+				logger?.error(`- Error: ${err}`);
+			}).finally(async () => {
+				//Tokens.release();
+			});
+		//
+	}
+	//
+}
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
 async function deletaPastaToken(filePath, filename) {
 	//
 	await rmfr(`${filePath}/${filename}`).then(async (result) => {
@@ -251,8 +289,6 @@ module.exports = class Instace {
 		const theTokenAuth = req?.headers?.authorizationtoken;
 		const SessionName = req?.body?.SessionName;
 		//
-		await addUserConDb(theTokenAuth, SessionName);
-		//
 		try {
 			//
 			let startupRes = {
@@ -264,6 +300,8 @@ module.exports = class Instace {
 				"wh_qrcode": req?.body?.wh_qrcode ? req?.body?.wh_qrcode : null,
 				"wh_connect": req?.body?.wh_connect ? req?.body?.wh_connect : null,
 			};
+			//
+			await addUserConDb(theTokenAuth, SessionName, startupRes?.wh_status, startupRes?.wh_message, startupRes?.wh_qrcode, startupRes?.wh_connect);
 			//
 			fs.writeJson(`${tokenPatch}/${SessionName}.startup.json`, startupRes, (err) => {
 				if (err) {
@@ -708,6 +746,7 @@ module.exports = class Instace {
 								});
 								//
 								await updateStateDb(addJson?.state, addJson?.status, theTokenAuth, SessionName);
+								await updateWebhookDb(session?.wh_status, session?.wh_message, session?.wh_qrcode, session?.wh_connect, AuthorizationToken, SessionName);
 								webhooks?.wh_connect(SessionName);
 								//
 								if (phone) {
