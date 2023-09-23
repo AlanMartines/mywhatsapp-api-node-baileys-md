@@ -10,15 +10,15 @@ module.exports = (sequelize, DataTypes) => {
     },
     state: {
       type: DataTypes.CHAR(20),
-      allowNull: false
+      allowNull: true
     },
     status: {
       type: DataTypes.CHAR(20),
-      allowNull: false
+      allowNull: true
     },
     userconnected: {
       type: DataTypes.CHAR(20),
-      allowNull: false
+      allowNull: true
     },
     profilepicture: {
       type: DataTypes.TEXT,
@@ -26,19 +26,19 @@ module.exports = (sequelize, DataTypes) => {
     },
     wh_status: {
       type: DataTypes.STRING(255),
-      allowNull: false
+      allowNull: true
     },
     wh_message: {
       type: DataTypes.STRING(255),
-      allowNull: false
+      allowNull: true
     },
     wh_qrcode: {
       type: DataTypes.STRING(255),
-      allowNull: false
+      allowNull: true
     },
     wh_connect: {
       type: DataTypes.STRING(255),
-      allowNull: false
+      allowNull: true
     }
 	}, 
 	{
