@@ -139,7 +139,7 @@ async function updateUserConDb(userconnected, profilepicture, AuthorizationToken
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		logger?.info('- Atualizando User Connected');
 		//
-		await SessionWa.update({
+		await Sessionwa.update({
 			userconnected: userconnected,
 			profilepicture: profilepicture,
 		},
@@ -170,7 +170,7 @@ async function updateStateDb(state, status, AuthorizationToken) {
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		logger?.info('- Atualizando status');
 		//
-		await SessionWa.update({
+		await Sessionwa.update({
 			state: state,
 			status: status
 		},
