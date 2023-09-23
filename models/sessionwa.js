@@ -40,6 +40,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(255),
       allowNull: false
     }
+	}, 
+	{
+		freezeTableName: true,
+		tableName: 'sessionwa'
 	});
 	return Sessionwa;
 }
