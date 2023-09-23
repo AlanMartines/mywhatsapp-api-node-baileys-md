@@ -64,6 +64,6 @@ module.exports = {
   },
 
   down: (queryInterface) => {
-    return queryInterface.dropTable('Tokens');
+    return queryInterface.dropTable('Sessions');
   }
 };

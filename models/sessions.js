@@ -41,5 +41,5 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     }
 	});
-	return Tokens;
+	return Sessions;
 }
