@@ -31,6 +31,21 @@ function removeWithspace(string) {
 //
 // ------------------------------------------------------------------------------------------------//
 //
+const getCircularReplacer = () => {
+  const seen = new WeakSet();
+  return (key, value) => {
+    if (typeof value === 'object' && value !== null) {
+      if (seen.has(value)) {
+        return;
+      }
+      seen.add(value);
+    }
+    return value;
+  };
+};
+//
+// ------------------------------------------------------------------------------------------------//
+//
 router.post("/Start", verifyToken.verify, async (req, res, next) => {
 	//
 	const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
