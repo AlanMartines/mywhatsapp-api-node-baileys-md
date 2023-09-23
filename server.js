@@ -339,6 +339,7 @@ GRAYLOGPORT=12201
 				//
 			});
 			//
+			if(config.IPV6){
 			httpv6.listen(config.PORT, config.IPV6, async function (err) {
 				if (err) {
 					logger?.error(err);
@@ -354,6 +355,7 @@ GRAYLOGPORT=12201
 				}
 				//
 			});
+			}
 			//
 			logger?.info(`- Verificando Atualizações`);
 			io.emit('version', {
