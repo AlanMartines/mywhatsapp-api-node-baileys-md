@@ -452,7 +452,8 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	logger?.info(`- getQRCode`);
 	//
-const resSessionName = removeWithspace(req?.body?.SessionName);
+	const resSessionName = removeWithspace(req?.body?.SessionName);
+	console.log(resSessionName);
 	//
 	try {
 		if (!resSessionName) {
