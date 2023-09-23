@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.CHAR(5),
       allowNull: false
     },
+	}, 
+	{
+		freezeTableName: true,
+		tableName: 'tokens'
 	});
 	return Tokens;
 }

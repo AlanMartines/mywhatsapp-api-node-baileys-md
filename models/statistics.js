@@ -22,6 +22,10 @@ module.exports = (sequelize, DataTypes) => {
     },
 		created: 'TIMESTAMP',
 		modified: 'TIMESTAMP',
+	}, 
+	{
+		freezeTableName: true,
+		tableName: 'statistics'
 	});
 	return Statistics;
 }
