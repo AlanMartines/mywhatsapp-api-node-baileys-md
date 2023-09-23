@@ -273,21 +273,6 @@
 		//
 		$('document').ready(function () {
 			//
-			if (validate_mysql == true) {
-				$('#SessionName').prop('readonly', true);
-			}
-			//
-			$('#AuthorizationToken').keyup(function () {
-				if (validate_mysql == true) {
-					let inputValue = $('#AuthorizationToken').val();
-					$('#SessionName').val(inputValue);
-				}
-			});
-			//
-			//
-			//---------------------------------------------------------------------------------------------------------------------------------------------------//
-			//
-			//
 			const socket = io(`${url}/`, { transports: ['websocket'] });
 			//
 			$("#description").html("Sistema não iniciado");
