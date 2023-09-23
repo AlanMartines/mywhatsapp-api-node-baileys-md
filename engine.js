@@ -131,7 +131,7 @@ async function addUserConDb(AuthorizationToken, SessionName) {
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
-async function updateUserConDb(userconnected, profilepicture, AuthorizationToken) {
+async function updateUserConDb(userconnected, profilepicture, AuthorizationToken, SessionName) {
 	//
 	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
 	//logger?.info(`- Date: ${date_now}`);
@@ -145,7 +145,8 @@ async function updateUserConDb(userconnected, profilepicture, AuthorizationToken
 		},
 			{
 				where: {
-					authorizationtoken: AuthorizationToken
+					authorizationtoken: AuthorizationToken,
+					sessionname: SessionName
 				},
 			}).then(async (entries) => {
 				logger?.info('- User connection atualizado');
@@ -709,7 +710,7 @@ module.exports = class Instace {
 								webhooks?.wh_connect(SessionName);
 								//
 								if (phone) {
-									await updateUserConDb(phone, addJson?.profilepicture, theTokenAuth);
+									await updateUserConDb(phone, addJson?.profilepicture, theTokenAuth, SessionName);
 								}
 								//
 								attempts = 1;
