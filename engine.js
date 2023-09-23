@@ -746,7 +746,9 @@ module.exports = class Instace {
 								});
 								//
 								await updateStateDb(addJson?.state, addJson?.status, theTokenAuth, SessionName);
-								await updateWebhookDb(data?.wh_status, data?.wh_message, data?.wh_qrcode, data?.wh_connect, theTokenAuth, SessionName);
+								//
+								let dataSessions = await Sessions?.getSession(SessionName);
+								await updateWebhookDb(dataSessions?.wh_status, dataSessions?.wh_message, dataSessions?.wh_qrcode, dataSessions?.wh_connect, theTokenAuth, SessionName);
 								webhooks?.wh_connect(SessionName);
 								//
 								if (phone) {
