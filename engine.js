@@ -117,9 +117,9 @@ async function addUserConDb(AuthorizationToken, SessionName) {
 				sessionname: SessionName
 			},
 		}).then(async (entries) => {
-			logger?.info('- User connection atualizado');
+			logger?.info('- User connection adicionado');
 		}).catch(async (err) => {
-			logger?.error('- User connection não atualizado');
+			logger?.error('- User connection não adicionado');
 			logger?.error(`- Error: ${err}`);
 		}).finally(() => {
 			//Sessionwa.release();
@@ -148,9 +148,9 @@ async function updateUserConDb(userconnected, profilepicture, AuthorizationToken
 					authorizationtoken: AuthorizationToken
 				},
 			}).then(async (entries) => {
-				logger?.info('- User connection adicionado');
+				logger?.info('- User connection atualizado');
 			}).catch(async (err) => {
-				logger?.error('- User connection não adicionado');
+				logger?.error('- User connection não atualizado');
 				logger?.error(`- Error: ${err}`);
 			}).finally(() => {
 				//Tokens.release();
