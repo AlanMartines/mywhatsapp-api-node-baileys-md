@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
 	const Statistics = sequelize.define('Statistics', {
-    AuthorizationToken: {
+    authorizationtoken: {
       type: DataTypes.CHAR(255),
       allowNull: false
     },

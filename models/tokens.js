@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
 	const Tokens = sequelize.define('Tokens', {
-    AuthorizationToken: {
+    authorizationtoken: {
       type: DataTypes.CHAR(255),
       allowNull: false
     },

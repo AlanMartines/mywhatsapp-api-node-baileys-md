@@ -8,7 +8,7 @@ module.exports = {
         unique: true,
         type: DataTypes.INTEGER.UNSIGNED,
       },
-      AuthorizationToken: {
+      authorizationtoken: {
         allowNull: false,
         type: DataTypes.CHAR(255),
       },

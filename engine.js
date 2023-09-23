@@ -15,7 +15,7 @@ const { default: pQueue } = require('p-queue');
 const { release } = require('os');
 const NodeCache = require('node-cache');
 const { logger } = require("./utils/logger");
-const { Tokens } = require('./models');
+const { Tokens, SessionWa } = require('./models');
 const Sessions = require('./controllers/sessions');
 const eventsSend = require('./controllers/events');
 const webhooks = require('./controllers/webhooks');
@@ -107,13 +107,13 @@ async function updateStateDb(state, status, AuthorizationToken) {
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		logger?.info('- Atualizando status');
 		//
-		await Tokens.update({
+		await SessionWa.update({
 			state: state,
 			status: status
 		},
 			{
 				where: {
-					AuthorizationToken: AuthorizationToken
+					authorizationtoken: AuthorizationToken
 				},
 			}).then(async (entries) => {
 				logger?.info('- Status atualizado');
@@ -138,13 +138,13 @@ async function updateUserConDb(userconnected, profilepicture, AuthorizationToken
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		logger?.info('- Atualizando User Connected');
 		//
-		await Tokens.update({
+		await SessionWa.update({
 			userconnected: userconnected,
 			profilepicture: profilepicture,
 		},
 			{
 				where: {
-					AuthorizationToken: AuthorizationToken
+					authorizationtoken: AuthorizationToken
 				},
 			}).then(async (entries) => {
 				logger?.info('- User connection atualizado');

@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, DataTypes) => {
-    return queryInterface.createTable('Sessions', {
+    return queryInterface.createTable('SessionWa', {
       ID: {
         allowNull: false,
         autoIncrement: true,
@@ -8,7 +8,7 @@ module.exports = {
         unique: true,
         type: DataTypes.INTEGER.UNSIGNED,
       },
-      AuthorizationToken: {
+      authorizationtoken: {
         allowNull: false,
         type: DataTypes.CHAR(255),
       },
@@ -64,6 +64,6 @@ module.exports = {
   },
 
   down: (queryInterface) => {
-    return queryInterface.dropTable('Sessions');
+    return queryInterface.dropTable('SessionWa');
   }
 };
