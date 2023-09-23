@@ -15,7 +15,7 @@ const { default: pQueue } = require('p-queue');
 const { release } = require('os');
 const NodeCache = require('node-cache');
 const { logger } = require("./utils/logger");
-const { SessionWa } = require('./models');
+const { Sessionwa } = require('./models');
 const Sessions = require('./controllers/sessions');
 const eventsSend = require('./controllers/events');
 const webhooks = require('./controllers/webhooks');
@@ -107,7 +107,7 @@ async function addUserConDb(AuthorizationToken, SessionName) {
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
 		logger?.info('- Atualizando User Connected');
 		//
-		await SessionWa.findOrCreate({
+		await Sessionwa.findOrCreate({
 			where: {//object containing fields to found
 				authorizationtoken: AuthorizationToken,
 				sessionname: SessionName,
