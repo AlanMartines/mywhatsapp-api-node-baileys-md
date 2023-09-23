@@ -58,12 +58,14 @@ NODE_EN=production
 IPV4=127.0.0.1
 #
 # Defina o IPV6 aqui caso voce utilize uma VPS deve ser colocado o IP da VPS
+# CASO UTILIZE IPV6, DEVE PREENCHER A VARIAVEL IPV6
+# CASO DE NÃO SER CONFIGURADO IPV6 MATENHA A VARIAVEL IPV6 VAZIA
 # Exemplos:
 # IPV6=FEDC:2D9D:DC28:7654:3210:FC57:D4C8:1FFF => IP da VPS, caso esteja usando virtualização via hospedagem
 # IPV6=2001:0DB8:85A3:08D3:1319:8A2E:0370:7344 => IP da VM, caso esteja usando virtualização
 # IPV6=0:0:0:0:0:0:0:1 => caso esteja usando na sua proprima maquina local
 # IPV6=0:0:0:0:0:0:0:0 => caso esteja usando em um cotainer
-IPV6=0:0:0:0:0:0:0:1
+IPV6=
 #
 # Defina o numero da porta a ser usada pela API.
 PORT=9009
@@ -274,6 +276,7 @@ GRAYLOGPORT=12201
 			});
 			//
 			//
+			if(config.IPV6){
 			app.get('/StartV6', function (req, res, next) {
 				let host = config.IPV6 == '0:0:0:0:0:0:0:0' ? '0:0:0:0:0:0:0:1' : `${config.IPV6}`;
 				res.render('index', {
@@ -283,6 +286,7 @@ GRAYLOGPORT=12201
 					validate_mysql: parseInt(config.VALIDATE_MYSQL),
 				});
 			});
+			}
 			//
 			// rota url erro
 			app.all('*', (req, res) => {
