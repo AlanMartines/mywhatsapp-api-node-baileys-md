@@ -110,11 +110,11 @@ async function addUserConDb(AuthorizationToken, SessionName) {
 		await Sessionwa.findOrCreate({
 			where: {//object containing fields to found
 				authorizationtoken: AuthorizationToken,
-				sessionname: SessionName,
+				sessionname: SessionName
 			},
 			defaults: {//object containing fields and values to apply
 				authorizationtoken: AuthorizationToken,
-				sessionname: SessionName,
+				sessionname: SessionName
 			},
 		}).then(async (entries) => {
 			logger?.info('- User connection atualizado');
@@ -122,7 +122,7 @@ async function addUserConDb(AuthorizationToken, SessionName) {
 			logger?.error('- User connection não atualizado');
 			logger?.error(`- Error: ${err}`);
 		}).finally(() => {
-			//Tokens.release();
+			//Sessionwa.release();
 		});
 		//
 	}
