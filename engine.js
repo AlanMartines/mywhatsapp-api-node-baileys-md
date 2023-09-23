@@ -219,9 +219,9 @@ async function updateWebhookDb(wh_status, wh_message, wh_qrcode, wh_connect, Aut
 					sessionname: SessionName
 				},
 			}).then(async (entries) => {
-				logger?.info('- Status atualizado');
+				logger?.info('- Webhook atualizado');
 			}).catch(async (err) => {
-				logger?.error('- Status não atualizado');
+				logger?.error('- Webhook não atualizado');
 				logger?.error(`- Error: ${err}`);
 			}).finally(async () => {
 				//Tokens.release();
