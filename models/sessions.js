@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-	const Session = sequelize.define('SessionWa', {
+	const SessionWa = sequelize.define('SessionWa', {
     authorizationtoken: {
       type: DataTypes.CHAR(255),
       allowNull: false
