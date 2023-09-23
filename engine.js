@@ -60,8 +60,8 @@ const {
 	makeCacheableSignalKeyStore,
 	isJidBroadcast,
 	MessageRetryMap,
-	getAggregateVotesInPollMessage, 
-	WAMessageContent, 
+	getAggregateVotesInPollMessage,
+	WAMessageContent,
 	WAMessageKey
 } = require('@whiskeysockets/baileys');
 //
@@ -99,30 +99,31 @@ async function saudacao() {
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
-async function updateStateDb(state, status, AuthorizationToken) {
+async function addUserConDb(AuthorizationToken, SessionName) {
 	//
 	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
 	//logger?.info(`- Date: ${date_now}`);
 	//
 	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		logger?.info('- Atualizando status');
+		logger?.info('- Atualizando User Connected');
 		//
-		await SessionWa.update({
-			state: state,
-			status: status
-		},
-			{
-				where: {
-					authorizationtoken: AuthorizationToken
-				},
-			}).then(async (entries) => {
-				logger?.info('- Status atualizado');
-			}).catch(async (err) => {
-				logger?.error('- Status não atualizado');
-				logger?.error(`- Error: ${err}`);
-			}).finally(async () => {
-				//Tokens.release();
-			});
+		await SessionWa.findOrCreate({
+			where: {//object containing fields to found
+				authorizationtoken: AuthorizationToken,
+				sessionname: SessionName,
+			},
+			defaults: {//object containing fields and values to apply
+				authorizationtoken: AuthorizationToken,
+				sessionname: SessionName,
+			},
+		}).then(async (entries) => {
+			logger?.info('- User connection atualizado');
+		}).catch(async (err) => {
+			logger?.error('- User connection não atualizado');
+			logger?.error(`- Error: ${err}`);
+		}).finally(() => {
+			//Tokens.release();
+		});
 		//
 	}
 	//
@@ -147,11 +148,42 @@ async function updateUserConDb(userconnected, profilepicture, AuthorizationToken
 					authorizationtoken: AuthorizationToken
 				},
 			}).then(async (entries) => {
-				logger?.info('- User connection atualizado');
+				logger?.info('- User connection adicionado');
 			}).catch(async (err) => {
-				logger?.error('- User connection não atualizado');
+				logger?.error('- User connection não adicionado');
 				logger?.error(`- Error: ${err}`);
 			}).finally(() => {
+				//Tokens.release();
+			});
+		//
+	}
+	//
+}
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
+async function updateStateDb(state, status, AuthorizationToken) {
+	//
+	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
+	//logger?.info(`- Date: ${date_now}`);
+	//
+	if (parseInt(config.VALIDATE_MYSQL) == true) {
+		logger?.info('- Atualizando status');
+		//
+		await SessionWa.update({
+			state: state,
+			status: status
+		},
+			{
+				where: {
+					authorizationtoken: AuthorizationToken
+				},
+			}).then(async (entries) => {
+				logger?.info('- Status atualizado');
+			}).catch(async (err) => {
+				logger?.error('- Status não atualizado');
+				logger?.error(`- Error: ${err}`);
+			}).finally(async () => {
 				//Tokens.release();
 			});
 		//
@@ -216,6 +248,8 @@ module.exports = class Instace {
 		//
 		const theTokenAuth = req?.headers?.authorizationtoken;
 		const SessionName = req?.body?.SessionName;
+		//
+		await addUserConDb(theTokenAuth, SessionName);
 		//
 		try {
 			//
@@ -680,11 +714,11 @@ module.exports = class Instace {
 								//
 								attempts = 1;
 								//
-								if(parseInt(config.DELETE_FILE_UNUSED)){
-								await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `app-*.json`);
-								await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `pre-*.json`);
-								await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `sender-*.json`);
-								await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `session-*.json`);
+								if (parseInt(config.DELETE_FILE_UNUSED)) {
+									await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `app-*.json`);
+									await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `pre-*.json`);
+									await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `sender-*.json`);
+									await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `session-*.json`);
 								}
 								//
 							} else if (connection === 'close') {
