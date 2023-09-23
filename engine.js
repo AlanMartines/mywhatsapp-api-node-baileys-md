@@ -709,7 +709,7 @@ module.exports = class Instace {
 								webhooks?.wh_connect(SessionName);
 								//
 								if (phone) {
-									await updateUserConDb(phone, addJson?.profilepicture, SessionName);
+									await updateUserConDb(phone, addJson?.profilepicture, theTokenAuth);
 								}
 								//
 								attempts = 1;
