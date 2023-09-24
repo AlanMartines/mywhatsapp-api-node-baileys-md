@@ -247,11 +247,9 @@ npm install pm2 -g
 
 pm2 start server.js --name ApiBaileysMd --watch
 
-pm2 save
-
 pm2 startup
 
-sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u ${USER} --hp /home/${USER}
+pm2 save
 
 # Para remover do init script
 pm2 unstartup systemd
@@ -291,12 +289,14 @@ NODE_EN=production
 IPV4=127.0.0.1
 #
 # Defina o IPV6 aqui caso voce utilize uma VPS deve ser colocado o IP da VPS
+# CASO UTILIZE IPV6, DEVE PREENCHER A VARIAVEL IPV6
+# CASO DE NÃO SER CONFIGURADO IPV6 MATENHA A VARIAVEL IPV6 VAZIA
 # Exemplos:
 # IPV6=FEDC:2D9D:DC28:7654:3210:FC57:D4C8:1FFF => IP da VPS, caso esteja usando virtualização via hospedagem
 # IPV6=2001:0DB8:85A3:08D3:1319:8A2E:0370:7344 => IP da VM, caso esteja usando virtualização
 # IPV6=0:0:0:0:0:0:0:1 => caso esteja usando na sua proprima maquina local
 # IPV6=0:0:0:0:0:0:0:0 => caso esteja usando em um cotainer
-IPV6=0:0:0:0:0:0:0:1
+IPV6=
 #
 # Defina o numero da porta a ser usada pela API.
 PORT=9009
@@ -336,20 +336,22 @@ WA_VERSION=
 WA_URL=
 #
 # Auto close
-AUTO_CLOSE=10
+AUTO_CLOSE=15
 #
 # Chave de segurança para validação
-SECRET_KEY=096e402586e2faa8db20d6b033c60
+SECRET_KEY='kgashjgajbug$$jgbbjgkbkgk'
 #
-# Validate in terminal false or true
-VALIDATE_MYSQL=0
+# Defina se vai ser usando um bando de dados ou não.
+# CASO DE NÃO SER CONFIGURADO A VARIAVEL VALIDATE_MYSQL DEVE SER 0
+VALIDATE_MYSQL=1
 #
+# Defina a quantidade de processo simultaneo na fila.
 CONCURRENCY=5
 #
-# mysql ou mariabd
+# Defina qual bando de dados usado, mysql ou mariabd usado para uso no docker
 MYSQL_ENGINE=mysql
 #
-# Vesão
+# Defina qual versão do bando de dados usado para uso no docker
 MYSQL_VERSION=latest
 #
 # O host do banco. Ex: localhost
@@ -359,16 +361,13 @@ MYSQL_HOST=localhost
 MYSQL_PORT=3306
 #
 # Um usuário do banco. Ex: user
-MYSQL_USER=root
+MYSQL_USER=mywhatsappapi
 #
 # A senha do usuário do banco. Ex: user123
-MYSQL_PASSWORD='aG3JirkjCtAA@'
+MYSQL_PASSWORD='senha123'
 #
 # A base de dados a qual a p-queue irá se conectar. Ex: node_mysql
-MYSQL_DATABASE=mywhatsapp-api
-#
-# A base de dados a qual a aplicação irá se conectar. Ex: node_mysql
-MYSQL_DATABASE_QUEUE=mywhatsapp-api-queue
+MYSQL_DATABASE=dbEletroInfoWa
 #
 # Time Zone
 MYSQL_TIMEZONE='-04:00'
@@ -385,17 +384,17 @@ BROWSER_WSENDPOINT=
 # Default 1
 MAX_CONCURRENT_SESSIONS=1
 #
-# Set name instace for use ecosystem.config.js
-NAME_INSTANCES=ApiBaileysMdCluster
-#
-# Set count instace for use ecosystem.config.js
-INSTANCES=1
-#
 # Caso queira que ao iniciar a API todas as sessões salvas sejam inicializadas automaticamente
 START_ALL_SESSIONS=1
 #
-# Caso queira forçar a reconexão da API em caso de desconexão do WhatsApp defina true
-FORCE_CONNECTION_USE_HERE=0
+# Deleta os arquivos não usados do Baileys
+DELETE_FILE_UNUSED=0
+#
+# Host do servidor do Graylog
+GRAYLOGSERVER=127.0.0.1
+#
+# Porta do servidor do  Graylog
+GRAYLOGPORT=12201
 #
 ```
 
