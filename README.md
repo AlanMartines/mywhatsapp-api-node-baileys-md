@@ -537,7 +537,7 @@ cd ~
 mkdir /usr/local/tokens
 
 #Setar permição na pasta tokens
-chmod -R 777 /usr/local/tokens
+chmod -R 775 /usr/local/tokens
 
 # Clone este repositório
 git clone https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md.git ApiBaileysMd
