@@ -845,12 +845,13 @@ module.exports = class Instace {
 										//
 										await updateStateDb(addJson?.state, addJson?.status, theTokenAuth, SessionName);
 										//
-										socket.emit('status',
-											{
-												SessionName: SessionName,
-												status: addJson?.status
-											}
-										);
+										dataSessions?.funcoesSocket?.stateChange(SessionName, {
+											SessionName: SessionName,
+											state: addJson?.state,
+											status: addJson?.status,
+											message: addJson?.message,
+										});
+										//
 										/*
 										setTimeout(async function () {
 											return await startSock(SessionName).then(async (result) => {
@@ -879,12 +880,12 @@ module.exports = class Instace {
 										//
 										await updateStateDb(addJson?.state, addJson?.status, theTokenAuth, SessionName);
 										//
-										socket.emit('status',
-											{
-												SessionName: SessionName,
-												status: session.status
-											}
-										);
+										dataSessions?.funcoesSocket?.stateChange(SessionName, {
+											SessionName: SessionName,
+											state: addJson?.state,
+											status: addJson?.status,
+											message: addJson?.message,
+										});
 										//
 										/*
 										setTimeout(async function () {
