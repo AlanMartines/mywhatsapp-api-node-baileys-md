@@ -35,8 +35,8 @@
   },
   "homepage": "https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md#readme",
   "dependencies": {
-		"@whiskeysockets/baileys": "^6.4.1",
-		"@adiwajshing/keyed-db": "^0.2.4",
+    "@whiskeysockets/baileys": "^6.0.0",
+    "@adiwajshing/keyed-db": "^0.2.4",
 		"@hapi/boom": "^10.0.1",
 		"axios": "^1.5.0",
 		"boxen": "^5.1.2",
