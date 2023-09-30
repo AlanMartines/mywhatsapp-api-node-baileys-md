@@ -1,7 +1,5 @@
 const axios = require('axios');
 const https = require('https');
-const superagent = require('superagent');
-require('superagent-queue');
 require('dotenv').config();
 const { logger } = require("../utils/logger");
 const Sessions = require('../controllers/sessions');
