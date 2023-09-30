@@ -646,7 +646,7 @@ module.exports = class Instace {
 									await deletaPastaToken(`${tokenPatch}`, `${SessionName}.data.json`);
 									await deletaToken(`${tokenPatch}`, `${SessionName}.data.json`);
 									await deletaToken(`${tokenPatch}`, `${SessionName}.store.json`);
-									await deletaToken(`${tokenPatch}`, `${SessionName}.startup.json`);
+									//await deletaToken(`${tokenPatch}`, `${SessionName}.startup.json`);
 									await deletaToken(`${tokenPatch}`, `${SessionName}.contacts.json`);
 									//
 									dataSessions?.funcoesSocket?.stateChange(SessionName, {
@@ -807,7 +807,7 @@ module.exports = class Instace {
 										await deletaPastaToken(`${tokenPatch}`, `${SessionName}.data.json`);
 										await deletaToken(`${tokenPatch}`, `${SessionName}.data.json`);
 										await deletaToken(`${tokenPatch}`, `${SessionName}.store.json`);
-										await deletaToken(`${tokenPatch}`, `${SessionName}.startup.json`);
+										//await deletaToken(`${tokenPatch}`, `${SessionName}.startup.json`);
 										await deletaToken(`${tokenPatch}`, `${SessionName}.contacts.json`);
 										//
 										addJson = {
@@ -1037,7 +1037,7 @@ module.exports = class Instace {
 										await deletaPastaToken(`${tokenPatch}`, `${SessionName}.data.json`);
 										await deletaToken(`${tokenPatch}`, `${SessionName}.data.json`);
 										await deletaToken(`${tokenPatch}`, `${SessionName}.store.json`);
-										await deletaToken(`${tokenPatch}`, `${SessionName}.startup.json`);
+										//await deletaToken(`${tokenPatch}`, `${SessionName}.startup.json`);
 										await deletaToken(`${tokenPatch}`, `${SessionName}.contacts.json`);
 										//
 										addJson = {
@@ -1088,7 +1088,7 @@ module.exports = class Instace {
 										await deletaPastaToken(`${tokenPatch}`, `${SessionName}.data.json`);
 										await deletaToken(`${tokenPatch}`, `${SessionName}.data.json`);
 										await deletaToken(`${tokenPatch}`, `${SessionName}.store.json`);
-										await deletaToken(`${tokenPatch}`, `${SessionName}.startup.json`);
+										//await deletaToken(`${tokenPatch}`, `${SessionName}.startup.json`);
 										await deletaToken(`${tokenPatch}`, `${SessionName}.contacts.json`);
 										//
 										addJson = {
