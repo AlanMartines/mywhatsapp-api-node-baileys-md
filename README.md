@@ -367,7 +367,7 @@ MYSQL_USER=mywhatsappapi
 MYSQL_PASSWORD='senha123'
 #
 # A base de dados a qual a p-queue irá se conectar. Ex: node_mysql
-MYSQL_DATABASE=dbEletroInfoWa
+MYSQL_DATABASE=node_mysql
 #
 # Time Zone
 MYSQL_TIMEZONE='-04:00'
@@ -381,9 +381,6 @@ TAG=1.0.0
 # browserWSEndpoint Ex.: ws://127.0.0.1:3000
 BROWSER_WSENDPOINT=
 #
-# Default 1
-MAX_CONCURRENT_SESSIONS=1
-#
 # Caso queira que ao iniciar a API todas as sessões salvas sejam inicializadas automaticamente
 START_ALL_SESSIONS=1
 #
@@ -395,6 +392,11 @@ GRAYLOGSERVER=127.0.0.1
 #
 # Porta do servidor do  Graylog
 GRAYLOGPORT=12201
+#
+# Defina se vai ser usado em um container.
+# CASO DE SER USADO CONFIGURE A VARIAVEL INDOCKER DEVE SER 1
+# CASO DE NÃO SER CONFIGURADO A VARIAVEL INDOCKER DEVE SER 0
+INDOCKER=0
 #
 ```
 
@@ -583,41 +585,8 @@ cp .env-example .env
 docker build -t alanmartines/mywhatsapp-api-node-baileys-md:1.0.0 -f Dockerfile.backend .
 
 # Criar contêiner
-docker run -d \
-	--name ApiBaileysMdMyWhatsapp \
-	--hostname ApiBaileysMdMyWhatsapp \
-	-p 9001:9001 \
-	--restart=unless-stopped \
-	-v ${PWD}:/home/ApiBaileysMdMyWhatsapp \
-	-v /usr/local/tokens:/usr/local/tokens \
-	-v /etc/timezone:/etc/timezone \
-	-v /etc/timezone:/etc/timezone \
-	-e NODE_EN=production \
-	-e IPV4=0.0.0.0 \
-	-e IPV6= \
-	-e PORT=9001 \
-	-e DOMAIN_SSL= \
-	-e VIEW_QRCODE_TERMINAL=0 \
-	-e DEVICE_NAME='My-Whatsapp' \
-	-e WA_VERSION= \
-	-e PATCH_TOKENS='/usr/local/tokens' \
-	-e AUTO_CLOSE=5 \
-	-e SECRET_KEY=09f26e402586e2faa8da4c98a35f1b20d6b033c60 \
-	-e VALIDATE_MYSQL=0 \
-	-e MYSQL_HOST=localhost \
-	-e MYSQL_PORT=3306 \
-	-e MYSQL_USER=mywhatsappapi \
-	-e MYSQL_PASSWORD=TuUep8KkjCtAA@ \
-	-e MYSQL_DATABASE=mywhatsapp-api \
-	-e MYSQL_DATABASE_QUEUE=mywhatsapp-api-gueue \
-	-e MYSQL_DIALECT=mysql \
-	-e MYSQL_TIMEZONE='-04:00' \
-	-e BROWSER_WSENDPOINT= \
-	-e START_ALL_SESSIONS=1 \
-	-e FORCE_CONNECTION_USE_HERE=0 \
-	-e CONCURRENCY=5 \
-	-e INDOCKER=1 \
-  alanmartines/mywhatsapp-api-node-baileys-md:1.0.0
+docker run -d --env-file .env alanmartines/mywhatsapp-api-node-baileys-md:1.0.0
+
 ```
 
 ## Instalar o certbot Debian (e.g. Ubuntu) 64bits
