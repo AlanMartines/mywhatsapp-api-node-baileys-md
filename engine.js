@@ -5,7 +5,6 @@ const path = require('path');
 const fs = require('fs-extra');
 const QRCode = require('qrcode');
 const qrViewer = require('qrcode-terminal');
-const NodeCache = require('node-cache');
 const moment = require('moment');
 moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
@@ -14,6 +13,7 @@ const rmfr = require('rmfr');
 const colors = require('colors');
 const { default: pQueue } = require('p-queue');
 const { release } = require('os');
+const NodeCache = require('node-cache');
 const { logger } = require("./utils/logger");
 const { Sessionwa } = require('./models');
 const Sessions = require('./controllers/sessions');
@@ -62,8 +62,7 @@ const {
 	MessageRetryMap,
 	getAggregateVotesInPollMessage,
 	WAMessageContent,
-	WAMessageKey,
-	PHONENUMBER_MCC
+	WAMessageKey
 } = require('@whiskeysockets/baileys');
 //
 const tokenPatch = parseInt(config.INDOCKER) ? path.join(config.PATCH_TOKENS, os.hostname()) : config.PATCH_TOKENS;
@@ -376,11 +375,10 @@ module.exports = class Instace {
 		//
 		const useStore = !process.argv.includes('--no-store');
 		const doReplies = !process.argv.includes('--no-reply');
-		const usePairingCode = process.argv.includes('--use-pairing-code');
-		const useMobile = process.argv.includes('--mobile');
 		//
-		// Mapa externo para armazenar contagens de repetição de mensagens quando a descriptografia/criptografia falha
-		// Mantenha isso fora do próprio socket para evitar um loop de descriptografia/criptografia de mensagens ao reiniciar o socket
+		// external map to store retry counts of messages when decryption/encryption fails
+		// keep this out of the socket itself, so as to prevent a message decryption/encryption loop across socket restarts
+		//const MessageRetryMap = {};
 		const msgRetryCounterCache = new NodeCache();
 		//
 		const store = useStore ? makeInMemoryStore({ loggerPino }) : undefined;
@@ -393,18 +391,12 @@ module.exports = class Instace {
 			logger?.error(`- Error read store file: ${error}`);
 		};
 		//
-		// Salva a daca 10s
+		// save every 10s
 		setInterval(async () => {
 			//
-			try {
-				//
-				store?.writeToFile(`${tokenPatch}/${SessionName}.store.json`);
-				//
-				await resContacts(SessionName, store?.contacts);
-				//
-			} catch (error) {
-				logger?.error(`- Error write store file: ${error}`);
-			};
+			store?.writeToFile(`${tokenPatch}/${SessionName}.store.json`);
+			//
+			await resContacts(SessionName, store?.contacts);
 			//
 		}, 10000);
 		//
@@ -416,119 +408,118 @@ module.exports = class Instace {
 			//
 			const startSock = async (SessionName = null) => {
 				//
-				// Busca a versão mais recente do WA Web
+				// fetch latest version of WA Web
 				const { version, isLatest } = await fetchLatestBaileysVersion();
 				logger?.info(`- Using WA v${version.join('.')}, isLatest: ${isLatest}`)
 				//
 				const AxiosRequestConfig = {};
 				//
-				const ConfiguracaoSocket = {
-					/** URL do WS para se conectar ao WhatsApp */
+				const SocketConfig = {
+					/** the WS url to connect to WA */
 					//waWebSocketUrl: config.WA_URL,
-					/** Falha na conexão se o socket expirar neste intervalo */
+					/** Fails the connection if the socket times out in this interval */
 					connectTimeoutMs: 60000,
-					/** Tempo limite padrão para consultas, indefinido para nenhum tempo limite */
+					/** Default timeout for queries, undefined for no timeout */
 					defaultQueryTimeoutMs: undefined,
-					/** Intervalo de ping-pong para conexão WS */
+					/** ping-pong interval for WS connection */
 					keepAliveIntervalMs: 5000,
-					/** Agente de proxy */
+					/** proxy agent */
 					agent: undefined,
-					/** Logger Pino */
+					/** pino logger */
 					logger: pino({ level: 'error' }),
-					/** Versão para se conectar */
+					/** version to connect with */
 					version: version || undefined,
-					/** Substituir configuração do navegador */
-					browser: [`${config.NOME_DO_DISPOSITIVO}`, 'Chrome', release()],
-					/** Agente usado para solicitações de busca - fazer upload/baixar mídia */
+					/** override browser config */
+					browser: [`${config.DEVICE_NAME}`, 'Chrome', release()],
+					/** agent used for fetch requests -- uploading/downloading media */
 					fetchAgent: undefined,
-					/** Imprimir o QR no terminal */
+					/** should the QR be printed in the terminal */
 					printQRInTerminal: false,
-					/** Emitir eventos para ações realizadas por esta conexão de socket */
+					/** should events be emitted for actions done by this socket connection */
 					emitOwnEvents: true,
-					/** Fornecer um cache para armazenar mídias, para não precisar ser reenviado */
-					mediaCache: NodeCache,
-					/** Hospedeiros personalizados para fazer upload de mídia */
+					/** provide a cache to store media, so does not have to be re-uploaded */
+					//mediaCache: NodeCache,
+					/** custom upload hosts to upload media to */
 					//customUploadHosts: MediaConnInfo['hosts'],
-					/** Tempo de espera entre o envio de novas solicitações de repetição */
+					/** time to wait between sending new retry requests */
 					retryRequestDelayMs: 5000,
-					/** Tempo de espera para a geração do próximo QR em ms */
+					/** time to wait for the generation of the next QR in ms */
 					qrTimeout: 15000,
-					/** Fornecer um objeto de estado de autenticação para manter o estado de autenticação */
+					/** provide an auth state object to maintain the auth state */
 					//auth: state,
 					auth: {
 						creds: state.creds,
-						// O armazenamento em cache torna a mensagem mais rápido para enviar/receber mensagens
+						//caching makes the store faster to send/recv messages
 						keys: makeCacheableSignalKeyStore(state.keys, loggerPino),
 					},
-					/** Controlar o processamento de histórico com este controle; por padrão, irá sincronizar tudo */
+					/** manage history processing with this control; by default will sync up everything */
 					//shouldSyncHistoryMessage: boolean,
-					/** Opções de capacidade de transação para SignalKeyStore */
+					/** transaction capability options for SignalKeyStore */
 					//transactionOpts: TransactionCapabilityOptions,
-					/** Fornecer um cache para armazenar a lista de dispositivos de um usuário */
-					userDevicesCache: NodeCache,
-					/** Marcar o cliente como online sempre que o socket se conectar com sucesso */
+					/** provide a cache to store a user's device list */
+					//userDevicesCache: NodeCache,
+					/** marks the client as online whenever the socket successfully connects */
 					markOnlineOnConnect: setOnline,
 					/**
-					 * Mapa para armazenar as contagens de repetição de mensagens com falha;
-					 * usado para determinar se uma mensagem deve ser repetida ou não
-					 */
+					 * map to store the retry counts for failed messages;
+					 * used to determine whether to retry a message or not */
 					msgRetryCounterCache: msgRetryCounterCache,
-					/** Largura das imagens de visualização de link */
+					/** width for link preview images */
 					linkPreviewImageThumbnailWidth: 192,
-					/** Baileys deve pedir ao telefone o histórico completo, que será recebido de forma assíncrona */
+					/** Should Baileys ask the phone for full history, will be received async */
 					syncFullHistory: true,
-					/** Baileys deve disparar consultas de inicialização automaticamente, padrão verdadeiro */
+					/** Should baileys fire init queries automatically, default true */
 					fireInitQueries: true,
 					/**
-					 * Gerar uma visualização de link de alta qualidade,
-					 * envolve o upload do jpegThumbnail para o WhatsApp
-					 */
+					 * generate a high quality link preview,
+					 * entails uploading the jpegThumbnail to WA
+					 * */
 					generateHighQualityLinkPreview: true,
-					/** Opções para axios */
+					/** options for axios */
 					//options: AxiosRequestConfig || undefined,
-					// Ignorar todas as mensagens de transmissão - para receber as mesmas
-					// comente a linha abaixo
+					// ignore all broadcast messages -- to receive the same
+					// comment the line below out
 					shouldIgnoreJid: jid => isJidBroadcast(jid),
-					/** Por padrão, verdadeiro, mensagens de histórico devem ser baixadas e processadas */
+					/** By default true, should history messages be downloaded and processed */
 					downloadHistory: true,
 					/**
-					 * Buscar uma mensagem de sua loja
-					 * Implemente isso para que as mensagens que falharam ao enviar (resolve o problema de "esta mensagem pode demorar") possam ser repetidas
-					 */
-					// Implementar para lidar com as repetições
-					getMessage: async (chave) => {
-						if (loja) {
-							const msg = await loja?.loadMessage(chave?.remoteJid, chave?.id);
+					 * fetch a message from your store
+					 * implement this so that messages failed to send (solves the "this message can take a while" issue) can be retried
+					 * */
+					// implement to handle retries
+					getMessage: async (key) => {
+						if (store) {
+							const msg = await store?.loadMessage(key?.remoteJid, key?.id);
 							return msg?.message || undefined;
 						}
 						//
-						// Somente se a loja estiver presente
+						// only if store is present
 						return {
-							conversa: 'olá'
+							conversation: 'hello'
 						}
 					},
-					// Para corrigir botão, mensagem de lista de modelos
-					patchMessageBeforeSending: (mensagem) => {
-						const requerPatch = !!(
-							mensagem.buttonsMessage ||
-							mensagem.templateMessage ||
-							mensagem.listMessage
+					// For fix button, template list message
+					patchMessageBeforeSending: (message) => {
+						const requiresPatch = !!(
+							message.buttonsMessage ||
+							message.templateMessage ||
+							message.listMessage
 						);
-						if (requerPatch) {
-							mensagem = {
+						if (requiresPatch) {
+							message = {
 								viewOnceMessage: {
-									mensagem: {
+									message: {
 										messageContextInfo: {
 											deviceListMetadataVersion: 2,
 											deviceListMetadata: {},
 										},
-										...mensagem,
+										...message,
 									},
 								},
 							};
 						}
 						//
-						return mensagem;
+						return message;
 					},
 				};
 				//
