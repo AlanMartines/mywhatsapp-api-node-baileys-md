@@ -459,7 +459,7 @@ module.exports = class Instace {
 					/** Opções de capacidade de transação para SignalKeyStore */
 					//transactionOpts: TransactionCapabilityOptions,
 					/** Fornece um cache para armazenar a lista de dispositivos do usuário */
-					userDevicesCache: NodeCache,
+					//userDevicesCache: NodeCache,
 					/** Marca o cliente como online sempre que o soquete se conecta com sucesso */
 					markOnlineOnConnect: setOnline,
 					/**
