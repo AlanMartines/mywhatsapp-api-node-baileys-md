@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs-extra');
 const QRCode = require('qrcode');
 const qrViewer = require('qrcode-terminal');
+const NodeCache = require('node-cache');
 const moment = require('moment');
 moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
@@ -13,7 +14,6 @@ const rmfr = require('rmfr');
 const colors = require('colors');
 const { default: pQueue } = require('p-queue');
 const { release } = require('os');
-const NodeCache = require('node-cache');
 const { logger } = require("./utils/logger");
 const { Sessionwa } = require('./models');
 const Sessions = require('./controllers/sessions');
@@ -62,7 +62,8 @@ const {
 	MessageRetryMap,
 	getAggregateVotesInPollMessage,
 	WAMessageContent,
-	WAMessageKey
+	WAMessageKey,
+	PHONENUMBER_MCC
 } = require('@whiskeysockets/baileys');
 //
 const tokenPatch = parseInt(config.INDOCKER) ? path.join(config.PATCH_TOKENS, os.hostname()) : config.PATCH_TOKENS;
@@ -375,10 +376,11 @@ module.exports = class Instace {
 		//
 		const useStore = !process.argv.includes('--no-store');
 		const doReplies = !process.argv.includes('--no-reply');
+		const usePairingCode = process.argv.includes('--use-pairing-code');
+		const useMobile = process.argv.includes('--mobile');
 		//
-		// external map to store retry counts of messages when decryption/encryption fails
-		// keep this out of the socket itself, so as to prevent a message decryption/encryption loop across socket restarts
-		//const MessageRetryMap = {};
+		// Mapa externo para armazenar contagens de repetição de mensagens quando a descriptografia/criptografia falha
+		// Mantenha isso fora do próprio socket para evitar um loop de descriptografia/criptografia de mensagens ao reiniciar o socket
 		const msgRetryCounterCache = new NodeCache();
 		//
 		const store = useStore ? makeInMemoryStore({ loggerPino }) : undefined;
@@ -391,12 +393,18 @@ module.exports = class Instace {
 			logger?.error(`- Error read store file: ${error}`);
 		};
 		//
-		// save every 10s
+		// Salva a daca 10s
 		setInterval(async () => {
 			//
-			store?.writeToFile(`${tokenPatch}/${SessionName}.store.json`);
-			//
-			await resContacts(SessionName, store?.contacts);
+			try {
+				//
+				store?.writeToFile(`${tokenPatch}/${SessionName}.store.json`);
+				//
+				await resContacts(SessionName, store?.contacts);
+				//
+			} catch (error) {
+				logger?.error(`- Error write store file: ${error}`);
+			};
 			//
 		}, 10000);
 		//
@@ -408,118 +416,119 @@ module.exports = class Instace {
 			//
 			const startSock = async (SessionName = null) => {
 				//
-				// fetch latest version of WA Web
+				// Busca a versão mais recente do WA Web
 				const { version, isLatest } = await fetchLatestBaileysVersion();
 				logger?.info(`- Using WA v${version.join('.')}, isLatest: ${isLatest}`)
 				//
 				const AxiosRequestConfig = {};
 				//
-				const SocketConfig = {
-					/** the WS url to connect to WA */
+				const ConfiguracaoSocket = {
+					/** URL do WS para se conectar ao WhatsApp */
 					//waWebSocketUrl: config.WA_URL,
-					/** Fails the connection if the socket times out in this interval */
+					/** Falha na conexão se o socket expirar neste intervalo */
 					connectTimeoutMs: 60000,
-					/** Default timeout for queries, undefined for no timeout */
+					/** Tempo limite padrão para consultas, indefinido para nenhum tempo limite */
 					defaultQueryTimeoutMs: undefined,
-					/** ping-pong interval for WS connection */
+					/** Intervalo de ping-pong para conexão WS */
 					keepAliveIntervalMs: 5000,
-					/** proxy agent */
+					/** Agente de proxy */
 					agent: undefined,
-					/** pino logger */
+					/** Logger Pino */
 					logger: pino({ level: 'error' }),
-					/** version to connect with */
+					/** Versão para se conectar */
 					version: version || undefined,
-					/** override browser config */
-					browser: [`${config.DEVICE_NAME}`, 'Chrome', release()],
-					/** agent used for fetch requests -- uploading/downloading media */
+					/** Substituir configuração do navegador */
+					browser: [`${config.NOME_DO_DISPOSITIVO}`, 'Chrome', release()],
+					/** Agente usado para solicitações de busca - fazer upload/baixar mídia */
 					fetchAgent: undefined,
-					/** should the QR be printed in the terminal */
+					/** Imprimir o QR no terminal */
 					printQRInTerminal: false,
-					/** should events be emitted for actions done by this socket connection */
-					emitOwnEvents: false,
-					/** provide a cache to store media, so does not have to be re-uploaded */
-					//mediaCache: NodeCache,
-					/** custom upload hosts to upload media to */
+					/** Emitir eventos para ações realizadas por esta conexão de socket */
+					emitOwnEvents: true,
+					/** Fornecer um cache para armazenar mídias, para não precisar ser reenviado */
+					mediaCache: NodeCache,
+					/** Hospedeiros personalizados para fazer upload de mídia */
 					//customUploadHosts: MediaConnInfo['hosts'],
-					/** time to wait between sending new retry requests */
+					/** Tempo de espera entre o envio de novas solicitações de repetição */
 					retryRequestDelayMs: 5000,
-					/** time to wait for the generation of the next QR in ms */
+					/** Tempo de espera para a geração do próximo QR em ms */
 					qrTimeout: 15000,
-					/** provide an auth state object to maintain the auth state */
+					/** Fornecer um objeto de estado de autenticação para manter o estado de autenticação */
 					//auth: state,
 					auth: {
 						creds: state.creds,
-						//caching makes the store faster to send/recv messages
+						// O armazenamento em cache torna a mensagem mais rápido para enviar/receber mensagens
 						keys: makeCacheableSignalKeyStore(state.keys, loggerPino),
 					},
-					/** manage history processing with this control; by default will sync up everything */
+					/** Controlar o processamento de histórico com este controle; por padrão, irá sincronizar tudo */
 					//shouldSyncHistoryMessage: boolean,
-					/** transaction capability options for SignalKeyStore */
+					/** Opções de capacidade de transação para SignalKeyStore */
 					//transactionOpts: TransactionCapabilityOptions,
-					/** provide a cache to store a user's device list */
-					//userDevicesCache: NodeCache,
-					/** marks the client as online whenever the socket successfully connects */
+					/** Fornecer um cache para armazenar a lista de dispositivos de um usuário */
+					userDevicesCache: NodeCache,
+					/** Marcar o cliente como online sempre que o socket se conectar com sucesso */
 					markOnlineOnConnect: setOnline,
 					/**
-					 * map to store the retry counts for failed messages;
-					 * used to determine whether to retry a message or not */
+					 * Mapa para armazenar as contagens de repetição de mensagens com falha;
+					 * usado para determinar se uma mensagem deve ser repetida ou não
+					 */
 					msgRetryCounterCache: msgRetryCounterCache,
-					/** width for link preview images */
+					/** Largura das imagens de visualização de link */
 					linkPreviewImageThumbnailWidth: 192,
-					/** Should Baileys ask the phone for full history, will be received async */
+					/** Baileys deve pedir ao telefone o histórico completo, que será recebido de forma assíncrona */
 					syncFullHistory: true,
-					/** Should baileys fire init queries automatically, default true */
+					/** Baileys deve disparar consultas de inicialização automaticamente, padrão verdadeiro */
 					fireInitQueries: true,
 					/**
-					 * generate a high quality link preview,
-					 * entails uploading the jpegThumbnail to WA
-					 * */
+					 * Gerar uma visualização de link de alta qualidade,
+					 * envolve o upload do jpegThumbnail para o WhatsApp
+					 */
 					generateHighQualityLinkPreview: true,
-					/** options for axios */
+					/** Opções para axios */
 					//options: AxiosRequestConfig || undefined,
-					// ignore all broadcast messages -- to receive the same
-					// comment the line below out
+					// Ignorar todas as mensagens de transmissão - para receber as mesmas
+					// comente a linha abaixo
 					shouldIgnoreJid: jid => isJidBroadcast(jid),
-					/** By default true, should history messages be downloaded and processed */
+					/** Por padrão, verdadeiro, mensagens de histórico devem ser baixadas e processadas */
 					downloadHistory: true,
 					/**
-					 * fetch a message from your store
-					 * implement this so that messages failed to send (solves the "this message can take a while" issue) can be retried
-					 * */
-					// implement to handle retries
-					getMessage: async (key) => {
-						if (store) {
-							const msg = await store?.loadMessage(key?.remoteJid, key?.id);
+					 * Buscar uma mensagem de sua loja
+					 * Implemente isso para que as mensagens que falharam ao enviar (resolve o problema de "esta mensagem pode demorar") possam ser repetidas
+					 */
+					// Implementar para lidar com as repetições
+					getMessage: async (chave) => {
+						if (loja) {
+							const msg = await loja?.loadMessage(chave?.remoteJid, chave?.id);
 							return msg?.message || undefined;
 						}
 						//
-						// only if store is present
+						// Somente se a loja estiver presente
 						return {
-							conversation: 'hello'
+							conversa: 'olá'
 						}
 					},
-					// For fix button, template list message
-					patchMessageBeforeSending: (message) => {
-						const requiresPatch = !!(
-							message.buttonsMessage ||
-							message.templateMessage ||
-							message.listMessage
+					// Para corrigir botão, mensagem de lista de modelos
+					patchMessageBeforeSending: (mensagem) => {
+						const requerPatch = !!(
+							mensagem.buttonsMessage ||
+							mensagem.templateMessage ||
+							mensagem.listMessage
 						);
-						if (requiresPatch) {
-							message = {
+						if (requerPatch) {
+							mensagem = {
 								viewOnceMessage: {
-									message: {
+									mensagem: {
 										messageContextInfo: {
 											deviceListMetadataVersion: 2,
 											deviceListMetadata: {},
 										},
-										...message,
+										...mensagem,
 									},
 								},
 							};
 						}
 						//
-						return message;
+						return mensagem;
 					},
 				};
 				//
@@ -532,6 +541,93 @@ module.exports = class Instace {
 				);
 				//
 				store?.bind(client.ev);
+				//
+				// Código de emparelhamento para clientes da Web
+				if (usePairingCode && !sock.authState.creds.registered) {
+					if (useMobile) {
+						throw new Error(`- Cannot use pairing code with mobile api`);
+					}
+
+					const phoneNumber = await question(`- Please enter your mobile phone number:\n`);
+					const code = await client.requestPairingCode(phoneNumber);
+					logger.info(`- Pairing code: ${code}`);
+				}
+				//
+				// If mobile was chosen, ask for the code
+				if (useMobile && !sock.authState.creds.registered) {
+					const { registration } = sock.authState.creds || { registration: {} }
+
+					if (!registration.phoneNumber) {
+						registration.phoneNumber = await question('Please enter your mobile phone number:\n')
+					}
+
+					const libPhonenumber = await import("libphonenumber-js")
+					const phoneNumber = libPhonenumber.parsePhoneNumber(registration?.phoneNumber)
+					if (!phoneNumber?.isValid()) {
+						throw new Error('Invalid phone number: ' + registration?.phoneNumber)
+					}
+
+					registration.phoneNumber = phoneNumber.format('E.164')
+					registration.phoneNumberCountryCode = phoneNumber.countryCallingCode
+					registration.phoneNumberNationalNumber = phoneNumber.nationalNumber
+					const mcc = PHONENUMBER_MCC[phoneNumber.countryCallingCode]
+					if (!mcc) {
+						throw new Error('Could not find MCC for phone number: ' + registration?.phoneNumber + '\nPlease specify the MCC manually.')
+					}
+
+					registration.phoneNumberMobileCountryCode = mcc
+
+					async function enterCode() {
+						try {
+							const code = await question('Please enter the one time code:\n')
+							const response = await sock.register(code.replace(/["']/g, '').trim().toLowerCase())
+							logger.info('- Successfully registered your phone number.')
+							logger.info(response)
+							rl.close()
+						} catch (error) {
+							logger.error('- Failed to register your phone number. Please try again.\n', error)
+							await askForOTP()
+						}
+					}
+
+					async function enterCaptcha() {
+						const response = await sock.requestRegistrationCode({ ...registration, method: 'captcha' })
+						const path = __dirname + '/captcha.png'
+						fs.writeFileSync(path, Buffer.from(response.image_blob, 'base64'))
+
+						open(path)
+						const code = await question('Please enter the captcha code:\n')
+						fs.unlinkSync(path)
+						registration.captcha = code.replace(/["']/g, '').trim().toLowerCase()
+					}
+
+					async function askForOTP() {
+						if (!registration.method) {
+							let code = await question('How would you like to receive the one time code for registration? "sms" or "voice"\n')
+							code = code.replace(/["']/g, '').trim().toLowerCase()
+							if (code !== 'sms' && code !== 'voice') {
+								return await askForOTP();
+							}
+
+							registration.method = code
+						}
+
+						try {
+							await sock.requestRegistrationCode(registration)
+							await enterCode();
+						} catch (error) {
+							logger.error('- Failed to request registration code. Please try again.\n', error)
+
+							if (error?.reason === 'code_checkpoint') {
+								await enterCaptcha();
+							}
+
+							await askForOTP();
+						}
+					}
+;
+					askForOTP()
+				}
 				//
 				let addJson = {
 					store: store
