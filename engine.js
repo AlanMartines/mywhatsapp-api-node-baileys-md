@@ -492,14 +492,12 @@ module.exports = class Instace {
 					// implement to handle retries
 					getMessage: async (key) => {
 						if (store) {
-							const msg = await store?.loadMessage(key?.remoteJid, key?.id);
-							return msg?.message || undefined;
+							const msg = await store.loadMessage(key?.remoteJid, key?.id)
+							return msg?.message || undefined
 						}
 						//
 						// only if store is present
-						return {
-							conversation: 'hello'
-						}
+						return proto.Message.fromObject({})
 					},
 					// For fix button, template list message
 					patchMessageBeforeSending: (message) => {
@@ -536,7 +534,7 @@ module.exports = class Instace {
 				//
 				store?.bind(client.ev);
 				//
-				
+
 				// Código de emparelhamento para clientes da Web
 				if (usePairingCode && !sock.authState.creds.registered) {
 					if (useMobile) {
@@ -620,10 +618,10 @@ module.exports = class Instace {
 							await askForOTP();
 						}
 					}
-;
+					;
 					askForOTP();
 				}
-				
+
 				//
 				let addJson = {
 					store: store
