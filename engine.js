@@ -490,15 +490,7 @@ module.exports = class Instace {
 					 * implement this so that messages failed to send (solves the "this message can take a while" issue) can be retried
 					 * */
 					// implement to handle retries
-					getMessage: async (key) => {
-						if (store) {
-							const msg = await store.loadMessage(key?.remoteJid, key?.id)
-							return msg?.message || undefined
-						}
-						//
-						// only if store is present
-						return proto.Message.fromObject({})
-					},
+					getMessage,
 					// For fix button, template list message
 					patchMessageBeforeSending: (message) => {
 						const requiresPatch = !!(
@@ -1271,19 +1263,28 @@ module.exports = class Instace {
 							await saveCreds();
 						}
 						//
-						eventsSend?.statusConnection(theTokenAuth, SessionName, events);
-						eventsSend?.statusMessage(theTokenAuth, SessionName, events);
-						eventsSend?.contactsEvents(theTokenAuth, SessionName, events);
-						eventsSend?.messagesEvents(theTokenAuth, SessionName, events);
-						eventsSend?.chatsEvents(theTokenAuth, SessionName, events);
-						eventsSend?.blocklistEvents(theTokenAuth, SessionName, events);
-						eventsSend?.groupsEvents(theTokenAuth, SessionName, events);
-						eventsSend?.extraEvents(theTokenAuth, SessionName, events);
+						eventsSend.statusConnection(theTokenAuth, SessionName, events);
+						eventsSend.statusMessage(theTokenAuth, SessionName, events);
+						eventsSend.contactsEvents(theTokenAuth, SessionName, events);
+						eventsSend.messagesEvents(theTokenAuth, SessionName, events);
+						eventsSend.chatsEvents(theTokenAuth, SessionName, events);
+						eventsSend.blocklistEvents(theTokenAuth, SessionName, events);
+						eventsSend.groupsEvents(theTokenAuth, SessionName, events);
+						eventsSend.extraEvents(theTokenAuth, SessionName, events);
 						//
 					}
 				);
 				return client;
 				//
+				async function getMessage(key){
+					if(store) {
+						const msg = await store.loadMessage(key?.remoteJid, key?.id)
+						return msg?.message || undefined
+					}
+			
+					// only if store is present
+					return proto.Message.fromObject({})
+				}
 			}
 			//
 			return await startSock(SessionName).then(async (result) => {
