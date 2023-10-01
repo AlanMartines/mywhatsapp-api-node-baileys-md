@@ -87,7 +87,7 @@ module.exports = class Events {
 			} = conn;
 			//
 		}else{
-			logger?.error(`- SessionName: ${SessionName}`);
+			logger?.info(`- SessionName: ${SessionName}`);
 			logger?.error(`- Connection update error`);
 		}
 	}
@@ -171,9 +171,12 @@ module.exports = class Events {
 					await webhooks?.wh_status(SessionName, response);
 				}
 				//
+			}else{
+				logger?.info(`- SessionName: ${SessionName}`);
+				logger?.error(`- Error messages update event ${error}`);
 			}
 		} catch (error) {
-			logger?.error(`- SessionName: ${SessionName}`);
+			logger?.info(`- SessionName: ${SessionName}`);
 			logger?.error(`- Error messages update event ${error}`);
 		}
 	}
@@ -192,6 +195,9 @@ module.exports = class Events {
 				//
 
 				//
+			}else{
+				logger?.info(`- SessionName: ${SessionName}`);
+				logger?.error(`- Error contacts set event`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -220,6 +226,9 @@ module.exports = class Events {
 				}
 				//
 				*/
+			}else{
+				logger?.info(`- SessionName: ${SessionName}`);
+				logger?.error(`- Error contacts upsert event`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -237,6 +246,9 @@ module.exports = class Events {
 				}
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Contacts update`);
+			}else{
+				logger?.info(`- SessionName: ${SessionName}`);
+				logger?.error(`- Error message receipt update event`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -858,6 +870,9 @@ module.exports = class Events {
 					logger?.info(`- Message type: status@broadcast`);
 					//
 				}
+			}else{
+				logger?.info(`- SessionName: ${SessionName}`);
+				logger?.error(`- Error messages upsert`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -870,6 +885,9 @@ module.exports = class Events {
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Message delete`);
 				//logger?.info(`${JSON.stringify(messagesdelete, null, 2)}`);
+			}else{
+				logger?.info(`- SessionName: ${SessionName}`);
+				logger?.error(`- Error message delete event`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -882,6 +900,9 @@ module.exports = class Events {
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Message-media update`);
 				//logger?.info(`- Message-media update: ${JSON.stringify(messagesmedia, null, 2)}`);
+			}else{
+				logger?.info(`- SessionName: ${SessionName}`);
+				logger?.error(`- Error message-media update event`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -894,6 +915,9 @@ module.exports = class Events {
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Messages reaction`);
 				//logger?.info(`- Messages reaction: ${JSON.stringify(receipt, null, 2)}`);
+			}else{
+				logger?.info(`- SessionName: ${SessionName}`);
+				logger?.error(`- Error messages reaction event`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -907,6 +931,11 @@ module.exports = class Events {
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Messages receipt`);
 				//logger?.info(`- Messages receipt: ${JSON.stringify(messagereceipt, null, 2)}`);
+				logger?.info(`- SessionName: ${SessionName}`);
+				logger?.error(`- Error messages receipt event`);
+			}else{
+				logger?.info(`- SessionName: ${SessionName}`);
+				logger?.error(`- Error messages receipt event`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -927,6 +956,9 @@ module.exports = class Events {
 				//
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Messaging History recv ${chats.length} chats, ${contacts.length} contacts, ${messages.length} msgs (is latest: ${isLatest})`);
+			}else{
+				logger?.info(`- SessionName: ${SessionName}`);
+				logger?.error(`- Error history received event`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -946,6 +978,9 @@ module.exports = class Events {
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Chats upsert`);
 				//logger?.info(`${JSON.stringify(chatsUpsert, null, 2)}`);
+			}else{
+				logger?.info(`- SessionName: ${SessionName}`);
+				logger?.error(`- Error chats upsert event`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -958,6 +993,9 @@ module.exports = class Events {
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Chats update`);
 				//logger?.info(`${JSON.stringify(chatsUpdate, null, 2)}`);
+			}else{
+				logger?.info(`- SessionName: ${SessionName}`);
+				logger?.error(`- Error chats update event`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -970,6 +1008,9 @@ module.exports = class Events {
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Chats deleted`);
 				//logger?.info(`${JSON.stringify(chatsDelete, null, 2)}`);
+			}else{
+				logger?.info(`- SessionName: ${SessionName}`);
+				logger?.error(`- Error chats deleted event`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -989,6 +1030,9 @@ module.exports = class Events {
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Labels Association`);
 				//logger?.info(`${JSON.stringify(labelsAssociation, null, 2)}`);
+			}else{
+				logger?.info(`- SessionName: ${SessionName}`);
+				logger?.error(`- Error labels association event`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -1001,6 +1045,9 @@ module.exports = class Events {
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Labels Edit`);
 				//logger?.info(`${JSON.stringify(labelsEdit, null, 2)}`);
+			}else{
+				logger?.info(`- SessionName: ${SessionName}`);
+				logger?.error(`- Error labels edit event`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -1020,6 +1067,9 @@ module.exports = class Events {
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Blocklist set`);
 				//logger?.info(`${JSON.stringify(blocklistSet, null, 2)}`);
+			}else{
+				logger?.info(`- SessionName: ${SessionName}`);
+				logger?.error(`- Error blocklist set event`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -1032,10 +1082,13 @@ module.exports = class Events {
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Blocklist update`);
 				//logger?.info(`${JSON.stringify(blocklistUpdate, null, 2)}`);
+			}else{
+				logger?.info(`- SessionName: ${SessionName}`);
+				logger?.error(`- Error blocklist update event`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
-			logger?.error(`- Error chats deleted event ${error}`);
+			logger?.error(`- Error blocklist update event ${error}`);
 		}
 		//
 	}
@@ -1051,6 +1104,9 @@ module.exports = class Events {
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Groups upsert`);
 				//logger?.info(`${JSON.stringify(groupsUpsert, null, 2)}`);
+			}else{
+				logger?.info(`- SessionName: ${SessionName}`);
+				logger?.error(`- Error groups upsert  event`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -1063,6 +1119,9 @@ module.exports = class Events {
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Groups update`);
 				//logger?.info(`${JSON.stringify(groupsUpdate, null, 2)}`);
+			}else{
+				logger?.info(`- SessionName: ${SessionName}`);
+				logger?.error(`- Error groups update  event`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -1075,6 +1134,9 @@ module.exports = class Events {
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Group participants update`);
 				//logger?.info(`${JSON.stringify(participantsUpdate, null, 2)}`);
+			}else{
+				logger?.info(`- SessionName: ${SessionName}`);
+				logger?.error(`- Error groups participants update  event`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -1094,6 +1156,9 @@ module.exports = class Events {
 				//logger?.info(`- Presence update: ${JSON.stringify(presenceUpdate, null, 2)}`);
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Presence update`);
+			}else{
+				logger?.info(`- SessionName: ${SessionName}`);
+				logger?.error(`- Error presence update  event`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
@@ -1124,6 +1189,9 @@ module.exports = class Events {
 				dataSessions?.funcoesSocket?.eventCall(SessionName, response);
 				await webhooks?.wh_incomingCall(SessionName, response);
 				//
+			}else{
+				logger?.info(`- SessionName: ${SessionName}`);
+				logger?.error(`- Error recv call event`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
