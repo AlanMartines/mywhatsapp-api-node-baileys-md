@@ -77,7 +77,7 @@ module.exports = class Events {
 		let dataSessions = await Sessions?.getSession(SessionName);
 		dataSessions.client.ev.on("connection.update").then(async (conn) => {
 			//
-			logger?.info(`- Connection update`);
+			logger?.info(`- Connection update is ${connection}`);
 			//
 			const {
 				connection,
