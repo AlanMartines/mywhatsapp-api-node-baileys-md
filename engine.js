@@ -620,14 +620,6 @@ module.exports = class Instace {
 								receivedPendingNotifications
 							} = conn;
 							//
-							logger?.info(`- Connection update`.green);
-							//
-							/*
-							logger?.info(`- Output: \n ${JSON.stringify(lastDisconnect?.error?.output, null, 2)}`);
-							logger?.info(`- Data: \n ${JSON.stringify(lastDisconnect?.error?.data, null, 2)}`);
-							logger?.info(`- loggedOut: \n ${JSON.stringify(DisconnectReason?.loggedOut, null, 2)}`);
-							*/
-							//
 							if (qr) {
 								//
 								logger?.info(`- SessionName: ${SessionName}`);
