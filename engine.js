@@ -622,11 +622,12 @@ module.exports = class Instace {
 							//
 							logger?.info(`- Connection update`.green);
 							//
-							
+							logger?.info(`- Connection: \n ${JSON.stringify(conn, null, 2)}`);
+							/*
 							logger?.info(`- Output: \n ${JSON.stringify(lastDisconnect?.error?.output, null, 2)}`);
 							logger?.info(`- Data: \n ${JSON.stringify(lastDisconnect?.error?.data, null, 2)}`);
 							logger?.info(`- loggedOut: \n ${JSON.stringify(DisconnectReason?.loggedOut, null, 2)}`);
-							
+							*/
 							//
 							if (qr) {
 								//
@@ -1243,7 +1244,7 @@ module.exports = class Instace {
 							await saveCreds();
 						}
 						//
-						//eventsSend.statusConnection(theTokenAuth, SessionName, events);
+						eventsSend.statusConnection(theTokenAuth, SessionName, events);
 						eventsSend.statusMessage(theTokenAuth, SessionName, events);
 						eventsSend.contactsEvents(theTokenAuth, SessionName, events);
 						eventsSend.messagesEvents(theTokenAuth, SessionName, events);

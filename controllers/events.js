@@ -70,18 +70,6 @@ async function updateStatisticsDb(status, type, isGroup, AuthorizationToken, Ses
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
-async function getMessage(dataSessions, key) {
-	if (dataSessions?.client) {
-		const msg = await dataSessions?.client?.loadMessage(key.remoteJid, key.id);
-		return msg?.message || undefined;
-	}
-
-	// apenas se o store estiver presente
-	return proto.Message.fromObject({});
-}
-//
-// ------------------------------------------------------------------------------------------------------- //
-//
 module.exports = class Events {
 	//
 	static async statusConnection(AuthorizationToken, SessionName, events) {
