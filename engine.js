@@ -416,104 +416,82 @@ module.exports = class Instace {
 				logger?.info(`- Using WA v${version.join('.')}, isLatest: ${isLatest}`)
 				//
 				const AxiosRequestConfig = {};
-				//
 				const SocketConfig = {
-					/** the WS url to connect to WA */
+					/** URL do WS para conectar ao WhatsApp */
 					//waWebSocketUrl: config.WA_URL,
-					/** Fails the connection if the socket times out in this interval */
+					/** Falha a conexão se o socket expirar neste intervalo */
 					connectTimeoutMs: 60000,
-					/** Default timeout for queries, undefined for no timeout */
+					/** Tempo limite padrão para consultas, undefined para nenhum tempo limite */
 					defaultQueryTimeoutMs: undefined,
-					/** ping-pong interval for WS connection */
+					/** Intervalo de ping-pong para conexão WS */
 					keepAliveIntervalMs: 5000,
-					/** proxy agent */
+					/** Agente de proxy */
 					agent: undefined,
-					/** pino logger */
+					/** Logger do tipo pino */
 					logger: pino({ level: 'error' }),
-					/** version to connect with */
+					/** Versão para conectar */
 					version: version || undefined,
-					/** override browser config */
+					/** Configuração do navegador */
 					browser: [`${config.DEVICE_NAME}`, 'Chrome', release()],
-					/** agent used for fetch requests -- uploading/downloading media */
+					/** Agente usado para solicitações de busca - carregamento/download de mídia */
 					fetchAgent: undefined,
-					/** should the QR be printed in the terminal */
+					/** Deve o QR ser impresso no terminal */
 					printQRInTerminal: false,
-					/** should events be emitted for actions done by this socket connection */
+					/** Deve eventos serem emitidos para ações realizadas por esta conexão de soquete */
 					emitOwnEvents: true,
-					/** provide a cache to store media, so does not have to be re-uploaded */
+					/** Fornece um cache para armazenar mídia, para que não precise ser reenviada */
 					mediaCache: NodeCache,
-					/** custom upload hosts to upload media to */
+					/** Hospedeiros personalizados de upload de mídia */
 					//customUploadHosts: MediaConnInfo['hosts'],
-					/** time to wait between sending new retry requests */
+					/** Tempo de espera entre o envio de novas solicitações de repetição */
 					retryRequestDelayMs: 5000,
-					/** time to wait for the generation of the next QR in ms */
+					/** Tempo de espera para a geração do próximo QR em ms */
 					qrTimeout: 15000,
-					/** provide an auth state object to maintain the auth state */
+					/** Forneça um objeto de estado de autenticação para manter o estado de autenticação */
 					//auth: state,
 					auth: {
 						creds: state.creds,
-						//caching makes the store faster to send/recv messages
+						// O armazenamento em cache torna o armazenamento mais rápido para enviar/receber mensagens
 						keys: makeCacheableSignalKeyStore(state.keys, loggerPino),
 					},
-					/** manage history processing with this control; by default will sync up everything */
+					/** Gerencia o processamento do histórico com este controle; por padrão, sincronizará tudo */
 					//shouldSyncHistoryMessage: boolean,
-					/** transaction capability options for SignalKeyStore */
+					/** Opções de capacidade de transação para SignalKeyStore */
 					//transactionOpts: TransactionCapabilityOptions,
-					/** provide a cache to store a user's device list */
+					/** Fornece um cache para armazenar a lista de dispositivos do usuário */
 					userDevicesCache: NodeCache,
-					/** marks the client as online whenever the socket successfully connects */
+					/** Marca o cliente como online sempre que o soquete se conecta com sucesso */
 					markOnlineOnConnect: setOnline,
 					/**
-					 * map to store the retry counts for failed messages;
-					 * used to determine whether to retry a message or not */
+					 * Mapa para armazenar as contagens de repetição para mensagens com falha;
+					 * usado para determinar se uma mensagem deve ser retransmitida ou não */
 					msgRetryCounterCache: msgRetryCounterCache,
-					/** width for link preview images */
+					/** Largura para imagens de visualização de link */
 					linkPreviewImageThumbnailWidth: 192,
-					/** Should Baileys ask the phone for full history, will be received async */
+					/** O Baileys deve solicitar ao telefone o histórico completo, que será recebido assincronamente */
 					syncFullHistory: true,
-					/** Should baileys fire init queries automatically, default true */
+					/** O Baileys deve disparar consultas de inicialização automaticamente, padrão: true */
 					fireInitQueries: true,
 					/**
-					 * generate a high quality link preview,
-					 * entails uploading the jpegThumbnail to WA
-					 * */
+					 * Gerar uma visualização de link de alta qualidade,
+					 * implica fazer upload do jpegThumbnail para o WhatsApp
+					 */
 					generateHighQualityLinkPreview: true,
-					/** options for axios */
+					/** Opções para o axios */
 					//options: AxiosRequestConfig || undefined,
-					// ignore all broadcast messages -- to receive the same
-					// comment the line below out
+					// Ignorar todas as mensagens de transmissão -- para receber as mesmas
+					// comente a linha abaixo
 					shouldIgnoreJid: jid => isJidBroadcast(jid),
-					/** By default true, should history messages be downloaded and processed */
+					/** Por padrão, verdadeiro, as mensagens de histórico devem ser baixadas e processadas */
 					downloadHistory: true,
 					/**
-					 * fetch a message from your store
-					 * implement this so that messages failed to send (solves the "this message can take a while" issue) can be retried
-					 * */
-					// implement to handle retries
+					 * Busque uma mensagem em sua loja
+					 * implemente isso para que mensagens com falha no envio (resolve o problema "esta mensagem pode levar um tempo" possam ser reenviadas
+					 */
+					// implemente para lidar com repetições
 					getMessage,
-					// For fix button, template list message
-					patchMessageBeforeSending: (message) => {
-						const requiresPatch = !!(
-							message.buttonsMessage ||
-							message.templateMessage ||
-							message.listMessage
-						);
-						if (requiresPatch) {
-							message = {
-								viewOnceMessage: {
-									message: {
-										messageContextInfo: {
-											deviceListMetadataVersion: 2,
-											deviceListMetadata: {},
-										},
-										...message,
-									},
-								},
-							};
-						}
-						//
-						return message;
-					},
+					// Para o botão de correção, mensagem de lista de modelos
+					patchMessageBeforeSending,
 				};
 				//
 				// ------------------------------------------------------------------------------------------------------- //
@@ -1276,15 +1254,38 @@ module.exports = class Instace {
 				);
 				return client;
 				//
-				async function getMessage(key){
-					if(store) {
+				async function getMessage(key) {
+					if (store) {
 						const msg = await store.loadMessage(key?.remoteJid, key?.id)
 						return msg?.message || undefined
 					}
-			
+
 					// only if store is present
 					return proto.Message.fromObject({})
 				}
+				//
+				async function patchMessageBeforeSending(message) {
+						const requiresPatch = !!(
+							message.buttonsMessage ||
+							message.templateMessage ||
+							message.listMessage
+						);
+						if (requiresPatch) {
+							message = {
+								viewOnceMessage: {
+									message: {
+										messageContextInfo: {
+											deviceListMetadataVersion: 2,
+											deviceListMetadata: {},
+										},
+										...message,
+									},
+								},
+							};
+						}
+						//
+						return message;
+					}
 			}
 			//
 			return await startSock(SessionName).then(async (result) => {
