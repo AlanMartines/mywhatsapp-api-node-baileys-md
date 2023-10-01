@@ -86,6 +86,9 @@ module.exports = class Events {
 				receivedPendingNotifications
 			} = conn;
 			//
+		}else{
+			logger?.error(`- SessionName: ${SessionName}`);
+			logger?.error(`- Connection update error`);
 		}
 	}
 	//
