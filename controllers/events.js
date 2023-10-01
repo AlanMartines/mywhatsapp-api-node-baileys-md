@@ -77,8 +77,7 @@ async function updateStatisticsDb(status, type, isGroup, AuthorizationToken, Ses
 module.exports = class Events {
 	//
 	static async statusConnection(AuthorizationToken, SessionName, events) {
-		// Eventos de conexão
-		let dataSessions = await Sessions?.getSession(SessionName);
+		// Eventos de conexão	
 		if (events['connection.update']) {
 			const conn = events['connection.update'];
 			//
@@ -99,7 +98,7 @@ module.exports = class Events {
 			logger?.info(`- SessionName: ${SessionName}`);
 			logger?.info(`- Creds update`);
 			//
-			await saveCreds();
+			saveCreds();
 		}
 		//
 	}
