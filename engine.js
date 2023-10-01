@@ -62,7 +62,8 @@ const {
 	MessageRetryMap,
 	getAggregateVotesInPollMessage,
 	WAMessageContent,
-	WAMessageKey
+	WAMessageKey,
+	PHONENUMBER_MCC
 } = require('@whiskeysockets/baileys');
 //
 const tokenPatch = parseInt(config.INDOCKER) ? path.join(config.PATCH_TOKENS, os.hostname()) : config.PATCH_TOKENS;
