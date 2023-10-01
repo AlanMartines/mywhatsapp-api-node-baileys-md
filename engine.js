@@ -535,7 +535,7 @@ module.exports = class Instace {
 				//
 				store?.bind(client.ev);
 				//
-				/*
+				
 				// Código de emparelhamento para clientes da Web
 				if (usePairingCode && !sock.authState.creds.registered) {
 					if (useMobile) {
@@ -622,7 +622,7 @@ module.exports = class Instace {
 ;
 					askForOTP();
 				}
-				*/
+				
 				//
 				let addJson = {
 					store: store
