@@ -605,6 +605,12 @@ module.exports = class Instace {
 				//
 				// the process function lets you process all events that just occurred
 				// efficiently in a batch
+				//
+				client.ev.on('messages.upsert', m => {
+					console.log(JSON.stringify(m, undefined, 2));
+					console.log('replying to', m.messages[0].key.remoteJid);
+			});
+				//
 				client.ev.process(
 					async (events) => {
 						// something about the connection changed
@@ -622,7 +628,6 @@ module.exports = class Instace {
 							//
 							logger?.info(`- Connection update`.green);
 							//
-							logger?.info(`- Connection: \n ${JSON.stringify(conn, null, 2)}`);
 							/*
 							logger?.info(`- Output: \n ${JSON.stringify(lastDisconnect?.error?.output, null, 2)}`);
 							logger?.info(`- Data: \n ${JSON.stringify(lastDisconnect?.error?.data, null, 2)}`);
