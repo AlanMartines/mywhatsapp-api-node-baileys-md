@@ -599,7 +599,7 @@ module.exports = class Instace {
 					store: store
 				};
 				//
-				await Sessions?.addInfoSession(SessionName, addJson);
+				//await Sessions?.addInfoSession(SessionName, addJson);
 				//
 				let attempts = 1;
 				//
