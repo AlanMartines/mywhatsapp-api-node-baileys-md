@@ -1238,6 +1238,15 @@ module.exports = class Instace {
 							//
 						}
 						//
+						// auto save dos dados da sessão
+						// credentials updated -- save them
+						if (events['creds.update']) {
+							//
+							logger?.info(`- SessionName: ${SessionName}`);
+							logger?.info(`- Creds update`);
+							//
+						}
+						//
 						eventsSend.statusConnection(theTokenAuth, SessionName, events);
 						eventsSend.statusMessage(theTokenAuth, SessionName, events);
 						eventsSend.contactsEvents(theTokenAuth, SessionName, events);

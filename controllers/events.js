@@ -1,6 +1,6 @@
 //
-const os = require('os');
-const path = require('path');
+const { downloadMediaMessage, getAggregateVotesInPollMessage, proto, DisconnectReason } = require('@whiskeysockets/baileys');
+//
 const webhooks = require('./webhooks');
 const Sessions = require('./sessions');
 const { logger } = require("../utils/logger");
@@ -9,10 +9,6 @@ const config = require('../config.global');
 const moment = require('moment');
 moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
-const { downloadMediaMessage, getAggregateVotesInPollMessage, proto, DisconnectReason } = require('@whiskeysockets/baileys');
-//
-const tokenPatch = parseInt(config.INDOCKER) ? path.join(config.PATCH_TOKENS, os.hostname()) : config.PATCH_TOKENS;
-const { saveCreds } = await useMultiFileAuthState(`${tokenPatch}/${SessionName}.data.json`);
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
@@ -77,7 +73,8 @@ async function updateStatisticsDb(status, type, isGroup, AuthorizationToken, Ses
 module.exports = class Events {
 	//
 	static async statusConnection(AuthorizationToken, SessionName, events) {
-		// Eventos de conexão	
+		// Eventos de conexão
+		let dataSessions = await Sessions?.getSession(SessionName);
 		if (events['connection.update']) {
 			const conn = events['connection.update'];
 			//
@@ -90,17 +87,6 @@ module.exports = class Events {
 			} = conn;
 			//
 		}
-		//
-		// Auto save dos dados da sessão
-		// Credentials updated -- save them
-		if (events['creds.update']) {
-			//
-			logger?.info(`- SessionName: ${SessionName}`);
-			logger?.info(`- Creds update`);
-			//
-			saveCreds();
-		}
-		//
 	}
 	//
 	// ------------------------------------------------------------------------------------------------------- //
@@ -165,7 +151,7 @@ module.exports = class Events {
 					default:
 						//
 						status = null;
-					//
+						//
 				}
 				logger?.info(`- Listen to ack ${onAck}, status ${status}`);
 				let response = {
