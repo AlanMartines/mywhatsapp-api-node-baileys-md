@@ -606,9 +606,12 @@ module.exports = class Instace {
 				// the process function lets you process all events that just occurred
 				// efficiently in a batch
 				//
+				client.ev.process(
+					async (events) => {
 						// something about the connection changed
 						// maybe it closed, or we received all offline message or connection opened
-						client.ev.on("connection.update", async (conn) => {
+						if (events['connection.update']) {
+							const conn = events['connection.update'];
 							//
 							const {
 								connection,
@@ -1234,22 +1237,29 @@ module.exports = class Instace {
 								//
 							}
 							//
-						});
+						}
 						//
 						// auto save dos dados da sessão
 						// credentials updated -- save them
-						client.ev.on("creds.update", saveCreds);
+						if (events['creds.update']) {
+							//
+							logger?.info(`- SessionName: ${SessionName}`);
+							logger?.info(`- Creds update`);
+							//
+						}
 						//
-						eventsSend.statusConnection(SessionName);
-						//eventsSend.statusMessage(SessionName);
-						//eventsSend.contactsEvents(SessionName);
-						//eventsSend.messagesEvents(SessionName);
-						//eventsSend.chatsEvents(SessionName);
-						//eventsSend.labelsEvents(SessionName);
-						//eventsSend.blocklistEvents(SessionName);
-						//eventsSend.groupsEvents(SessionName);
-						//eventsSend.extraEvents(SessionName);
+						eventsSend.statusConnection(SessionName, events);
+						eventsSend.statusMessage(SessionName, events);
+						eventsSend.contactsEvents(SessionName, events);
+						eventsSend.messagesEvents(SessionName, events);
+						eventsSend.chatsEvents(SessionName, events);
+						eventsSend.labelsEvents(SessionName, events);
+						eventsSend.blocklistEvents(SessionName, events);
+						eventsSend.groupsEvents(SessionName, events);
+						eventsSend.extraEvents(SessionName, events);
 						//
+					}
+				);
 				return client;
 				//
 				async function getMessage(key) {
