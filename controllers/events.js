@@ -97,7 +97,7 @@ module.exports = class Events {
 		if (events['creds.update']) {
 			//
 			logger?.info(`- SessionName: ${SessionName}`);
-			logger?.info(`-Creds update`);
+			logger?.info(`- Creds update`);
 			//
 			await saveCreds();
 		}
