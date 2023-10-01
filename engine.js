@@ -606,7 +606,7 @@ module.exports = class Instace {
 				// the process function lets you process all events that just occurred
 				// efficiently in a batch
 				//
-				sock.ev.on('connection.update', (update) => {
+				client.ev.on('connection.update', (update) => {
 					//
 					const {
 						connection,
