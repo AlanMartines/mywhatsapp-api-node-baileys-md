@@ -606,10 +606,23 @@ module.exports = class Instace {
 				// the process function lets you process all events that just occurred
 				// efficiently in a batch
 				//
-				client.ev.on('messages.upsert', m => {
-					console.log(JSON.stringify(m, undefined, 2));
-					console.log('replying to', m.messages[0].key.remoteJid);
-			});
+				sock.ev.on('connection.update', (update) => {
+					//
+					const {
+						connection,
+						lastDisconnect,
+						isNewLogin,
+						qr,
+						receivedPendingNotifications
+					} = update;
+					//
+					logger?.info(`- Connection update`.green);
+					//
+					logger?.info(`- Output: \n ${JSON.stringify(lastDisconnect?.error?.output, null, 2)}`);
+					logger?.info(`- Data: \n ${JSON.stringify(lastDisconnect?.error?.data, null, 2)}`);
+					logger?.info(`- loggedOut: \n ${JSON.stringify(DisconnectReason?.loggedOut, null, 2)}`);
+					//
+				});
 				//
 				client.ev.process(
 					async (events) => {
@@ -1273,27 +1286,27 @@ module.exports = class Instace {
 				}
 				//
 				async function patchMessageBeforeSending(message) {
-						const requiresPatch = !!(
-							message.buttonsMessage ||
-							message.templateMessage ||
-							message.listMessage
-						);
-						if (requiresPatch) {
-							message = {
-								viewOnceMessage: {
-									message: {
-										messageContextInfo: {
-											deviceListMetadataVersion: 2,
-											deviceListMetadata: {},
-										},
-										...message,
+					const requiresPatch = !!(
+						message.buttonsMessage ||
+						message.templateMessage ||
+						message.listMessage
+					);
+					if (requiresPatch) {
+						message = {
+							viewOnceMessage: {
+								message: {
+									messageContextInfo: {
+										deviceListMetadataVersion: 2,
+										deviceListMetadata: {},
 									},
+									...message,
 								},
-							};
-						}
-						//
-						return message;
+							},
+						};
 					}
+					//
+					return message;
+				}
 			}
 			//
 			return await startSock(SessionName).then(async (result) => {
