@@ -1,6 +1,6 @@
 //
-const { downloadMediaMessage, getAggregateVotesInPollMessage, proto, DisconnectReason } = require('@whiskeysockets/baileys');
-//
+const os = require('os');
+const path = require('path');
 const webhooks = require('./webhooks');
 const Sessions = require('./sessions');
 const { logger } = require("../utils/logger");
@@ -9,6 +9,10 @@ const config = require('../config.global');
 const moment = require('moment');
 moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
+const { downloadMediaMessage, getAggregateVotesInPollMessage, proto, DisconnectReason } = require('@whiskeysockets/baileys');
+//
+const tokenPatch = parseInt(config.INDOCKER) ? path.join(config.PATCH_TOKENS, os.hostname()) : config.PATCH_TOKENS;
+const { saveCreds } = await useMultiFileAuthState(`${tokenPatch}/${SessionName}.data.json`);
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
@@ -73,6 +77,7 @@ async function updateStatisticsDb(status, type, isGroup, AuthorizationToken, Ses
 module.exports = class Events {
 	//
 	static async statusConnection(AuthorizationToken, SessionName, events) {
+		// Eventos de conexão
 		let dataSessions = await Sessions?.getSession(SessionName);
 		if (events['connection.update']) {
 			const conn = events['connection.update'];
@@ -85,13 +90,14 @@ module.exports = class Events {
 				receivedPendingNotifications
 			} = conn;
 			//
-			logger?.info(`- Connection update`.green);
-			//
-			logger?.info(`- Output: \n ${JSON.stringify(lastDisconnect?.error?.output, null, 2)}`);
-			logger?.info(`- Data: \n ${JSON.stringify(lastDisconnect?.error?.data, null, 2)}`);
-			logger?.info(`- loggedOut: \n ${JSON.stringify(DisconnectReason?.loggedOut, null, 2)}`);
-			//
 		}
+		//
+		// Auto save dos dados da sessão
+		// Credentials updated -- save them
+		if (events['creds.update']) {
+			await saveCreds();
+		}
+		//
 	}
 	//
 	// ------------------------------------------------------------------------------------------------------- //
@@ -156,7 +162,7 @@ module.exports = class Events {
 					default:
 						//
 						status = null;
-						//
+					//
 				}
 				logger?.info(`- Listen to ack ${onAck}, status ${status}`);
 				let response = {

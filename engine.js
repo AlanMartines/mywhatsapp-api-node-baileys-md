@@ -407,7 +407,7 @@ module.exports = class Instace {
 		//
 		//const { state, saveState } = await useSingleFileAuthState(`${tokenPatch}/${SessionName}.data.json`);
 		//
-		const { state, saveCreds } = await useMultiFileAuthState(`${tokenPatch}/${SessionName}.data.json`);
+		const { state } = await useMultiFileAuthState(`${tokenPatch}/${SessionName}.data.json`);
 		//
 		try {
 			//
@@ -605,24 +605,6 @@ module.exports = class Instace {
 				//
 				// the process function lets you process all events that just occurred
 				// efficiently in a batch
-				//
-				client.ev.on('connection.update', (update) => {
-					//
-					const {
-						connection,
-						lastDisconnect,
-						isNewLogin,
-						qr,
-						receivedPendingNotifications
-					} = update;
-					//
-					logger?.info(`- Connection update`.green);
-					//
-					logger?.info(`- Output: \n ${JSON.stringify(lastDisconnect?.error?.output, null, 2)}`);
-					logger?.info(`- Data: \n ${JSON.stringify(lastDisconnect?.error?.data, null, 2)}`);
-					logger?.info(`- loggedOut: \n ${JSON.stringify(DisconnectReason?.loggedOut, null, 2)}`);
-					//
-				});
 				//
 				client.ev.process(
 					async (events) => {
