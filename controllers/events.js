@@ -95,6 +95,10 @@ module.exports = class Events {
 		// Auto save dos dados da sessão
 		// Credentials updated -- save them
 		if (events['creds.update']) {
+			//
+			logger?.info(`- SessionName: ${SessionName}`);
+			logger?.info(`-Creds update`);
+			//
 			await saveCreds();
 		}
 		//
