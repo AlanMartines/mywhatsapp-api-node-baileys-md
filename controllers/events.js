@@ -173,7 +173,7 @@ module.exports = class Events {
 				//
 			}else{
 				logger?.info(`- SessionName: ${SessionName}`);
-				logger?.error(`- Error messages update event ${error}`);
+				logger?.error(`- Error messages update event`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
