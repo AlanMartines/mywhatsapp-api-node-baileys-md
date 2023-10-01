@@ -373,8 +373,10 @@ module.exports = class Instace {
 		//const loggerPino = pino({ level: 'trace' });
 		const loggerPino = pino({ level: 'silent' });
 		//
-		const useStore = !process.argv.includes('--no-store');
-		const doReplies = !process.argv.includes('--no-reply');
+		const useStore = !process.argv.includes('--no-store')
+		const doReplies = !process.argv.includes('--no-reply')
+		const usePairingCode = process.argv.includes('--use-pairing-code')
+		const useMobile = process.argv.includes('--mobile')
 		//
 		// external map to store retry counts of messages when decryption/encryption fails
 		// keep this out of the socket itself, so as to prevent a message decryption/encryption loop across socket restarts
