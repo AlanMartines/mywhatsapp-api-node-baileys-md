@@ -5,6 +5,8 @@ const path = require('path');
 const fs = require('fs-extra');
 const QRCode = require('qrcode');
 const qrViewer = require('qrcode-terminal');
+const parsePhoneNumber = require('libphonenumber-js');
+const readline = require('readline');
 const moment = require('moment');
 moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
