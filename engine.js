@@ -446,7 +446,7 @@ module.exports = class Instace {
 					/** Emitir eventos para ações realizadas por esta conexão de socket */
 					emitOwnEvents: true,
 					/** Fornecer um cache para armazenar mídias, para não precisar ser reenviado */
-					//mediaCache: NodeCache,
+					mediaCache: NodeCache,
 					/** Hospedeiros personalizados para fazer upload de mídia */
 					//customUploadHosts: MediaConnInfo['hosts'],
 					/** Tempo de espera entre o envio de novas solicitações de repetição */
@@ -465,7 +465,7 @@ module.exports = class Instace {
 					/** Opções de capacidade de transação para SignalKeyStore */
 					//transactionOpts: TransactionCapabilityOptions,
 					/** Fornecer um cache para armazenar a lista de dispositivos de um usuário */
-					//userDevicesCache: NodeCache,
+					userDevicesCache: NodeCache,
 					/** Marcar o cliente como online sempre que o socket se conectar com sucesso */
 					markOnlineOnConnect: setOnline,
 					/**
