@@ -40,7 +40,7 @@ function convertHMS(value) {
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
-async function updateStatisticsDb(status, type, isGroup, AuthorizationToken, SessionName) {
+async function updateStatisticsDb(status, type, isGroup, SessionName) {
 	//
 	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
 	//logger?.info(`- Date: ${date_now}`);
@@ -72,7 +72,7 @@ async function updateStatisticsDb(status, type, isGroup, AuthorizationToken, Ses
 //
 module.exports = class Events {
 	//
-	static async statusConnection(AuthorizationToken, SessionName, events) {
+	static async statusConnection(SessionName, events) {
 		// Eventos de conexão
 		let dataSessions = await Sessions?.getSession(SessionName);
 		if (events['connection.update']) {
@@ -845,7 +845,7 @@ module.exports = class Events {
 						//
 						dataSessions?.funcoesSocket?.message(SessionName, response);
 						await webhooks?.wh_messages(SessionName, response);
-						await updateStatisticsDb(response?.status, response?.type, response?.isGroup, AuthorizationToken, SessionName);
+						await updateStatisticsDb(response?.status, response?.type, response?.isGroup, SessionName);
 						//
 					}
 					//
@@ -913,7 +913,15 @@ module.exports = class Events {
 		try {
 			// history received
 			if (events['messaging-history.set']) {
-				const { chats, contacts, messages, isLatest } = events['messaging-history.set'];
+				const history = events['messaging-history.set'];
+				//
+				const {
+					chats,
+					contacts,
+					messages,
+					isLatest
+				} = history;
+				//
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Messaging History recv ${chats.length} chats, ${contacts.length} contacts, ${messages.length} msgs (is latest: ${isLatest})`);
 			}
@@ -927,8 +935,8 @@ module.exports = class Events {
 	// ------------------------------------------------------------------------------------------------------- //
 	//
 	static async chatsEvents(SessionName, events) {
+		// Eventos de chats
 		let dataSessions = await Sessions?.getSession(SessionName);
-		//
 		try {
 			if (events['chats.upsert']) {
 				const chatsUpsert = events['chats.upsert'];
@@ -963,6 +971,37 @@ module.exports = class Events {
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
 			logger?.error(`- Error chats deleted event ${error}`);
+		}
+		//
+	}
+	//
+	// ------------------------------------------------------------------------------------------------------- //
+	//
+	static async labelsEvents(SessionName, events) {
+		// Eventos de chats
+		let dataSessions = await Sessions?.getSession(SessionName);
+		try {
+			if (events['labels.association']) {
+				const labelsAssociation = events['labels.association'];
+				logger?.info(`- SessionName: ${SessionName}`);
+				logger?.info(`- Labels Association`);
+				//logger?.info(`${JSON.stringify(labelsAssociation, null, 2)}`);
+			}
+		} catch (error) {
+			logger?.info(`- SessionName: ${SessionName}`);
+			logger?.error(`- Error labels association event ${error}`);
+		}
+		//
+		try {
+			if (events['labels.edit']) {
+				const labelsEdit = events['labels.edit'];
+				logger?.info(`- SessionName: ${SessionName}`);
+				logger?.info(`- Labels Edit`);
+				//logger?.info(`${JSON.stringify(labelsEdit, null, 2)}`);
+			}
+		} catch (error) {
+			logger?.info(`- SessionName: ${SessionName}`);
+			logger?.error(`- Error labels edit event ${error}`);
 		}
 		//
 	}

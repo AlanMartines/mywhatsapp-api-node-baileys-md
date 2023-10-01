@@ -627,7 +627,7 @@ module.exports = class Instace {
 							logger?.info(`- Output: \n ${JSON.stringify(lastDisconnect?.error?.output, null, 2)}`);
 							logger?.info(`- Data: \n ${JSON.stringify(lastDisconnect?.error?.data, null, 2)}`);
 							logger?.info(`- loggedOut: \n ${JSON.stringify(DisconnectReason?.loggedOut, null, 2)}`);
-							logger?.info(`- receivedPendingNotifications: ${JSON.stringify(receivedPendingNotifications, null, 2)}`);
+							logger?.info(`- PendingNotifications: ${JSON.stringify(receivedPendingNotifications, null, 2)}`);
 							*/
 							//
 							if (qr) {
@@ -1248,14 +1248,15 @@ module.exports = class Instace {
 							//
 						}
 						//
-						eventsSend.statusConnection(theTokenAuth, SessionName, events);
-						eventsSend.statusMessage(theTokenAuth, SessionName, events);
-						eventsSend.contactsEvents(theTokenAuth, SessionName, events);
-						eventsSend.messagesEvents(theTokenAuth, SessionName, events);
-						eventsSend.chatsEvents(theTokenAuth, SessionName, events);
-						eventsSend.blocklistEvents(theTokenAuth, SessionName, events);
-						eventsSend.groupsEvents(theTokenAuth, SessionName, events);
-						eventsSend.extraEvents(theTokenAuth, SessionName, events);
+						eventsSend.statusConnection(SessionName, events);
+						eventsSend.statusMessage(SessionName, events);
+						eventsSend.contactsEvents(SessionName, events);
+						eventsSend.messagesEvents(SessionName, events);
+						eventsSend.chatsEvents(SessionName, events);
+						eventsSend.labelsEvents(SessionName, events);
+						eventsSend.blocklistEvents(SessionName, events);
+						eventsSend.groupsEvents(SessionName, events);
+						eventsSend.extraEvents(SessionName, events);
 						//
 					}
 				);
