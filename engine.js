@@ -623,11 +623,11 @@ module.exports = class Instace {
 							//
 							logger?.info(`- Connection update`.green);
 							//
-							logger?.info(`- receivedPendingNotifications: \n ${JSON.stringify(receivedPendingNotifications, null, 2)}`);
 							/*
 							logger?.info(`- Output: \n ${JSON.stringify(lastDisconnect?.error?.output, null, 2)}`);
 							logger?.info(`- Data: \n ${JSON.stringify(lastDisconnect?.error?.data, null, 2)}`);
 							logger?.info(`- loggedOut: \n ${JSON.stringify(DisconnectReason?.loggedOut, null, 2)}`);
+							logger?.info(`- receivedPendingNotifications: ${JSON.stringify(receivedPendingNotifications, null, 2)}`);
 							*/
 							//
 							if (qr) {
