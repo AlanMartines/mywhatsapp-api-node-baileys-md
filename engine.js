@@ -374,7 +374,8 @@ module.exports = class Instace {
 	 */
 		//
 		//const loggerPino = pino({ level: 'trace' });
-		const loggerPino = pino({ level: 'silent' });
+		//const loggerPino = pino({ level: 'silent' });
+		logger.level = 'trace';
 		//
 		const useStore = !process.argv.includes('--no-store')
 		const doReplies = !process.argv.includes('--no-reply')
@@ -386,7 +387,7 @@ module.exports = class Instace {
 		//const MessageRetryMap = {};
 		const msgRetryCounterCache = new NodeCache();
 		//
-		const store = useStore ? makeInMemoryStore({ loggerPino }) : undefined;
+		const store = useStore ? makeInMemoryStore({ logger }) : undefined;
 		//
 		try {
 			//
@@ -430,7 +431,7 @@ module.exports = class Instace {
 					/** Agente de proxy */
 					agent: undefined,
 					/** Logger do tipo pino */
-					logger: pino({ level: 'error' }),
+					//logger: pino({ level: 'error' }),
 					/** Versão para conectar */
 					version: version || undefined,
 					/** Configuração do navegador */
