@@ -431,7 +431,7 @@ module.exports = class Instace {
 					/** Agente de proxy */
 					agent: undefined,
 					/** Logger do tipo pino */
-					logger: loggerPino,
+					logger: logger,
 					/** Versão para conectar */
 					version: version || undefined,
 					/** Configuração do navegador */
