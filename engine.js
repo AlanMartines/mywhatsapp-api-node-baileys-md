@@ -387,7 +387,7 @@ module.exports = class Instace {
 		//const MessageRetryMap = {};
 		const msgRetryCounterCache = new NodeCache();
 		//
-		const store = useStore ? makeInMemoryStore({ loggerPino }) : undefined;
+		const store = useStore ? makeInMemoryStore({ logger }) : undefined;
 		//
 		try {
 			//
