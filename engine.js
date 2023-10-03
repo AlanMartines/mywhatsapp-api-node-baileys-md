@@ -450,7 +450,7 @@ module.exports = class Instace {
 					/** Deve o QR ser impresso no terminal */
 					printQRInTerminal: false,
 					//
-					//mobile: useMobile,
+					mobile: false,
 					/** Deve eventos serem emitidos para ações realizadas por esta conexão de soquete */
 					emitOwnEvents: true,
 					/** Fornece um cache para armazenar mídia, para que não precise ser reenviada */
@@ -517,9 +517,9 @@ module.exports = class Instace {
 					/** Versão para conectar */
 					version: waVersion,
 					/** Deve o QR ser impresso no terminal */
-					printQRInTerminal: !usePairingCode,
+					printQRInTerminal: false,
 					/** Tempo de espera para a geração do próximo QR em ms */
-					mobile: useMobile,
+					mobile: false,
 					/** Forneça um objeto de estado de autenticação para manter o estado de autenticação */
 					//auth: state,
 					auth: {
