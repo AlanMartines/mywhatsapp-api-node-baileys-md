@@ -442,6 +442,8 @@ module.exports = class Instace {
 					fetchAgent: undefined,
 					/** Deve o QR ser impresso no terminal */
 					printQRInTerminal: false,
+					//
+					mobile: useMobile,
 					/** Deve eventos serem emitidos para ações realizadas por esta conexão de soquete */
 					emitOwnEvents: true,
 					/** Fornece um cache para armazenar mídia, para que não precise ser reenviada */
