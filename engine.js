@@ -433,7 +433,7 @@ module.exports = class Instace {
 					/** Agente de proxy */
 					agent: undefined,
 					/** Logger do tipo pino */
-					//logger: logger,
+					logger: loggerPino,
 					/** Versão para conectar */
 					version: waVersion,
 					/** Configuração do navegador */
@@ -454,7 +454,11 @@ module.exports = class Instace {
 					qrTimeout: 15000,
 					/** Forneça um objeto de estado de autenticação para manter o estado de autenticação */
 					//auth: state,
-					auth: state,
+					auth: {
+						creds: state.creds,
+						// O armazenamento em cache torna o armazenamento mais rápido para enviar/receber mensagens
+						keys: makeCacheableSignalKeyStore(state.keys, loggerPino),
+					},
 					/** Gerencia o processamento do histórico com este controle; por padrão, sincronizará tudo */
 					//shouldSyncHistoryMessage: boolean,
 					/** Opções de capacidade de transação para SignalKeyStore */
