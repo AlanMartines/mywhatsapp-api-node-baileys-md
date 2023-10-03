@@ -399,28 +399,6 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			//
 		} else {
 			//
-			try {
-				var startupRes = {
-					"AuthorizationToken": theTokenAuth,
-					"SessionName": resSessionName,
-					"setOnline": req?.body?.setOnline || true,
-					"wh_connect": req?.body?.wh_status || null,
-					"wh_qrcode": req?.body?.wh_status || null,
-					"wh_status": req?.body?.wh_status || null,
-					"wh_message": req?.body?.wh_status || null
-				};
-				//
-				fs.writeJson(`${config.PATCH_TOKENS}/${resSessionName}.startup.json`, startupRes, (err) => {
-					if (err) {
-						logger?.error(`- Erro: ${err}`);
-					} else {
-						logger?.info('- Success startup config for user file');
-					}
-				});
-			} catch (error) {
-				logger?.error('- Error startup config for user file');
-			}
-			//
 			let resultRestart = await instance.restartToken(req, res, next);
 			//
 			res.setHeader('Content-Type', 'application/json');

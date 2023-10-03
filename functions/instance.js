@@ -429,14 +429,7 @@ module.exports = class Instance {
 	//
 	static async restartToken(req, res, next) {
 		//
-		const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
-		const theSessionName = removeWithspace(req?.body?.SessionName);
-		//
-		if (parseInt(config.VALIDATE_MYSQL) == true) {
-			var SessionName = theTokenAuth;
-		} else {
-			var SessionName = theSessionName;
-		}
+		const SessionName = removeWithspace(req?.body?.SessionName);
 		//
 		logger?.info("- Reiniciando sessão");
 		logger?.info(`- SessionName: ${SessionName}`);
@@ -454,7 +447,7 @@ module.exports = class Instance {
 				await deletaPastaToken(`${tokenPatch}`, `${SessionName}.data.json`);
 				await deletaToken(`${tokenPatch}`, `${SessionName}.data.json`);
 				await deletaToken(`${tokenPatch}`, `${SessionName}.store.json`);
-				await deletaToken(`${tokenPatch}`, `${SessionName}.startup.json`);
+				//await deletaToken(`${tokenPatch}`, `${SessionName}.startup.json`);
 				await deletaToken(`${tokenPatch}`, `${SessionName}.contacts.json`);
 				//
 				let addJson = {
