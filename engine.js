@@ -539,7 +539,7 @@ module.exports = class Instace {
 				//
 				const client = makeWASocket(
 					//
-					SocketConfigLite
+					SocketConfig
 					//
 				);
 				//
