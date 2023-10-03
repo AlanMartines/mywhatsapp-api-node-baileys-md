@@ -373,8 +373,8 @@ module.exports = class Instace {
 			╚═╝┴   ┴ ┴└─┘┘└┘┴ ┴┴─┘  ╚═╝┴└─└─┘┴ ┴ ┴ └─┘  ╩  ┴ ┴┴└─┴ ┴┴ ┴└─┘ ┴ └─┘┴└─└─┘
 	 */
 		//
-		const loggerPino = pino({ level: 'trace' });
-		//const loggerPino = pino({ level: 'silent' });
+		//const loggerPino = pino({ level: 'trace' });
+		const loggerPino = pino({ level: 'silent' });
 		//logger.level = 'trace';
 		//
 		const useStore = !process.argv.includes('--no-store')
