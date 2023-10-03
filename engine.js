@@ -416,6 +416,7 @@ module.exports = class Instace {
 				//
 				// fetch latest version of WA Web
 				const { version, isLatest } = await fetchLatestBaileysVersion();
+				const waVersion = config.WA_VERSION ? config.WA_VERSION : version;
 				logger?.info(`- Using WA v${version.join('.')}, isLatest: ${isLatest}`)
 				//
 				const AxiosRequestConfig = {};
@@ -433,7 +434,7 @@ module.exports = class Instace {
 					/** Logger do tipo pino */
 					//logger: logger,
 					/** Versão para conectar */
-					version: [2,2323,4],
+					version: waVersion,
 					/** Configuração do navegador */
 					browser: [`${config.DEVICE_NAME}`, 'Chrome', release()],
 					/** Agente usado para solicitações de busca - carregamento/download de mídia */
