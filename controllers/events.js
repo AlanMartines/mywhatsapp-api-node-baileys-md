@@ -860,7 +860,7 @@ module.exports = class Events {
 						//
 						dataSessions?.funcoesSocket?.message(SessionName, response);
 						await webhooks?.wh_messages(SessionName, response);
-						await updateStatisticsDb(response?.status, response?.type, response?.isGroup, dataSessions?.AuthorizationToken, SessionName);
+						//await updateStatisticsDb(response?.status, response?.type, response?.isGroup, dataSessions?.AuthorizationToken, SessionName);
 						//
 					}
 					//
