@@ -100,6 +100,13 @@ async function saudacao() {
 	logger?.info(`${saudacao}`);
 }
 //
+// ------------------------------------------------------------------------------------------------//
+//
+function removeWithspace(string) {
+	var string = string.replace(/\r?\n|\r|\s+/g, ""); /* replace all newlines and with a space */
+	return string;
+}
+//
 // ------------------------------------------------------------------------------------------------------- //
 //
 async function addUserConDb(AuthorizationToken, SessionName, wh_status, wh_message, wh_qrcode, wh_connect) {
@@ -289,8 +296,8 @@ async function resContacts(SessionName, contacts) {
 module.exports = class Instace {
 	static async Start(req, res, next) {
 		//
-		const theTokenAuth = req?.headers?.authorizationtoken;
-		const SessionName = req?.body?.SessionName;
+		const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+		const SessionName = removeWithspace(req?.body?.SessionName);
 		//
 		try {
 			//
@@ -356,8 +363,8 @@ module.exports = class Instace {
 	//
 	static async initSession(req, res, next) {
 		//
-		let theTokenAuth = req?.headers?.authorizationtoken;
-		let SessionName = req?.body?.SessionName;
+		let theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+		let SessionName = removeWithspace(req?.body?.SessionName);
 		let setOnline = req?.body?.setOnline;
 		let dataSessions = await Sessions?.getSession(SessionName);
 		logger?.info(`- SessionName: ${SessionName}`);
