@@ -450,7 +450,7 @@ module.exports = class Instace {
 					/** Deve o QR ser impresso no terminal */
 					printQRInTerminal: false,
 					//
-					mobile: useMobile,
+					//mobile: useMobile,
 					/** Deve eventos serem emitidos para ações realizadas por esta conexão de soquete */
 					emitOwnEvents: true,
 					/** Fornece um cache para armazenar mídia, para que não precise ser reenviada */
@@ -554,7 +554,7 @@ module.exports = class Instace {
 				//
 				store?.bind(client.ev);
 				//
-
+				/*
 				// Código de emparelhamento para clientes da Web
 				if (usePairingCode && !sock.authState.creds.registered) {
 					if (useMobile) {
@@ -641,7 +641,7 @@ module.exports = class Instace {
 					;
 					askForOTP();
 				}
-
+				*/
 				//
 				let addJson = {
 					store: store
