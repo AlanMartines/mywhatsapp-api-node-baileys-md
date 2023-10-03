@@ -87,8 +87,8 @@ module.exports = class Events {
 			} = conn;
 			//
 		}else{
-			logger?.info(`- SessionName: ${SessionName}`);
-			logger?.error(`- Connection update error`);
+			// logger?.info(`- SessionName: ${SessionName}`);
+			// logger?.error(`- Connection update error`);
 		}
 	}
 	//
@@ -1103,8 +1103,8 @@ module.exports = class Events {
 				logger?.info(`- Groups upsert`);
 				//logger?.info(`${JSON.stringify(groupsUpsert, null, 2)}`);
 			}else{
-				logger?.info(`- SessionName: ${SessionName}`);
-				logger?.error(`- Error groups upsert  event`);
+				// logger?.info(`- SessionName: ${SessionName}`);
+				// logger?.error(`- Error groups upsert  event`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
