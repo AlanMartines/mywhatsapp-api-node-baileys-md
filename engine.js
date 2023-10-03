@@ -420,6 +420,7 @@ module.exports = class Instace {
 				logger?.info(`- Using WA v${version.join('.')}, isLatest: ${isLatest}`)
 				//
 				const AxiosRequestConfig = {};
+				//const browser = Browsers.appropriate('Desktop');
 				const SocketConfig = {
 					/** URL do WS para conectar ao WhatsApp */
 					//waWebSocketUrl: config.WA_URL,
@@ -436,7 +437,7 @@ module.exports = class Instace {
 					/** Versão para conectar */
 					version: waVersion,
 					/** Configuração do navegador */
-					browser: [`${config.DEVICE_NAME}`, 'Chrome', release()],
+					//browser: [`${config.DEVICE_NAME}`, 'Chrome', release()],
 					/** Agente usado para solicitações de busca - carregamento/download de mídia */
 					fetchAgent: undefined,
 					/** Deve o QR ser impresso no terminal */
