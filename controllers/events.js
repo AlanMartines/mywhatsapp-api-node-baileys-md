@@ -244,11 +244,11 @@ module.exports = class Events {
 						//logger?.info(` - Contact ${contact.id} has a new profile pic: ${newUrl}`,);
 					}
 				}
-				// logger?.info(`- SessionName: ${SessionName}`);
-				// logger?.info(`- Contacts update`);
-			}else{
 				logger?.info(`- SessionName: ${SessionName}`);
-				logger?.error(`- Error message receipt update event`);
+				logger?.info(`- Contacts update`);
+			}else{
+				// logger?.info(`- SessionName: ${SessionName}`);
+				// logger?.error(`- Error message receipt update event`);
 			}
 		} catch (error) {
 			logger?.info(`- SessionName: ${SessionName}`);
