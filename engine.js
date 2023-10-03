@@ -501,9 +501,45 @@ module.exports = class Instace {
 				//
 				// ------------------------------------------------------------------------------------------------------- //
 				//
+				//const browser = Browsers.appropriate('Desktop');
+				const SocketConfigLite = {
+					/** Logger do tipo pino */
+					logger: loggerPino,
+					/** Versão para conectar */
+					version: waVersion,
+					/** Deve o QR ser impresso no terminal */
+					printQRInTerminal: !usePairingCode,
+					/** Tempo de espera para a geração do próximo QR em ms */
+					mobile: useMobile,
+					/** Forneça um objeto de estado de autenticação para manter o estado de autenticação */
+					//auth: state,
+					auth: {
+						creds: state.creds,
+						// O armazenamento em cache torna o armazenamento mais rápido para enviar/receber mensagens
+						keys: makeCacheableSignalKeyStore(state.keys, loggerPino),
+					},
+					/**
+					 * Mapa para armazenar as contagens de repetição para mensagens com falha;
+					 * usado para determinar se uma mensagem deve ser retransmitida ou não */
+					msgRetryCounterCache,
+					/**
+					 * Gerar uma visualização de link de alta qualidade,
+					 * implica fazer upload do jpegThumbnail para o WhatsApp
+					 */
+					generateHighQualityLinkPreview: true,
+					/**
+					 * Busque uma mensagem em sua loja
+					 * implemente isso para que mensagens com falha no envio (resolve o problema "esta mensagem pode levar um tempo" possam ser reenviadas
+					 */
+					// implemente para lidar com repetições
+					getMessage,
+				};
+				//
+				// ------------------------------------------------------------------------------------------------------- //
+				//
 				const client = makeWASocket(
 					//
-					SocketConfig
+					SocketConfigLite
 					//
 				);
 				//
