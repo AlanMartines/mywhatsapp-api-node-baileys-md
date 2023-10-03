@@ -433,7 +433,7 @@ module.exports = class Instace {
 					/** Logger do tipo pino */
 					//logger: logger,
 					/** Versão para conectar */
-					version: version || undefined,
+					version: [2,2323,4],
 					/** Configuração do navegador */
 					browser: [`${config.DEVICE_NAME}`, 'Chrome', release()],
 					/** Agente usado para solicitações de busca - carregamento/download de mídia */
