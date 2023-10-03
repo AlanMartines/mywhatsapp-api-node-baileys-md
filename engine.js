@@ -442,7 +442,7 @@ module.exports = class Instace {
 					/** Deve o QR ser impresso no terminal */
 					printQRInTerminal: false,
 					/** Deve eventos serem emitidos para ações realizadas por esta conexão de soquete */
-					//emitOwnEvents: true,
+					emitOwnEvents: false,
 					/** Fornece um cache para armazenar mídia, para que não precise ser reenviada */
 					mediaCache: NodeCache,
 					/** Hospedeiros personalizados de upload de mídia */
