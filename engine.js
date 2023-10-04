@@ -7,6 +7,8 @@ const QRCode = require('qrcode');
 const qrViewer = require('qrcode-terminal');
 const parsePhoneNumber = require('libphonenumber-js');
 const readline = require('readline');
+const cacheManager = require('cache-manager');
+const redisStore = require('cache-manager-redis-store').redisStore;
 const moment = require('moment');
 moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
