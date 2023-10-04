@@ -415,7 +415,15 @@ module.exports = class Instace {
 		//
 		//const { state, saveState } = await useSingleFileAuthState(`${tokenPatch}/${SessionName}.data.json`);
 		//
-		const { state } = await useMultiFileAuthState(`${tokenPatch}/${SessionName}.data.json`);
+		const { state, saveCreds } = await useMultiFileAuthState(`${tokenPatch}/${SessionName}.data.json`);
+		//
+		const redisInstace = await redisStore({
+			host: '127.0.0.1',
+			port: 6379,
+			password: '',
+		});
+		//
+		//const { state, saveCreds, clearState } = await makeCacheManagerAuthState(redisInstace, key)
 		//
 		try {
 			//
@@ -450,7 +458,7 @@ module.exports = class Instace {
 					/** Deve o QR ser impresso no terminal */
 					printQRInTerminal: false,
 					//
-					mobile: false,
+					mobile: useMobile,
 					/** Deve eventos serem emitidos para ações realizadas por esta conexão de soquete */
 					emitOwnEvents: true,
 					/** Fornece um cache para armazenar mídia, para que não precise ser reenviada */
@@ -510,42 +518,6 @@ module.exports = class Instace {
 				//
 				// ------------------------------------------------------------------------------------------------------- //
 				//
-				//const browser = Browsers.appropriate('Desktop');
-				const SocketConfigLite = {
-					/** Logger do tipo pino */
-					logger: loggerPino,
-					/** Versão para conectar */
-					version: waVersion,
-					/** Deve o QR ser impresso no terminal */
-					printQRInTerminal: false,
-					/** Tempo de espera para a geração do próximo QR em ms */
-					mobile: false,
-					/** Forneça um objeto de estado de autenticação para manter o estado de autenticação */
-					//auth: state,
-					auth: {
-						creds: state.creds,
-						// O armazenamento em cache torna o armazenamento mais rápido para enviar/receber mensagens
-						keys: makeCacheableSignalKeyStore(state.keys, loggerPino),
-					},
-					/**
-					 * Mapa para armazenar as contagens de repetição para mensagens com falha;
-					 * usado para determinar se uma mensagem deve ser retransmitida ou não */
-					msgRetryCounterCache,
-					/**
-					 * Gerar uma visualização de link de alta qualidade,
-					 * implica fazer upload do jpegThumbnail para o WhatsApp
-					 */
-					generateHighQualityLinkPreview: true,
-					/**
-					 * Busque uma mensagem em sua loja
-					 * implemente isso para que mensagens com falha no envio (resolve o problema "esta mensagem pode levar um tempo" possam ser reenviadas
-					 */
-					// implemente para lidar com repetições
-					getMessage,
-				};
-				//
-				// ------------------------------------------------------------------------------------------------------- //
-				//
 				const client = makeWASocket(
 					//
 					SocketConfig
@@ -554,7 +526,6 @@ module.exports = class Instace {
 				//
 				store?.bind(client.ev);
 				//
-				/*
 				// Código de emparelhamento para clientes da Web
 				if (usePairingCode && !sock.authState.creds.registered) {
 					if (useMobile) {
@@ -641,7 +612,6 @@ module.exports = class Instace {
 					;
 					askForOTP();
 				}
-				*/
 				//
 				let addJson = {
 					store: store
@@ -1291,6 +1261,7 @@ module.exports = class Instace {
 						// credentials updated -- save them
 						if (events['creds.update']) {
 							//
+							await saveCreds();
 							logger?.info(`- SessionName: ${SessionName}`);
 							logger?.info(`- Creds update`);
 							//
