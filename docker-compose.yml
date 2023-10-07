@@ -43,7 +43,7 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     ports:
-      - ${PORT:-1000}:9001
+      - ${PORT:-9001}:9001
     expose:
       - ${PORT:-9001}
 
