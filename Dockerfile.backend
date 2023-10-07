@@ -1,10 +1,10 @@
-FROM node:18.14-slim
+FROM node:18.18-slim
 
 LABEL version="1.0.0" description="ApiBaileysMd" maintainer="Alan Martines<alancpmartines@hotmail.com>"
 
 RUN mkdir -p /home/ApiBaileysMd
 RUN mkdir -p /usr/local/tokens
-RUN chmod -R 777 /usr/local/tokens/
+RUN chmod -R 775 /usr/local/tokens/
 
 RUN apt-get update && \
 	apt-get upgrade -y && \
@@ -68,14 +68,6 @@ RUN apt-get update && \
 	apt-get autoremove -y
 
 WORKDIR /home/ApiBaileysMd
-
-COPY package*.json ./
-
-ENV NODE_OPTIONS=" --dns-result-order=ipv4first "
-
-RUN npm install -g pino-gelf
-
-RUN npm install --allow-root --unsafe-perm=true
 
 EXPOSE 9001/tcp
 
