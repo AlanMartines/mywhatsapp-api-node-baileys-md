@@ -465,7 +465,7 @@ module.exports = class Instace {
 					/** Deve eventos serem emitidos para ações realizadas por esta conexão de soquete */
 					emitOwnEvents: true,
 					/** Fornece um cache para armazenar mídia, para que não precise ser reenviada */
-					mediaCache: NodeCache,
+					//mediaCache: NodeCache,
 					/** Hospedeiros personalizados de upload de mídia */
 					//customUploadHosts: MediaConnInfo['hosts'],
 					/** Tempo de espera entre o envio de novas solicitações de repetição */
