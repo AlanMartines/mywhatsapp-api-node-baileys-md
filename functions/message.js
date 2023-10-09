@@ -698,7 +698,7 @@ module.exports = class Mensagens {
 			};
 			//
 		}).catch((erro) => {
-			logger?.error(`- Error when: ${erro.output}`);
+			logger?.error(`- Error when: ${erro}`);
 			//return (erro);
 			//
 			return {
