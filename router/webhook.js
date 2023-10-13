@@ -134,7 +134,8 @@ router.post("/setConfig", upload.none(''), verifyToken.verify, async (req, res, 
 						"wh_status": req?.body?.wh_status ? req?.body?.wh_status : null,
 						"wh_message": req?.body?.wh_message ? req?.body?.wh_message : null,
 						"wh_qrcode": req?.body?.wh_qrcode ? req?.body?.wh_qrcode : null,
-						"wh_connect": req?.body?.wh_connect ? req?.body?.wh_connect : null
+						"wh_connect": req?.body?.wh_connect ? req?.body?.wh_connect : null,
+						"wh_incomingcall": req?.body?.wh_incomingcall ? req?.body?.wh_incomingcall : null
 					};
 					//
 					fs.writeJson(`${config.PATCH_TOKENS}/${resSessionName}.startup.json`, startupRes, async (err) => {
@@ -147,7 +148,8 @@ router.post("/setConfig", upload.none(''), verifyToken.verify, async (req, res, 
 								"wh_status": req?.body?.wh_status ? req?.body?.wh_status : null,
 								"wh_message": req?.body?.wh_message ? req?.body?.wh_message : null,
 								"wh_qrcode": req?.body?.wh_qrcode ? req?.body?.wh_qrcode : null,
-								"wh_connect": req?.body?.wh_connect ? req?.body?.wh_connect : null
+								"wh_connect": req?.body?.wh_connect ? req?.body?.wh_connect : null,
+								"wh_incomingcall": req?.body?.wh_incomingcall ? req?.body?.wh_incomingcall : null
 							};
 							await Sessions?.addInfoSession(resSessionName, newSession);
 						}
@@ -160,7 +162,8 @@ router.post("/setConfig", upload.none(''), verifyToken.verify, async (req, res, 
 								"wh_status": req?.body?.wh_status ? req?.body?.wh_status : null,
 								"wh_message": req?.body?.wh_message ? req?.body?.wh_message : null,
 								"wh_qrcode": req?.body?.wh_qrcode ? req?.body?.wh_qrcode : null,
-								"wh_connect": req?.body?.wh_connect ? req?.body?.wh_connect : null
+								"wh_connect": req?.body?.wh_connect ? req?.body?.wh_connect : null,
+								"wh_incomingcall": req?.body?.wh_incomingcall ? req?.body?.wh_incomingcall : null
 						},
 						"message": 'Configuração atualizada com sucesso'
 					};

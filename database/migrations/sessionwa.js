@@ -50,6 +50,10 @@ module.exports = {
         allowNull: true,
         type: DataTypes.STRING(255),
       },
+      wh_incomingcall: {
+        allowNull: true,
+        type: DataTypes.STRING(255),
+      },
       created: {
         allowNull: false,
         type: 'TIMESTAMP',

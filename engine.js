@@ -111,7 +111,7 @@ function removeWithspace(string) {
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
-async function addUserConDb(AuthorizationToken, SessionName, wh_status, wh_message, wh_qrcode, wh_connect) {
+async function addUserConDb(AuthorizationToken, SessionName, wh_status, wh_message, wh_qrcode, wh_connect, wh_incomingcall) {
 	//
 	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
 	//logger?.info(`- Date: ${date_now}`);
@@ -130,7 +130,8 @@ async function addUserConDb(AuthorizationToken, SessionName, wh_status, wh_messa
 				wh_status: wh_status,
 				wh_message: wh_message,
 				wh_qrcode: wh_qrcode,
-				wh_connect: wh_connect
+				wh_connect: wh_connect,
+				wh_incomingcall: wh_incomingcall
 			},
 		}).then(async (entries) => {
 			logger?.info('- User connection adicionado');
@@ -311,9 +312,10 @@ module.exports = class Instace {
 				"wh_message": req?.body?.wh_message ? req?.body?.wh_message : null,
 				"wh_qrcode": req?.body?.wh_qrcode ? req?.body?.wh_qrcode : null,
 				"wh_connect": req?.body?.wh_connect ? req?.body?.wh_connect : null,
+				"wh_incomingcall": req?.body?.wh_incomingcall ? req?.body?.wh_incomingcall : null
 			};
 			//
-			await addUserConDb(theTokenAuth, SessionName, startupRes?.wh_status, startupRes?.wh_message, startupRes?.wh_qrcode, startupRes?.wh_connect);
+			await addUserConDb(theTokenAuth, SessionName, startupRes?.wh_status, startupRes?.wh_message, startupRes?.wh_qrcode, startupRes?.wh_connect, startupRes?.wh_incomingcall);
 			//
 			fs.writeJson(`${tokenPatch}/${SessionName}.startup.json`, startupRes, (err) => {
 				if (err) {
@@ -352,6 +354,7 @@ module.exports = class Instace {
 				wh_message: req?.body?.wh_message ? req?.body?.wh_message : null,
 				wh_qrcode: req?.body?.wh_qrcode ? req?.body?.wh_qrcode : null,
 				wh_connect: req?.body?.wh_connect ? req?.body?.wh_connect : null,
+				wh_incomingcall: req?.body?.wh_incomingcall ? req?.body?.wh_incomingcall : null,
 				state: 'STARTING',
 				status: "notLogged"
 			};

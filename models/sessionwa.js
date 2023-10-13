@@ -39,6 +39,10 @@ module.exports = (sequelize, DataTypes) => {
     wh_connect: {
       type: DataTypes.STRING(255),
       allowNull: true
+    },
+    wh_incomingcall: {
+      type: DataTypes.STRING(255),
+      allowNull: true
     }
 	}, 
 	{

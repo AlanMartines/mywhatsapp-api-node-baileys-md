@@ -1185,7 +1185,7 @@ module.exports = class Events {
 				};
 				//
 				dataSessions?.funcoesSocket?.eventCall(SessionName, response);
-				await webhooks?.wh_incomingCall(SessionName, response);
+				await webhooks?.wh_incomingcall(SessionName, response);
 				//
 			}else{
 				// logger?.info(`- SessionName: ${SessionName}`);

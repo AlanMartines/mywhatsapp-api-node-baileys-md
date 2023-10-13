@@ -22,9 +22,9 @@ module.exports = class Webhooks {
             'Accept': 'application/json; charset=utf-8'
          }
 				}).then(response => {
-					logger.info('- Webhooks receive message');
+					logger.info('- Webhooks message');
 				}).catch(error => {
-					logger?.error(`- Error receive message: ${error.message}`);
+					logger?.error(`- Error message: ${error.message}`);
 				});
 			} else {
 				logger.info('- Webhook message no defined');
@@ -60,7 +60,7 @@ module.exports = class Webhooks {
 				}).then(response => {
 					logger.info('- Webhooks connect status');
 				}).catch(error => {
-					logger?.error(`- Error connect status ${error.message}`);
+					logger?.error(`- Error connect status: ${error.message}`);
 				});
 			} else {
 				logger.info('- Webhook connect no defined');
@@ -88,11 +88,11 @@ module.exports = class Webhooks {
 				}).then(response => {
 					logger.info('- Webhooks status message')
 				}).catch(error => {
-					logger?.error(`- Error status message ${error.message}`);
+					logger?.error(`- Error status message: ${error.message}`);
 				});
 
 			} else {
-				logger.info('- Webhook status no defined');
+				logger.info('- Webhook status message no defined');
 			}
 		} catch (error) {
 			logger?.error(`- Error: ${error.message}`);
@@ -122,26 +122,26 @@ module.exports = class Webhooks {
             'Accept': 'application/json; charset=utf-8'
          }
 				}).then(response => {
-					logger.info('- Webhooks status message send')
+					logger.info('- Webhooks qrcode send')
 				}).catch(error => {
-					logger?.error(`- Error status message ${error.message}`);
+					logger?.error(`- Error qrcode send: ${error.message}`);
 				});
 
 			} else {
-				logger.info('- Webhook status no defined');
+				logger.info('- Webhook qrcode send no defined');
 			}
 		} catch (error) {
 			logger?.error(`- Error: ${error.message}`);;
 		}
 	}
 
-	static async wh_incomingCall(SessionName, object) {
+	static async wh_incomingcall(SessionName, object) {
 		let dataSessions = await Sessions?.getSession(SessionName);
 		try {
-			if (dataSessions?.wh_message != undefined && dataSessions?.wh_message != null && dataSessions?.wh_message != '') {
+			if (dataSessions?.wh_incomingcall != undefined && dataSessions?.wh_incomingcall != null && dataSessions?.wh_incomingcall != '') {
 				logger.info(`- SessionName: ${SessionName}`);
 				let dataJson = JSON.stringify(object, null, 2);
-				await axios.post(dataSessions?.wh_message, dataJson, {
+				await axios.post(dataSessions?.wh_incomingcall, dataJson, {
 					httpsAgent: new https.Agent({
 						rejectUnauthorized: false,
 						keepAlive: true

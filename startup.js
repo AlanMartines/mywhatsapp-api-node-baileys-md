@@ -53,7 +53,8 @@ class AllSessions {
 							"wh_connect": result?.wh_connect ? result?.wh_connect : null,
 							"wh_qrcode": result?.wh_qrcode ? result?.wh_qrcode : null,
 							"wh_status": result?.wh_status ? result?.wh_status : null,
-							"wh_message": result?.wh_message ? result?.wh_message : null
+							"wh_message": result?.wh_message ? result?.wh_message : null,
+							"wh_incomingcall": result?.wh_incomingcall ? result?.wh_incomingcall : null
 						};
 
 						const options = {
