@@ -57,7 +57,8 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 							"wh_status": dataSession?.wh_status ? dataSession?.wh_status : null,
 							"wh_message": dataSession?.wh_message ? dataSession?.wh_message : null,
 							"wh_qrcode": dataSession?.wh_qrcode ? dataSession?.wh_qrcode : null,
-							"wh_connect": dataSession?.wh_connect ? dataSession?.wh_connect : null
+							"wh_connect": dataSession?.wh_connect ? dataSession?.wh_connect : null,
+							"wh_incomingcall": dataSession?.wh_incomingcall ? dataSession?.wh_incomingcall : null
 					},
 					"message": 'Configuração obtida com sucesso'
 				};
