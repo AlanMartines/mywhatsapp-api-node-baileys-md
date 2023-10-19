@@ -300,9 +300,6 @@ module.exports = class Events {
 						type = 'text';
 					} else if (msg?.message?.extendedTextMessage) {
 						type = 'extended';
-						//
-						logger?.info(`- receiveMessage\n ${JSON.stringify(msg, null, 2)}`);
-						//
 					} else if (msg?.message?.videoMessage) {
 						type = 'video';
 					} else if (msg?.message?.viewOnceMessageV2?.message?.videoMessage) {
@@ -777,6 +774,7 @@ module.exports = class Events {
 								"description": msg?.message?.extendedTextMessage?.description,
 								"title": msg?.message?.extendedTextMessage?.title,
 								"content": msg?.message?.extendedTextMessage?.text,
+								"quotedMessage": msg?.message?.extendedTextMessage?.contextInfo?.quotedMessage?.conversation,
 								"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 							}
 							break;
