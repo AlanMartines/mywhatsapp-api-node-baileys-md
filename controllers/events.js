@@ -1,5 +1,5 @@
 //
-const { downloadMediaMessage, getAggregateVotesInPollMessage, proto, DisconnectReason } = require('@whiskeysockets/baileys');
+const { downloadMediaMessage, getAggregateVotesInPollMessage, proto, DisconnectReason, decryptPollVote } = require('@whiskeysockets/baileys');
 //
 const webhooks = require('./webhooks');
 const Sessions = require('./sessions');
@@ -101,31 +101,7 @@ module.exports = class Events {
 				const messages = events['messages.update'];
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Messages update`);
-				logger?.info(`${JSON.stringify(messages, null, 2)}`);
-				//
-				/*
-				for (const { key, update } of messages) {
-					if (update.pollUpdates) {
-						const pollCreation = await getMessage(dataSessions, key);
-						if (pollCreation) {
-							const pollMessage = await getAggregateVotesInPollMessage({
-								message: pollCreation,
-								pollUpdates: update.pollUpdates,
-							})
-							const [messageCtx] = m;
-
-							let payload = {
-								...messageCtx,
-								body: pollMessage.find(poll => poll.voters.length > 0)?.name || '',
-								from: key.remoteJid,
-								voters: pollCreation,
-								type: 'poll'
-							};
-							logger?.info(`${JSON.stringify(payload, null, 2)}`);
-						}
-					}
-				}
-				*/
+				//logger?.info(`${JSON.stringify(messages, null, 2)}`);
 				//
 				// logic of your application...
 				let phone = dataSessions?.client?.user?.id?.split(":")[0];
@@ -833,6 +809,9 @@ module.exports = class Events {
 							logger?.info('- Message type: pollVote');
 							//
 							logger?.info(msg);
+							const voteMsg = decryptPollVote(msg);
+							logger?.info(`${JSON.stringify(voteMsg, null, 2)}`);
+							//
 							//
 							break;
 						default:
