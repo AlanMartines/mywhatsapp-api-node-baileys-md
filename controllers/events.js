@@ -101,7 +101,7 @@ module.exports = class Events {
 				const messages = events['messages.update'];
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Messages update`);
-				//logger?.info(`${JSON.stringify(message, null, 2)}`);
+				logger?.info(`${JSON.stringify(messages, null, 2)}`);
 				//
 				/*
 				for (const { key, update } of messages) {
@@ -915,7 +915,7 @@ module.exports = class Events {
 				const reaction = events['messages.reaction'];
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Messages reaction`);
-				logger?.info(`${JSON.stringify(reaction, null, 2)}`);
+				//logger?.info(`${JSON.stringify(reaction, null, 2)}`);
 			}else{
 				// logger?.info(`- SessionName: ${SessionName}`);
 				// logger?.error(`- Error messages reaction event`);
