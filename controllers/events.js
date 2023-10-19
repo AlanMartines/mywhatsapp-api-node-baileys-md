@@ -331,8 +331,8 @@ module.exports = class Events {
 					} else {
 						type = undefined;
 						//
-						logger?.info(`- Desculpe, estamos sem nenhuma resposta no momento.`);
-						logger?.error(msg?.message);
+						logger?.error(`- Desculpe, estamos sem nenhuma resposta no momento.`);
+						logger?.error(`${JSON.stringify(msg, null, 2)}`);
 						//
 					}
 					//
@@ -401,7 +401,7 @@ module.exports = class Events {
 						default:
 							type = undefined;
 							//
-							logger?.info(`- Desculpe, estamos sem nenhuma resposta no momento.`);
+							logger?.error(`- Desculpe, estamos sem nenhuma resposta no momento.`);
 							logger?.error(msg?.message);
 							//
 							break;
