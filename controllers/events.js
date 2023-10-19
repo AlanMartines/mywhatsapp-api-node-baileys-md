@@ -300,6 +300,9 @@ module.exports = class Events {
 						type = 'text';
 					} else if (msg?.message?.extendedTextMessage) {
 						type = 'extended';
+						//
+						logger?.info(`- receiveMessage\n ${JSON.stringify(msg, null, 2)}`);
+						//
 					} else if (msg?.message?.videoMessage) {
 						type = 'video';
 					} else if (msg?.message?.viewOnceMessageV2?.message?.videoMessage) {
