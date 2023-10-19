@@ -131,7 +131,7 @@ module.exports = class Events {
 				// logic of your application...
 				let phone = dataSessions?.client?.user?.id?.split(":")[0];
 				let onAck = messages[0]?.update?.status;
-				//logger?.info(`- onAck: ${onAck}`);
+				logger?.info(`- onAck: ${messages[0]}`);
 				let status;
 				switch (onAck) {
 					case 5:
