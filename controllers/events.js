@@ -134,7 +134,7 @@ module.exports = class Events {
 						//
 				}
 				logger?.info(`- Listen to ack ${onAck}, status ${status}`);
-				logger?.info(`${JSON.stringify(messages[0], null, 2)}`);
+				logger?.info(`${JSON.stringify(messages, null, 2)}`);
 				let response = {
 					"wook": 'MESSAGE_STATUS',
 					"status": status,
