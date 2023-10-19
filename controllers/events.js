@@ -809,7 +809,7 @@ module.exports = class Events {
 							logger?.info('- Message type: pollVote');
 							//
 							logger?.info(msg);
-							const voteMsg = decryptPollVote(msg);
+							const voteMsg = decryptPollVote(msg?.message?.pollUpdateMessage);
 							logger?.info(`${JSON.stringify(voteMsg, null, 2)}`);
 							//
 							//
