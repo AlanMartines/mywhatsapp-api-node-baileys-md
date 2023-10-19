@@ -117,13 +117,12 @@ module.exports = class Events {
 					if(update.pollUpdates) {
 						const pollCreation = await getMessage(key, store);
 						if(pollCreation) {
-							console.log(
-								'got poll update, aggregation: ',
-								getAggregateVotesInPollMessage({
-									message: pollCreation,
-									pollUpdates: update.pollUpdates,
-								})
-							)
+
+	
+							let pollCreationres = await getAggregateVotesInPollMessage({ message: pollCreation, pollUpdates: update.pollUpdates });
+
+							logger?.info(`- pollCreation`);
+							logger?.info(`${JSON.stringify(pollCreationres, null, 2)}`);
 						}
 					}
 				}
@@ -131,7 +130,7 @@ module.exports = class Events {
 				// logic of your application...
 				let phone = dataSessions?.client?.user?.id?.split(":")[0];
 				let onAck = messages[0]?.update?.status;
-				logger?.info(`- onAck: ${messages[0]}`);
+				//logger?.info(`- onAck: ${onAck}`);
 				let status;
 				switch (onAck) {
 					case 5:
@@ -158,6 +157,7 @@ module.exports = class Events {
 						//
 				}
 				logger?.info(`- Listen to ack ${onAck}, status ${status}`);
+				logger?.info(`${JSON.stringify(messages[0], null, 2)}`);
 				let response = {
 					"wook": 'MESSAGE_STATUS',
 					"status": status,
