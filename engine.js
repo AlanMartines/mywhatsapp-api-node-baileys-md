@@ -1273,7 +1273,7 @@ module.exports = class Instace {
 							//
 						}
 						//
-						eventsSend.statusConnection(SessionName, events, store);
+						eventsSend.statusConnection(SessionName, events);
 						eventsSend.statusMessage(SessionName, events);
 						eventsSend.contactsEvents(SessionName, events);
 						eventsSend.messagesEvents(SessionName, events);
