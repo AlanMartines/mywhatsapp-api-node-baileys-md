@@ -282,7 +282,6 @@ module.exports = class Events {
 					//
 					logger?.info(`- Message of type: ${m?.type}`);
 					//
-					/*
 					if (msg?.message?.locationMessage) {
 						type = 'location';
 					} else if (msg?.message?.liveLocationMessage) {
@@ -332,12 +331,12 @@ module.exports = class Events {
 					} else {
 						type = undefined;
 						//
-						logger?.error(`- Desculpe, estamos sem nenhuma resposta no momento.`);
+						logger?.info(`- Desculpe, estamos sem nenhuma resposta no momento.`);
 						logger?.error(msg?.message);
 						//
 					}
-					*/
 					//
+					/*
 					switch (m?.type) {
 						case 'location':
 							type = 'location';
@@ -402,11 +401,12 @@ module.exports = class Events {
 						default:
 							type = undefined;
 							//
-							logger?.error(`- Desculpe, estamos sem nenhuma resposta no momento.`);
-							logger?.error(`${JSON.stringify(msg, null, 2)}`);
+							logger?.info(`- Desculpe, estamos sem nenhuma resposta no momento.`);
+							logger?.error(msg?.message);
 							//
 							break;
 					}
+					*/
 					//
 					switch (type) {
 						case 'text':
