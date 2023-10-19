@@ -7,6 +7,7 @@ const { logger } = require("../utils/logger");
 const { Statistics } = require('../models');
 const config = require('../config.global');
 const moment = require('moment');
+const digestSync = require('crypto-digest-sync');
 moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
 //
