@@ -810,10 +810,6 @@ module.exports = class Events {
 						case 'pollVote':
 							logger?.info('- Message type: pollVote');
 							//
-							logger?.info(`${JSON.stringify(msg, null, 2)}`);
-							//
-
-							//
 							break;
 						default:
 						//
