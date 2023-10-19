@@ -71,6 +71,16 @@ async function updateStatisticsDb(status, type, isGroup, AuthorizationToken, Ses
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
+async function getMessage(key, store) {
+	if(store) {
+		const msg = await store.loadMessage(key.remoteJid, key.id)
+		return msg?.message || undefined
+	}
+
+	// only if store is present
+	return proto.Message.fromObject({})
+}
+//
 module.exports = class Events {
 	//
 	static async statusConnection(SessionName, events) {
@@ -95,7 +105,7 @@ module.exports = class Events {
 	//
 	// ------------------------------------------------------------------------------------------------------- //
 	//
-	static async statusMessage(SessionName, events) {
+	static async statusMessage(SessionName, events, store) {
 		let dataSessions = await Sessions?.getSession(SessionName);
 		try {
 			if (events['messages.update']) {
@@ -103,6 +113,20 @@ module.exports = class Events {
 				logger?.info(`- SessionName: ${SessionName}`);
 				logger?.info(`- Messages update`);
 				//logger?.info(`${JSON.stringify(messages, null, 2)}`);
+				for(const { key, update } of events['messages.update']) {
+					if(update.pollUpdates) {
+						const pollCreation = await getMessage(key, store);
+						if(pollCreation) {
+							console.log(
+								'got poll update, aggregation: ',
+								getAggregateVotesInPollMessage({
+									message: pollCreation,
+									pollUpdates: update.pollUpdates,
+								})
+							)
+						}
+					}
+				}
 				//
 				// logic of your application...
 				let phone = dataSessions?.client?.user?.id?.split(":")[0];
@@ -813,6 +837,7 @@ module.exports = class Events {
 							const voteMsg = decryptPollVote(msg?.message?.pollUpdateMessage?.vote);
 							logger?.info(`${JSON.stringify(voteMsg, null, 2)}`);
 							//
+
 							//
 							break;
 						default:
