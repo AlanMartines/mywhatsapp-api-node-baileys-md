@@ -43,9 +43,9 @@ yo('My-WhatsApp', {
 //console.log(boxen('My-WhatsApp', {padding: 1, margin: 1, borderStyle: 'double'}));
 //
 // Função para executar o comando swagger-codegen-cli
-function generateSwaggerCode() {
+async function generateSwaggerCode() {
 	try {
-		const command = 'swagger-codegen-cli generate -i swagger.yaml -l nodejs-server -o newiu';
+		const command = 'swagger-codegen-cli generate -i swagger.yaml -l nodejs-server -o swaggerCodegen';
 
 		exec(command, (error, stdout, stderr) => {
 			if (error) {
@@ -197,22 +197,19 @@ INDOCKER=0
 		// ------------------------------------------------------------------------------------------------//
 		//
 		// Verifique se o arquivo swagger.yaml já existe e remova-o antes de criar um novo
-		fs.pathExists('./swagger.yaml')
-			.then(exists => {
+		fs.pathExists('./swagger.yaml').then(async (exists) => {
 				if (exists) {
 					return fs.remove('./swagger.yaml');
 				}
-			})
-			.then(() => {
+			}).then(async () => {
 				const yamlSpec = yaml.dump(swaggerSpec);
 				return fs.writeFile('./swagger.yaml', yamlSpec, 'utf8');
-			})
-			.then(() => {
+			}).then(async () => {
 				// Chame a função para gerar o código
 				logger.info(`- Arquivo swagger.yaml manipulado com sucesso`);
-				generateSwaggerCode();
-			})
-			.catch(err => {
+				await generateSwaggerCode();
+				//
+			}).catch(async (err) => {
 				logger.error(`- Erro ao manipular o arquivo: ${err.message}`);
 			});
 		//
