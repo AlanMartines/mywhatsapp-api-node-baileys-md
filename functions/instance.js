@@ -108,159 +108,160 @@ module.exports = class Instance {
 				//só adiciona se não existir
 				let getSession = await Sessions?.getSession(resSessionName);
 				switch (getSession.status) {
-					case 'isStarting':
-						return {
-							statusCode: 202,
-							state: "STARTING",
-							status: "isStarting",
-							message: "Sistema iniciando. Aguarde..."
-						};
-						break
-					case 'isConnecting':
-						return {
-							statusCode: 202,
-							state: "CONNECTING",
-							status: "isConnecting",
-							message: "Dispositivo conectando. Aguarde..."
-						};
-						break
-					case 'isBanned':
-						return {
-							statusCode: 403,
-							state: "BANNED",
-							status: "isBanned",
-							message: "Usuario banido, entre em contato com suporte do whatsapp"
-						};
-						break
-					case 'inChat':
-						return {
-							statusCode: 200,
-							state: "CONNECTED",
-							status: "inChat",
-							message: "Sistema iniciado e disponivel para uso"
-						};
-						break
-					case 'isLogged':
-						return {
-							statusCode: 200,
-							state: "CONNECTED",
-							status: "isLogged",
-							message: "Sistema iniciado e disponivel para uso"
-						};
-						break
-					case 'notLogged':
-					case 'desconnectedMobile':
-					case 'deviceNotConnected':
-						return {
-							statusCode: 401,
-							state: "DISCONNECTED",
-							status: "notLogged",
-							message: "Dispositivo desconectado"
-						};
-						break
-					case 'browserClose':
-						return {
-							statusCode: 200,
-							state: "CLOSE",
-							status: "browserClose",
-							message: "Navegador fechado"
-						};
-						break
-					case 'qrReadSuccess':
-						return {
-							statusCode: 200,
-							state: "CONNECTED",
-							status: "qrReadSuccess",
-							message: "Verificação do QR-Code feita com sucesso"
-						};
-						break
-					case 'qrReadFail':
-						return {
-							statusCode: 400,
-							state: "DISCONNECTED",
-							status: "qrReadFail",
-							message: "Falha na verificação do QR-Code"
-						};
-						break
-					case 'qrRead':
-						return {
-							statusCode: 202,
-							state: "QRCODE",
-							status: "qrRead",
-							message: "Sistema aguardando leitura do QR-Code"
-						};
-						break
-					case 'autocloseCalled':
-						return {
-							statusCode: 200,
-							state: "CLOSE",
-							status: "autocloseCalled",
-							message: "Navegador fechado automaticamente"
-						};
-						break
-					case 'deleteToken':
-						return {
-							statusCode: 200,
-							state: "DISCONNECTED",
-							status: "deleteToken",
-							message: "Token de sessão removido"
-						};
-						break
-					case 'chatsAvailable':
-						return {
-							statusCode: 200,
-							state: "CONNECTED",
-							status: "chatsAvailable",
-							message: "Sistema iniciado e disponivel para uso"
-						};
-						break
-					case 'serverWssNotConnected':
-						return {
-							statusCode: 404,
-							state: "DISCONNECTED",
-							status: "serverWssNotConnected",
-							message: "O endereço wss não foi encontrado"
-						};
-						break
-					case 'noOpenBrowser':
-						return {
-							statusCode: 400,
-							state: "DISCONNECTED",
-							status: "noOpenBrowser",
-							message: "Não foi encontrado o navegador ou falta algum comando no args"
-						};
-						break
-					case 'serverClose':
-						return {
-							statusCode: 401,
-							state: "DISCONNECTED",
-							status: "serverClose",
-							message: "O cliente se desconectou do wss"
-						};
-						break
+						case 'isStarting':
+								return {
+										statusCode: 202,
+										state: "STARTING",
+										status: "isStarting",
+										message: i18n.__('instance.isStarting')
+								};
+								break;
+						case 'isConnecting':
+								return {
+										statusCode: 202,
+										state: "CONNECTING",
+										status: "isConnecting",
+										message: i18n.__('instance.isConnecting')
+								};
+								break;
+						case 'isBanned':
+								return {
+										statusCode: 403,
+										state: "BANNED",
+										status: "isBanned",
+										message: i18n.__('instance.isBanned')
+								};
+								break;
+						case 'inChat':
+								return {
+										statusCode: 200,
+										state: "CONNECTED",
+										status: "inChat",
+										message: i18n.__('instance.inChat')
+								};
+								break;
+						case 'isLogged':
+								return {
+										statusCode: 200,
+										state: "CONNECTED",
+										status: "isLogged",
+										message: i18n.__('instance.isLogged')
+								};
+								break;
+						case 'notLogged':
+						case 'desconnectedMobile':
+						case 'deviceNotConnected':
+								return {
+										statusCode: 401,
+										state: "DISCONNECTED",
+										status: "notLogged",
+										message: i18n.__('instance.notLogged')
+								};
+								break;
+						case 'browserClose':
+								return {
+										statusCode: 200,
+										state: "CLOSE",
+										status: "browserClose",
+										message: i18n.__('instance.browserClose')
+								};
+								break;
+						case 'qrReadSuccess':
+								return {
+										statusCode: 200,
+										state: "CONNECTED",
+										status: "qrReadSuccess",
+										message: i18n.__('instance.qrReadSuccess')
+								};
+								break;
+						case 'qrReadFail':
+								return {
+										statusCode: 400,
+										state: "DISCONNECTED",
+										status: "qrReadFail",
+										message: i18n.__('instance.qrReadFail')
+								};
+								break;
+						case 'qrRead':
+								return {
+										statusCode: 202,
+										state: "QRCODE",
+										status: "qrRead",
+										message: i18n.__('instance.qrRead')
+								};
+								break;
+						case 'autocloseCalled':
+								return {
+										statusCode: 200,
+										state: "CLOSE",
+										status: "autocloseCalled",
+										message: i18n.__('instance.autocloseCalled')
+								};
+								break;
+						case 'deleteToken':
+								return {
+										statusCode: 200,
+										state: "DISCONNECTED",
+										status: "deleteToken",
+										message: i18n.__('instance.deleteToken')
+								};
+								break;
+						case 'chatsAvailable':
+								return {
+										statusCode: 200,
+										state: "CONNECTED",
+										status: "chatsAvailable",
+										message: i18n.__('instance.chatsAvailable')
+								};
+								break;
+						case 'serverWssNotConnected':
+								return {
+										statusCode: 404,
+										state: "DISCONNECTED",
+										status: "serverWssNotConnected",
+										message: i18n.__('instance.serverWssNotConnected')
+								};
+								break;
+						case 'noOpenBrowser':
+								return {
+										statusCode: 400,
+										state: "DISCONNECTED",
+										status: "noOpenBrowser",
+										message: i18n.__('instance.noOpenBrowser')
+								};
+								break;
+						case 'serverClose':
+								return {
+										statusCode: 401,
+										state: "DISCONNECTED",
+										status: "serverClose",
+										message: i18n.__('instance.serverClose')
+								};
+								break;
 						case 'isError':
-							return {
-								statusCode: 500,
-								state: "ERROR",
-								status: "isError",
-								message: "Não foi possivel executar a ação, verifique e tente novamente."
-							};
-							break
-					default:
-						return {
-							statusCode: 404,
-							state: 'NOTFOUND',
-							status: 'notFound',
-							message: 'Sistema Off-line, inicie o sistemas'
-						};
+								return {
+										statusCode: 500,
+										state: "ERROR",
+										status: "isError",
+										message: i18n.__('instance.isError')
+								};
+								break;
+						default:
+								return {
+										statusCode: 404,
+										state: 'NOTFOUND',
+										status: 'notFound',
+										message: i18n.__('instance.default')
+								};
 				}
+				
 			} else {
 				return {
 					statusCode: 404,
 					state: 'NOTFOUND',
 					status: 'notFound',
-					message: 'Sistema Off-line'
-				};
+					message: i18n.__('instance.default')
+			};
 			}
 		} catch (error) {
 			res.status(500).json({ error: error })
