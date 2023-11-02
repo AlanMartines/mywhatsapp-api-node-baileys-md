@@ -73,7 +73,8 @@ libgbm1 \
 libgcc1 \
 build-essential \
 nodejs \
-libappindicator1
+libappindicator1 \
+openjdk-11-jdk
 ```
 
 #### Dependências CentOS 7/8 64bits (Validar)
@@ -101,7 +102,8 @@ xorg-x11-fonts-75dpi \
 xorg-x11-fonts-cyrillic \
 xorg-x11-fonts-misc \
 xorg-x11-fonts-Type1 \
-xorg-x11-utils
+xorg-x11-utils \
+java-11-openjdk
 ```
 
 #### Dependências Alpine 64bits (Validar)
