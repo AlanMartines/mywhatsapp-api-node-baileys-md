@@ -19,6 +19,24 @@
 			"serverClose": "Client disconnected from wss",
 			"isError": "Unable to perform action, please check and try again",
 			"default": "System offline, start the system"
+		},
+		"message": {
+
+		},
+		"group": {
+
+		},
+		"retrieving": {
+
+		},
+		"profile": {
+
+		},
+		"webhook": {
+
+		},
+		"gateway": {
+
 		}
 	}
 }

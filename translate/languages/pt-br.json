@@ -19,6 +19,24 @@
 			"serverClose": "O cliente se desconectou do wss",
 			"isError": "Não foi possivel executar a ação, verifique e tente novamente.",
 			"default": "Sistema Off-line, inicie o sistemas"
+		},
+		"message": {
+
+		},
+		"group": {
+
+		},
+		"retrieving": {
+
+		},
+		"profile": {
+
+		},
+		"webhook": {
+
+		},
+		"gateway": {
+
 		}
 	}
 }
