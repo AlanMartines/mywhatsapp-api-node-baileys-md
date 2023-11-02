@@ -52,17 +52,18 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 			//
 			let existSession = await Sessions?.checkSession(resSessionName);
 			if (existSession) {
-				let Status = await instance?.Status(resSessionName);
-				switch (Status?.status) {
+				let data = await instance?.getSession(resSessionName);
+				switch (data?.status) {
 					case 'inChat':
 					case 'qrReadSuccess':
 					case 'isLogged':
 					case 'chatsAvailable':
 					case 'qrRead':
 						//
+						var resStatus = await instance?.Status(resSessionName);
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(Status.statusCode).json({
-							"Status": Status
+						return res.status(resStatus.statusCode).json({
+							"Status": resStatus
 						});
 						//
 						break;
@@ -80,11 +81,10 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 						//
 						engine?.Start(req, res, next);
 						//
-						let Status = await instance?.Status(resSessionName);
-						//
+						var resStatus = await instance?.Status(resSessionName);
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(Status.statusCode).json({
-							"Status": Status
+						return res.status(resStatus.statusCode).json({
+							"Status": resStatus
 						});
 						//
 						break;
