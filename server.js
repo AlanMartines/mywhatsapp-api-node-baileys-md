@@ -246,15 +246,6 @@ INDOCKER=0
 				res.sendFile(path.join(__dirname, './views/index.html'));
 			});
 			//
-			app.use("/instance", instance);
-			app.use("/message", message);
-			app.use("/group", group);
-			app.use("/retrieving", retrieving);
-			app.use("/profile", profile);
-			app.use("/gateway", gateway);
-			app.use("/webhook", webhook);
-			app.use("/api-doc", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-			//
 			app.get('/Start', function (req, res, next) {
 				let host = config.IPV4 == '0.0.0.0' ? '127.0.0.1' : `${config.IPV4}`;
 				res.render('index', {
@@ -265,6 +256,14 @@ INDOCKER=0
 				});
 			});
 			//
+			app.use("/instance", instance);
+			app.use("/message", message);
+			app.use("/group", group);
+			app.use("/retrieving", retrieving);
+			app.use("/profile", profile);
+			app.use("/gateway", gateway);
+			app.use("/webhook", webhook);
+			app.use("/api-doc", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 			//
 			if(config.IPV6){
 			app.get('/StartV6', function (req, res, next) {
