@@ -102,8 +102,6 @@ module.exports = class Instance {
 	//
 	static async Status(resSessionName) {
 		//
-		console.log(i18n.__('greeting.hello'));
-		//
 		try {
 			let existSession = await Sessions?.checkSession(resSessionName);
 			if (existSession) {
