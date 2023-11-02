@@ -1,5 +1,6 @@
 const osUtils = require('os-utils');
 const os = require('os');
+const i18n = require('../i18nConfig');
 const moment = require('moment');
 moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
@@ -100,6 +101,9 @@ async function deletaToken(filePath, filename) {
 module.exports = class Instance {
 	//
 	static async Status(resSessionName) {
+		//
+		console.log(i18n.__('greeting.hello'));
+		//
 		try {
 			let existSession = await Sessions?.checkSession(resSessionName);
 			if (existSession) {

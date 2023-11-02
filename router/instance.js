@@ -2,6 +2,7 @@
 // Configuração dos módulos
 const osUtils = require('os-utils');
 const os = require('os');
+const i18n = require('../i18nConfig');
 const fs = require('fs-extra');
 const express = require("express");
 const router = express.Router();

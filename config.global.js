@@ -30,6 +30,7 @@ config.GRAYLOGSERVER = process.env.GRAYLOGSERVER || '127.0.0.1';
 config.GRAYLOGPORT = process.env.GRAYLOGPORT || 12201;
 config.INDOCKER = process.env.INDOCKER || 0;
 config.DELETE_FILE_UNUSED = process.env.DELETE_FILE_UNUSED || 0;
+config.LANGUAGE = process.env.LANGUAGE || 'pt-br';
 //
 config.tokenPatch = "/usr/local/tokens";
 //
