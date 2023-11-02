@@ -206,11 +206,11 @@ INDOCKER=0
 				return fs.writeFile('./swagger.yaml', yamlSpec, 'utf8');
 			}).then(async () => {
 				// Chame a função para gerar o código
-				logger.info(`- Arquivo swagger.yaml manipulado com sucesso`);
+				logger.info(`- Arquivo swagger.yaml criado com sucesso`);
 				await generateSwaggerCode();
 				//
 			}).catch(async (err) => {
-				logger.error(`- Erro ao manipular o arquivo: ${err.message}`);
+				logger.error(`- Erro ao criar o arquivo swagger.yaml: ${err.message}`);
 			});
 		//
 		// ------------------------------------------------------------------------------------------------//
