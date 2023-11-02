@@ -164,7 +164,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				var Status = await instance?.Status(resSessionName);
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(200).json({
+				return res.status(Status.statusCode).json({
 					"Status": Status
 				});
 				//
