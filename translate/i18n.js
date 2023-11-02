@@ -3,7 +3,7 @@ const config = require('../config.global');
 i18n.configure({
     locales: ['pt-br', 'en'],
     directory: __dirname + '/languages',
-    defaultLocale: config.LANGUAGE,
+    defaultLocale: 'en',
     objectNotation: true,
 });
 
