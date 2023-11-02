@@ -1,22 +1,24 @@
 {
 	"instance": {
-		"isStarting": "System starting. Please wait...",
-		"isConnecting": "Device connecting. Please wait...",
-		"isBanned": "User banned, please contact WhatsApp support",
-		"inChat": "System started and available for use",
-		"isLogged": "System started and available for use",
-		"notLogged": "Device disconnected",
-		"browserClose": "Browser closed",
-		"qrReadSuccess": "QR-Code verification successful",
-		"qrReadFail": "QR-Code verification failed",
-		"qrRead": "System awaiting QR-Code scan",
-		"autocloseCalled": "Browser automatically closed",
-		"deleteToken": "Session token removed",
-		"chatsAvailable": "System started and available for use",
-		"serverWssNotConnected": "WSS address not found",
-		"noOpenBrowser": "Browser not found or some command missing in args",
-		"serverClose": "Client disconnected from wss",
-		"isError": "Unable to perform action, please check and try again",
-		"default": "System offline, start the system"
+		"Status": {
+			"isStarting": "System starting. Please wait...",
+			"isConnecting": "Device connecting. Please wait...",
+			"isBanned": "User banned, please contact WhatsApp support",
+			"inChat": "System started and available for use",
+			"isLogged": "System started and available for use",
+			"notLogged": "Device disconnected",
+			"browserClose": "Browser closed",
+			"qrReadSuccess": "QR-Code verification successful",
+			"qrReadFail": "QR-Code verification failed",
+			"qrRead": "System awaiting QR-Code scan",
+			"autocloseCalled": "Browser automatically closed",
+			"deleteToken": "Session token removed",
+			"chatsAvailable": "System started and available for use",
+			"serverWssNotConnected": "WSS address not found",
+			"noOpenBrowser": "Browser not found or some command missing in args",
+			"serverClose": "Client disconnected from wss",
+			"isError": "Unable to perform action, please check and try again",
+			"default": "System offline, start the system"
+		}
 	}
 }

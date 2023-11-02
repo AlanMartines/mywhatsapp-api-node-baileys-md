@@ -113,7 +113,7 @@ module.exports = class Instance {
 										statusCode: 202,
 										state: "STARTING",
 										status: "isStarting",
-										message: i18n.__('instance.isStarting')
+										message: i18n.__('instance.Status.isStarting')
 								};
 								break;
 						case 'isConnecting':
@@ -121,7 +121,7 @@ module.exports = class Instance {
 										statusCode: 202,
 										state: "CONNECTING",
 										status: "isConnecting",
-										message: i18n.__('instance.isConnecting')
+										message: i18n.__('instance.Status.isConnecting')
 								};
 								break;
 						case 'isBanned':
@@ -129,7 +129,7 @@ module.exports = class Instance {
 										statusCode: 403,
 										state: "BANNED",
 										status: "isBanned",
-										message: i18n.__('instance.isBanned')
+										message: i18n.__('instance.Status.isBanned')
 								};
 								break;
 						case 'inChat':
@@ -137,7 +137,7 @@ module.exports = class Instance {
 										statusCode: 200,
 										state: "CONNECTED",
 										status: "inChat",
-										message: i18n.__('instance.inChat')
+										message: i18n.__('instance.Status.inChat')
 								};
 								break;
 						case 'isLogged':
@@ -145,7 +145,7 @@ module.exports = class Instance {
 										statusCode: 200,
 										state: "CONNECTED",
 										status: "isLogged",
-										message: i18n.__('instance.isLogged')
+										message: i18n.__('instance.Status.isLogged')
 								};
 								break;
 						case 'notLogged':
@@ -155,7 +155,7 @@ module.exports = class Instance {
 										statusCode: 401,
 										state: "DISCONNECTED",
 										status: "notLogged",
-										message: i18n.__('instance.notLogged')
+										message: i18n.__('instance.Status.notLogged')
 								};
 								break;
 						case 'browserClose':
@@ -163,7 +163,7 @@ module.exports = class Instance {
 										statusCode: 200,
 										state: "CLOSE",
 										status: "browserClose",
-										message: i18n.__('instance.browserClose')
+										message: i18n.__('instance.Status.browserClose')
 								};
 								break;
 						case 'qrReadSuccess':
@@ -171,7 +171,7 @@ module.exports = class Instance {
 										statusCode: 200,
 										state: "CONNECTED",
 										status: "qrReadSuccess",
-										message: i18n.__('instance.qrReadSuccess')
+										message: i18n.__('instance.Status.qrReadSuccess')
 								};
 								break;
 						case 'qrReadFail':
@@ -179,7 +179,7 @@ module.exports = class Instance {
 										statusCode: 400,
 										state: "DISCONNECTED",
 										status: "qrReadFail",
-										message: i18n.__('instance.qrReadFail')
+										message: i18n.__('instance.Status.qrReadFail')
 								};
 								break;
 						case 'qrRead':
@@ -187,7 +187,7 @@ module.exports = class Instance {
 										statusCode: 202,
 										state: "QRCODE",
 										status: "qrRead",
-										message: i18n.__('instance.qrRead')
+										message: i18n.__('instance.Status.qrRead')
 								};
 								break;
 						case 'autocloseCalled':
@@ -195,7 +195,7 @@ module.exports = class Instance {
 										statusCode: 200,
 										state: "CLOSE",
 										status: "autocloseCalled",
-										message: i18n.__('instance.autocloseCalled')
+										message: i18n.__('instance.Status.autocloseCalled')
 								};
 								break;
 						case 'deleteToken':
@@ -203,7 +203,7 @@ module.exports = class Instance {
 										statusCode: 200,
 										state: "DISCONNECTED",
 										status: "deleteToken",
-										message: i18n.__('instance.deleteToken')
+										message: i18n.__('instance.Status.deleteToken')
 								};
 								break;
 						case 'chatsAvailable':
@@ -211,7 +211,7 @@ module.exports = class Instance {
 										statusCode: 200,
 										state: "CONNECTED",
 										status: "chatsAvailable",
-										message: i18n.__('instance.chatsAvailable')
+										message: i18n.__('instance.Status.chatsAvailable')
 								};
 								break;
 						case 'serverWssNotConnected':
@@ -219,7 +219,7 @@ module.exports = class Instance {
 										statusCode: 404,
 										state: "DISCONNECTED",
 										status: "serverWssNotConnected",
-										message: i18n.__('instance.serverWssNotConnected')
+										message: i18n.__('instance.Status.serverWssNotConnected')
 								};
 								break;
 						case 'noOpenBrowser':
@@ -227,7 +227,7 @@ module.exports = class Instance {
 										statusCode: 400,
 										state: "DISCONNECTED",
 										status: "noOpenBrowser",
-										message: i18n.__('instance.noOpenBrowser')
+										message: i18n.__('instance.Status.noOpenBrowser')
 								};
 								break;
 						case 'serverClose':
@@ -235,7 +235,7 @@ module.exports = class Instance {
 										statusCode: 401,
 										state: "DISCONNECTED",
 										status: "serverClose",
-										message: i18n.__('instance.serverClose')
+										message: i18n.__('instance.Status.serverClose')
 								};
 								break;
 						case 'isError':
@@ -243,7 +243,7 @@ module.exports = class Instance {
 										statusCode: 500,
 										state: "ERROR",
 										status: "isError",
-										message: i18n.__('instance.isError')
+										message: i18n.__('instance.Status.isError')
 								};
 								break;
 						default:
@@ -251,7 +251,7 @@ module.exports = class Instance {
 										statusCode: 404,
 										state: 'NOTFOUND',
 										status: 'notFound',
-										message: i18n.__('instance.default')
+										message: i18n.__('instance.Status.default')
 								};
 				}
 				
@@ -260,7 +260,7 @@ module.exports = class Instance {
 					statusCode: 404,
 					state: 'NOTFOUND',
 					status: 'notFound',
-					message: i18n.__('instance.default')
+					message: i18n.__('instance.Status.default')
 			};
 			}
 		} catch (error) {

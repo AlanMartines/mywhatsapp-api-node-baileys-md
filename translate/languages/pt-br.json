@@ -1,22 +1,24 @@
 {
 	"instance": {
-		"isStarting": "Sistema iniciando. Aguarde...",
-		"isConnecting": "Dispositivo conectando. Aguarde...",
-		"isBanned": "Usuario banido, entre em contato com suporte do whatsapp",
-		"inChat": "Sistema iniciado e disponivel para uso",
-		"isLogged": "Sistema iniciado e disponivel para uso",
-		"notLogged": "Dispositivo desconectado",
-		"browserClose": "Navegador fechado",
-		"qrReadSuccess": "Verificação do QR-Code feita com sucesso",
-		"qrReadFail": "Falha na verificação do QR-Code",
-		"qrRead": "Sistema aguardando leitura do QR-Code",
-		"autocloseCalled": "Navegador fechado automaticamente",
-		"deleteToken": "Token de sessão removido",
-		"chatsAvailable": "Sistema iniciado e disponivel para uso",
-		"serverWssNotConnected": "O endereço wss não foi encontrado",
-		"noOpenBrowser": "Não foi encontrado o navegador ou falta algum comando no args",
-		"serverClose": "O cliente se desconectou do wss",
-		"isError": "Não foi possivel executar a ação, verifique e tente novamente.",
-		"default": "Sistema Off-line, inicie o sistemas"
+		"Status": {
+			"isStarting": "Sistema iniciando. Aguarde...",
+			"isConnecting": "Dispositivo conectando. Aguarde...",
+			"isBanned": "Usuario banido, entre em contato com suporte do whatsapp",
+			"inChat": "Sistema iniciado e disponivel para uso",
+			"isLogged": "Sistema iniciado e disponivel para uso",
+			"notLogged": "Dispositivo desconectado",
+			"browserClose": "Navegador fechado",
+			"qrReadSuccess": "Verificação do QR-Code feita com sucesso",
+			"qrReadFail": "Falha na verificação do QR-Code",
+			"qrRead": "Sistema aguardando leitura do QR-Code",
+			"autocloseCalled": "Navegador fechado automaticamente",
+			"deleteToken": "Token de sessão removido",
+			"chatsAvailable": "Sistema iniciado e disponivel para uso",
+			"serverWssNotConnected": "O endereço wss não foi encontrado",
+			"noOpenBrowser": "Não foi encontrado o navegador ou falta algum comando no args",
+			"serverClose": "O cliente se desconectou do wss",
+			"isError": "Não foi possivel executar a ação, verifique e tente novamente.",
+			"default": "Sistema Off-line, inicie o sistemas"
+		}
 	}
 }
