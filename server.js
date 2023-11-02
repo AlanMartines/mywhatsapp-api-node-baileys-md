@@ -8,13 +8,15 @@ const app = express();
 const cors = require('cors');
 const path = require('path');
 const swaggerUi = require('swagger-ui-express')
+const yaml = require('js-yaml');
 const latest = require('latest-version'); // verifica a ultima release no npm
 const { version } = require('./package.json');
 const { logger } = require("./utils/logger");
 const AllSessions = require('./startup');
 const Sessions = require('./controllers/sessions');
 const config = require('./config.global');
-const swaggerDocument = require('./swagger');//
+const swaggerSpec = require('./swagger.js');
+const yamlSpec = yaml.dump(swaggerSpec);
 const http = require('http').Server(app);
 const httpv6 = require('http').Server(app);
 // https://www.scaleway.com/en/docs/tutorials/socket-io/
@@ -263,7 +265,7 @@ INDOCKER=0
 			app.use("/profile", profile);
 			app.use("/gateway", gateway);
 			app.use("/webhook", webhook);
-			app.use("/api-doc", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+			app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 			//
 			if(config.IPV6){
 			app.get('/StartV6', function (req, res, next) {
@@ -322,7 +324,7 @@ INDOCKER=0
 					let host = config.DOMAIN_SSL == '' ? `http://${hostUrl}:${config.PORT}` : `https://${config.DOMAIN_SSL}`;
 					logger?.info(`- HTTP Server running on`);
 					logger?.info(`- To start: ${host}/Start`);
-					logger?.info(`- To doc: ${host}/api-doc`);
+					logger?.info(`- To docs: ${host}/api-docs`);
 					//
 				}
 				//
@@ -339,7 +341,7 @@ INDOCKER=0
 					let host = config.DOMAIN_SSL == '' ? `http://${hostUrl}:${config.PORT}` : `https://${config.DOMAIN_SSL}`;
 					logger?.info(`- HTTP Server running on`);
 					logger?.info(`- To start: ${host}/Start`);
-					logger?.info(`- To doc: ${host}/api-doc`);
+					logger?.info(`- To docs: ${host}/api-docs`);
 					//
 				}
 				//

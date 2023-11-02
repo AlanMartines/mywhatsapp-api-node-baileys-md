@@ -83,6 +83,7 @@
     "swagger-autogen": "^2.23.7",
     "swagger-codegen-cli": "^2.2.3",
     "swagger-ui-express": "^5.0.0",
+    "js-yaml": "^4.1.0",
 		"url-exists": "^1.0.3",
 		"valid-url": "^1.0.9",
     "yamljs": "^0.3.0",

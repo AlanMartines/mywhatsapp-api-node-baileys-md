@@ -5,6 +5,7 @@ if (config.DOMAIN_SSL) {
 } else {
 	var serverURL = `http://${config.IPV4}:${config.PORT}`;
 }
+//
 module.exports = {
 	"openapi": "3.0.3",
 	"info": {
