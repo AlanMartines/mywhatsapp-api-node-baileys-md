@@ -217,7 +217,7 @@ module.exports = class Instance {
 							statusCode: 404,
 							state: 'NOTFOUND',
 							status: 'notFound',
-							message: 'Sistema Off-line, inikcie o sistemas'
+							message: 'Sistema Off-line, inicie o sistemas'
 						};
 				}				
 			} else {
