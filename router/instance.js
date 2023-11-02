@@ -591,8 +591,7 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 		const cpuUsage = process.cpuUsage();
 
 		const resultRes = {
-			"error": false,
-			"status": 200,
+			"statusCode": 200,
 			"noformat": {
 				"uptime": os.uptime(),
 				"totalmem": os.totalmem(),
@@ -614,7 +613,7 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 		};
 
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -622,13 +621,12 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 		//
 		logger?.error(`${error}`);
 		var resultRes = {
-			"error": true,
-			"status": 403,
+			"statusCode": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
