@@ -104,6 +104,9 @@ module.exports = class Instance {
 			let existSession = await Sessions?.checkSession(resSessionName);
 			if (existSession) {
 				//só adiciona se não existir
+				//
+				console.log(existSession);
+				//
 				switch (existSession.status) {
 					case 'isStarting':
 						return {
