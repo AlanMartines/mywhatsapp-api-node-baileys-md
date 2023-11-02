@@ -176,6 +176,27 @@ INDOCKER=0
 		//
 		// ------------------------------------------------------------------------------------------------//
 		//
+		// Verifique se o arquivo swagger.yaml já existe e remova-o antes de criar um novo
+		fs.pathExists('./swagger.yaml')
+			.then(exists => {
+				if (exists) {
+					return fs.remove('./swagger.yaml');
+				}
+			})
+			.then(() => {
+				const yamlSpec = yaml.dump(swaggerSpec);
+				return fs.writeFile('./swagger.yaml', yamlSpec, 'utf8');
+			})
+			.then(() => {
+				// Chame a função para gerar o código
+				logger.info(`- Arquivo swagger.yaml manipulado com sucesso`);
+			})
+			.catch(err => {
+				logger.error(`- Erro ao manipular o arquivo: ${err.message}`);
+			});
+		//
+		// ------------------------------------------------------------------------------------------------//
+		//
 		try {
 			//
 			const profile = require("./router/profile");
@@ -267,16 +288,16 @@ INDOCKER=0
 			app.use("/webhook", webhook);
 			app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 			//
-			if(config.IPV6){
-			app.get('/StartV6', function (req, res, next) {
-				let host = config.IPV6 == '0:0:0:0:0:0:0:0' ? '0:0:0:0:0:0:0:1' : `${config.IPV6}`;
-				res.render('index', {
-					port: config.PORT,
-					host: host,
-					host_ssl: config.DOMAIN_SSL,
-					validate_mysql: parseInt(config.VALIDATE_MYSQL),
+			if (config.IPV6) {
+				app.get('/StartV6', function (req, res, next) {
+					let host = config.IPV6 == '0:0:0:0:0:0:0:0' ? '0:0:0:0:0:0:0:1' : `${config.IPV6}`;
+					res.render('index', {
+						port: config.PORT,
+						host: host,
+						host_ssl: config.DOMAIN_SSL,
+						validate_mysql: parseInt(config.VALIDATE_MYSQL),
+					});
 				});
-			});
 			}
 			//
 			// rota url erro
@@ -330,22 +351,22 @@ INDOCKER=0
 				//
 			});
 			//
-			if(config.IPV6){
-			httpv6.listen(config.PORT, config.IPV6, async function (err) {
-				if (err) {
-					logger?.error(err);
-				} else {
-					const address = httpv6.address().address;
-					const port = httpv6.address().port;
-					let hostUrl = config.IPV6 == '0:0:0:0:0:0:0:0' ? '0:0:0:0:0:0:0:1' : `${config.IPV6}`;
-					let host = config.DOMAIN_SSL == '' ? `http://${hostUrl}:${config.PORT}` : `https://${config.DOMAIN_SSL}`;
-					logger?.info(`- HTTP Server running on`);
-					logger?.info(`- To start: ${host}/Start`);
-					logger?.info(`- To docs: ${host}/api-docs`);
+			if (config.IPV6) {
+				httpv6.listen(config.PORT, config.IPV6, async function (err) {
+					if (err) {
+						logger?.error(err);
+					} else {
+						const address = httpv6.address().address;
+						const port = httpv6.address().port;
+						let hostUrl = config.IPV6 == '0:0:0:0:0:0:0:0' ? '0:0:0:0:0:0:0:1' : `${config.IPV6}`;
+						let host = config.DOMAIN_SSL == '' ? `http://${hostUrl}:${config.PORT}` : `https://${config.DOMAIN_SSL}`;
+						logger?.info(`- HTTP Server running on`);
+						logger?.info(`- To start: ${host}/Start`);
+						logger?.info(`- To docs: ${host}/api-docs`);
+						//
+					}
 					//
-				}
-				//
-			});
+				});
 			}
 			//
 			logger?.info(`- Verificando Atualizações`);
