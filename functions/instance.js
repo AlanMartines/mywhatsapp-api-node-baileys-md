@@ -1,6 +1,6 @@
 const osUtils = require('os-utils');
 const os = require('os');
-const i18n = require('../i18nConfig');
+const i18n = require('../translate/i18n');
 const moment = require('moment');
 moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
