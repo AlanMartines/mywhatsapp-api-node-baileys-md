@@ -116,13 +116,15 @@ module.exports = class Instance {
 							status: "isStarting",
 							message: "Sistema iniciando. Aguarde..."
 						};
-						case 'isConnecting':
-							return {
-								statusCode: 202,
-								state: "CONNECTING",
-								status: "isConnecting",
-								message: "Dispositivo conectando. Aguarde..."
-							};
+						break
+					case 'isConnecting':
+						return {
+							statusCode: 202,
+							state: "CONNECTING",
+							status: "isConnecting",
+							message: "Dispositivo conectando. Aguarde..."
+						};
+						break
 					case 'isBanned':
 						return {
 							statusCode: 403,
@@ -130,6 +132,15 @@ module.exports = class Instance {
 							status: "isBanned",
 							message: "Usuario banido, entre em contato com suporte do whatsapp"
 						};
+						break
+					case 'inChat':
+						return {
+							statusCode: 200,
+							state: "CONNECTED",
+							status: "inChat",
+							message: "Sistema iniciado e disponivel para uso"
+						};
+						break
 					case 'isLogged':
 						return {
 							statusCode: 200,
@@ -137,6 +148,7 @@ module.exports = class Instance {
 							status: "isLogged",
 							message: "Sistema iniciado e disponivel para uso"
 						};
+						break
 					case 'notLogged':
 					case 'desconnectedMobile':
 					case 'deviceNotConnected':
@@ -146,6 +158,7 @@ module.exports = class Instance {
 							status: "notLogged",
 							message: "Dispositivo desconectado"
 						};
+						break
 					case 'browserClose':
 						return {
 							statusCode: 200,
@@ -153,6 +166,7 @@ module.exports = class Instance {
 							status: "browserClose",
 							message: "Navegador fechado"
 						};
+						break
 					case 'qrReadSuccess':
 						return {
 							statusCode: 200,
@@ -160,6 +174,7 @@ module.exports = class Instance {
 							status: "qrReadSuccess",
 							message: "Verificação do QR-Code feita com sucesso"
 						};
+						break
 					case 'qrReadFail':
 						return {
 							statusCode: 400,
@@ -167,6 +182,7 @@ module.exports = class Instance {
 							status: "qrReadFail",
 							message: "Falha na verificação do QR-Code"
 						};
+						break
 					case 'qrRead':
 						return {
 							statusCode: 202,
@@ -174,6 +190,7 @@ module.exports = class Instance {
 							status: "qrRead",
 							message: "Sistema aguardando leitura do QR-Code"
 						};
+						break
 					case 'autocloseCalled':
 						return {
 							statusCode: 200,
@@ -181,6 +198,7 @@ module.exports = class Instance {
 							status: "autocloseCalled",
 							message: "Navegador fechado automaticamente"
 						};
+						break
 					case 'deleteToken':
 						return {
 							statusCode: 200,
@@ -188,6 +206,7 @@ module.exports = class Instance {
 							status: "deleteToken",
 							message: "Token de sessão removido"
 						};
+						break
 					case 'chatsAvailable':
 						return {
 							statusCode: 200,
@@ -195,6 +214,7 @@ module.exports = class Instance {
 							status: "chatsAvailable",
 							message: "Sistema iniciado e disponivel para uso"
 						};
+						break
 					case 'serverWssNotConnected':
 						return {
 							statusCode: 404,
@@ -202,6 +222,7 @@ module.exports = class Instance {
 							status: "serverWssNotConnected",
 							message: "O endereço wss não foi encontrado"
 						};
+						break
 					case 'noOpenBrowser':
 						return {
 							statusCode: 400,
@@ -209,6 +230,7 @@ module.exports = class Instance {
 							status: "noOpenBrowser",
 							message: "Não foi encontrado o navegador ou falta algum comando no args"
 						};
+						break
 					case 'serverClose':
 						return {
 							statusCode: 401,
@@ -216,6 +238,7 @@ module.exports = class Instance {
 							status: "serverClose",
 							message: "O cliente se desconectou do wss"
 						};
+						break
 					default:
 						return {
 							statusCode: 404,
@@ -223,7 +246,7 @@ module.exports = class Instance {
 							status: 'notFound',
 							message: 'Sistema Off-line, inicie o sistemas'
 						};
-				}				
+				}
 			} else {
 				return {
 					statusCode: 404,
