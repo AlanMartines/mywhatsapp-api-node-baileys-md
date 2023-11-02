@@ -647,13 +647,12 @@ const formatters = {
 router.all('*', (req, res, next) => {
 	//
 	var resultRes = {
-		"error": true,
-		"status": 404,
+		"statusCode": 404,
 		"message": 'Não foi possivel executar a ação, verifique a url informada.'
 	};
 	//
 	res.setHeader('Content-Type', 'application/json');
-	res.status(resultRes.status).json({
+	res.status(resultRes.statusCode).json({
 		"Status": resultRes
 	});
 	//
