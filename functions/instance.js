@@ -236,6 +236,14 @@ module.exports = class Instance {
 							message: "O cliente se desconectou do wss"
 						};
 						break
+						case 'isError':
+							return {
+								statusCode: 500,
+								state: "ERROR",
+								status: "isError",
+								message: "Não foi possivel executar a ação, verifique e tente novamente."
+							};
+							break
 					default:
 						return {
 							statusCode: 404,
@@ -275,9 +283,9 @@ module.exports = class Instance {
 			logger?.info("- Sessão fechada");
 			//
 			let addJson = {
+				state: "CLOSE",
+				status: "browserClose",
 				message: "Sessão fechada",
-				state: "CLOSED",
-				status: "notLogged"
 			};
 			//
 			await Sessions?.addInfoSession(SessionName, addJson);

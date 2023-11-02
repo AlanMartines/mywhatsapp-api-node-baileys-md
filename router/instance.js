@@ -50,63 +50,64 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 			//
 		} else {
 			//
-				let data = await instance?.Status(resSessionName);
-				switch (data?.status) {
-					case 'inChat':
-					case 'qrReadSuccess':
-					case 'isLogged':
-					case 'chatsAvailable':
-					case 'qrRead':
-						//
-						res.setHeader('Content-Type', 'application/json');
-						return res.status(data.statusCode).json({
-							"Status": data
-						});
-						//
-						break;
-					case 'notLogged':
-					case 'deviceNotConnected':
-					case 'desconnectedMobile':
-					case 'qrReadFail':
-					case 'deleteToken':
-					case 'browserClose':
-					case 'autocloseCalled':
-					case 'serverClose':
-					case 'deleteToken':
-					case 'serverWssNotConnected':
-					case 'notFound':
-						//
-						await engine?.Start(req, res, next);
-						//
-						var resStatus = await instance?.Status(resSessionName);
-						res.setHeader('Content-Type', 'application/json');
-						return res.status(resStatus.statusCode).json({
-							"Status": resStatus
-						});
-						//
-						break;
-					default:
-						var resultRes = {
-							statusCode: 404,
-							"state": 'NOTFOUND',
-							"status": 'notFound',
-							"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
-						};
-						//
-						res.setHeader('Content-Type', 'application/json');
-						return res.status(resultRes.status).json({
-							"Status": resultRes
-						});
+			let data = await instance?.Status(resSessionName);
+			switch (data?.status) {
+				case 'inChat':
+				case 'qrReadSuccess':
+				case 'isLogged':
+				case 'chatsAvailable':
+				case 'qrRead':
 					//
-				}
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(data.statusCode).json({
+						"Status": data
+					});
+					//
+					break;
+				case 'notLogged':
+				case 'deviceNotConnected':
+				case 'desconnectedMobile':
+				case 'qrReadFail':
+				case 'deleteToken':
+				case 'browserClose':
+				case 'autocloseCalled':
+				case 'serverClose':
+				case 'deleteToken':
+				case 'serverWssNotConnected':
+				case 'notFound':
+					//
+					await engine?.Start(req, res, next);
+					//
+					var resStatus = await instance?.Status(resSessionName);
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(resStatus.statusCode).json({
+						"Status": resStatus
+					});
+					//
+					break;
+				default:
+					var resultRes = {
+						"statusCode": 500,
+						"state": 'ERROR',
+						"status": 'isError',
+						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+					};
+					//
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(resultRes.status).json({
+						"Status": resultRes
+					});
 				//
+			}
+			//
 		}
 	} catch (error) {
 		logger?.error(error);
 		//
 		var resultRes = {
-			"error": true,
-			"status": 403,
+			"statusCode": 500,
+			"state": 'ERROR',
+			"status": 'isError',
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
 		//
@@ -124,7 +125,7 @@ router.post("/Status", upload.none(''), verifyToken.verify, async (req, res, nex
 	//
 	logger?.info("- Obtendo status");
 	//
-const resSessionName = removeWithspace(req?.body?.SessionName);
+	const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
 		if (!resSessionName) {
@@ -185,7 +186,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 //
 router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-const resSessionName = removeWithspace(req?.body?.SessionName);
+	const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
 		if (!resSessionName) {
@@ -270,7 +271,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 //
 router.post("/Logout", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-const resSessionName = removeWithspace(req?.body?.SessionName);
+	const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
 		if (!resSessionName) {
@@ -338,7 +339,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 //
 router.post("/restartToken", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-const resSessionName = removeWithspace(req?.body?.SessionName);
+	const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
 		if (!resSessionName) {
@@ -514,7 +515,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 //
 router.post("/getSession", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-const resSessionName = removeWithspace(req?.body?.SessionName);
+	const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
 		if (!resSessionName) {

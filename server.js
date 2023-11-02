@@ -18,6 +18,7 @@ const Sessions = require('./controllers/sessions');
 const config = require('./config.global');
 const swaggerSpec = require('./swagger.js');
 const yamlSpec = yaml.dump(swaggerSpec);
+const i18n = require('./translate/i18n');
 const http = require('http').Server(app);
 const httpv6 = require('http').Server(app);
 // https://www.scaleway.com/en/docs/tutorials/socket-io/
@@ -259,6 +260,10 @@ INDOCKER=0
 				next();
 			});
 			//
+			app.use(i18n.init);
+			//
+			console.log(i18n.__('greeting.hello'));
+			//
 			app.use((err, req, res, next) => {
 				res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
 				res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -283,7 +288,6 @@ INDOCKER=0
 				//
 				next();
 			});
-			//
 			//
 			app.get('/', (req, res, next) => {
 				res.sendFile(path.join(__dirname, './views/index.html'));
