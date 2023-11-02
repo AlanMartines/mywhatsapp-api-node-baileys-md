@@ -50,9 +50,7 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 			//
 		} else {
 			//
-			let existSession = await Sessions?.checkSession(resSessionName);
-			if (existSession) {
-				let data = await instance?.getSession(resSessionName);
+				let data = await instance?.Status(resSessionName);
 				switch (data?.status) {
 					case 'inChat':
 					case 'qrReadSuccess':
@@ -60,10 +58,9 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 					case 'chatsAvailable':
 					case 'qrRead':
 						//
-						var resStatus = await instance?.Status(resSessionName);
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(resStatus.statusCode).json({
-							"Status": resStatus
+						return res.status(data.statusCode).json({
+							"Status": data
 						});
 						//
 						break;
@@ -79,7 +76,7 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 					case 'serverWssNotConnected':
 					case 'notFound':
 						//
-						engine?.Start(req, res, next);
+						await engine?.Start(req, res, next);
 						//
 						var resStatus = await instance?.Status(resSessionName);
 						res.setHeader('Content-Type', 'application/json');
@@ -103,22 +100,6 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 					//
 				}
 				//
-			} else {
-				//
-				engine.Start(req, res, next);
-				//
-				var resultRes = {
-					"error": false,
-					"status": 200,
-					"message": 'Sistema iniciando, por favor aguarde'
-				};
-				//
-				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
-					"Status": resultRes
-				});
-				//
-			}
 		}
 	} catch (error) {
 		logger?.error(error);

@@ -100,13 +100,11 @@ async function deletaToken(filePath, filename) {
 module.exports = class Instance {
 	//
 	static async Status(resSessionName) {
-
 		try {
-			let session = await Sessions?.getSession(resSessionName);
-
-			if (session) {
+			let existSession = await Sessions?.checkSession(resSessionName);
+			if (existSession) {
 				//só adiciona se não existir
-				switch (session.status) {
+				switch (existSession.status) {
 					case 'isStarting':
 						return {
 							statusCode: 202,
