@@ -568,50 +568,58 @@ router.post("/getAllSessions", upload.none(''), verifyToken.verify, async (req, 
 router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	logger?.info(`- getHardWare`);
 	//
-	try {
-		const formatBytes = (bytes) => {
+// Funções de formatação
+const formatters = {
+	bytes: (bytes) => {
 			const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
 			if (bytes === 0) return "0 Bytes";
 			const i = Math.floor(Math.log2(bytes) / 10);
 			return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(2))} ${sizes[i]}`;
-		};
-
-		const formatPercentage = (value) => `${Math.round(value * 100)}%`;
-
-		const formatUptime = (seconds) => {
+	},
+	percentage: (value) => `${Math.round(value * 100)}%`,
+	uptime: (seconds) => {
 			const days = Math.floor(seconds / 86400);
 			const hours = Math.floor((seconds % 86400) / 3600);
 			const minutes = Math.floor((seconds % 3600) / 60);
 			const remainingSeconds = seconds % 60;
-			return `${days}d ${hours.toString().padStart(2, "0")}:${minutes
-				.toString()
-				.padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
-		};
+			return `${days}d ${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
+	}
+};
+//
+	try {
+    // Coletar dados
+    const uptime = os.uptime();
+    const totalMem = os.totalmem();
+    const freeMem = os.freemem();
+    const usedMem = totalMem - freeMem;
+    const freeMemPercentage = freeMem / totalMem;
+    const usedMemPercentage = 1 - freeMemPercentage;
+    const cpuUsage = process.cpuUsage();
+    const cpuUsagePercentage = cpuUsage.user / (cpuUsage.user + cpuUsage.system);
 
-		const cpuUsage = process.cpuUsage();
-
-		const resultRes = {
-			"statusCode": 200,
-			"noformat": {
-				"uptime": os.uptime(),
-				"totalmem": os.totalmem(),
-				"memusage": os.totalmem() - os.freemem(),
-				"freemem": os.freemem(),
-				"freeusagemem": (os.freemem() / os.totalmem()),
-				"usagemem": (1 - os.freemem() / os.totalmem()),
-				"cpuusage": (cpuUsage.user / (cpuUsage.user + cpuUsage.system)),
-			},
-			"format": {
-				"uptime": formatUptime(os.uptime()).split('.')[0],
-				"totalmem": formatBytes(os.totalmem()),
-				"memusage": formatBytes(os.totalmem() - os.freemem()),
-				"freemem": formatBytes(os.freemem()),
-				"freeusagemem": formatPercentage(os.freemem() / os.totalmem()),
-				"usagemem": formatPercentage(1 - os.freemem() / os.totalmem()),
-				"cpuusage": formatPercentage(cpuUsage.user / (cpuUsage.user + cpuUsage.system)),
-			},
-		};
-
+    // Estruturar resposta
+    const resultRes = {
+        statusCode: 200,
+        noformat: {
+            uptime,
+            totalmem: totalMem,
+            memusage: usedMem,
+            freemem: freeMem,
+            freeusagemem: freeMemPercentage,
+            usagemem: usedMemPercentage,
+            cpuusage: cpuUsagePercentage
+        },
+        format: {
+            uptime: formatters.uptime(uptime).split('.')[0],
+            totalmem: formatters.bytes(totalMem),
+            memusage: formatters.bytes(usedMem),
+            freemem: formatters.bytes(freeMem),
+            freeusagemem: formatters.percentage(freeMemPercentage),
+            usagemem: formatters.percentage(usedMemPercentage),
+            cpuusage: formatters.percentage(cpuUsagePercentage)
+        }
+    };
+		//
 		res.setHeader('Content-Type', 'application/json');
 		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
@@ -621,7 +629,7 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 		//
 		logger?.error(`${error}`);
 		var resultRes = {
-			"statusCode": 403,
+			"statusCode": 500,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
 		//
