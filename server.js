@@ -1,5 +1,6 @@
 'use strict';
 //
+const { exec } = require('child_process');
 const fs = require('fs-extra');
 const express = require('express');
 require('express-async-errors');
@@ -41,7 +42,26 @@ yo('My-WhatsApp', {
 //
 //console.log(boxen('My-WhatsApp', {padding: 1, margin: 1, borderStyle: 'double'}));
 //
-//
+// Função para executar o comando swagger-codegen-cli
+function generateSwaggerCode() {
+	try {
+		const command = 'swagger-codegen-cli generate -i swagger.yaml -l nodejs-server -o newiu';
+
+		exec(command, (error, stdout, stderr) => {
+			if (error) {
+				logger.error(`- Erro ao executar o comando: ${error.message}`);
+				return;
+			}
+			if (stderr) {
+				logger.error(`- Erro: ${stderr}`);
+				return;
+			}
+			logger.info(`- Resultado: ${stdout}`);
+		});
+	} catch (error) {
+		logger.error(`- Erro: ${error}`);
+	}
+}
 //
 // ------------------------------------------------------------------------------------------------//
 //
@@ -190,6 +210,7 @@ INDOCKER=0
 			.then(() => {
 				// Chame a função para gerar o código
 				logger.info(`- Arquivo swagger.yaml manipulado com sucesso`);
+				generateSwaggerCode();
 			})
 			.catch(err => {
 				logger.error(`- Erro ao manipular o arquivo: ${err.message}`);
