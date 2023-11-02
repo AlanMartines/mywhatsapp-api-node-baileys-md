@@ -198,20 +198,20 @@ INDOCKER=0
 		//
 		// Verifique se o arquivo swagger.yaml já existe e remova-o antes de criar um novo
 		fs.pathExists('./swagger.yaml').then(async (exists) => {
-				if (exists) {
-					return fs.remove('./swagger.yaml');
-				}
-			}).then(async () => {
-				const yamlSpec = yaml.dump(swaggerSpec);
-				return fs.writeFile('./swagger.yaml', yamlSpec, 'utf8');
-			}).then(async () => {
-				// Chame a função para gerar o código
-				logger.info(`- Arquivo swagger.yaml criado com sucesso`);
-				await generateSwaggerCode();
-				//
-			}).catch(async (err) => {
-				logger.error(`- Erro ao criar o arquivo swagger.yaml: ${err.message}`);
-			});
+			if (exists) {
+				return fs.remove('./swagger.yaml');
+			}
+		}).then(async () => {
+			const yamlSpec = yaml.dump(swaggerSpec);
+			return fs.writeFile('./swagger.yaml', yamlSpec, 'utf8');
+		}).then(async () => {
+			// Chame a função para gerar o código
+			logger.info(`- Arquivo swagger.yaml criado com sucesso`);
+			await generateSwaggerCode();
+			//
+		}).catch(async (err) => {
+			logger.error(`- Erro ao criar o arquivo swagger.yaml: ${err.message}`);
+		});
 		//
 		// ------------------------------------------------------------------------------------------------//
 		//
@@ -268,14 +268,15 @@ INDOCKER=0
 				if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
 					//
 					//console.error(err);
+					let validate = {
+						"error": true,
+						"status": 404,
+						"message": "Json gerado de forma incorreta, efetue a correção e tente novamente"
+					};
+					//
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(404).json({
-						"Status": {
-							"result": "error",
-							"state": "FAILURE",
-							"status": "notProvided",
-							"message": "Json gerado de forma incorreta, efetue a correção e tente novamente"
-						}
+					return res.status(validate.status).json({
+						"Status": validate
 					});
 				}
 				//
