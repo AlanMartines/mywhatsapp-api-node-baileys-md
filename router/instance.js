@@ -544,19 +544,18 @@ router.post("/getAllSessions", upload.none(''), verifyToken.verify, async (req, 
 	if (getSessions?.session?.length) {
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(getSessions.status).json({
+		return res.status(getSessions.statusCode).json({
 			"Status": getSessions
 		});
 		//
 	} else {
 		var resultRes = {
-			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Nenhuma sessão criada'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 	}
