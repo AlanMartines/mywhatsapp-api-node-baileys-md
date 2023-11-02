@@ -365,8 +365,7 @@ module.exports = class Instance {
 			logger?.error(`- Error ao desconetar sessão: ${error}`);
 			//
 			let result = {
-				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao desconetar sessão"
 			};
 			//
@@ -405,7 +404,7 @@ module.exports = class Instance {
 					client: false,
 					message: "Sessão sendo reiniciada",
 					state: "STARTING",
-					status: "notLogged"
+					status: "isStarting"
 				};
 				//
 				await Sessions?.addInfoSession(SessionName, addJson);
@@ -423,8 +422,7 @@ module.exports = class Instance {
 				engine?.Start(req, res, next);
 				//
 				return {
-					"error": false,
-					"status": 200,
+					"statusCode": 200,
 					"message": "Sistema reiniciado com sucesso"
 				};
 				//
@@ -434,8 +432,7 @@ module.exports = class Instance {
 				session.client = false;
 				//
 				return {
-					"error": false,
-					"status": 404,
+					"statusCode": 404,
 					"message": 'Sistema Off-line'
 				};
 				//
@@ -443,8 +440,7 @@ module.exports = class Instance {
 			//
 		} else {
 			return {
-				"error": false,
-				"status": 404,
+				"statusCode": 404,
 				"message": 'Sistema Off-line'
 			};
 		}
@@ -464,8 +460,7 @@ module.exports = class Instance {
 				delete dataSessions?.waqueue;
 				//
 				return {
-					"error": false,
-					"status": 200,
+					"statusCode": 200,
 					"message": "Sessão carregada com sucesso",
 					"session": dataSessions
 				};
@@ -473,8 +468,7 @@ module.exports = class Instance {
 			} else {
 				//
 				return {
-					"error": false,
-					"status": 200,
+					"statusCode": 200,
 					"message": "Sessão não encontrada"
 				};
 				//
@@ -483,8 +477,7 @@ module.exports = class Instance {
 			logger?.error(`- Error when: ${error}`);
 			//
 			return {
-				"error": false,
-				"status": 404,
+				"statusCode": 404,
 				"message": 'Erro ao carregar sessão'
 			};
 			//
@@ -511,8 +504,7 @@ module.exports = class Instance {
 				});
 				//
 				return {
-					"error": false,
-					"status": 200,
+					"statusCode": 200,
 					"message": "Sessões carregadas com sucesso",
 					"session": novoJson
 				};
@@ -520,8 +512,7 @@ module.exports = class Instance {
 			} else {
 				//
 				return {
-					"error": false,
-					"status": 200,
+					"statusCode": 200,
 					"message": "Sessões não encontradas"
 				};
 				//
@@ -530,8 +521,7 @@ module.exports = class Instance {
 			logger?.error(`- Error when: ${error}`);
 			//
 			return {
-				"error": false,
-				"status": 404,
+				"statusCode": 404,
 				"message": 'Erro ao carregar sessões'
 			};
 			//
