@@ -106,206 +106,127 @@ module.exports = class Instance {
 
 			if (session) {
 				//só adiciona se não existir
-				if (session.state == "CONNECTED") {
-					return {
-						state: "CONNECTED",
-						status: "inChat",
-						message: "Sistema iniciado e disponivel para uso"
-					};
-				} else if (session.state == "STARTING") {
-					return {
-						state: "STARTING",
-						status: "notLogged",
-						message: "Sistema iniciando e indisponivel para uso"
-					};
-				} else if (session.state == "QRCODE") {
-					return {
-						state: "QRCODE",
-						status: "qrRead",
-						message: "Sistema aguardando leitura do QR-Code"
-					};
-				} else if (session.state == "DISCONNECTED") {
-					return {
-						state: "DISCONNECTED",
-						status: "notLogged",
-						message: "Dispositivo desconectado"
-					};
-				} else if (session.state == "CLOSE") {
-					return {
-						state: "CLOSE",
-						status: "notLogged",
-						message: "Navegador interno fechado"
-					};
-				} else if (session.state == "CLOSED") {
-					return {
-						state: "CLOSED",
-						status: "notLogged",
-						message: "Navegador interno fechado"
-					};
-				} else if (session.state == "BANNED") {
-					return {
-						state: "BANNED",
-						status: "notLogged",
-						message: "Esta conta está impedida de usar o WhatsApp, conta banida"
-					};
-				} else {
-					switch (session.status) {
-						case 'isLogged':
+				switch (session.status) {
+					case 'isStarting':
+						return {
+							statusCode: 202,
+							state: "STARTING",
+							status: "isStarting",
+							message: "Sistema iniciando. Aguarde..."
+						};
+						case 'isConnecting':
 							return {
-								state: "CONNECTED",
-								status: "isLogged",
-								message: "Sistema iniciado e disponivel para uso"
+								statusCode: 202,
+								state: "CONNECTING",
+								status: "isConnecting",
+								message: "Dispositivo conectando. Aguarde..."
 							};
-							break;
-						case 'notLogged':
-							return {
-								state: "DISCONNECTED",
-								status: "notLogged",
-								message: "Dispositivo desconectado"
-							};
-							break;
-						case 'browserClose':
-							return {
-								state: "CLOSE",
-								status: "browserClose",
-								message: "Navegador interno fechado"
-							};
-							break;
-						case 'qrReadSuccess':
-							return {
-								state: "CONNECTED",
-								status: "qrReadSuccess",
-								message: "Verificação do QR-Code feita com sucesso"
-							};
-							break;
-						case 'qrReadFail':
-							return {
-								state: "DISCONNECTED",
-								status: "qrReadFail",
-								message: "Falha na verificação do QR-Code"
-							};
-							break;
-						case 'qrRead':
-							return {
-								state: "QRCODE",
-								status: "qrRead",
-								message: "Sistema aguardando leitura do QR-Code"
-							};
-							break;
-						case 'autocloseCalled':
-							return {
-								state: "DISCONNECTED",
-								status: "notLogged",
-								message: "Navegador interno fechado automaticamente"
-							};
-							break;
-						case 'desconnectedMobile':
-							return {
-								state: "DISCONNECTED",
-								status: "desconnectedMobile",
-								message: "Dispositivo desconectado"
-							};
-							break;
-						case 'deleteToken':
-							return {
-								state: "DISCONNECTED",
-								status: "deleteToken",
-								message: "Token de sessão removido"
-							};
-							break;
-						case 'chatsAvailable':
-							return {
-								state: "CONNECTED",
-								status: "chatsAvailable",
-								message: "Sistema iniciado e disponivel para uso"
-							};
-							break;
-						case 'deviceNotConnected':
-							return {
-								state: "DISCONNECTED",
-								status: "deviceNotConnected",
-								message: "Dispositivo desconectado"
-							};
-							break;
-						case 'serverWssNotConnected':
-							return {
-								state: "DISCONNECTED",
-								status: "serverWssNotConnected",
-								message: "O endereço wss não foi encontrado"
-							};
-							break;
-						case 'noOpenBrowser':
-							return {
-								state: "DISCONNECTED",
-								status: "noOpenBrowser",
-								message: "Não foi encontrado o navegador ou falta algum comando no args"
-							};
-							break;
-						case 'serverClose':
-							return {
-								state: "DISCONNECTED",
-								status: "serverClose",
-								message: "O cliente se desconectou do wss"
-							};
-							break;
-						case 'OPENING':
-							return {
-								state: "OPENING",
-								status: "notLogged",
-								message: "'Sistema iniciando e indisponivel para uso'"
-							};
-							break;
-						case 'CONFLICT':
-							return {
-								state: "CONFLICT",
-								status: "isLogged",
-								message: "Dispositivo conectado em outra sessão, reconectando"
-							};
-							break;
-						case 'UNPAIRED':
-						case 'UNLAUNCHED':
-						case 'UNPAIRED_IDLE':
-							return {
-								state: "DISCONNECTED",
-								status: "notLogged",
-								message: "Dispositivo desconectado"
-							};
-							break;
-						case 'DISCONNECTED':
-							return {
-								state: "DISCONNECTED",
-								status: "notLogged",
-								message: "Dispositivo desconectado"
-							};
-							break;
-						case 'SYNCING':
-							return {
-								state: "SYNCING",
-								status: "notLogged",
-								message: "Dispositivo sincronizando"
-							};
-							break;
-						case 'CLOSED':
-							return {
-								state: "CLOSED",
-								status: "notLogged",
-								message: "Navegador interno fechado"
-							};
-							break;
-						default:
-							//
-							return {
-								state: 'NOTFOUND',
-								status: 'notLogged',
-								message: 'Sistema Off-line'
-							};
-						//
-					}
-				}
+					case 'isBanned':
+						return {
+							statusCode: 403,
+							state: "BANNED",
+							status: "isBanned",
+							message: "Usuario banido, entre em contato com suporte do whatsapp"
+						};
+					case 'isLogged':
+						return {
+							statusCode: 200,
+							state: "CONNECTED",
+							status: "isLogged",
+							message: "Sistema iniciado e disponivel para uso"
+						};
+					case 'notLogged':
+					case 'desconnectedMobile':
+					case 'deviceNotConnected':
+						return {
+							statusCode: 401,
+							state: "DISCONNECTED",
+							status: "notLogged",
+							message: "Dispositivo desconectado"
+						};
+					case 'browserClose':
+						return {
+							statusCode: 200,
+							state: "CLOSE",
+							status: "browserClose",
+							message: "Navegador fechado"
+						};
+					case 'qrReadSuccess':
+						return {
+							statusCode: 200,
+							state: "CONNECTED",
+							status: "qrReadSuccess",
+							message: "Verificação do QR-Code feita com sucesso"
+						};
+					case 'qrReadFail':
+						return {
+							statusCode: 400,
+							state: "DISCONNECTED",
+							status: "qrReadFail",
+							message: "Falha na verificação do QR-Code"
+						};
+					case 'qrRead':
+						return {
+							statusCode: 202,
+							state: "QRCODE",
+							status: "qrRead",
+							message: "Sistema aguardando leitura do QR-Code"
+						};
+					case 'autocloseCalled':
+						return {
+							statusCode: 200,
+							state: "CLOSE",
+							status: "autocloseCalled",
+							message: "Navegador fechado automaticamente"
+						};
+					case 'deleteToken':
+						return {
+							statusCode: 200,
+							state: "DISCONNECTED",
+							status: "deleteToken",
+							message: "Token de sessão removido"
+						};
+					case 'chatsAvailable':
+						return {
+							statusCode: 200,
+							state: "CONNECTED",
+							status: "chatsAvailable",
+							message: "Sistema iniciado e disponivel para uso"
+						};
+					case 'serverWssNotConnected':
+						return {
+							statusCode: 404,
+							state: "DISCONNECTED",
+							status: "serverWssNotConnected",
+							message: "O endereço wss não foi encontrado"
+						};
+					case 'noOpenBrowser':
+						return {
+							statusCode: 400,
+							state: "DISCONNECTED",
+							status: "noOpenBrowser",
+							message: "Não foi encontrado o navegador ou falta algum comando no args"
+						};
+					case 'serverClose':
+						return {
+							statusCode: 401,
+							state: "DISCONNECTED",
+							status: "serverClose",
+							message: "O cliente se desconectou do wss"
+						};
+					default:
+						return {
+							statusCode: 404,
+							state: 'NOTFOUND',
+							status: 'notFound',
+							message: 'Sistema Off-line'
+						};
+				}				
 			} else {
 				return {
+					statusCode: 404,
 					state: 'NOTFOUND',
-					status: 'notLogged',
+					status: 'notFound',
 					message: 'Sistema Off-line'
 				};
 			}

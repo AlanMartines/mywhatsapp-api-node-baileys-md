@@ -31,21 +31,6 @@ function removeWithspace(string) {
 //
 // ------------------------------------------------------------------------------------------------//
 //
-const getCircularReplacer = () => {
-  const seen = new WeakSet();
-  return (key, value) => {
-    if (typeof value === 'object' && value !== null) {
-      if (seen.has(value)) {
-        return;
-      }
-      seen.add(value);
-    }
-    return value;
-  };
-};
-//
-// ------------------------------------------------------------------------------------------------//
-//
 router.post("/Start", verifyToken.verify, async (req, res, next) => {
 	//
 	const resSessionName = removeWithspace(req?.body?.SessionName);
@@ -67,23 +52,17 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 			//
 			let existSession = await Sessions?.checkSession(resSessionName);
 			if (existSession) {
-				let data = await Sessions?.getSession(resSessionName);
-				switch (data?.status) {
+				let Status = await instance?.Status(resSessionName);
+				switch (Status?.status) {
 					case 'inChat':
 					case 'qrReadSuccess':
 					case 'isLogged':
 					case 'chatsAvailable':
 					case 'qrRead':
 						//
-						var resultRes = {
-							"error": false,
-							"status": 200,
-							"message": 'Sistema iniciado'
-						};
-						//
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(resultRes.status).json({
-							"Status": resultRes
+						return res.status(Status.statusCode).json({
+							"Status": Status
 						});
 						//
 						break;
@@ -96,28 +75,24 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 					case 'autocloseCalled':
 					case 'serverClose':
 					case 'deleteToken':
-					case 'CLOSED':
-					case 'DISCONNECTED':
-					case 'NOTFOUND':
+					case 'serverWssNotConnected':
+					case 'notFound':
 						//
 						engine?.Start(req, res, next);
 						//
-						var resultRes = {
-							"error": false,
-							"status": 200,
-							"message": 'Sistema iniciando, por favor aguarde'
-						};
+						let Status = await instance?.Status(resSessionName);
 						//
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(resultRes.status).json({
-							"Status": resultRes
+						return res.status(Status.statusCode).json({
+							"Status": Status
 						});
 						//
 						break;
 					default:
 						var resultRes = {
-							"error": true,
-							"status": 400,
+							statusCode: 404,
+							"state": 'NOTFOUND',
+							"status": 'notFound',
 							"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 						};
 						//
@@ -703,7 +678,7 @@ router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res
 // ------------------------------------------------------------------------------------------------//
 //
 // rota url erro
-router.all('*', (req, res) => {
+router.all('*', (req, res, next) => {
 	//
 	var resultRes = {
 		"error": true,

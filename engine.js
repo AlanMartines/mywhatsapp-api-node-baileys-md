@@ -335,8 +335,8 @@ module.exports = class Instace {
 			AuthorizationToken: theTokenAuth,
 			SessionName: SessionName,
 			state: 'STARTING',
-			status: "notLogged",
-			message: 'Iniciando WhatsApp. Aguarde...',
+			status: "isStarting",
+			message: 'Sistema iniciando. Aguarde...',
 		});
 		//
 		if (data) {
@@ -356,7 +356,7 @@ module.exports = class Instace {
 				wh_connect: req?.body?.wh_connect ? req?.body?.wh_connect : null,
 				wh_incomingcall: req?.body?.wh_incomingcall ? req?.body?.wh_incomingcall : null,
 				state: 'STARTING',
-				status: "notLogged"
+				status: "isStarting",
 			};
 
 			await Sessions?.checkAddUser(SessionName);
@@ -633,7 +633,7 @@ module.exports = class Instace {
 				client.ev.process(
 					async (events) => {
 						// something about the connection changed
-						// maybe it closed, or we received all offline message or connection opened
+						// maybe it CLOSE, or we received all offline message or connection opened
 						if (events['connection.update']) {
 							const conn = events['connection.update'];
 							//
@@ -724,8 +724,8 @@ module.exports = class Instace {
 									//
 									let addJson = {
 										client: false,
-										state: "CLOSED",
-										status: "notLogged",
+										state: "CLOSE",
+										status: "browserClose",
 										message: "Navegador fechado automaticamente"
 									};
 									//
@@ -760,7 +760,7 @@ module.exports = class Instace {
 								//
 								let addJson = {
 									state: "CONNECTING",
-									status: "notLogged",
+									status: "isConnecting",
 									message: "Dispositivo conectando"
 								};
 								//
@@ -851,7 +851,7 @@ module.exports = class Instace {
 									await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `session-*.json`);
 								}
 								//
-							} else if (connection === 'close') {
+							} else if (connection === 'CLOSE') {
 								//
 								let addJson = {};
 								//
@@ -862,7 +862,7 @@ module.exports = class Instace {
 									timedOut: 408,
 									connectionLost: 408,
 									multideviceMismatch: 411,
-									connectionClosed: 428,
+									connectionCLOSE: 428,
 									connectionReplaced: 440,
 									badSession: 500,
 									restartRequired: 515,
@@ -900,9 +900,9 @@ module.exports = class Instace {
 										//
 										addJson = {
 											client: false,
-											state: "CLOSED",
-											status: "notLogged",
-											message: "Sistema desconectado"
+											state: "CLOSE",
+											status: "browserClose",
+											message: "Navegador fechado"
 										};
 										//
 										await Sessions?.addInfoSession(SessionName, addJson);
@@ -1063,16 +1063,16 @@ module.exports = class Instace {
 										logger?.info('- Connection multideviceMismatch'.blue);
 										//
 										break;
-									case resDisconnectReason.connectionClosed:
+									case resDisconnectReason.connectionCLOSE:
 										//
 										logger?.info(`- SessionName: ${SessionName}`);
-										logger?.info(`- Connection connectionClosed`.red);
+										logger?.info(`- Connection connectionCLOSE`.red);
 										//
 										addJson = {
 											client: false,
-											message: "Sistema desconectado",
-											state: "CLOSED",
-											status: "notLogged"
+											message: "Navegador fechado",
+											state: "CLOSE",
+											status: "browserClose"
 										};
 										//
 										await Sessions?.addInfoSession(SessionName, addJson);
