@@ -283,12 +283,12 @@ module.exports = class Instance {
 			// remove all events
 			await session.client.ev.removeAllListeners();
 			//
-			logger?.info("- Sessão fechada");
+			logger?.info("- Navegador fechado");
 			//
 			let addJson = {
 				state: "CLOSE",
 				status: "browserClose",
-				message: "Sessão fechada",
+				message: "Navegador fechado",
 			};
 			//
 			await Sessions?.addInfoSession(SessionName, addJson);
@@ -304,8 +304,7 @@ module.exports = class Instance {
 			});
 			//
 			let result = {
-				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"message": "Sessão fechada com sucesso"
 			};
 			//
@@ -316,8 +315,7 @@ module.exports = class Instance {
 			logger?.error(`- Erro ao fechar navegador ${error}`);
 			//
 			let result = {
-				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao fechar navegador"
 			};
 			//
@@ -357,8 +355,7 @@ module.exports = class Instance {
 			//await Sessions?.deleteSession(SessionName);
 			//
 			let result = {
-				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"message": "Sessão desconetada com sucesso"
 			};
 			//

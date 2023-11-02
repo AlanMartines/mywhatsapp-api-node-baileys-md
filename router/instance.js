@@ -39,8 +39,7 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 	try {
 		if (!resSessionName) {
 			var resultRes = {
-				"error": true,
-				"status": 400,
+				"statusCode": 400,
 				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 			};
 			//
@@ -95,7 +94,7 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(resultRes.status).json({
+					return res.status(resultRes.statusCode).json({
 						"Status": resultRes
 					});
 				//
@@ -113,7 +112,7 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -192,13 +191,12 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 	try {
 		if (!resSessionName) {
 			var resultRes = {
-				"error": true,
-				"status": 400,
+				"statusCode": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			return res.status(resultRes.status).json({
+			return res.status(resultRes.statusCode).json({
 				"Status": resultRes
 			});
 			//
@@ -217,7 +215,7 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 						let resultClose = await instance?.closeSession(resSessionName);
 						//
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(resultClose.status).json({
+						return res.status(resultClose.statusCode).json({
 							"Status": resultClose
 						});
 						//
@@ -225,13 +223,12 @@ router.post("/Close", upload.none(''), verifyToken.verify, async (req, res, next
 					default:
 						//
 						var resultRes = {
-							"error": true,
-							"status": 400,
+							"statusCode": 400,
 							"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 						};
 						//
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(resultRes.status).json({
+						return res.status(resultRes.statusCode).json({
 							"Status": resultRes
 						});
 					//
