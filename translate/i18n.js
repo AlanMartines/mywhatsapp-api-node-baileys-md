@@ -4,7 +4,7 @@ const config = require('../config.global');
 i18n.configure({
     locales: ['pt-br', 'en'],
     directory: __dirname + '/languages',
-    defaultLocale: 'en',
+    defaultLocale: 'pt-br',
     objectNotation: true,
 });
 //
