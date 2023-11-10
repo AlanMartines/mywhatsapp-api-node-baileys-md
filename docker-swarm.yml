@@ -39,16 +39,16 @@ services:
     ports:
       - ${PORT:-9001}:9001
     deploy:
-      replicas: 4
+      replicas: 
       restart_policy:
         condition: on-failure
       resources:
         limits:
           cpus: "0.50"
-          memory: 2048M
+          memory: 1204M
         reservations:
           cpus: "0.25"
-          memory: 1024M
+          memory: 512M
     networks:
       - apiwhatsapp_overlay
 
