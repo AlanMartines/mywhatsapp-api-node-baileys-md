@@ -30,9 +30,6 @@ version: "3.9"
 services:
   backend:
     image: alanmartines/mywhatsapp-api-node-baileys-md:${TAG}
-    build:
-      context: .
-      dockerfile: Dockerfile.backend
     env_file: .env
     volumes:
       - .:/home/ApiBaileysMd:rw
