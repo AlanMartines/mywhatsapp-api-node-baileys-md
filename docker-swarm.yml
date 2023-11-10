@@ -29,7 +29,7 @@ version: "3.9"
 
 services:
   backend:
-    image: alanmartines/mywhatsapp-api-node-baileys-md:${TAG}
+    image: alanmartines/mywhatsapp-api-node-baileys-md:1.0.0
     env_file: .env
     volumes:
       - .:/home/ApiBaileysMd:rw
