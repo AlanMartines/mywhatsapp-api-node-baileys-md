@@ -39,7 +39,7 @@ services:
     ports:
       - ${PORT:-9001}:9001
     deploy:
-      replicas: 
+      replicas: 2
       restart_policy:
         condition: on-failure
       resources:
