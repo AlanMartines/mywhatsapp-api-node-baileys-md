@@ -23,13 +23,13 @@
 # docker network create --driver=overlay --attachable apiwhatsapp_overlay
 
 # Criar um contêiner
-# docker stack deploy -c docker-compose.yml apiwhatsapp_stack
+# docker stack deploy -c docker-swarm.yml apiwhatsapp_stack
 
 version: "3.9"
 
 services:
   backend:
-    image: alanmartines/mywhatsapp-api-node-baileys-md:1.0.0
+    image: alanmartines/mywhatsapp-api-node-baileys-md:${TAG}
     build:
       context: .
       dockerfile: Dockerfile.backend
