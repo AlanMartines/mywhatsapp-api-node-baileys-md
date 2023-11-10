@@ -1,0 +1,59 @@
+
+## Acessar bash do container
+# docker exec -it <container id> /bin/sh
+# docker exec -it <container id> /bin/bash
+
+## Logs do container
+# docker logs -f --tail 1000 ApiBaileysMd
+
+## Removendo todos os containers e imagens de uma só vez
+# docker rm $(docker ps -qa)
+
+## Removendo todas as imagens de uma só vez
+# docker rmi $(docker images -aq)
+
+## Removendo imagens
+# docker rmi <REPOSITORY>
+# docker rmi <IMAGE ID>
+
+## Como obter o endereço IP de um contêiner Docker do host
+# https://stack.desenvolvedor.expert/appendix/docker/rede.html
+# docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <IMAGE ID>
+
+## Crie a rede overlay
+# docker network create --driver=overlay --attachable apiwhatsapp_overlay
+
+# Criar um contêiner
+# docker stack deploy -c docker-compose.yml apiwhatsapp_stack
+
+version: "3.9"
+
+services:
+  backend:
+    image: alanmartines/mywhatsapp-api-node-baileys-md:${TAG}
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    env_file: .env
+    volumes:
+      - .:/home/ApiBaileysMd:rw
+      - ${PATCH_TOKENS:-/usr/local/tokensHomologacao}:/usr/local/tokens:rw
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - ${PORT:-9001}:9001
+    deploy:
+      replicas: 4
+      restart_policy:
+        condition: on-failure
+    networks:
+      - apiwhatsapp_overlay
+
+networks:
+  apiwhatsapp_overlay:
+    driver: overlay
+
+#    logging:
+#      driver: gelf
+#      options:
+#        gelf-address: "udp://${GRAYLOGSERVER:-127.0.0.1}:${GRAYLOGPORT:-12201}"

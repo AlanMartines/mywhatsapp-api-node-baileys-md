@@ -1,7 +1,7 @@
 {
   "material-icon-theme.folders.theme": "specific", // Tipo dos iconens dos arquivos
   "material-icon-theme.folders.color": "#ef5350",
-  "workbench.editor.showTabs": true,
+  "workbench.editor.showTabs": "multiple",
   "workbench.editor.enablePreview": false,
   "editor.formatOnSave": false, // Formata o código sempre que salvamos
   "workbench.startupEditor": "newUntitledFile", // Abre sempre um arquivo em branco
