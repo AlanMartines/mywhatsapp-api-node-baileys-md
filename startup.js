@@ -6,8 +6,10 @@ const request = util.promisify(require('request'));
 const { logger } = require('./utils/logger');
 const config = require('./config.global');
 
-const tokenPatch = parseInt(config.INDOCKER) ? path.join(config.PATCH_TOKENS, os.hostname()) : config.PATCH_TOKENS;
-
+//const tokenPatch = parseInt(config.INDOCKER) ? path.join(config.PATCH_TOKENS, os.hostname()) : config.PATCH_TOKENS;
+//
+const tokenPatch = `${config.PATCH_TOKENS}`;
+//
 if (!fs.existsSync(tokenPatch)) {
 	try {
 		fs.mkdirSync(tokenPatch, { recursive: true });
