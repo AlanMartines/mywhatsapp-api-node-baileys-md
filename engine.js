@@ -809,7 +809,8 @@ module.exports = class Instace {
 								//
 								logger?.info("- Sessão criada com sucesso");
 								logger?.info(`- Telefone conectado: ${phone?.split("@")[0]}`);
-								logger?.info(`- Profile Picture Url: ${ppUrl}`);
+								logger?.info(`- Profile Picture: ${ppUrl}`);
+								logger?.info(`- Patch token: ${tokenPatch}`);
 								//
 								addJson = {
 									client: client,
