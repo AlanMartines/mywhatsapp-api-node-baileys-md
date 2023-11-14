@@ -70,6 +70,7 @@ const {
 	PHONENUMBER_MCC
 } = require('@whiskeysockets/baileys');
 //
+/*
 const tokenPatch = parseInt(config.INDOCKER) ? path.join(config.PATCH_TOKENS, os.hostname()) : config.PATCH_TOKENS;
 //
 // ------------------------------------------------------------------------------------------------------- //
@@ -77,6 +78,7 @@ const tokenPatch = parseInt(config.INDOCKER) ? path.join(config.PATCH_TOKENS, os
 if (!fs.existsSync(tokenPatch)) { // verifica se o diretório já existe
 	fs.mkdirSync(tokenPatch, { recursive: true }); // cria o diretório recursivamente
 }
+*/
 //
 // ------------------------------------------------------------------------------------------------//
 //
@@ -372,7 +374,16 @@ module.exports = class Instace {
 		let SessionName = removeWithspace(req?.body?.SessionName);
 		let setOnline = req?.body?.setOnline;
 		let dataSessions = await Sessions?.getSession(SessionName);
-		logger?.info(`- SessionName: ${SessionName}`);
+		//
+		const tokenPatch = `${config.PATCH_TOKENS}/${SessionName}`;
+		//
+		if (!fs.existsSync(tokenPatch)) { // verifica se o diretório já existe
+			fs.mkdirSync(tokenPatch, { recursive: true }); // cria o diretório recursivamente
+		}
+		//
+		logger?.info("- Iniciando sessão");
+		logger?.info(`- Patch token: ${tokenPatch}`);
+		//
 		let waqueue = new pQueue({ concurrency: parseInt(config.CONCURRENCY) });
 		await Sessions?.addInfoSession(SessionName, {
 			waqueue: waqueue
