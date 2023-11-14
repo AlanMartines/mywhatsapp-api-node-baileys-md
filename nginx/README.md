@@ -8,9 +8,9 @@ sudo vim /etc/nginx/conf.d/bailyes.conf
 ```
 
 ```
-# Arquivo de configuração nginx
 #
 upstream serverbailyes {
+	ip_hash;
 	server 127.0.0.1:9001 max_fails=3 fail_timeout=30s;
 }
 #
@@ -30,21 +30,20 @@ server {
 	ssl_certificate /etc/letsencrypt/live/bailyes.seudominio.com.br/fullchain.pem;
 	ssl_certificate_key /etc/letsencrypt/live/bailyes.seudominio.com.br/privkey.pem;
 	#
-	ssl_protocols TLSv1.3;
+	ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
 	ssl_prefer_server_ciphers on;
-	ssl_ciphers EECDH+AESGCM:EDH+AESGCM;
+	ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
 	ssl_ecdh_curve secp384r1;
 	ssl_session_timeout 10m;
 	ssl_session_cache shared:SSL:10m;
 	ssl_session_tickets off;
-	ssl_stapling on;
-	ssl_stapling_verify on;
+	ssl_stapling off;
+	ssl_stapling_verify off;
 	resolver 8.8.8.8 8.8.4.4 valid=300s;
 	resolver_timeout 5s;
 	# Disable strict transport security for now. You can uncomment the following
 	# line if you understand the implications.
 	#add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
-	add_header X-Frame-Options DENY;
 	add_header X-Content-Type-Options nosniff;
 	add_header X-XSS-Protection "1; mode=block";
 	#
@@ -79,7 +78,7 @@ server {
 #
 ```
 
-#### Protegendo a rota /start
+#### Protegendo a rota /Start
 
 ```sh
 # Habilitando a autenticação
@@ -93,9 +92,9 @@ sudo vim /etc/nginx/conf.d/authbailyes.conf
 ```
 
 ```
-# Arquivo de configuração nginx
 #
 upstream serverbailyes {
+	ip_hash;
 	server 127.0.0.1:9001 max_fails=3 fail_timeout=30s;
 }
 #
@@ -115,21 +114,20 @@ server {
 	ssl_certificate /etc/letsencrypt/live/bailyes.seudominio.com.br/fullchain.pem;
 	ssl_certificate_key /etc/letsencrypt/live/bailyes.seudominio.com.br/privkey.pem;
 	#
-	ssl_protocols TLSv1.3;
+	ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
 	ssl_prefer_server_ciphers on;
-	ssl_ciphers EECDH+AESGCM:EDH+AESGCM;
+	ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
 	ssl_ecdh_curve secp384r1;
 	ssl_session_timeout 10m;
 	ssl_session_cache shared:SSL:10m;
 	ssl_session_tickets off;
-	ssl_stapling on;
-	ssl_stapling_verify on;
+	ssl_stapling off;
+	ssl_stapling_verify off;
 	resolver 8.8.8.8 8.8.4.4 valid=300s;
 	resolver_timeout 5s;
 	# Disable strict transport security for now. You can uncomment the following
 	# line if you understand the implications.
 	#add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
-	add_header X-Frame-Options DENY;
 	add_header X-Content-Type-Options nosniff;
 	add_header X-XSS-Protection "1; mode=block";
 	#
@@ -149,7 +147,7 @@ server {
 		proxy_redirect off;
 	}
 	#
-	location /start {
+	location /Start {
 		auth_basic "Restricted Content";
 		auth_basic_user_file /etc/nginx/.htpasswd;
 		proxy_pass http://serverbailyes;
