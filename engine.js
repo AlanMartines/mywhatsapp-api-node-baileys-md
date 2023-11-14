@@ -282,6 +282,12 @@ async function deletaToken(filePath, filename) {
 //
 async function resContacts(SessionName, contacts) {
 	//
+	const tokenPatch = `${config.PATCH_TOKENS}/${SessionName}`;
+	//
+	if (!fs.existsSync(tokenPatch)) { // verifica se o diretório já existe
+		fs.mkdirSync(tokenPatch, { recursive: true }); // cria o diretório recursivamente
+	}
+	//
 	try {
 		fs.writeJson(`${tokenPatch}/${SessionName}.contacts.json`, `${JSON.stringify(contacts, null, 2)}`, (err) => {
 			if (err) {
@@ -303,6 +309,12 @@ module.exports = class Instace {
 		//
 		const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
 		const SessionName = removeWithspace(req?.body?.SessionName);
+		//
+		const tokenPatch = `${config.PATCH_TOKENS}/${SessionName}`;
+		//
+		if (!fs.existsSync(tokenPatch)) { // verifica se o diretório já existe
+			fs.mkdirSync(tokenPatch, { recursive: true }); // cria o diretório recursivamente
+		}
 		//
 		try {
 			//
