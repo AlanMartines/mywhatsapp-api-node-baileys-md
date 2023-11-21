@@ -70,7 +70,6 @@ const {
 	PHONENUMBER_MCC
 } = require('@whiskeysockets/baileys');
 //
-/*
 const tokenPatch = parseInt(config.INDOCKER) ? path.join(config.PATCH_TOKENS, os.hostname()) : config.PATCH_TOKENS;
 //
 // ------------------------------------------------------------------------------------------------------- //
@@ -78,7 +77,6 @@ const tokenPatch = parseInt(config.INDOCKER) ? path.join(config.PATCH_TOKENS, os
 if (!fs.existsSync(tokenPatch)) { // verifica se o diretório já existe
 	fs.mkdirSync(tokenPatch, { recursive: true }); // cria o diretório recursivamente
 }
-*/
 //
 // ------------------------------------------------------------------------------------------------//
 //
@@ -282,12 +280,6 @@ async function deletaToken(filePath, filename) {
 //
 async function resContacts(SessionName, contacts) {
 	//
-	const tokenPatch = `${config.PATCH_TOKENS}/${SessionName}`;
-	//
-	if (!fs.existsSync(tokenPatch)) { // verifica se o diretório já existe
-		fs.mkdirSync(tokenPatch, { recursive: true }); // cria o diretório recursivamente
-	}
-	//
 	try {
 		fs.writeJson(`${tokenPatch}/${SessionName}.contacts.json`, `${JSON.stringify(contacts, null, 2)}`, (err) => {
 			if (err) {
@@ -309,12 +301,6 @@ module.exports = class Instace {
 		//
 		const theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
 		const SessionName = removeWithspace(req?.body?.SessionName);
-		//
-		const tokenPatch = `${config.PATCH_TOKENS}/${SessionName}`;
-		//
-		if (!fs.existsSync(tokenPatch)) { // verifica se o diretório já existe
-			fs.mkdirSync(tokenPatch, { recursive: true }); // cria o diretório recursivamente
-		}
 		//
 		try {
 			//
@@ -386,12 +372,6 @@ module.exports = class Instace {
 		let SessionName = removeWithspace(req?.body?.SessionName);
 		let setOnline = req?.body?.setOnline;
 		let dataSessions = await Sessions?.getSession(SessionName);
-		//
-		const tokenPatch = `${config.PATCH_TOKENS}/${SessionName}`;
-		//
-		if (!fs.existsSync(tokenPatch)) { // verifica se o diretório já existe
-			fs.mkdirSync(tokenPatch, { recursive: true }); // cria o diretório recursivamente
-		}
 		//
 		logger?.info("- Iniciando sessão");
 		logger?.info(`- Patch token: ${tokenPatch}`);

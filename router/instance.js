@@ -1,9 +1,7 @@
 //
 // Configuração dos módulos
-const osUtils = require('os-utils');
 const os = require('os');
 const i18n = require('../translate/i18n');
-const fs = require('fs-extra');
 const express = require("express");
 const router = express.Router();
 const multer = require('multer');
@@ -13,7 +11,6 @@ const instance = require("../functions/instance");
 const engine = require("../engine");
 const Sessions = require('../controllers/sessions');
 const { logger } = require("../utils/logger");
-const config = require('../config.global');
 //
 // ------------------------------------------------------------------------------------------------//
 //
