@@ -197,6 +197,7 @@ INDOCKER=0
 		//
 		// ------------------------------------------------------------------------------------------------//
 		//
+		/*
 		// Verifique se o arquivo swagger.yaml já existe e remova-o antes de criar um novo
 		fs.pathExists('./swagger.yaml').then(async (exists) => {
 			if (exists) {
@@ -213,6 +214,7 @@ INDOCKER=0
 		}).catch(async (err) => {
 			logger.error(`- Erro ao criar o arquivo swagger.yaml: ${err.message}`);
 		});
+		*/
 		//
 		// ------------------------------------------------------------------------------------------------//
 		//
