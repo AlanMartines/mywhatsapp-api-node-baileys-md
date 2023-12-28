@@ -467,7 +467,7 @@ module.exports = class Instace {
 					/** Deve o QR ser impresso no terminal */
 					printQRInTerminal: false,
 					//
-					mobile: useMobile,
+					//mobile: useMobile,
 					/** Deve eventos serem emitidos para ações realizadas por esta conexão de soquete */
 					emitOwnEvents: true,
 					/** Fornece um cache para armazenar mídia, para que não precise ser reenviada */
@@ -527,6 +527,41 @@ module.exports = class Instace {
 				//
 				// ------------------------------------------------------------------------------------------------------- //
 				//
+				const SocketConfigNew = {
+					logger: loggerPino,
+					printQRInTerminal: false,
+					browser: [`${config.DEVICE_NAME}`, 'Chrome', release()],
+					auth: {
+						creds: state.creds,
+						keys: makeCacheableSignalKeyStore(state.keys, loggerPino),
+					},
+					version,
+					shouldIgnoreJid: jid => isJidBroadcast(jid),
+					patchMessageBeforeSending: (message) => {
+						const requiresPatch = !!(
+							message.buttonsMessage
+							|| message.templateMessage
+							|| message.listMessage
+						);
+						if (requiresPatch) {
+							message = {
+								viewOnceMessageV2: {
+									message: {
+										messageContextInfo: {
+											deviceListMetadataVersion: 2,
+											deviceListMetadata: {},
+										},
+										...message,
+									},
+								},
+							};
+						}
+						return message;
+					}
+				};
+				//
+				// ------------------------------------------------------------------------------------------------------- //
+				//
 				const client = makeWASocket(
 					//
 					SocketConfig
@@ -535,6 +570,7 @@ module.exports = class Instace {
 				//
 				store?.bind(client.ev);
 				//
+				/*
 				// Código de emparelhamento para clientes da Web
 				if (usePairingCode && !sock.authState.creds.registered) {
 					if (useMobile) {
@@ -621,6 +657,7 @@ module.exports = class Instace {
 					;
 					askForOTP();
 				}
+				*/
 				//
 				let addJson = {
 					store: store
