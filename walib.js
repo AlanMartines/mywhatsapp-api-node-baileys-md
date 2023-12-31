@@ -129,27 +129,19 @@ async function connectoWhatsapps() {
 			case "close":
 				switch (new Boom(lastDisconnect?.error)?.output?.statusCode) {
 					case DisconnectReason.badSession:
-						console.log(
-							`Bad Session File, hapus session dan scan scan lagi.`
-						);
+						console.log(`Bad Session File, hapus session dan scan scan lagi.`);
 						process.exit();
 						break;
 					case DisconnectReason.connectionClosed:
-						console.log(
-							"Connection closed, menyambungkan kembali..."
-						);
+						console.log(`Connection closed, menyambungkan kembali...`);
 						connectoWhatsapps();
 						break;
 					case DisconnectReason.connectionLost:
-						console.log(
-							"Connection Lost from Server, menyambungkan kembali..."
-						);
+						console.log(`Connection Lost from Server, menyambungkan kembali...`);
 						connectoWhatsapps();
 						break;
 					case DisconnectReason.connectionReplaced:
-						console.log(
-							"Connection Replaced, sesi baru lainnya dibuka dan terhubung kembali..."
-						);
+						console.log(`Connection Replaced, sesi baru lainnya dibuka dan terhubung kembali...`);
 						connectoWhatsapps();
 						break;
 					case DisconnectReason.loggedOut:
@@ -157,17 +149,15 @@ async function connectoWhatsapps() {
 						process.exit();
 						break;
 					case DisconnectReason.restartRequired:
-						console.log("Restart Required, memulai ulang...");
+						console.log(`Restart Required, memulai ulang...`);
 						connectoWhatsapps();
 						break;
 					case DisconnectReason.timedOut:
-						console.log(
-							"Connection TimedOut, menyambungkan kembali..."
-						);
+						console.log(`Connection TimedOut, menyambungkan kembali...`);
 						connectoWhatsapps();
 						break;
 					case DisconnectReason.Multidevicemismatch:
-						console.log("Multi device mismatch, scan ulang lagi.");
+						console.log(`Multi device mismatch, scan ulang lagi...`);
 						process.exit();
 						break;
 					default:
@@ -175,9 +165,7 @@ async function connectoWhatsapps() {
 				}
 				break;
 			case "connecting":
-				console.log(
-					`using WA v${version.join(".")}, isLatest ${isLatest}`
-				);
+				console.log(`using WA v${version.join(".")}, isLatest ${isLatest}`);
 				break;
 			case "open":
 				console.log(" nama :", sock.user.name);
