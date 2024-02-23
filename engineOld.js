@@ -335,8 +335,8 @@ module.exports = class Instace {
 			AuthorizationToken: theTokenAuth,
 			SessionName: SessionName,
 			state: 'STARTING',
-			status: "notLogged",
-			message: 'Iniciando WhatsApp. Aguarde...',
+			status: "isStarting",
+			message: 'Sistema iniciando. Aguarde...',
 		});
 		//
 		if (data) {
@@ -356,7 +356,7 @@ module.exports = class Instace {
 				wh_connect: req?.body?.wh_connect ? req?.body?.wh_connect : null,
 				wh_incomingcall: req?.body?.wh_incomingcall ? req?.body?.wh_incomingcall : null,
 				state: 'STARTING',
-				status: "notLogged"
+				status: "isStarting",
 			};
 
 			await Sessions?.checkAddUser(SessionName);
@@ -372,7 +372,10 @@ module.exports = class Instace {
 		let SessionName = removeWithspace(req?.body?.SessionName);
 		let setOnline = req?.body?.setOnline;
 		let dataSessions = await Sessions?.getSession(SessionName);
-		logger?.info(`- SessionName: ${SessionName}`);
+		//
+		logger?.info("- Iniciando sessão");
+		logger?.info(`- Patch token: ${tokenPatch}`);
+		//
 		let waqueue = new pQueue({ concurrency: parseInt(config.CONCURRENCY) });
 		await Sessions?.addInfoSession(SessionName, {
 			waqueue: waqueue
@@ -464,7 +467,7 @@ module.exports = class Instace {
 					/** Deve o QR ser impresso no terminal */
 					printQRInTerminal: false,
 					//
-					mobile: useMobile,
+					//mobile: useMobile,
 					/** Deve eventos serem emitidos para ações realizadas por esta conexão de soquete */
 					emitOwnEvents: true,
 					/** Fornece um cache para armazenar mídia, para que não precise ser reenviada */
@@ -524,14 +527,50 @@ module.exports = class Instace {
 				//
 				// ------------------------------------------------------------------------------------------------------- //
 				//
+				const SocketConfigNew = {
+					logger: loggerPino,
+					printQRInTerminal: false,
+					browser: [`${config.DEVICE_NAME}`, 'Chrome', release()],
+					auth: {
+						creds: state.creds,
+						keys: makeCacheableSignalKeyStore(state.keys, loggerPino),
+					},
+					version,
+					shouldIgnoreJid: jid => isJidBroadcast(jid),
+					patchMessageBeforeSending: (message) => {
+						const requiresPatch = !!(
+							message.buttonsMessage
+							|| message.templateMessage
+							|| message.listMessage
+						);
+						if (requiresPatch) {
+							message = {
+								viewOnceMessageV2: {
+									message: {
+										messageContextInfo: {
+											deviceListMetadataVersion: 2,
+											deviceListMetadata: {},
+										},
+										...message,
+									},
+								},
+							};
+						}
+						return message;
+					}
+				};
+				//
+				// ------------------------------------------------------------------------------------------------------- //
+				//
 				const client = makeWASocket(
 					//
-					SocketConfig
+					SocketConfigNew
 					//
 				);
 				//
 				store?.bind(client.ev);
 				//
+				/*
 				// Código de emparelhamento para clientes da Web
 				if (usePairingCode && !sock.authState.creds.registered) {
 					if (useMobile) {
@@ -618,6 +657,7 @@ module.exports = class Instace {
 					;
 					askForOTP();
 				}
+				*/
 				//
 				let addJson = {
 					store: store
@@ -633,7 +673,7 @@ module.exports = class Instace {
 				client.ev.process(
 					async (events) => {
 						// something about the connection changed
-						// maybe it closed, or we received all offline message or connection opened
+						// maybe it CLOSE, or we received all offline message or connection opened
 						if (events['connection.update']) {
 							const conn = events['connection.update'];
 							//
@@ -724,8 +764,8 @@ module.exports = class Instace {
 									//
 									let addJson = {
 										client: false,
-										state: "CLOSED",
-										status: "notLogged",
+										state: "CLOSE",
+										status: "browserClose",
 										message: "Navegador fechado automaticamente"
 									};
 									//
@@ -760,7 +800,7 @@ module.exports = class Instace {
 								//
 								let addJson = {
 									state: "CONNECTING",
-									status: "notLogged",
+									status: "isConnecting",
 									message: "Dispositivo conectando"
 								};
 								//
@@ -809,7 +849,8 @@ module.exports = class Instace {
 								//
 								logger?.info("- Sessão criada com sucesso");
 								logger?.info(`- Telefone conectado: ${phone?.split("@")[0]}`);
-								logger?.info(`- Profile Picture Url: ${ppUrl}`);
+								logger?.info(`- Profile Picture: ${ppUrl}`);
+								logger?.info(`- Patch token: ${tokenPatch}`);
 								//
 								addJson = {
 									client: client,
@@ -851,7 +892,7 @@ module.exports = class Instace {
 									await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `session-*.json`);
 								}
 								//
-							} else if (connection === 'close') {
+							} else if (connection === 'CLOSE') {
 								//
 								let addJson = {};
 								//
@@ -862,7 +903,7 @@ module.exports = class Instace {
 									timedOut: 408,
 									connectionLost: 408,
 									multideviceMismatch: 411,
-									connectionClosed: 428,
+									connectionCLOSE: 428,
 									connectionReplaced: 440,
 									badSession: 500,
 									restartRequired: 515,
@@ -900,9 +941,9 @@ module.exports = class Instace {
 										//
 										addJson = {
 											client: false,
-											state: "CLOSED",
-											status: "notLogged",
-											message: "Sistema desconectado"
+											state: "CLOSE",
+											status: "browserClose",
+											message: "Navegador fechado"
 										};
 										//
 										await Sessions?.addInfoSession(SessionName, addJson);
@@ -1063,16 +1104,16 @@ module.exports = class Instace {
 										logger?.info('- Connection multideviceMismatch'.blue);
 										//
 										break;
-									case resDisconnectReason.connectionClosed:
+									case resDisconnectReason.connectionCLOSE:
 										//
 										logger?.info(`- SessionName: ${SessionName}`);
-										logger?.info(`- Connection connectionClosed`.red);
+										logger?.info(`- Connection connectionCLOSE`.red);
 										//
 										addJson = {
 											client: false,
-											message: "Sistema desconectado",
-											state: "CLOSED",
-											status: "notLogged"
+											message: "Navegador fechado",
+											state: "CLOSE",
+											status: "browserClose"
 										};
 										//
 										await Sessions?.addInfoSession(SessionName, addJson);
