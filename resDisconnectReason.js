@@ -1,50 +1,23 @@
-//
-/*
-const ConnectFailureReason = {
-    Generic: 400,
-    LoggedOut: 401,
-    TempBanned: 402,
-    MainDeviceGone: 403, // this is now called LOCKED in the WhatsApp Web code
-    UnknownLogout: 406, // this is now called BANNED in the WhatsApp Web code
-    ClientOutdated: 405,
-    BadUserAgent: 409,
-    CATExpired: 413,
-    CATInvalid: 414,
-    NotFound: 415,
-    InternalServerError: 500,
-    Experimental: 501,
-    ServiceUnavailable: 503
-};
-
-const connectFailureReasonMessage = {
-    [ConnectFailureReason.LoggedOut]: "logged out from another device",
-    [ConnectFailureReason.TempBanned]: "account temporarily banned",
-    [ConnectFailureReason.MainDeviceGone]: "primary device was logged out", // seems to happen for both bans and switching phones
-    [ConnectFailureReason.UnknownLogout]: "logged out for unknown reason",
-    [ConnectFailureReason.ClientOutdated]: "client is out of date",
-    [ConnectFailureReason.BadUserAgent]: "client user agent was rejected",
-    [ConnectFailureReason.CATExpired]: "messenger crypto auth token has expired",
-    [ConnectFailureReason.CATInvalid]: "messenger crypto auth token is invalid",
-};
-
-// Exportando os objetos para uso em outros módulos
-module.exports = {
-    ConnectFailureReason,
-    connectFailureReasonMessage
-};
-
-*/
 var addJson {};
 let resDisconnectReason = {
-	loggedOut: 401,
-	bannedTimetamp: 402,
-	bannedTemporary: 403,
+	genericOut: 400,
+	loggedOut: 401, // Logged out from another device
+	bannedTimetamp: 402, // The status code 402 has a banned timetamp, account temporarily banned
+	bannedTemporary: 403, // this is now called LOCKED in the WhatsApp Web code, primary device was logged out
+	clientOutdated: 405, // Client is out of date
+    	unknownLogout: 406, // This is now called BANNED in the WhatsApp Web code, logged out for unknown reason
 	timedOut: 408,
 	connectionLost: 408,
+	dadUserAgent: 409, // Client user agent was rejected
 	multideviceMismatch: 411,
+	CATExpired: 413, // Messenger crypto auth token has expired
+	CATInvalid: 414, // Messenger crypto auth token is invalid
+	notFound: 415,
 	connectionClosed: 428,
 	connectionReplaced: 440,
 	badSession: 500,
+    	experimental: 501,
+    	serviceUnavailable: 503,
 	restartRequired: 515,
 };
 // Banned status codes are 403 and 402 temporary
