@@ -1,4 +1,39 @@
 //
+/*
+const ConnectFailureReason = {
+    Generic: 400,
+    LoggedOut: 401,
+    TempBanned: 402,
+    MainDeviceGone: 403, // this is now called LOCKED in the WhatsApp Web code
+    UnknownLogout: 406, // this is now called BANNED in the WhatsApp Web code
+    ClientOutdated: 405,
+    BadUserAgent: 409,
+    CATExpired: 413,
+    CATInvalid: 414,
+    NotFound: 415,
+    InternalServerError: 500,
+    Experimental: 501,
+    ServiceUnavailable: 503
+};
+
+const connectFailureReasonMessage = {
+    [ConnectFailureReason.LoggedOut]: "logged out from another device",
+    [ConnectFailureReason.TempBanned]: "account temporarily banned",
+    [ConnectFailureReason.MainDeviceGone]: "primary device was logged out", // seems to happen for both bans and switching phones
+    [ConnectFailureReason.UnknownLogout]: "logged out for unknown reason",
+    [ConnectFailureReason.ClientOutdated]: "client is out of date",
+    [ConnectFailureReason.BadUserAgent]: "client user agent was rejected",
+    [ConnectFailureReason.CATExpired]: "messenger crypto auth token has expired",
+    [ConnectFailureReason.CATInvalid]: "messenger crypto auth token is invalid",
+};
+
+// Exportando os objetos para uso em outros módulos
+module.exports = {
+    ConnectFailureReason,
+    connectFailureReasonMessage
+};
+
+*/
 var addJson {};
 let resDisconnectReason = {
 	loggedOut: 401,
