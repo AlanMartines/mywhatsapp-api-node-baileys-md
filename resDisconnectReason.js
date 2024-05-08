@@ -3,7 +3,7 @@ let resDisconnectReason = {
 	genericOut: 400,
 	loggedOut: 401, // Logged out from another device
 	bannedTimetamp: 402, // The status code 402 has a banned timetamp, account temporarily banned
-	bannedTemporary: 403, // this is now called LOCKED in the WhatsApp Web code, primary device was logged out
+	bannedTemporary: 403, // This is now called LOCKED in the WhatsApp Web code, account banned, primary device was logged out
 	clientOutdated: 405, // Client is out of date
     	unknownLogout: 406, // This is now called BANNED in the WhatsApp Web code, logged out for unknown reason
 	timedOut: 408,
@@ -20,8 +20,7 @@ let resDisconnectReason = {
     	serviceUnavailable: 503,
 	restartRequired: 515,
 };
-// Banned status codes are 403 and 402 temporary
-// The status code 402 has a banned timetamp
+//
 const statusCode = lastDisconnect.error ? lastDisconnect.error?.output?.statusCode : 0;
 switch (statusCode) {
 	case resDisconnectReason.loggedOut:
