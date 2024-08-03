@@ -726,6 +726,10 @@ Envolva-se com as pessoas. Isso é ter propósito!
 
 </blockquote>
 
-## License
+# Contribuições
 
-[MIT](https://choosealicense.com/licenses/mit/)
+[Contribuições](CONTRIBUTING.md) são bem-vindas! Por favor, abra uma issue ou pull request.
+
+# Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
