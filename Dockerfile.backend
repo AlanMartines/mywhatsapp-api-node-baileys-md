@@ -1,4 +1,4 @@
-FROM node:18.18-slim
+FROM node:20.18-slim
 
 LABEL version="1.0.0" description="ApiBaileysMd" maintainer="Alan Martines<alancpmartines@hotmail.com>"
 

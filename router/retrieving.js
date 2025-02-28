@@ -37,7 +37,7 @@ router.post("/getStatus", upload.none(''), verifyToken.verify, async (req, res, 
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.phonefull) {
+	if (!resSessionName || !req?.body?.phonefull) {
 		var validate = {
 			"error": true,
 			"status": 400,
@@ -62,7 +62,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var checkNumberStatus = await retrieving?.checkNumberStatus(
 						resSessionName,
-						soNumeros(req.body.phonefull).trim()
+						soNumeros(req?.body?.phonefull).trim()
 					);
 					//
 					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
@@ -286,7 +286,7 @@ router.post("/getMessage", upload.none(''), verifyToken.verify, async (req, res,
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.phonefull || !req.body.limit || !req.body.cursor_id || !req.body.cursor_fromMe) {
+	if (!resSessionName || !req?.body?.phonefull || !req?.body?.limit || !req?.body?.cursor_id || !req?.body?.cursor_fromMe) {
 		var validate = {
 			"error": true,
 			"status": 400,
@@ -311,7 +311,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var checkNumberStatus = await retrieving?.checkNumberStatus(
 						resSessionName,
-						soNumeros(req.body.phonefull).trim()
+						soNumeros(req?.body?.phonefull).trim()
 					);
 					//
 					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
@@ -319,9 +319,9 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						var getAllMessage = await retrieving?.getMessage(
 							resSessionName,
 							checkNumberStatus.number,
-							req.body.limit,
-							req.body.cursor_id,
-							req.body.cursor_fromMe
+							req?.body?.limit,
+							req?.body?.cursor_id,
+							req?.body?.cursor_fromMe
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
@@ -422,7 +422,7 @@ router.post("/getProfilePicFromServer", upload.none(''), verifyToken.verify, asy
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.phonefull) {
+	if (!resSessionName || !req?.body?.phonefull) {
 		var resultRes = {
 			"error": true,
 			"status": 400,
@@ -447,7 +447,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var checkNumberStatus = await retrieving?.checkNumberStatus(
 						resSessionName,
-						soNumeros(req.body.phonefull).trim()
+						soNumeros(req?.body?.phonefull).trim()
 					);
 					//
 					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
@@ -497,7 +497,7 @@ router.post("/checkNumberStatus", upload.none(''), verifyToken.verify, async (re
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.phonefull) {
+	if (!resSessionName || !req?.body?.phonefull) {
 		var resultRes = {
 			"error": true,
 			"status": 400,
@@ -522,7 +522,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var checkNumberStatus = await retrieving?.checkNumberStatus(
 						resSessionName,
-						soNumeros(req.body.phonefull).trim()
+						soNumeros(req?.body?.phonefull).trim()
 					);
 					//
 					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
@@ -567,7 +567,7 @@ router.post("/checkGroupStatus", upload.none(''), verifyToken.verify, async (req
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.groupId) {
+	if (!resSessionName || !req?.body?.groupId) {
 		var resultRes = {
 			"error": true,
 			"status": 400,
@@ -592,7 +592,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var checkGroup = await retrieving?.checkGroupStatus(
 						resSessionName,
-						req.body.groupId.trim()
+						req?.body?.groupId.trim()
 					);
 					//
 					if (checkGroup.status === 200 && checkGroup.erro === false) {

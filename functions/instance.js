@@ -8,7 +8,6 @@ const rmfr = require('rmfr');
 const CircularJSON = require('circular-json');
 const Sessions = require("../controllers/sessions");
 const { logger } = require("../utils/logger");
-const { Tokens } = require('../models');
 const webhooks = require('../controllers/webhooks');
 const config = require('../config.global');
 const engine = require("../engine");
@@ -33,38 +32,6 @@ function removeWithspace(string) {
 }
 //
 // ------------------------------------------------------------------------------------------------//
-//
-async function updateStateDb(state, status, AuthorizationToken) {
-	//
-	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
-	logger?.info(`- Date: ${date_now}`);
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		logger?.info('- Atualizando status');
-		//
-		await Tokens.update({
-			state: state,
-			status: status,
-			lastactivity: date_now,
-		},
-			{
-				where: {
-					token: AuthorizationToken
-				},
-			}).then(async (entries) => {
-				logger?.info('- Status atualizado');
-			}).catch(async (err) => {
-				logger?.error('- Status não atualizado');
-				logger?.error(`- Error: ${err}`);
-			}).finally(async () => {
-				//Tokens.release();
-			});
-		//
-	}
-	//
-}
-//
-// ------------------------------------------------------------------------------------------------------- //
 //
 async function deletaPastaToken(filePath, filename) {
 	//

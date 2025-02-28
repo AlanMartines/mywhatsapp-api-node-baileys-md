@@ -405,7 +405,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 				case 'qrRead':
 					//
 					var session = await Sessions?.getSession(resSessionName);
-					if (req.body.View === true) {
+					if (req?.body?.View === true) {
 						var qrcode = session.qrcode;
 						if (qrcode) {
 							const imageBuffer = Buffer.from(qrcode.replace('data:image/png;base64,', ''), 'base64');
@@ -425,7 +425,7 @@ router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, nex
 							});
 							//
 						}
-					} else if (req.body.View === false) {
+					} else if (req?.body?.View === false) {
 						var resultRes = {
 							"statusCode": 200,
 							"state": session.state,

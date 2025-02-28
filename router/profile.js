@@ -11,21 +11,21 @@ const profile = require("../functions/profile");
 const Sessions = require('../controllers/sessions');
 const config = require('../config.global');
 //
-// ------------------------------------------------------------------------------------------------//
+// ------------------------------------------------------------------------------------------------ //
 //
 function removeWithspace(string) {
-	var string = string.replace(/\r?\n|\r|\s+/g, ""); /* replace all newlines and with a space */
+	var string = string.replace(/\r?\n|\r|\s+/g, ''); /* Replace all newlines and with a space */
 	return string;
 }
 //
-// ------------------------------------------------------------------------------------------------//
+// ------------------------------------------------------------------------------------------------ //
 //
 function soNumeros(string) {
 	var numbers = string.replace(/[^0-9]/g, '');
 	return numbers;
 }
 //
-// ------------------------------------------------------------------------------------------------//
+// ------------------------------------------------------------------------------------------------ //
 //
 /*
 ╔═╗┬─┐┌─┐┌─┐┬┬  ┌─┐  ╔═╗┬ ┬┌┐┌┌─┐┌┬┐┬┌─┐┌┐┌┌─┐           
@@ -35,9 +35,9 @@ function soNumeros(string) {
 // Recuperar status de contato
 router.post("/getPerfilStatus", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-const resSessionName = removeWithspace(req?.body?.SessionName);
+	const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.phonefull) {
+	if (!resSessionName || !req?.body?.phonefull) {
 		var resultRes = {
 			"error": true,
 			"status": 400,
@@ -63,7 +63,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var checkNumberStatus = await retrieving?.checkNumberStatus(
 						resSessionName,
-						soNumeros(req.body.phonefull).trim()
+						soNumeros(req?.body?.phonefull).trim()
 					);
 					//
 					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
@@ -112,9 +112,9 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 // Set client status
 router.post("/setProfileStatus", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-const resSessionName = removeWithspace(req?.body?.SessionName);
+	const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.ProfileStatus) {
+	if (!resSessionName || !req?.body?.ProfileStatus) {
 		var validate = {
 			"error": true,
 			"status": 400,
@@ -139,7 +139,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var setProfileStatus = await profile?.setProfileStatus(
 						resSessionName,
-						req.body.ProfileStatus
+						req?.body?.ProfileStatus
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
@@ -171,9 +171,9 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 // Set client profile name
 router.post("/setProfileName", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	//
-const resSessionName = removeWithspace(req?.body?.SessionName);
+	const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.ProfileName) {
+	if (!resSessionName || !req?.body?.ProfileName) {
 		var validate = {
 			result: "info",
 			state: 'FAILURE',
@@ -199,7 +199,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var setProfileName = await profile?.setProfileName(
 						resSessionName,
-						req.body.ProfileName
+						req?.body?.ProfileName
 					);
 					res.setHeader('Content-Type', 'application/json');
 					return res.status(200).json({

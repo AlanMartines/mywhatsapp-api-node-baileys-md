@@ -4,7 +4,6 @@ const { downloadMediaMessage, getAggregateVotesInPollMessage, proto, DisconnectR
 const webhooks = require('./webhooks');
 const Sessions = require('./sessions');
 const { logger } = require("../utils/logger");
-const { Statistics } = require('../models');
 const config = require('../config.global');
 const moment = require('moment');
 const digestSync = require('crypto-digest-sync');
@@ -37,36 +36,6 @@ function convertHMS(value) {
 	if (minutes < 10) { minutes = "0" + minutes; }
 	if (seconds < 10) { seconds = "0" + seconds; }
 	return hours + ':' + minutes + ':' + seconds; // Return is HH : MM : SS
-}
-//
-// ------------------------------------------------------------------------------------------------------- //
-//
-async function updateStatisticsDb(status, type, isGroup, AuthorizationToken, SessionName) {
-	//
-	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
-	//logger?.info(`- Date: ${date_now}`);
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		logger?.info('- Atualizando statistics');
-		//
-		await Statistics.create({
-			AuthorizationToken: AuthorizationToken,
-			sessionname: SessionName,
-			status: status,
-			type: type,
-			isgroup: isGroup,
-			lastactivity: date_now,
-		}).then(async (entries) => {
-			logger?.info('- Statistics atualizado');
-		}).catch(async (err) => {
-			logger?.error('- Statistics não atualizado');
-			logger?.error(`- Error: ${err}`);
-		}).finally(async () => {
-			//Tokens.release();
-		});
-		//
-	}
-	//
 }
 //
 // ------------------------------------------------------------------------------------------------------- //

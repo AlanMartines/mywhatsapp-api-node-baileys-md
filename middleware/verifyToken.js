@@ -2,7 +2,6 @@ const moment = require('moment');
 moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
 const config = require('../config.global');
-const { Tokens } = require('../models');
 const { logger } = require("../utils/logger");
 //
 const todayDate = moment(new Date())?.format('YYYY-MM-DD');

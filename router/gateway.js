@@ -4,7 +4,7 @@ const express = require("express");
 const router = express.Router();
 const multer = require('multer');
 const upload = multer({});
-const verifyToken = require("../middleware/verifyMkOuth");
+const verifyToken = require("../middleware/verifyToken");
 const instance = require("../functions/instance");
 const message = require("../functions/message");
 const retrieving = require("../functions/retrieving");
@@ -46,7 +46,7 @@ router.post("/mkauthPlaySms", upload.none(''), verifyToken.verify, async (req, r
 	}
 	//
 	try {
-		if (!resSessionName || !req.body.to || !req.body.msg) {
+		if (!resSessionName || !req?.body?.to || !req?.body?.msg) {
 			var validate = {
 				"error": true,
 				"status": 400,
@@ -71,7 +71,7 @@ router.post("/mkauthPlaySms", upload.none(''), verifyToken.verify, async (req, r
 					await session.waqueue.add(async () => {
 						var checkNumberStatus = await retrieving?.checkNumberStatus(
 							resSessionName,
-							soNumeros(req.body.to).trim()
+							soNumeros(req?.body?.to).trim()
 						);
 						//
 						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
@@ -79,7 +79,7 @@ router.post("/mkauthPlaySms", upload.none(''), verifyToken.verify, async (req, r
 							var sendText = await message?.sendText(
 								resSessionName,
 								checkNumberStatus.number,
-								req.body.msg
+								req?.body?.msg
 							);
 							//
 							res.setHeader('Content-Type', 'application/json');

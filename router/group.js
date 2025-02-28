@@ -42,7 +42,7 @@ router.post("/sendContactVcardGrupo", upload.none(''), verifyToken.verify, async
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
-		if (!resSessionName || !req.body.groupId || !req.body.contact || !req.body.namecontact) {
+		if (!resSessionName || !req?.body?.groupId || !req?.body?.contact || !req?.body?.namecontact) {
 			var resultRes = {
 				"error": true,
 				"status": 400,
@@ -67,9 +67,9 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					await session.waqueue.add(async () => {
 						var sendContactVcard = await message?.sendContactVcard(
 							resSessionName,
-							req.body.groupId.trim() + '@g.us',
-							soNumeros(req.body.contact),
-							req.body.namecontact
+							req?.body?.groupId.trim() + '@g.us',
+							soNumeros(req?.body?.contact),
+							req?.body?.namecontact
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
@@ -121,7 +121,7 @@ router.post("/sendVoiceGrupo", upload.single('file'), verifyToken.verify, async 
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
-		if (!resSessionName || !req.body.groupId || !req.file) {
+		if (!resSessionName || !req?.body?.groupId || !req.file) {
 			var validate = {
 				"error": true,
 				"status": 400,
@@ -166,10 +166,10 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						await session.waqueue.add(async () => {
 							var sendPtt = await message?.sendPtt(
 								resSessionName,
-								req.body.groupId.trim() + '@g.us',
+								req?.body?.groupId.trim() + '@g.us',
 								req.file.buffer,
 								req.file.mimetype,
-								req.body.caption
+								req?.body?.caption
 							);
 							//
 							res.setHeader('Content-Type', 'application/json');
@@ -221,7 +221,7 @@ router.post("/sendVoiceBase64Grupo", upload.none(''), verifyToken.verify, async 
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
-		if (!resSessionName || !req.body.groupId || !req.body.base64 || !req.body.originalname) {
+		if (!resSessionName || !req?.body?.groupId || !req?.body?.base64 || !req?.body?.originalname) {
 			var validate = {
 				"error": true,
 				"status": 400,
@@ -244,14 +244,14 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				case 'chatsAvailable':
 					//
 					await session.waqueue.add(async () => {
-						var mimeType = mime.lookup(req.body.originalname);
+						var mimeType = mime.lookup(req?.body?.originalname);
 						//
 						var sendPtt = await message?.sendPtt(
 							resSessionName,
-							req.body.groupId.trim() + '@g.us',
-							Buffer.from(req.body.base64, 'base64'),
+							req?.body?.groupId.trim() + '@g.us',
+							Buffer.from(req?.body?.base64, 'base64'),
 							mimeType,
-							req.body.caption
+							req?.body?.caption
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
@@ -301,7 +301,7 @@ router.post("/sendVoiceFromBase64Grupo", upload.none(''), verifyToken.verify, as
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
-		if (!resSessionName || !req.body.groupId || !req.body.base64 || !req.body.mimetype || !req.body.originalname) {
+		if (!resSessionName || !req?.body?.groupId || !req?.body?.base64 || !req?.body?.mimetype || !req?.body?.originalname) {
 			var validate = {
 				"error": true,
 				"status": 400,
@@ -319,7 +319,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
 			//let ext = path.parse(req.file.originalname).ext;
 			//logger?.info(`- acceptedTypes: ${req.file.mimetype}`);
-			let acceptedTypes = req.body.mimetype.split('/')[0];
+			let acceptedTypes = req?.body?.mimetype.split('/')[0];
 			if (acceptedTypes !== "audio") {
 				//
 				var validate = {
@@ -346,9 +346,9 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						await session.waqueue.add(async () => {
 							var sendPtt = await message?.sendPtt(
 								resSessionName,
-								req.body.groupId.trim() + '@g.us',
-								Buffer.from(req.body.base64, 'base64'),
-								req.body.mimetype
+								req?.body?.groupId.trim() + '@g.us',
+								Buffer.from(req?.body?.base64, 'base64'),
+								req?.body?.mimetype
 							);
 							//
 							res.setHeader('Content-Type', 'application/json');
@@ -398,7 +398,7 @@ router.post("/sendTextGrupo", upload.none(''), verifyToken.verify, async (req, r
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.groupId || !req.body.msg) {
+	if (!resSessionName || !req?.body?.groupId || !req?.body?.msg) {
 		var resultRes = {
 			"error": true,
 			"status": 400,
@@ -423,8 +423,8 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var sendTextGrupo = await message?.sendText(
 						resSessionName,
-						req.body.groupId.trim() + '@g.us',
-						req.body.msg
+						req?.body?.groupId.trim() + '@g.us',
+						req?.body?.msg
 					);
 					//
 					//console?.log(result);
@@ -459,7 +459,7 @@ router.post("/sendLocationGrupo", upload.none(''), verifyToken.verify, async (re
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.groupId || !req.body.lat || !req.body.long || !req.body.local) {
+	if (!resSessionName || !req?.body?.groupId || !req?.body?.lat || !req?.body?.long || !req?.body?.local) {
 		//
 		var resultRes = {
 			"error": true,
@@ -485,10 +485,10 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var sendLocationGroup = await message?.sendLocation(
 						resSessionName,
-						req.body.groupId.trim() + '@g.us',
-						req.body.lat,
-						req.body.long,
-						req.body.local
+						req?.body?.groupId.trim() + '@g.us',
+						req?.body?.lat,
+						req?.body?.long,
+						req?.body?.local
 					);
 					//
 					//console?.log(result);
@@ -523,7 +523,7 @@ router.post("/sendLinkGrupo", upload.none(''), verifyToken.verify, async (req, r
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
-		if (!resSessionName || !req.body.groupId || !req.body.link || !req.body.descricao) {
+		if (!resSessionName || !req?.body?.groupId || !req?.body?.link || !req?.body?.descricao) {
 			//
 			var validate = {
 				"error": true,
@@ -547,7 +547,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				case 'chatsAvailable':
 					//
 					await session.waqueue.add(async () => {
-						if (!await Sessions.isURL(req.body.link)) {
+						if (!await Sessions.isURL(req?.body?.link)) {
 							var validate = {
 								"error": true,
 								"status": 401,
@@ -563,9 +563,9 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						//
 						var sendLink = await message?.sendLink(
 							resSessionName,
-							req.body.groupId.trim() + '@g.us',
-							req.body.link,
-							req.body.descricao
+							req?.body?.groupId.trim() + '@g.us',
+							req?.body?.link,
+							req?.body?.descricao
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
@@ -614,7 +614,7 @@ router.post("/sendImageGrupo", upload.single('file'), verifyToken.verify, async 
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
-		if (!resSessionName || !req.body.groupId || !req.file) {
+		if (!resSessionName || !req?.body?.groupId || !req.file) {
 			var validate = {
 				"error": true,
 				"status": 400,
@@ -659,11 +659,11 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						await session.waqueue.add(async () => {
 							var sendPtt = await message?.sendImage(
 								resSessionName,
-								req.body.groupId.trim() + '@g.us',
+								req?.body?.groupId.trim() + '@g.us',
 								req.file.buffer,
 								req.file.mimetype,
 								req.file.originalname,
-								req.body.caption
+								req?.body?.caption
 							);
 							//
 							res.setHeader('Content-Type', 'application/json');
@@ -714,7 +714,7 @@ router.post("/sendImageBase64Grupo", upload.none(''), verifyToken.verify, async 
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.groupId || !req.body.base64 || !req.body.originalname || !req.body.caption) {
+	if (!resSessionName || !req?.body?.groupId || !req?.body?.base64 || !req?.body?.originalname || !req?.body?.caption) {
 		var validate = {
 			"error": true,
 			"status": 400,
@@ -732,7 +732,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
 		//let ext = path.parse(req.file.originalname).ext;
 		//logger?.info(`- acceptedTypes: ${req.file.mimetype}`);
-		var mimeType = mime.lookup(req.body.originalname);
+		var mimeType = mime.lookup(req?.body?.originalname);
 		let acceptedTypes = mimeType.split('/')[0];
 		if (acceptedTypes !== "image") {
 			//
@@ -760,11 +760,11 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					await session.waqueue.add(async () => {
 						var sendFileBase64 = await message?.sendImage(
 							resSessionName,
-							req.body.groupId.trim() + '@g.us',
-							Buffer.from(req.body.base64, 'base64'),
-							req.body.originalname,
+							req?.body?.groupId.trim() + '@g.us',
+							Buffer.from(req?.body?.base64, 'base64'),
+							req?.body?.originalname,
 							mimeType,
-							req.body.caption
+							req?.body?.caption
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
@@ -799,7 +799,7 @@ router.post("/sendImageFromBase64Grupo", upload.none(''), verifyToken.verify, as
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.groupId || !req.body.base64 || !req.body.mimetype || !req.body.originalname || !req.body.caption) {
+	if (!resSessionName || !req?.body?.groupId || !req?.body?.base64 || !req?.body?.mimetype || !req?.body?.originalname || !req?.body?.caption) {
 		var validate = {
 			"error": true,
 			"status": 400,
@@ -817,7 +817,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
 		//let ext = path.parse(req.file.originalname).ext;
 		//logger?.info(`- acceptedTypes: ${req.file.mimetype}`);
-		var mimeType = req.body.mimetype;
+		var mimeType = req?.body?.mimetype;
 		let acceptedTypes = mimeType.split('/')[0];
 		if (acceptedTypes !== "image") {
 			//
@@ -845,11 +845,11 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					await session.waqueue.add(async () => {
 						var sendFileFromBase64 = await message?.sendImage(
 							resSessionName,
-							req.body.groupId.trim() + '@g.us',
-							Buffer.from(req.body.base64, 'base64'),
-							req.body.originalname,
-							req.body.mimetype,
-							req.body.caption
+							req?.body?.groupId.trim() + '@g.us',
+							Buffer.from(req?.body?.base64, 'base64'),
+							req?.body?.originalname,
+							req?.body?.mimetype,
+							req?.body?.caption
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
@@ -885,7 +885,7 @@ router.post("/sendFileGrupo", upload.single('file'), verifyToken.verify, async (
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.groupId || !req.body.caption || !req.file) {
+	if (!resSessionName || !req?.body?.groupId || !req?.body?.caption || !req.file) {
 		var validate = {
 			"error": true,
 			"status": 400,
@@ -910,11 +910,11 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var sendFile = await message?.sendFile(
 						resSessionName,
-						req.body.groupId.trim() + '@g.us',
+						req?.body?.groupId.trim() + '@g.us',
 						req.file.buffer,
 						req.file.originalname,
 						req.file.mimetype,
-						req.body.caption
+						req?.body?.caption
 					);
 					//
 					//console?.log(result);
@@ -950,7 +950,7 @@ router.post("/sendFileUrlGrupo", upload.none(''), verifyToken.verify, async (req
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.groupId || !req.body.url || !req.body.caption) {
+	if (!resSessionName || !req?.body?.groupId || !req?.body?.url || !req?.body?.caption) {
 		var validate = {
 			"error": true,
 			"status": 400,
@@ -975,11 +975,11 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var sendFile = await message?.sendFileUrl(
 						resSessionName,
-						req.body.groupId.trim() + '@g.us',
-						req.body.url,
-						req.body.url.split('/').slice(-1)[0],
-						mime.lookup(req.body.url.split('.').slice(-1)[0]),
-						req.body.caption
+						req?.body?.groupId.trim() + '@g.us',
+						req?.body?.url,
+						req?.body?.url.split('/').slice(-1)[0],
+						mime.lookup(req?.body?.url.split('.').slice(-1)[0]),
+						req?.body?.caption
 					);
 					//
 					//console?.log(result);
@@ -1014,7 +1014,7 @@ router.post("/sendFileBase64Grupo", upload.none(''), verifyToken.verify, async (
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.groupId || !req.body.base64 || !req.body.originalname || !req.body.caption) {
+	if (!resSessionName || !req?.body?.groupId || !req?.body?.base64 || !req?.body?.originalname || !req?.body?.caption) {
 		var validate = {
 			"error": true,
 			"status": 400,
@@ -1037,14 +1037,14 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'chatsAvailable':
 				//
 				await session.waqueue.add(async () => {
-					var mimeType = mime.lookup(req.body.originalname);
+					var mimeType = mime.lookup(req?.body?.originalname);
 					var sendFileBase64 = await message?.sendFile(
 						resSessionName,
-						req.body.groupId.trim() + '@g.us',
-						Buffer.from(req.body.base64, 'base64'),
-						req.body.originalname,
+						req?.body?.groupId.trim() + '@g.us',
+						Buffer.from(req?.body?.base64, 'base64'),
+						req?.body?.originalname,
 						mimeType,
-						req.body.caption
+						req?.body?.caption
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
@@ -1078,7 +1078,7 @@ router.post("/sendFileFromBase64Grupo", upload.none(''), verifyToken.verify, asy
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.groupId || !req.body.base64 || !req.body.mimetype || !req.body.originalname || !req.body.caption) {
+	if (!resSessionName || !req?.body?.groupId || !req?.body?.base64 || !req?.body?.mimetype || !req?.body?.originalname || !req?.body?.caption) {
 		var validate = {
 			"error": true,
 			"status": 400,
@@ -1103,11 +1103,11 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var sendFileFromBase64 = await message?.sendFile(
 						resSessionName,
-						req.body.groupId.trim() + '@g.us',
-						Buffer.from(req.body.base64, 'base64'),
-						req.body.originalname,
-						req.body.mimetype,
-						req.body.caption
+						req?.body?.groupId.trim() + '@g.us',
+						Buffer.from(req?.body?.base64, 'base64'),
+						req?.body?.originalname,
+						req?.body?.mimetype,
+						req?.body?.caption
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
@@ -1142,7 +1142,7 @@ router.post("/sendButtonGrupo", upload.none(''), verifyToken.verify, async (req,
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.groupId || !req.body.buttonMessage) {
+	if (!resSessionName || !req?.body?.groupId || !req?.body?.buttonMessage) {
 		var resultRes = {
 			"error": true,
 			"status": 400,
@@ -1167,8 +1167,8 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var sendButton = await message?.sendButton(
 						resSessionName,
-						req.body.groupId.trim() + '@g.us',
-						req.body.buttonMessage,
+						req?.body?.groupId.trim() + '@g.us',
+						req?.body?.buttonMessage,
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
@@ -1202,7 +1202,7 @@ router.post("/sendTemplateGrupo", upload.none(''), verifyToken.verify, async (re
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.groupId || !req.body.templateMessage) {
+	if (!resSessionName || !req?.body?.groupId || !req?.body?.templateMessage) {
 		var resultRes = {
 			"error": true,
 			"status": 400,
@@ -1227,8 +1227,8 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var sendTemplate = await message?.sendTemplate(
 						resSessionName,
-						req.body.groupId.trim() + '@g.us',
-						req.body.templateMessage,
+						req?.body?.groupId.trim() + '@g.us',
+						req?.body?.templateMessage,
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
@@ -1262,7 +1262,7 @@ router.post("/sendListMessageGrupo", upload.none(''), verifyToken.verify, async 
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.groupId || !req.body.listMessage) {
+	if (!resSessionName || !req?.body?.groupId || !req?.body?.listMessage) {
 		var resultRes = {
 			"error": true,
 			"status": 400,
@@ -1287,8 +1287,8 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var sendListMessage = await message?.sendListMessage(
 						resSessionName,
-						req.body.groupId.trim() + '@g.us',
-						req.body.listMessage,
+						req?.body?.groupId.trim() + '@g.us',
+						req?.body?.listMessage,
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
@@ -1322,7 +1322,7 @@ router.post("/leaveGroup", upload.none(''), verifyToken.verify, async (req, res,
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.groupId) {
+	if (!resSessionName || !req?.body?.groupId) {
 		var resultRes = {
 			"error": true,
 			"status": 400,
@@ -1347,7 +1347,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var leaveGroup = await group?.leaveGroup(
 						resSessionName,
-						req.body.groupId + '@g.us'
+						req?.body?.groupId + '@g.us'
 					);
 					res.setHeader('Content-Type', 'application/json');
 					return res.status(leaveGroup.status).json({
@@ -1379,7 +1379,7 @@ router.post("/createGroup", upload.none(''), verifyToken.verify, async (req, res
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.title || !req.body.participants) {
+	if (!resSessionName || !req?.body?.title || !req?.body?.participants) {
 		var resultRes = {
 			"error": true,
 			"status": 400,
@@ -1393,7 +1393,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		//
 	} else {
 		//
-		if (req.body.title.length >= 25) {
+		if (req?.body?.title.length >= 25) {
 			var validate = {
 				"error": true,
 				"status": 400,
@@ -1419,7 +1419,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					var contactlistValid = [];
 					var contactlistInvalid = [];
 					//
-					var arrayNumbers = req.body.participants;
+					var arrayNumbers = req?.body?.participants;
 					//
 					for (var i in arrayNumbers) {
 						//console?.log(arrayNumbers[i]);
@@ -1445,7 +1445,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					//
 					var createGroup = await group?.createGroup(
 						resSessionName,
-						req.body.title,
+						req?.body?.title,
 						contactlistValid,
 						contactlistInvalid
 					);
@@ -1481,7 +1481,7 @@ router.post("/updateGroupTitle", upload.none(''), verifyToken.verify, async (req
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.groupId || !req.body.title) {
+	if (!resSessionName || !req?.body?.groupId || !req?.body?.title) {
 		var resultRes = {
 			"error": true,
 			"status": 400,
@@ -1495,7 +1495,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		//
 	} else {
 		//
-		if (req.body.title.length >= 25) {
+		if (req?.body?.title.length >= 25) {
 			var validate = {
 				"error": true,
 				"status": 400,
@@ -1520,8 +1520,8 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var updateGroupTitle = await group?.updateGroupTitle(
 						resSessionName,
-						req.body.groupId + '@g.us',
-						req.body.title,
+						req?.body?.groupId + '@g.us',
+						req?.body?.title,
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
@@ -1555,7 +1555,7 @@ router.post("/updateGroupDesc", upload.none(''), verifyToken.verify, async (req,
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.groupId || !req.body.desc) {
+	if (!resSessionName || !req?.body?.groupId || !req?.body?.desc) {
 		var resultRes = {
 			"error": true,
 			"status": 400,
@@ -1580,8 +1580,8 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var updateGroupDesc = await group?.updateGroupDesc(
 						resSessionName,
-						req.body.groupId + '@g.us',
-						req.body.desc,
+						req?.body?.groupId + '@g.us',
+						req?.body?.desc,
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
@@ -1615,7 +1615,7 @@ router.post("/getGroupMembers", upload.none(''), verifyToken.verify, async (req,
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.groupId) {
+	if (!resSessionName || !req?.body?.groupId) {
 		var resultRes = {
 			"error": true,
 			"status": 400,
@@ -1640,7 +1640,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var getGroupMembers = await group?.getGroupMembers(
 						resSessionName,
-						req.body.groupId + '@g.us'
+						req?.body?.groupId + '@g.us'
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
@@ -1674,7 +1674,7 @@ router.post("/getGroupInviteLink", upload.none(''), verifyToken.verify, async (r
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.groupId) {
+	if (!resSessionName || !req?.body?.groupId) {
 		var resultRes = {
 			"error": true,
 			"status": 400,
@@ -1699,7 +1699,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var GroupInviteLink = await group?.getGroupInviteLink(
 						resSessionName,
-						req.body.groupId + '@g.us'
+						req?.body?.groupId + '@g.us'
 					);
 					res.setHeader('Content-Type', 'application/json');
 					return res.status(GroupInviteLink.status).json({
@@ -1731,7 +1731,7 @@ router.post("/getGroupRevokeInviteLink", upload.none(''), verifyToken.verify, as
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.groupId) {
+	if (!resSessionName || !req?.body?.groupId) {
 		var resultRes = {
 			"error": true,
 			"status": 400,
@@ -1756,7 +1756,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var GroupInviteLink = await group?.getGroupRevokeInviteLink(
 						resSessionName,
-						req.body.groupId + '@g.us'
+						req?.body?.groupId + '@g.us'
 					);
 					res.setHeader('Content-Type', 'application/json');
 					return res.status(GroupInviteLink.status).json({
@@ -1787,7 +1787,7 @@ router.post("/removeParticipant", upload.none(''), verifyToken.verify, async (re
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.groupId || !req.body.participants) {
+	if (!resSessionName || !req?.body?.groupId || !req?.body?.participants) {
 		var resultRes = {
 			"error": true,
 			"status": 400,
@@ -1813,7 +1813,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					var contactlistValid = [];
 					var contactlistInvalid = [];
 					//
-					var arrayNumbers = req.body.participants;
+					var arrayNumbers = req?.body?.participants;
 					//
 					for (var i in arrayNumbers) {
 						//console?.log(arrayNumbers[i]);
@@ -1839,7 +1839,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					//
 					var removeParticipant = await group?.removeParticipant(
 						resSessionName,
-						req.body.groupId + '@g.us',
+						req?.body?.groupId + '@g.us',
 						contactlistValid,
 						contactlistInvalid
 					);
@@ -1876,7 +1876,7 @@ router.post("/addParticipant", upload.none(''), verifyToken.verify, async (req, 
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.groupId || !req.body.participants) {
+	if (!resSessionName || !req?.body?.groupId || !req?.body?.participants) {
 		var resultRes = {
 			"error": true,
 			"status": 400,
@@ -1902,7 +1902,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					var contactlistValid = [];
 					var contactlistInvalid = [];
 					//
-					var arrayNumbers = req.body.participants;
+					var arrayNumbers = req?.body?.participants;
 					//
 					for (var i in arrayNumbers) {
 						//console?.log(arrayNumbers[i]);
@@ -1928,7 +1928,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					//
 					var addParticipant = await group?.addParticipant(
 						resSessionName,
-						req.body.groupId + '@g.us',
+						req?.body?.groupId + '@g.us',
 						contactlistValid,
 						contactlistInvalid
 					);
@@ -1965,7 +1965,7 @@ router.post("/promoteParticipant", upload.none(''), verifyToken.verify, async (r
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.groupId || !req.body.participants) {
+	if (!resSessionName || !req?.body?.groupId || !req?.body?.participants) {
 		var resultRes = {
 			"error": true,
 			"status": 400,
@@ -1991,7 +1991,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					var contactlistValid = [];
 					var contactlistInvalid = [];
 					//
-					var arrayNumbers = req.body.participants;
+					var arrayNumbers = req?.body?.participants;
 					//
 					for (var i in arrayNumbers) {
 						//console?.log(arrayNumbers[i]);
@@ -2017,7 +2017,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					//
 					var promoteParticipant = await group?.promoteParticipant(
 						resSessionName,
-						req.body.groupId + '@g.us',
+						req?.body?.groupId + '@g.us',
 						contactlistValid,
 						contactlistInvalid
 					);
@@ -2054,7 +2054,7 @@ router.post("/demoteParticipant", upload.none(''), verifyToken.verify, async (re
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.groupId || !req.body.participants) {
+	if (!resSessionName || !req?.body?.groupId || !req?.body?.participants) {
 		var resultRes = {
 			"error": true,
 			"status": 400,
@@ -2080,7 +2080,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					var contactlistValid = [];
 					var contactlistInvalid = [];
 					//
-					var arrayNumbers = req.body.participants;
+					var arrayNumbers = req?.body?.participants;
 					//
 					for (var i in arrayNumbers) {
 						//console?.log(arrayNumbers[i]);
@@ -2106,7 +2106,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					//
 					var demoteParticipant = await group?.demoteParticipant(
 						resSessionName,
-						req.body.groupId + '@g.us',
+						req?.body?.groupId + '@g.us',
 						contactlistValid,
 						contactlistInvalid
 					);
@@ -2143,7 +2143,7 @@ router.post("/getGroupInfoFromInviteLink", upload.none(''), verifyToken.verify, 
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.inviteCode) {
+	if (!resSessionName || !req?.body?.inviteCode) {
 		var resultRes = {
 			"error": true,
 			"status": 400,
@@ -2167,7 +2167,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var getGroupInfoFromInviteLink = await group?.getGroupInfoFromInviteLink(
 						resSessionName,
-						req.body.inviteCode
+						req?.body?.inviteCode
 					);
 					res.setHeader('Content-Type', 'application/json');
 					return res.status(getGroupInfoFromInviteLink.status).json({
@@ -2199,7 +2199,7 @@ router.post("/joinGroup", upload.none(''), verifyToken.verify, async (req, res, 
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.inviteCode) {
+	if (!resSessionName || !req?.body?.inviteCode) {
 		var resultRes = {
 			"error": true,
 			"status": 400,
@@ -2223,7 +2223,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var getGroupInfoFromInviteLink = await group?.joinGroup(
 						resSessionName,
-						req.body.inviteCode
+						req?.body?.inviteCode
 					);
 					res.setHeader('Content-Type', 'application/json');
 					return res.status(getGroupInfoFromInviteLink.status).json({

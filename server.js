@@ -10,7 +10,8 @@ const cors = require('cors');
 const path = require('path');
 const swaggerUi = require('swagger-ui-express')
 const yaml = require('js-yaml');
-const latest = require('latest-version'); // verifica a ultima release no npm
+const latest = require('latest-version');
+const { yo } = require('yoo-hoo');
 const { version } = require('./package.json');
 const { logger } = require("./utils/logger");
 const AllSessions = require('./startup');
@@ -21,7 +22,7 @@ const yamlSpec = yaml.dump(swaggerSpec);
 const i18n = require('./translate/i18n');
 const http = require('http').Server(app);
 const httpv6 = require('http').Server(app);
-// https://www.scaleway.com/en/docs/tutorials/socket-io/
+//
 const io = require('socket.io')(http, {
 	cors: {
 		origins: ["*"],
@@ -32,165 +33,114 @@ const io = require('socket.io')(http, {
 	allowEIO3: true
 });
 //
-const {
-	yo
-} = require('yoo-hoo');
-//
 yo('My-WhatsApp', {
 	color: 'rainbow',
 	spacing: 1,
 });
 //
-//console.log(boxen('My-WhatsApp', {padding: 1, margin: 1, borderStyle: 'double'}));
-//
-// Função para executar o comando swagger-codegen-cli
-async function generateSwaggerCode() {
-	try {
-		const command = 'swagger-codegen-cli generate -i swagger.yaml -l nodejs-server -o swaggerCodegen';
-
-		exec(command, (error, stdout, stderr) => {
-			if (error) {
-				logger.error(`- Erro ao executar o comando: ${error.message}`);
-				return;
-			}
-			if (stderr) {
-				logger.error(`- Erro: ${stderr}`);
-				return;
-			}
-			logger.info(`- Resultado: ${stdout}`);
-		});
-	} catch (error) {
-		logger.error(`- Erro: ${error}`);
-	}
-}
-//
-// ------------------------------------------------------------------------------------------------//
+// console.log(boxen('My-WhatsApp', {padding: 1, margin: 1, borderStyle: 'double'}));
 //
 fs.access(".env", fs.constants.F_OK, async (err) => {
 	if (err && err.code === 'ENOENT') {
 		logger.error(`- Arquivo ".env" não encontrado, segue modelo de configuração:`);
 		var modelo = `
-NODE_EN=production
-#
-# Defina o IPV4 aqui caso voce utilize uma VPS deve ser colocado o IP da VPS
-# Exemplos:
-# IPV4=204.202.54.2 => IP da VPS, caso esteja usando virtualização via hospedagem
-# IPV4=10.0.0.10 => IP da VM, caso esteja usando virtualização
-# IPV4=127.0.0.1 => caso esteja usando na sua proprima maquina local
-# IPV4=0.0.0.0 => caso esteja usando em um cotainer
-IPV4=127.0.0.1
-#
-# Defina o IPV6 aqui caso voce utilize uma VPS deve ser colocado o IP da VPS
-# CASO UTILIZE IPV6, DEVE PREENCHER A VARIAVEL IPV6
-# CASO DE NÃO SER CONFIGURADO IPV6 MATENHA A VARIAVEL IPV6 VAZIA
-# Exemplos:
-# IPV6=FEDC:2D9D:DC28:7654:3210:FC57:D4C8:1FFF => IP da VPS, caso esteja usando virtualização via hospedagem
-# IPV6=2001:0DB8:85A3:08D3:1319:8A2E:0370:7344 => IP da VM, caso esteja usando virtualização
-# IPV6=0:0:0:0:0:0:0:1 => caso esteja usando na sua proprima maquina local
-# IPV6=0:0:0:0:0:0:0:0 => caso esteja usando em um cotainer
-IPV6=
-#
-# Defina o numero da porta a ser usada pela API.
-PORT=9009
-#
-# CASO UTILIZE CERTIFICADO SSL COM REDIRECIONAMENTO DE PORTA, DEVE PREENCHER A VARIAVEL DOMAIN_SSL
-# CASO DE NÃO SER CONFIGURADO UM DOMÍNIO MATENHA A VARIAVEL DOMAIN_SSL VAZIA
-# Exemplos:
-# DOMAIN_SSL=api.meudomai.com.br ou meudomai.com.br
-# DOMAIN_SSL=
-DOMAIN_SSL=
-#
-# Define se o qrcode vai ser mostrado no terminal
-VIEW_QRCODE_TERMINAL=0
-#
-# Define a pasta para os tokens
-PATCH_TOKENS=/usr/local/tokens
-#
-# Device name
-DEVICE_NAME='My-Whatsapp'
-#
-# Host name
-HOST_NAME='ApiBaileysMd'
-#
-# Defina a versão do whatsapp a ser usada.
-# CASO DE NÃO SER CONFIGURADO UM VERSÂO MATENHA A VARIAVEL WA_VERSION VAZIA
-# Exemplos:
-# WA_VERSION='2.2204.13'
-# WA_VERSION=
-#
-WA_VERSION=
-#
-# Defina a url do whatsapp a ser usada.
-# CASO DE NÃO SER CONFIGURADO UM LINK MATENHA A VARIAVEL WA_URL VAZIA
-# Exemplos:
-# WA_URL='web.whatsapp.com'
-# WA_URL=
-WA_URL=
-#
-# Auto close
-AUTO_CLOSE=15
-#
-# Chave de segurança para validação
-SECRET_KEY='kgashjgajbug$$jgbbjgkbkgk'
-#
-# Defina se vai ser usando um bando de dados ou não.
-# CASO DE NÃO SER CONFIGURADO A VARIAVEL VALIDATE_MYSQL DEVE SER 0
-VALIDATE_MYSQL=1
-#
-# Defina a quantidade de processo simultaneo na fila.
-CONCURRENCY=5
-#
-# Defina qual bando de dados usado, mysql ou mariabd usado para uso no docker
-MYSQL_ENGINE=mysql
-#
-# Defina qual versão do bando de dados usado para uso no docker
-MYSQL_VERSION=latest
-#
-# O host do banco. Ex: localhost
-MYSQL_HOST=localhost
-#
-# Port do banco. Ex: 3306
-MYSQL_PORT=3306
-#
-# Um usuário do banco. Ex: user
-MYSQL_USER=mywhatsappapi
-#
-# A senha do usuário do banco. Ex: user123
-MYSQL_PASSWORD='senha123'
-#
-# A base de dados a qual a p-queue irá se conectar. Ex: node_mysql
-MYSQL_DATABASE=node_mysql
-#
-# Time Zone
-MYSQL_TIMEZONE='-04:00'
-#
-# Time Zone
-TZ='America/Sao_Paulo'
-#
-# Gag image
-TAG=1.0.0
-#
-# browserWSEndpoint Ex.: ws://127.0.0.1:3000
-BROWSER_WSENDPOINT=
-#
-# Caso queira que ao iniciar a API todas as sessões salvas sejam inicializadas automaticamente
-START_ALL_SESSIONS=1
-#
-# Deleta os arquivos não usados do Baileys
-DELETE_FILE_UNUSED=0
-#
-# Host do servidor do Graylog
-GRAYLOGSERVER=127.0.0.1
-#
-# Porta do servidor do  Graylog
-GRAYLOGPORT=12201
-#
-# Defina se vai ser usado em um container.
-# CASO DE SER USADO CONFIGURE A VARIAVEL INDOCKER DEVE SER 1
-# CASO DE NÃO SER CONFIGURADO A VARIAVEL INDOCKER DEVE SER 0
-INDOCKER=0
-#
-`;
+		NODE_EN=production
+		#
+		# Defina o IPV4 aqui caso voce utilize uma VPS deve ser colocado o IP da VPS
+		# Exemplos:
+		# IPV4=204.202.54.2 => IP da VPS, caso esteja usando virtualização via hospedagem
+		# IPV4=10.0.0.10 => IP da VM, caso esteja usando virtualização
+		# IPV4=127.0.0.1 => caso esteja usando na sua proprima maquina local
+		# IPV4=0.0.0.0 => caso esteja usando em um cotainer
+		IPV4=127.0.0.1
+		#
+		# Defina o IPV6 aqui caso voce utilize uma VPS deve ser colocado o IP da VPS
+		# CASO UTILIZE IPV6, DEVE PREENCHER A VARIAVEL IPV6
+		# CASO DE NÃO SER CONFIGURADO IPV6 MATENHA A VARIAVEL IPV6 VAZIA
+		# Exemplos:
+		# IPV6=FEDC:2D9D:DC28:7654:3210:FC57:D4C8:1FFF => IP da VPS, caso esteja usando virtualização via hospedagem
+		# IPV6=2001:0DB8:85A3:08D3:1319:8A2E:0370:7344 => IP da VM, caso esteja usando virtualização
+		# IPV6=0:0:0:0:0:0:0:1 => caso esteja usando na sua proprima maquina local
+		# IPV6=0:0:0:0:0:0:0:0 => caso esteja usando em um cotainer
+		IPV6=
+		#
+		# Defina o numero da porta a ser usada pela API.
+		PORT=9009
+		#
+		# CASO UTILIZE CERTIFICADO SSL COM REDIRECIONAMENTO DE PORTA, DEVE PREENCHER A VARIAVEL DOMAIN_SSL
+		# CASO DE NÃO SER CONFIGURADO UM DOMÍNIO MATENHA A VARIAVEL DOMAIN_SSL VAZIA
+		# Exemplos:
+		# DOMAIN_SSL=api.meudomai.com.br ou meudomai.com.br
+		# DOMAIN_SSL=
+		DOMAIN_SSL=
+		#
+		# Define se o qrcode vai ser mostrado no terminal
+		VIEW_QRCODE_TERMINAL=0
+		#
+		# Define a pasta para os tokens
+		PATCH_TOKENS=/usr/local/tokens
+		#
+		# Device name
+		DEVICE_NAME='My-Whatsapp'
+		#
+		# Host name
+		HOST_NAME='ApiBaileysMd'
+		#
+		# Defina a versão do whatsapp a ser usada.
+		# CASO DE NÃO SER CONFIGURADO UM VERSÂO MATENHA A VARIAVEL WA_VERSION VAZIA
+		# Exemplos:
+		# WA_VERSION='2.2204.13'
+		# WA_VERSION=
+		#
+		WA_VERSION=
+		#
+		# Defina a url do whatsapp a ser usada.
+		# CASO DE NÃO SER CONFIGURADO UM LINK MATENHA A VARIAVEL WA_URL VAZIA
+		# Exemplos:
+		# WA_URL='web.whatsapp.com'
+		# WA_URL=
+		WA_URL=
+		#
+		# Auto close
+		AUTO_CLOSE=15
+		#
+		# Chave de segurança para validação
+		SECRET_KEY='kgashjgajbug$$jgbbjgkbkgk'
+		#
+		# Defina se vai ser usando um bando de dados ou não.
+		# CASO DE NÃO SER CONFIGURADO A VARIAVEL VALIDATE_MYSQL DEVE SER 0
+		VALIDATE_MYSQL=1
+		#
+		# Defina a quantidade de processo simultaneo na fila.
+		CONCURRENCY=5
+		#
+		# Time Zone
+		TZ='America/Sao_Paulo'
+		#
+		# Tag image
+		TAG=1.0.0
+		#
+		# browserWSEndpoint Ex.: ws://127.0.0.1:3000
+		BROWSER_WSENDPOINT=
+		#
+		# Caso queira que ao iniciar a API todas as sessões salvas sejam inicializadas automaticamente
+		START_ALL_SESSIONS=1
+		#
+		# Deleta os arquivos não usados do Baileys
+		DELETE_FILE_UNUSED=0
+		#
+		# Host do servidor do Graylog
+		GRAYLOGSERVER=127.0.0.1
+		#
+		# Porta do servidor do  Graylog
+		GRAYLOGPORT=12201
+		#
+		# Defina se vai ser usado em um container.
+		# CASO DE SER USADO CONFIGURE A VARIAVEL INDOCKER DEVE SER 1
+		# CASO DE NÃO SER CONFIGURADO A VARIAVEL INDOCKER DEVE SER 0
+		INDOCKER=0
+		#
+		`;
 		logger?.info(`- Modelo do arquivo de configuração:\n ${modelo}`);
 		process.exit(1);
 	} else {

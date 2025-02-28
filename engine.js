@@ -19,7 +19,6 @@ const { default: pQueue } = require('p-queue');
 const { release } = require('os');
 const NodeCache = require('node-cache');
 const { logger } = require("./utils/logger");
-const { Sessionwa } = require('./models');
 const Sessions = require('./controllers/sessions');
 const eventsSend = require('./controllers/events');
 const webhooks = require('./controllers/webhooks');
@@ -111,141 +110,6 @@ function removeWithspace(string) {
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
-async function addUserConDb(AuthorizationToken, SessionName, wh_status, wh_message, wh_qrcode, wh_connect, wh_incomingcall) {
-	//
-	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
-	//logger?.info(`- Date: ${date_now}`);
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		logger?.info('- Atualizando User Connected');
-		//
-		await Sessionwa.findOrCreate({
-			where: {//object containing fields to found
-				authorizationtoken: AuthorizationToken,
-				sessionname: SessionName
-			},
-			defaults: {//object containing fields and values to apply
-				authorizationtoken: AuthorizationToken,
-				sessionname: SessionName,
-				wh_status: wh_status,
-				wh_message: wh_message,
-				wh_qrcode: wh_qrcode,
-				wh_connect: wh_connect,
-				wh_incomingcall: wh_incomingcall
-			},
-		}).then(async (entries) => {
-			logger?.info('- User connection adicionado');
-		}).catch(async (err) => {
-			logger?.error('- User connection não adicionado');
-			logger?.error(`- Error: ${err}`);
-		}).finally(() => {
-			//Sessionwa.release();
-		});
-		//
-	}
-	//
-}
-//
-// ------------------------------------------------------------------------------------------------------- //
-//
-async function updateUserConDb(userconnected, profilepicture, AuthorizationToken, SessionName) {
-	//
-	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
-	//logger?.info(`- Date: ${date_now}`);
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		logger?.info('- Atualizando User Connected');
-		//
-		await Sessionwa.update({
-			userconnected: userconnected,
-			profilepicture: profilepicture,
-		},
-			{
-				where: {
-					authorizationtoken: AuthorizationToken,
-					sessionname: SessionName
-				},
-			}).then(async (entries) => {
-				logger?.info('- User connection atualizado');
-			}).catch(async (err) => {
-				logger?.error('- User connection não atualizado');
-				logger?.error(`- Error: ${err}`);
-			}).finally(() => {
-				//Tokens.release();
-			});
-		//
-	}
-	//
-}
-//
-// ------------------------------------------------------------------------------------------------------- //
-//
-async function updateStateDb(state, status, AuthorizationToken, SessionName) {
-	//
-	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
-	//logger?.info(`- Date: ${date_now}`);
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		logger?.info('- Atualizando status');
-		//
-		await Sessionwa.update({
-			state: state,
-			status: status
-		},
-			{
-				where: {
-					authorizationtoken: AuthorizationToken,
-					sessionname: SessionName
-				},
-			}).then(async (entries) => {
-				logger?.info('- Status atualizado');
-			}).catch(async (err) => {
-				logger?.error('- Status não atualizado');
-				logger?.error(`- Error: ${err}`);
-			}).finally(async () => {
-				//Tokens.release();
-			});
-		//
-	}
-	//
-}
-//
-// ------------------------------------------------------------------------------------------------------- //
-//
-async function updateWebhookDb(wh_status, wh_message, wh_qrcode, wh_connect, AuthorizationToken, SessionName) {
-	//
-	const date_now = moment(new Date())?.format('YYYY-MM-DD HH:mm:ss');
-	//logger?.info(`- Date: ${date_now}`);
-	//
-	if (parseInt(config.VALIDATE_MYSQL) == true) {
-		logger?.info('- Atualizando status');
-		//
-		await Sessionwa.update({
-			wh_status: wh_status,
-			wh_message: wh_message,
-			wh_qrcode: wh_qrcode,
-			wh_connect: wh_connect
-		},
-			{
-				where: {
-					authorizationtoken: AuthorizationToken,
-					sessionname: SessionName
-				},
-			}).then(async (entries) => {
-				logger?.info('- Webhook atualizado');
-			}).catch(async (err) => {
-				logger?.error('- Webhook não atualizado');
-				logger?.error(`- Error: ${err}`);
-			}).finally(async () => {
-				//Tokens.release();
-			});
-		//
-	}
-	//
-}
-//
-// ------------------------------------------------------------------------------------------------------- //
-//
 async function deletaPastaToken(filePath, filename) {
 	//
 	await rmfr(`${filePath}/${filename}`).then(async (result) => {
@@ -314,8 +178,6 @@ module.exports = class Instace {
 				"wh_connect": req?.body?.wh_connect ? req?.body?.wh_connect : null,
 				"wh_incomingcall": req?.body?.wh_incomingcall ? req?.body?.wh_incomingcall : null
 			};
-			//
-			await addUserConDb(theTokenAuth, SessionName, startupRes?.wh_status, startupRes?.wh_message, startupRes?.wh_qrcode, startupRes?.wh_connect, startupRes?.wh_incomingcall);
 			//
 			fs.writeJson(`${tokenPatch}/${SessionName}.startup.json`, startupRes, (err) => {
 				if (err) {
@@ -683,8 +545,6 @@ module.exports = class Instace {
 								//
 								await Sessions?.addInfoSession(SessionName, addJson);
 								//
-								await updateStateDb(addJson?.state, addJson?.status, theTokenAuth, SessionName);
-								//
 								webhooks?.wh_qrcode(SessionName);
 								//this.exportQR(req.io, readQRCode, SessionName, attempts);
 								//
@@ -746,7 +606,6 @@ module.exports = class Instace {
 									//
 									logger?.info("- Navegador fechado automaticamente");
 									//
-									await updateStateDb(addJson?.state, addJson?.status, theTokenAuth, SessionName);
 								}
 								//
 								attempts++;
@@ -833,14 +692,8 @@ module.exports = class Instace {
 									message: addJson?.message,
 								});
 								//
-								await updateStateDb(addJson?.state, addJson?.status, theTokenAuth, SessionName);
-								//
 								await updateWebhookDb(dataSessions?.wh_status, dataSessions?.wh_message, dataSessions?.wh_qrcode, dataSessions?.wh_connect, theTokenAuth, SessionName);
 								webhooks?.wh_connect(SessionName);
-								//
-								if (phone) {
-									await updateUserConDb(phone, addJson?.profilepicture, theTokenAuth, SessionName);
-								}
 								//
 								attempts = 1;
 								//
@@ -907,8 +760,6 @@ module.exports = class Instace {
 										//
 										await Sessions?.addInfoSession(SessionName, addJson);
 										//
-										await updateStateDb(addJson?.state, addJson?.status, theTokenAuth, SessionName);
-										//
 										dataSessions?.funcoesSocket?.stateChange(SessionName, {
 											SessionName: SessionName,
 											state: addJson?.state,
@@ -930,8 +781,6 @@ module.exports = class Instace {
 										};
 										//
 										await Sessions?.addInfoSession(SessionName, addJson);
-										//
-										await updateStateDb(addJson?.state, addJson?.status, theTokenAuth, SessionName);
 										//
 										dataSessions?.funcoesSocket?.stateChange(SessionName, {
 											SessionName: SessionName,
@@ -966,8 +815,6 @@ module.exports = class Instace {
 										//
 										await Sessions?.addInfoSession(SessionName, addJson);
 										//
-										await updateStateDb(addJson?.state, addJson?.status, theTokenAuth, SessionName);
-										//
 										dataSessions?.funcoesSocket?.stateChange(SessionName, {
 											SessionName: SessionName,
 											state: addJson?.state,
@@ -999,8 +846,6 @@ module.exports = class Instace {
 										};
 										//
 										await Sessions?.addInfoSession(SessionName, addJson);
-										//
-										await updateStateDb(addJson?.state, addJson?.status, theTokenAuth, SessionName);
 										//
 										dataSessions?.funcoesSocket?.stateChange(SessionName, {
 											SessionName: SessionName,
@@ -1077,8 +922,6 @@ module.exports = class Instace {
 										//
 										await Sessions?.addInfoSession(SessionName, addJson);
 										//
-										await updateStateDb(addJson?.state, addJson?.status, theTokenAuth, SessionName);
-										//
 										setTimeout(async function () {
 											return await startSock(SessionName).then(async (result) => {
 												//
@@ -1137,8 +980,6 @@ module.exports = class Instace {
 										//
 										await Sessions?.addInfoSession(SessionName, addJson);
 										//
-										await updateStateDb(addJson?.state, addJson?.status, theTokenAuth, SessionName);
-										//
 										dataSessions?.funcoesSocket?.stateChange(SessionName, {
 											SessionName: SessionName,
 											state: addJson?.state,
@@ -1187,8 +1028,6 @@ module.exports = class Instace {
 										};
 										//
 										await Sessions?.addInfoSession(SessionName, addJson);
-										//
-										await updateStateDb(addJson?.state, addJson?.status, theTokenAuth, SessionName);
 										//
 										dataSessions?.funcoesSocket?.stateChange(SessionName, {
 											SessionName: SessionName,

@@ -55,7 +55,7 @@ router.post("/sendContactVcard", upload.none(''), verifyToken.verify, async (req
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
-		if (!resSessionName || !req.body.phonefull || !req.body.contact || !req.body.namecontact) {
+		if (!resSessionName || !req?.body?.phonefull || !req?.body?.contact || !req?.body?.namecontact) {
 			var resultRes = {
 				"error": true,
 				"status": 400,
@@ -80,7 +80,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					await session.waqueue.add(async () => {
 						var checkNumber = await retrieving?.checkNumberStatus(
 							resSessionName,
-							soNumeros(req.body.phonefull)
+							soNumeros(req?.body?.phonefull)
 						);
 						//
 						if (checkNumber.status == 200 && checkNumber.error == false) {
@@ -88,8 +88,8 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 							var sendContactVcard = await message?.sendContactVcard(
 								resSessionName,
 								checkNumber.number,
-								soNumeros(req.body.contact),
-								req.body.namecontact
+								soNumeros(req?.body?.contact),
+								req?.body?.namecontact
 							);
 							//
 							res.setHeader('Content-Type', 'application/json');
@@ -149,7 +149,7 @@ router.post("/sendVoice", upload.single('file'), verifyToken.verify, async (req,
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
-		if (!resSessionName || !req.body.phonefull || !req.file) {
+		if (!resSessionName || !req?.body?.phonefull || !req.file) {
 			var validate = {
 				"error": true,
 				"status": 400,
@@ -194,7 +194,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						await session.waqueue.add(async () => {
 							var checkNumber = await retrieving?.checkNumberStatus(
 								resSessionName,
-								soNumeros(req.body.phonefull)
+								soNumeros(req?.body?.phonefull)
 							);
 							//
 							if (checkNumber.status === 200 && checkNumber.error === false) {
@@ -204,7 +204,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 									checkNumber.number,
 									req.file.buffer,
 									req.file.mimetype,
-									req.body.caption
+									req?.body?.caption
 								);
 								//
 								res.setHeader('Content-Type', 'application/json');
@@ -264,7 +264,7 @@ router.post("/sendVoiceBase64", upload.none(''), verifyToken.verify, async (req,
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
-		if (!resSessionName || !req.body.phonefull || !req.body.base64 || !req.body.originalname) {
+		if (!resSessionName || !req?.body?.phonefull || !req?.body?.base64 || !req?.body?.originalname) {
 			var validate = {
 				"error": true,
 				"status": 400,
@@ -289,19 +289,19 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					await session.waqueue.add(async () => {
 						var checkNumber = await retrieving?.checkNumberStatus(
 							resSessionName,
-							soNumeros(req.body.phonefull)
+							soNumeros(req?.body?.phonefull)
 						);
 						//
 						if (checkNumber.status === 200 && checkNumber.error === false) {
 							//
-							var mimeType = mime.lookup(req.body.originalname);
+							var mimeType = mime.lookup(req?.body?.originalname);
 							//
 							var sendPtt = await message?.sendPtt(
 								resSessionName,
 								checkNumber.number,
-								Buffer.from(req.body.base64, 'base64'),
+								Buffer.from(req?.body?.base64, 'base64'),
 								mimeType,
-								req.body.caption
+								req?.body?.caption
 							);
 							//
 							res.setHeader('Content-Type', 'application/json');
@@ -360,7 +360,7 @@ router.post("/sendVoiceFromBase64", upload.none(''), verifyToken.verify, async (
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
-		if (!resSessionName || !req.body.phonefull || !req.body.base64 || !req.body.mimetype || !req.body.originalname) {
+		if (!resSessionName || !req?.body?.phonefull || !req?.body?.base64 || !req?.body?.mimetype || !req?.body?.originalname) {
 			var validate = {
 				"error": true,
 				"status": 400,
@@ -378,7 +378,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
 			//let ext = path.parse(req.file.originalname).ext;
 			//logger?.info(`- acceptedTypes: ${req.file.mimetype}`);
-			let acceptedTypes = req.body.mimetype.split('/')[0];
+			let acceptedTypes = req?.body?.mimetype.split('/')[0];
 			if (acceptedTypes !== "audio") {
 				//
 				var validate = {
@@ -405,7 +405,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						await session.waqueue.add(async () => {
 							var checkNumber = await retrieving?.checkNumberStatus(
 								resSessionName,
-								soNumeros(req.body.phonefull)
+								soNumeros(req?.body?.phonefull)
 							);
 							//
 							if (checkNumber.status === 200 && checkNumber.error === false) {
@@ -413,8 +413,8 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 								var sendPtt = await message?.sendPtt(
 									resSessionName,
 									checkNumber.number,
-									Buffer.from(req.body.base64, 'base64'),
-									req.body.mimetype
+									Buffer.from(req?.body?.base64, 'base64'),
+									req?.body?.mimetype
 								);
 								//
 								res.setHeader('Content-Type', 'application/json');
@@ -474,7 +474,7 @@ router.post("/sendText", upload.none(''), verifyToken.verify, async (req, res, n
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
-		if (!resSessionName || !req.body.phonefull || !req.body.msg) {
+		if (!resSessionName || !req?.body?.phonefull || !req?.body?.msg) {
 			var validate = {
 				"error": true,
 				"status": 400,
@@ -499,7 +499,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					await session.waqueue.add(async () => {
 						var checkNumber = await retrieving?.checkNumberStatus(
 							resSessionName,
-							soNumeros(req.body.phonefull)
+							soNumeros(req?.body?.phonefull)
 						);
 						//
 						if (checkNumber.status === 200 && checkNumber.error === false) {
@@ -507,7 +507,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 							var sendText = await message?.sendText(
 								resSessionName,
 								checkNumber.number,
-								req.body.msg
+								req?.body?.msg
 							);
 							//
 							res.setHeader('Content-Type', 'application/json');
@@ -566,7 +566,7 @@ router.post("/sendLocation", upload.none(''), verifyToken.verify, async (req, re
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
-		if (!resSessionName || !req.body.phonefull || !req.body.lat || !req.body.long || !req.body.local) {
+		if (!resSessionName || !req?.body?.phonefull || !req?.body?.lat || !req?.body?.long || !req?.body?.local) {
 			//
 			var validate = {
 				"error": true,
@@ -592,7 +592,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					await session.waqueue.add(async () => {
 						var checkNumber = await retrieving?.checkNumberStatus(
 							resSessionName,
-							soNumeros(req.body.phonefull)
+							soNumeros(req?.body?.phonefull)
 						);
 						//
 						if (checkNumber.status === 200 && checkNumber.error === false) {
@@ -600,9 +600,9 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 							var sendLocation = await message?.sendLocation(
 								resSessionName,
 								checkNumber.number,
-								req.body.lat,
-								req.body.long,
-								req.body.local
+								req?.body?.lat,
+								req?.body?.long,
+								req?.body?.local
 							);
 							//
 							//console?.log(result);
@@ -663,7 +663,7 @@ router.post("/sendLink", upload.none(''), verifyToken.verify, async (req, res, n
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
-		if (!resSessionName || !req.body.phonefull || !req.body.link || !req.body.descricao) {
+		if (!resSessionName || !req?.body?.phonefull || !req?.body?.link || !req?.body?.descricao) {
 			//
 			var validate = {
 				"error": true,
@@ -687,7 +687,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				case 'chatsAvailable':
 					//
 					await session.waqueue.add(async () => {
-						if (!await Sessions.isURL(req.body.link)) {
+						if (!await Sessions.isURL(req?.body?.link)) {
 							var validate = {
 								"error": true,
 								"status": 401,
@@ -703,7 +703,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						//
 						var checkNumber = await retrieving?.checkNumberStatus(
 							resSessionName,
-							soNumeros(req.body.phonefull)
+							soNumeros(req?.body?.phonefull)
 						);
 						//
 						if (checkNumber.status === 200 && checkNumber.error === false) {
@@ -711,8 +711,8 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 							var sendLink = await message?.sendLink(
 								resSessionName,
 								checkNumber.number,
-								req.body.link,
-								req.body.descricao
+								req?.body?.link,
+								req?.body?.descricao
 							);
 							//
 							res.setHeader('Content-Type', 'application/json');
@@ -770,7 +770,7 @@ router.post("/sendImage", upload.single('file'), verifyToken.verify, async (req,
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
 	try {
-		if (!resSessionName || !req.body.phonefull || !req.file) {
+		if (!resSessionName || !req?.body?.phonefull || !req.file) {
 			var validate = {
 				"error": true,
 				"status": 400,
@@ -815,7 +815,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						await session.waqueue.add(async () => {
 							var checkNumber = await retrieving?.checkNumberStatus(
 								resSessionName,
-								soNumeros(req.body.phonefull)
+								soNumeros(req?.body?.phonefull)
 							);
 							//
 							if (checkNumber.status === 200 && checkNumber.error === false) {
@@ -826,7 +826,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 									req.file.buffer,
 									req.file.mimetype,
 									req.file.originalname,
-									req.body.caption
+									req?.body?.caption
 								);
 								//
 								res.setHeader('Content-Type', 'application/json');
@@ -886,7 +886,7 @@ router.post("/sendImageBase64", upload.none(''), verifyToken.verify, async (req,
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.phonefull || !req.body.base64 || !req.body.originalname || !req.body.caption) {
+	if (!resSessionName || !req?.body?.phonefull || !req?.body?.base64 || !req?.body?.originalname || !req?.body?.caption) {
 		var validate = {
 			"error": true,
 			"status": 400,
@@ -904,7 +904,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
 		//let ext = path.parse(req.file.originalname).ext;
 		//logger?.info(`- acceptedTypes: ${req.file.mimetype}`);
-		var mimeType = mime.lookup(req.body.originalname);
+		var mimeType = mime.lookup(req?.body?.originalname);
 		let acceptedTypes = mimeType.split('/')[0];
 		if (acceptedTypes !== "image") {
 			//
@@ -932,7 +932,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					await session.waqueue.add(async () => {
 						var checkNumber = await retrieving?.checkNumberStatus(
 							resSessionName,
-							soNumeros(req.body.phonefull)
+							soNumeros(req?.body?.phonefull)
 						);
 						//
 						if (checkNumber.status === 200 && checkNumber.error === false) {
@@ -940,10 +940,10 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 							var sendFileBase64 = await message?.sendImage(
 								resSessionName,
 								checkNumber.number,
-								Buffer.from(req.body.base64, 'base64'),
-								req.body.originalname,
+								Buffer.from(req?.body?.base64, 'base64'),
+								req?.body?.originalname,
 								mimeType,
-								req.body.caption
+								req?.body?.caption
 							);
 							//
 							res.setHeader('Content-Type', 'application/json');
@@ -986,7 +986,7 @@ router.post("/sendImageFromBase64", upload.none(''), verifyToken.verify, async (
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.phonefull || !req.body.base64 || !req.body.mimetype || !req.body.originalname || !req.body.caption) {
+	if (!resSessionName || !req?.body?.phonefull || !req?.body?.base64 || !req?.body?.mimetype || !req?.body?.originalname || !req?.body?.caption) {
 		var validate = {
 			"error": true,
 			"status": 400,
@@ -1004,7 +1004,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		//if (ext !== '.wav' || ext !== '.aifc' || ext !== '.aiff' || ext !== '.mp3' || ext !== '.m4a' || ext !== '.mp2' || ext !== '.ogg') {
 		//let ext = path.parse(req.file.originalname).ext;
 		//logger?.info(`- acceptedTypes: ${req.file.mimetype}`);
-		var mimeType = req.body.mimetype;
+		var mimeType = req?.body?.mimetype;
 		let acceptedTypes = mimeType.split('/')[0];
 		if (acceptedTypes !== "image") {
 			//
@@ -1032,7 +1032,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					await session.waqueue.add(async () => {
 						var checkNumber = await retrieving?.checkNumberStatus(
 							resSessionName,
-							soNumeros(req.body.phonefull)
+							soNumeros(req?.body?.phonefull)
 						);
 						//
 						if (checkNumber.status === 200 && checkNumber.error === false) {
@@ -1040,10 +1040,10 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 							var sendFileFromBase64 = await message?.sendImage(
 								resSessionName,
 								checkNumber.number,
-								Buffer.from(req.body.base64, 'base64'),
-								req.body.originalname,
-								req.body.mimetype,
-								req.body.caption
+								Buffer.from(req?.body?.base64, 'base64'),
+								req?.body?.originalname,
+								req?.body?.mimetype,
+								req?.body?.caption
 							);
 							//
 							res.setHeader('Content-Type', 'application/json');
@@ -1088,7 +1088,7 @@ router.post("/sendFile", upload.single('file'), verifyToken.verify, async (req, 
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.phonefull || !req.body.caption || !req.file) {
+	if (!resSessionName || !req?.body?.phonefull || !req?.body?.caption || !req.file) {
 		var validate = {
 			"error": true,
 			"status": 400,
@@ -1113,7 +1113,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var checkNumber = await retrieving?.checkNumberStatus(
 						resSessionName,
-						soNumeros(req.body.phonefull)
+						soNumeros(req?.body?.phonefull)
 					);
 					//
 					if (checkNumber.status === 200 && checkNumber.error === false) {
@@ -1124,7 +1124,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 							req.file.buffer,
 							req.file.originalname,
 							req.file.mimetype,
-							req.body.caption
+							req?.body?.caption
 						);
 						//
 						//console?.log(result);
@@ -1167,7 +1167,7 @@ router.post("/sendFileUrl", upload.none(''), verifyToken.verify, async (req, res
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.phonefull || !req.body.url || !req.body.caption) {
+	if (!resSessionName || !req?.body?.phonefull || !req?.body?.url || !req?.body?.caption) {
 		var validate = {
 			"error": true,
 			"status": 400,
@@ -1192,7 +1192,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var checkNumber = await retrieving?.checkNumberStatus(
 						resSessionName,
-						soNumeros(req.body.phonefull)
+						soNumeros(req?.body?.phonefull)
 					);
 					//
 					if (checkNumber.status === 200 && checkNumber.error === false) {
@@ -1200,10 +1200,10 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						var sendFile = await message?.sendFileUrl(
 							resSessionName,
 							checkNumber.number,
-							req.body.url,
-							req.body.url.split('/').slice(-1)[0],
-							mime.lookup(req.body.url.split('.').slice(-1)[0]),
-							req.body.caption
+							req?.body?.url,
+							req?.body?.url.split('/').slice(-1)[0],
+							mime.lookup(req?.body?.url.split('.').slice(-1)[0]),
+							req?.body?.caption
 						);
 						//
 						//console?.log(result);
@@ -1245,7 +1245,7 @@ router.post("/sendFileBase64", upload.none(''), verifyToken.verify, async (req, 
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.phonefull || !req.body.base64 || !req.body.originalname || !req.body.caption) {
+	if (!resSessionName || !req?.body?.phonefull || !req?.body?.base64 || !req?.body?.originalname || !req?.body?.caption) {
 		var validate = {
 			"error": true,
 			"status": 400,
@@ -1269,15 +1269,15 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				await session.waqueue.add(async () => {
 					//var folderName = fs.mkdtempSync(path.join(os.tmpdir(), 'BLS-' + resSessionName + '-'));
-					//var filePath = path.join(folderName, req.body.originalname);
-					//var base64Data = req.body.base64.replace(/^data:([A-Za-z-+/]+);base64,/,'');
-					var mimeType = mime.lookup(req.body.originalname);
+					//var filePath = path.join(folderName, req?.body?.originalname);
+					//var base64Data = req?.body?.base64.replace(/^data:([A-Za-z-+/]+);base64,/,'');
+					var mimeType = mime.lookup(req?.body?.originalname);
 					//fs.writeFileSync(filePath, base64Data,  {encoding: 'base64'});
 					//logger?.info(`- File ${filePath}`);
 					//
 					var checkNumber = await retrieving?.checkNumberStatus(
 						resSessionName,
-						soNumeros(req.body.phonefull)
+						soNumeros(req?.body?.phonefull)
 					);
 					//
 					if (checkNumber.status === 200 && checkNumber.error === false) {
@@ -1285,10 +1285,10 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						var sendFileBase64 = await message?.sendFile(
 							resSessionName,
 							checkNumber.number,
-							Buffer.from(req.body.base64, 'base64'),
-							req.body.originalname,
+							Buffer.from(req?.body?.base64, 'base64'),
+							req?.body?.originalname,
 							mimeType,
-							req.body.caption
+							req?.body?.caption
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
@@ -1330,7 +1330,7 @@ router.post("/sendFileFromBase64", upload.none(''), verifyToken.verify, async (r
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.phonefull || !req.body.base64 || !req.body.mimetype || !req.body.originalname || !req.body.caption) {
+	if (!resSessionName || !req?.body?.phonefull || !req?.body?.base64 || !req?.body?.mimetype || !req?.body?.originalname || !req?.body?.caption) {
 		var validate = {
 			"error": true,
 			"status": 400,
@@ -1355,7 +1355,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var checkNumber = await retrieving?.checkNumberStatus(
 						resSessionName,
-						soNumeros(req.body.phonefull)
+						soNumeros(req?.body?.phonefull)
 					);
 					//
 					if (checkNumber.status === 200 && checkNumber.error === false) {
@@ -1363,10 +1363,10 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						var sendFileFromBase64 = await message?.sendFile(
 							resSessionName,
 							checkNumber.number,
-							Buffer.from(req.body.base64, 'base64'),
-							req.body.originalname,
-							req.body.mimetype,
-							req.body.caption
+							Buffer.from(req?.body?.base64, 'base64'),
+							req?.body?.originalname,
+							req?.body?.mimetype,
+							req?.body?.caption
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
@@ -1410,7 +1410,7 @@ router.post("/sendButton", upload.none(''), verifyToken.verify, async (req, res,
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.phonefull || !req.body.buttonMessage) {
+	if (!resSessionName || !req?.body?.phonefull || !req?.body?.buttonMessage) {
 		var resultRes = {
 			"error": true,
 			"status": 400,
@@ -1435,7 +1435,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var checkNumber = await retrieving?.checkNumberStatus(
 						resSessionName,
-						soNumeros(req.body.phonefull)
+						soNumeros(req?.body?.phonefull)
 					);
 					//
 					if (checkNumber.status === 200 && checkNumber.error === false) {
@@ -1443,7 +1443,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						var sendButton = await message?.sendButton(
 							resSessionName,
 							checkNumber.number,
-							req.body.buttonMessage,
+							req?.body?.buttonMessage,
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
@@ -1486,7 +1486,7 @@ router.post("/sendTemplate", upload.none(''), verifyToken.verify, async (req, re
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.phonefull || !req.body.templateMessage) {
+	if (!resSessionName || !req?.body?.phonefull || !req?.body?.templateMessage) {
 		var resultRes = {
 			"error": true,
 			"status": 400,
@@ -1511,7 +1511,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var checkNumber = await retrieving?.checkNumberStatus(
 						resSessionName,
-						soNumeros(req.body.phonefull)
+						soNumeros(req?.body?.phonefull)
 					);
 					//
 					if (checkNumber.status === 200 && checkNumber.error === false) {
@@ -1519,7 +1519,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						var sendTemplate = await message?.sendTemplate(
 							resSessionName,
 							checkNumber.number,
-							req.body.templateMessage,
+							req?.body?.templateMessage,
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
@@ -1562,7 +1562,7 @@ router.post("/sendListMessage", upload.none(''), verifyToken.verify, async (req,
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.phonefull || !req.body.listMessage) {
+	if (!resSessionName || !req?.body?.phonefull || !req?.body?.listMessage) {
 		var resultRes = {
 			"error": true,
 			"status": 400,
@@ -1587,7 +1587,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var checkNumber = await retrieving?.checkNumberStatus(
 						resSessionName,
-						soNumeros(req.body.phonefull)
+						soNumeros(req?.body?.phonefull)
 					);
 					//
 					if (checkNumber.status === 200 && checkNumber.error === false) {
@@ -1595,7 +1595,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						var sendListMessage = await message?.sendListMessage(
 							resSessionName,
 							checkNumber.number,
-							req.body.listMessage,
+							req?.body?.listMessage,
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
@@ -1638,7 +1638,7 @@ router.post("/sendPoll", upload.none(''), verifyToken.verify, async (req, res, n
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
-	if (!resSessionName || !req.body.phonefull || !req.body.poll) {
+	if (!resSessionName || !req?.body?.phonefull || !req?.body?.poll) {
 		var resultRes = {
 			"error": true,
 			"status": 400,
@@ -1663,7 +1663,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				await session.waqueue.add(async () => {
 					var checkNumber = await retrieving?.checkNumberStatus(
 						resSessionName,
-						soNumeros(req.body.phonefull)
+						soNumeros(req?.body?.phonefull)
 					);
 					//
 					if (checkNumber.status === 200 && checkNumber.error === false) {
@@ -1671,7 +1671,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						var sendPoll = await message?.sendPoll(
 							resSessionName,
 							checkNumber.number,
-							req.body.poll,
+							req?.body?.poll,
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
