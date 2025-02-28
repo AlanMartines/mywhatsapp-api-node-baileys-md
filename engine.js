@@ -248,8 +248,8 @@ module.exports = class Instace {
 	 */
 		//
 		//const loggerPino = pino({ level: 'trace' });
-		//const loggerPino = pino({ level: 'silent' });
-		const loggerPino = pino({ timestamp: () => `,"time":"${new Date().toJSON()}"` }, pino.destination('./wa-logs.txt'));
+		const loggerPino = pino();
+		//const loggerPino = pino({ timestamp: () => `,"time":"${new Date().toJSON()}"` }, pino.destination('./wa-logs.txt'));
 		loggerPino.level = 'silent';
 		//
 		const useStore = !process.argv.includes('--no-store')

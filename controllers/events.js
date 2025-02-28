@@ -782,10 +782,10 @@ module.exports = class Events {
 							break;
 						default:
 						//
-						/*
 						logger?.info(`- Desculpe, estamos sem nenhuma resposta.`);
-						logger?.error(msg?.message);
+						logger?.error(msg);
 						//
+						/*
 						response = {
 							"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 							"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
