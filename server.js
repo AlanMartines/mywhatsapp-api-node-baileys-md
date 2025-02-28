@@ -1,6 +1,5 @@
 'use strict';
 //
-const { exec } = require('child_process');
 const fs = require('fs-extra');
 const express = require('express');
 require('express-async-errors');

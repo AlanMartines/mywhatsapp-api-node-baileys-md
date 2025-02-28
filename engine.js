@@ -66,7 +66,12 @@ const {
 	getAggregateVotesInPollMessage,
 	WAMessageContent,
 	WAMessageKey,
-	PHONENUMBER_MCC
+	PHONENUMBER_MCC,
+	BinaryInfo, 
+	downloadAndProcessHistorySyncNotification,
+	encodeWAM,
+	getHistoryMsg,
+	isJidNewsletter,
 } = require('@whiskeysockets/baileys');
 //
 const tokenPatch = parseInt(config.INDOCKER) ? path.join(config.PATCH_TOKENS, os.hostname()) : config.PATCH_TOKENS;
@@ -1074,7 +1079,7 @@ module.exports = class Instace {
 										break;
 									default:
 										// code block
-										logger?.info(`- lastDisconnect: ${lastDisconnect?.error}`);
+										logger?.info(`- Engine lastDisconnect: ${lastDisconnect?.error}`);
 										//
 										setTimeout(async function () {
 											return await startSock(SessionName).then(async (result) => {

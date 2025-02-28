@@ -1,4 +1,4 @@
-var addJson {};
+var addJson = {};
 let resDisconnectReason = {
     genericOut: 400,
     loggedOut: 401, // Logged out from another device
