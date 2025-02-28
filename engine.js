@@ -5,16 +5,11 @@ const path = require('path');
 const fs = require('fs-extra');
 const QRCode = require('qrcode');
 const qrViewer = require('qrcode-terminal');
-const parsePhoneNumber = require('libphonenumber-js');
-const readline = require('readline');
-const cacheManager = require('cache-manager');
-const redisStore = require('cache-manager-redis-store').redisStore;
 const moment = require('moment');
 moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
 const pino = require("pino");
 const rmfr = require('rmfr');
-const colors = require('colors');
 const { default: pQueue } = require('p-queue');
 const { release } = require('os');
 const NodeCache = require('node-cache');
@@ -253,8 +248,9 @@ module.exports = class Instace {
 	 */
 		//
 		//const loggerPino = pino({ level: 'trace' });
-		const loggerPino = pino({ level: 'silent' });
-		//logger.level = 'trace';
+		//const loggerPino = pino({ level: 'silent' });
+		const loggerPino = pino({ timestamp: () => `,"time":"${new Date().toJSON()}"` }, pino.destination('./wa-logs.txt'));
+		loggerPino.level = 'silent';
 		//
 		const useStore = !process.argv.includes('--no-store')
 		const doReplies = !process.argv.includes('--no-reply')
@@ -323,7 +319,7 @@ module.exports = class Instace {
 					/** Logger do tipo pino */
 					logger: loggerPino,
 					/** Versão para conectar */
-					version: waVersion,
+					//version: waVersion,
 					/** Configuração do navegador */
 					browser: [`${config.DEVICE_NAME}`, 'Chrome', release()],
 					/** Agente usado para solicitações de busca - carregamento/download de mídia */
@@ -697,7 +693,6 @@ module.exports = class Instace {
 									message: addJson?.message,
 								});
 								//
-								await updateWebhookDb(dataSessions?.wh_status, dataSessions?.wh_message, dataSessions?.wh_qrcode, dataSessions?.wh_connect, theTokenAuth, SessionName);
 								webhooks?.wh_connect(SessionName);
 								//
 								attempts = 1;
@@ -1136,7 +1131,6 @@ module.exports = class Instace {
 						const msg = await store.loadMessage(key?.remoteJid, key?.id)
 						return msg?.message || undefined
 					}
-
 					// only if store is present
 					return proto.Message.fromObject({})
 				}
