@@ -1,6 +1,4 @@
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const { Tokens } = require('../models');
 const authConfig = require('../config/auth');
 //
 exports.registerToken = (SessionName) => {
