@@ -1,0 +1,9 @@
+{
+	"name": "ApiWhatsApp",
+  "watch": true,
+  "ignore_watch" : ["node_modules", "wa-logs.txt"],
+  "watch_options": {
+    "followSymlinks": false
+  },
+	"script": "server.js"
+}

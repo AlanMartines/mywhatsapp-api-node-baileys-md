@@ -269,91 +269,24 @@ module.exports = class Events {
 						type = 'historySync';
 					} else if (msg?.message?.reactionMessage) {
 						type = 'reactionMessage';
+					} else if (msg?.message?.interactiveMessage) {
+						type = 'interactiveMessage';
 					} else if (msg?.message?.pollCreationMessage) {
 						type = 'poll';
 					} else if (msg?.message?.pollCreationMessageV2) {
 						type = 'poll';
+					} else if (msg?.message?.pollCreationMessageV3) {
+						type = 'poll';
 					} else if (msg?.message?.pollUpdateMessage) {
 						type = 'pollVote';
 					} else {
+						//
 						type = undefined;
 						//
 						logger?.error(`- Desculpe, estamos sem nenhuma resposta no momento.`);
 						logger?.error(`${JSON.stringify(msg, null, 2)}`);
 						//
 					}
-					//
-					/*
-					switch (m?.type) {
-						case 'location':
-							type = 'location';
-							break;
-						case 'liveLocation':
-							type = 'liveLocation';
-							break;
-						case 'image':
-							type = 'image';
-							break;
-						case 'document':
-							type = 'document';
-							break;
-						case 'documentWithCaptionMessage':
-							type = 'documentWithCaptionMessage';
-							break;
-						case 'audio':
-							type = 'audio';
-							break;
-						case 'vcard':
-							type = 'vcard';
-							break;
-						case 'text':
-							type = 'text';
-							break;
-						case 'extended':
-							type = 'extended';
-							break;
-						case 'video':
-							type = 'video';
-							break;
-						case 'sticker':
-							type = 'sticker';
-							break;
-						case 'button':
-							type = 'button';
-							break;
-						case 'buttonsResponse':
-							type = 'buttonsResponse';
-							break;
-						case 'templateMessage':
-							type = 'templateMessage';
-							break;
-						case 'templateResponse':
-							type = 'templateResponse';
-							break;
-						case 'listMessage':
-							type = 'listMessage';
-							break;
-						case 'listResponseMessage':
-							type = 'listResponseMessage';
-							break;
-						case 'historySync':
-							type = 'historySync';
-							break;
-						case 'reactionMessage':
-							type = 'reactionMessage';
-							break;
-						case 'poll':
-							type = 'poll';
-							break;
-						default:
-							type = undefined;
-							//
-							logger?.error(`- Desculpe, estamos sem nenhuma resposta no momento.`);
-							logger?.error(msg?.message);
-							//
-							break;
-					}
-					*/
 					//
 					switch (type) {
 						case 'text':
@@ -758,6 +691,24 @@ module.exports = class Events {
 							}
 							//
 							break;
+							case 'interactiveMessage':
+								logger?.info('- Message type: interactiveMessage');
+								//
+								response = {
+									"SessionName": `${SessionName}`,
+									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
+									"type": 'interactiveMessage',
+									"fromMe": msg?.key?.fromMe,
+									"id": msg?.key?.id,
+									"name": msg?.pushName || msg?.verifiedBizName || null,
+									"from": msg?.message?.key?.remoteJid?.split('@')[0],
+									"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
+									"content": msg?.message?.interactiveMessage?.nativeFlowMessage?.buttons,
+									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
+								}
+								//
+								break;
 						case 'poll':
 							logger?.info('- Message type: poll');
 							//
@@ -782,23 +733,7 @@ module.exports = class Events {
 							break;
 						default:
 						//
-						logger?.info(`- Desculpe, estamos sem nenhuma resposta.`);
-						logger?.error(msg);
-						//
-						/*
-						response = {
-							"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
-							"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
-							"type": 'undefined',
-							"fromMe": msg?.key?.fromMe,
-							"id": msg?.key?.id,
-							"name": msg?.pushName || msg?.verifiedBizName || null,
-							"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
-							"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
-							"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
-							"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
-						}
-						*/
+
 						//
 					}
 					//
@@ -806,7 +741,6 @@ module.exports = class Events {
 						//
 						dataSessions?.funcoesSocket?.message(SessionName, response);
 						await webhooks?.wh_messages(SessionName, response);
-						//await updateStatisticsDb(response?.status, response?.type, response?.isGroup, dataSessions?.AuthorizationToken, SessionName);
 						//
 					}
 					//

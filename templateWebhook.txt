@@ -1,0 +1,432 @@
+// Texto
+// =====
+{
+	"SessionName": "",
+	"wook": "",
+	"status": "",
+	"type": "text",
+	"fromMe": "",
+	"id": "",
+	"name": "",
+	"from": "",
+	"to": null,
+	"isGroup": "",
+	"content": "",
+	"datetime": ""
+}
+
+// Imagem
+// ======
+{
+	"SessionName": "",
+	"wook": "",
+	"status": "",
+	"type": "image",
+	"fromMe": "",
+	"id": "",
+	"name": "",
+	"from": "",
+	"to": null,
+	"isGroup": "",
+	"caption": "",
+	"mimetype": "",
+	"fileLength": "",
+	"base64": "",
+	"height": "",
+	"width": "",
+	"datetime": ""
+},
+
+// Sticker
+// =======
+{
+	"SessionName": "",
+	"wook": "",
+	"status": "",
+	"type": "image",
+	"fromMe": "",
+	"id": "",
+	"name": "",
+	"from": "",
+	"to": null,
+	"isGroup": "",
+	"caption": "",
+	"mimetype": "",
+	"fileLength": "",
+	"isAnimated": "",
+	"base64": "",
+	"height": "",
+	"width": "",
+	"datetime": ""
+}
+
+// Audio
+// =====
+{
+	"SessionName": "",
+	"wook": "",
+	"status": "",
+	"type": "audio",
+	"fromMe": "",
+	"id": "",
+	"name": "",
+	"from": "",
+	"to": null,
+	"isGroup": "",
+	"mimetype": "",
+	"fileLength": "",
+	"time": "",
+	"base64": "",
+	"ptt": "",
+	"datetime": ""
+}
+
+// Video
+// =====
+{
+	"SessionName": "",
+	"wook": "",
+	"status": "",
+	"type": "video",
+	"fromMe": "",
+	"id": "",
+	"name": "",
+	"from": "",
+	"to": null,
+	"isGroup": "",
+	"caption": "",
+	"mimetype": "",
+	"fileLength": "",
+	"base64": "",
+	"datetime": ""
+}
+
+// VideoV2
+// =======
+{
+	"SessionName": "",
+	"wook": "",
+	"status": "",
+	"type": "video",
+	"fromMe": "",
+	"id": "",
+	"name": "",
+	"from": "",
+	"to": null,
+	"isGroup": "",
+	"caption": "",
+	"mimetype": "",
+	"fileLength": "",
+	"seconds": "",
+	"base64": "",
+	"datetime": ""
+}
+
+// Location
+// ========
+{
+	"SessionName": "",
+	"wook": "",
+	"status": "",
+	"type": "location",
+	"fromMe": "",
+	"id": "",
+	"name": "",
+	"from": "",
+	"to": null,
+	"isGroup": "",
+	"lat": "",
+	"long": "",
+	"url": "",
+	"datetime": ""
+}
+
+// Live Location
+// =============
+{
+	"SessionName": "",
+	"wook": "",
+	"status": "",
+	"type": "liveLocation",
+	"fromMe": "",
+	"id": "",
+	"name": "",
+	"from": "",
+	"to": null,
+	"isGroup": "",
+	"lat": "",
+	"long": "",
+	"caption": "",
+	"url": "",
+	"datetime": ""
+}
+
+// Document
+// ========
+{
+	"SessionName": "",
+	"wook": "",
+	"status": "",
+	"type": "document",
+	"fromMe": "",
+	"id": "",
+	"name": "",
+	"from": "",
+	"to": null,
+	"isGroup": "",
+	"caption": "",
+	"fileName": "",
+	"mimetype": "",
+	"fileLength": "",
+	"base64": "",
+	"datetime": ""
+}
+
+// VCard
+// =====
+{
+	"SessionName": "",
+	"wook": "",
+	"status": "",
+	"type": "vcard",
+	"fromMe": "",
+	"id": "",
+	"name": "",
+	"from": "",
+	"to": null,
+	"isGroup": "",
+	"displayName": "",
+	"vcard": "",
+	"datetime": ""
+}
+
+// Botões
+// ======
+{
+	"SessionName": "",
+	"wook": "",
+	"status": "",
+	"type": "button",
+	"fromMe": "",
+	"id": "",
+	"name": "",
+	"from": "",
+	"to": null,
+	"isGroup": "",
+	"buttonsMessage": "",
+	"datetime": ""
+}
+
+// Botões Respostas
+// ================
+{
+	"SessionName": "",
+	"wook": "",
+	"status": "",
+	"type": "buttonsResponse",
+	"fromMe": "",
+	"id": "",
+	"name": "",
+	"from": "",
+	"to": null,
+	"selectedButtonId": "",
+	"selectedDisplayText": "",
+	"datetime": ""
+}
+
+// Templates
+// =========
+{
+	"SessionName": "",
+	"wook": "",
+	"status": "",
+	"type": "templateMessage",
+	"fromMe": "",
+	"id": "",
+	"name": "",
+	"from": "",
+	"to": null,
+	"isGroup": "",
+	"templateMessage": "",
+	"datetime": ""
+}
+
+// Templates Respostas
+// ===================
+{
+	"SessionName": "",
+	"wook": "",
+	"status": "",
+	"type": "templateResponse",
+	"fromMe": "",
+	"id": "",
+	"name": "",
+	"from": "",
+	"to": null,
+	"isGroup": "",
+	"selectedId": "",
+	"selectedDisplayText": "",
+	"datetime": ""
+}
+
+// Lista 
+// =====
+{
+	"SessionName": "",
+	"wook": "",
+	"status": "",
+	"type": "listMessage",
+	"fromMe": "",
+	"id": "",
+	"name": "",
+	"from": "",
+	"to": null,
+	"isGroup": "",
+	"listMessage": "",
+	"datetime": ""
+}
+
+// Lista Respostas
+// ===============
+{
+	"SessionName": "",
+	"wook": "",
+	"status": "",
+	"type": "listResponseMessage",
+	"fromMe": "",
+	"id": "",
+	"name": "",
+	"from": "",
+	"to": null,
+	"isGroup": "",
+	"listResponseMessage": "",
+	"datetime": ""
+}
+
+// Textended
+// =========
+{
+	"SessionName": "",
+	"wook": "",
+	"status": "",
+	"type": 'extended',
+	"fromMe": "",
+	"id": "",
+	"name": "",
+	"from": "",
+	"to": null,
+	"isGroup": "",
+	"content": "",
+	"matchedText": "",
+	"canonicalUrl": "",
+	"description": "",
+	"title": "",
+	"content": "",
+	"quotedMessage": "",
+	"datetime": ""
+}
+
+// History Sync
+// ============
+{
+	"SessionName": "",
+	"wook": "",
+	"status": "",
+	"type": 'historySync',
+	"fromMe": "",
+	"id": "",
+	"name": "",
+	"from": "",
+	"to": null,
+	"datetime": ""
+}
+
+// Reaction Message
+// ================
+{
+	"SessionName": "",
+	"wook": "",
+	"status": "",
+	"type": 'reactionMessage',
+	"fromMe": "",
+	"id": "",
+	"name": "",
+	"from": "",
+	"to": null,
+	"content": "",
+	"datetime": ""
+}
+
+// Enquete
+// =======
+{
+	"SessionName": "",
+	"wook": "",
+	"status": "",
+	"type": 'poll',
+	"fromMe": "",
+	"id": "",
+	"name": "",
+	"from": "",
+	"to": null,
+	"isGroup": "",
+	"poll": "",
+	"datetime": ""
+}
+
+// Chamada
+// =======
+{
+	"SessionName": "",
+	"wook": "INCOMING_CALL",
+	"type": 'call',
+	"id": "",
+	"phone": "",
+	"datetime": "",
+	"offline": "",
+	"status": "",
+	"isVideo": "",
+	"isGroup": "",
+	"participants": ""
+}
+
+// QR Code
+// =======
+{
+	"SessionName": "",
+	"wook": 'QRCODE',
+	'session': "",
+	'state': "QRCODE",
+	'status': "qrRead",
+	'urlCode': "",
+	'qrcode': "",
+	'message': "Sistema aguardando leitura do QR-Code"
+}
+
+// Status
+// ======
+{
+	"SessionName": "",
+	"wook": 'STATUS_CONNECT',
+	"session": "",
+	"state": "",
+	"status": "",
+	"message": ""
+}
+
+//interactiveMessage
+//==================
+{
+	"SessionName": "",
+	"wook": "",
+	"status": "",
+	"type": "interactiveMessage",
+	"fromMe": "",
+	"id": "",
+	"name": "",
+	"from": "",
+	"to": "",
+	"content": "",
+	"datetime": ""
+}
+//
