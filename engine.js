@@ -1,6 +1,7 @@
 'use strict';
 // Configuração dos módulos
 const os = require('os');
+const { Boom } = require("@hapi/boom");
 const path = require('path');
 const fs = require('fs-extra');
 const QRCode = require('qrcode');
@@ -62,7 +63,7 @@ const {
 	WAMessageContent,
 	WAMessageKey,
 	PHONENUMBER_MCC,
-	BinaryInfo, 
+	BinaryInfo,
 	downloadAndProcessHistorySyncNotification,
 	encodeWAM,
 	getHistoryMsg,
@@ -252,10 +253,10 @@ module.exports = class Instace {
 		//const loggerPino = pino({ timestamp: () => `,"time":"${new Date().toJSON()}"` }, pino.destination('./wa-logs.txt'));
 		loggerPino.level = 'silent';
 		//
-		const useStore = !process.argv.includes('--no-store')
-		const doReplies = !process.argv.includes('--no-reply')
-		const usePairingCode = process.argv.includes('--use-pairing-code')
-		const useMobile = process.argv.includes('--mobile')
+		const useStore = !process.argv.includes('--no-store');
+		const doReplies = !process.argv.includes('--no-reply');
+		const usePairingCode = process.argv.includes('--use-pairing-code');
+		const useMobile = process.argv.includes('--mobile');
 		//
 		// external map to store retry counts of messages when decryption/encryption fails
 		// keep this out of the socket itself, so as to prevent a message decryption/encryption loop across socket restarts
@@ -319,7 +320,7 @@ module.exports = class Instace {
 					/** Logger do tipo pino */
 					logger: loggerPino,
 					/** Versão para conectar */
-					//version: waVersion,
+					version: version,
 					/** Configuração do navegador */
 					browser: [`${config.DEVICE_NAME}`, 'Chrome', release()],
 					/** Agente usado para solicitações de busca - carregamento/download de mídia */
@@ -394,93 +395,6 @@ module.exports = class Instace {
 				);
 				//
 				store?.bind(client.ev);
-				//
-				// Código de emparelhamento para clientes da Web
-				if (usePairingCode && !sock.authState.creds.registered) {
-					if (useMobile) {
-						throw new Error(`- Cannot use pairing code with mobile api`);
-					}
-
-					const phoneNumber = await question(`- Please enter your mobile phone number:\n`);
-					const code = await client.requestPairingCode(phoneNumber);
-					logger.info(`- Pairing code: ${code}`);
-				}
-				//
-				// If mobile was chosen, ask for the code
-				if (useMobile && !sock.authState.creds.registered) {
-					const { registration } = sock.authState.creds || { registration: {} }
-
-					if (!registration.phoneNumber) {
-						registration.phoneNumber = await question('Please enter your mobile phone number:\n')
-					}
-
-					const libPhonenumber = await import("libphonenumber-js")
-					const phoneNumber = libPhonenumber.parsePhoneNumber(registration?.phoneNumber)
-					if (!phoneNumber?.isValid()) {
-						throw new Error('Invalid phone number: ' + registration?.phoneNumber)
-					}
-
-					registration.phoneNumber = phoneNumber.format('E.164')
-					registration.phoneNumberCountryCode = phoneNumber.countryCallingCode
-					registration.phoneNumberNationalNumber = phoneNumber.nationalNumber
-					const mcc = PHONENUMBER_MCC[phoneNumber.countryCallingCode]
-					if (!mcc) {
-						throw new Error('Could not find MCC for phone number: ' + registration?.phoneNumber + '\nPlease specify the MCC manually.')
-					}
-
-					registration.phoneNumberMobileCountryCode = mcc
-
-					async function enterCode() {
-						try {
-							const code = await question('Please enter the one time code:\n')
-							const response = await sock.register(code.replace(/["']/g, '').trim().toLowerCase())
-							logger.info('- Successfully registered your phone number.')
-							logger.info(response)
-							rl.close()
-						} catch (error) {
-							logger.error('- Failed to register your phone number. Please try again.\n', error)
-							await askForOTP()
-						}
-					}
-
-					async function enterCaptcha() {
-						const response = await sock.requestRegistrationCode({ ...registration, method: 'captcha' })
-						const path = __dirname + '/captcha.png'
-						fs.writeFileSync(path, Buffer.from(response.image_blob, 'base64'))
-
-						open(path)
-						const code = await question('Please enter the captcha code:\n')
-						fs.unlinkSync(path)
-						registration.captcha = code.replace(/["']/g, '').trim().toLowerCase()
-					}
-
-					async function askForOTP() {
-						if (!registration.method) {
-							let code = await question('How would you like to receive the one time code for registration? "sms" or "voice"\n')
-							code = code.replace(/["']/g, '').trim().toLowerCase()
-							if (code !== 'sms' && code !== 'voice') {
-								return await askForOTP();
-							}
-
-							registration.method = code
-						}
-
-						try {
-							await sock.requestRegistrationCode(registration)
-							await enterCode();
-						} catch (error) {
-							logger.error('- Failed to request registration code. Please try again.\n', error)
-
-							if (error?.reason === 'code_checkpoint') {
-								await enterCaptcha();
-							}
-
-							await askForOTP();
-						}
-					}
-					;
-					askForOTP();
-				}
 				//
 				let addJson = {
 					store: store
@@ -667,7 +581,7 @@ module.exports = class Instace {
 								//
 								attempts = 1;
 								//
-								logger?.info("- Sessão criada com sucesso");
+								logger?.info(`- Sessão criada com sucesso`);
 								logger?.info(`- Telefone conectado: ${phone?.split("@")[0]}`);
 								logger?.info(`- Profile Picture Url: ${ppUrl}`);
 								//
@@ -709,25 +623,35 @@ module.exports = class Instace {
 								let addJson = {};
 								//
 								let resDisconnectReason = {
-									loggedOut: 401,
-									bannedTimetamp: 402,
-									bannedTemporary: 403,
-									timedOut: 408,
-									connectionLost: 408,
-									multideviceMismatch: 411,
-									connectionClosed: 428,
-									connectionReplaced: 440,
-									badSession: 500,
+									genericOut: 400,
+									loggedOut: 401, // Desconectado de outro dispositivo
+									bannedTimetamp: 402, // O código de status 402 possui um timestamp de banimento, conta temporariamente banida
+									bannedTemporary: 403, // Agora chamado de LOCKED no código do WhatsApp Web, conta banida, dispositivo principal foi desconectado
+									clientOutdated: 405, // Cliente desatualizado
+									unknownLogout: 406, // Agora chamado de BANNED no código do WhatsApp Web, desconectado por motivo desconhecido
+									timedOut: 408, // Conexão expirada, reconectando...
+									connectionLost: 408, // Conexão perdida com o servidor, reconectando...
+									dadUserAgent: 409, // O agente do usuário do cliente foi rejeitado
+									multideviceMismatch: 411, // Incompatibilidade de múltiplos dispositivos, escaneie novamente...
+									CATExpired: 413, // O token de autenticação criptográfica do Messenger expirou
+									CATInvalid: 414, // O token de autenticação criptográfica do Messenger é inválido
+									notFound: 415,
+									connectionClosed: 428, // Conexão fechada, reconectando...
+									connectionReplaced: 440, // Conexão substituída, outra nova sessão foi aberta e reconectada...
+									badSession: 500, // Arquivo de sessão corrompido, exclua a sessão e escaneie novamente.
+									experimental: 501,
+									serviceUnavailable: 503,
 									restartRequired: 515,
 								};
+								//
 								// Banned status codes are 403 and 402 temporary
 								// The status code 402 has a banned timetamp
-								const statusCode = lastDisconnect.error ? lastDisconnect.error?.output?.statusCode : 0;
+								const statusCode = new Boom(lastDisconnect?.error)?.output?.statusCode;
 								switch (statusCode) {
-									case resDisconnectReason.loggedOut:
+									case DisconnectReason.loggedOut:
 										// Device Logged Out, Deleting Session
 										logger?.info(`- SessionName: ${SessionName}`);
-										logger?.info('- Connection loggedOut'.red);
+										logger?.info(`- Connection loggedOut`.red);
 										//
 										try {
 											// close WebSocket connection
@@ -768,7 +692,7 @@ module.exports = class Instace {
 										});
 										//
 										break;
-									case resDisconnectReason.bannedTemporary:
+									case DisconnectReason.bannedTemporary:
 										//
 										logger?.info(`- SessionName: ${SessionName}`);
 										logger?.info(`- User banned temporary`.red);
@@ -801,7 +725,7 @@ module.exports = class Instace {
 										*/
 										//
 										break;
-									case resDisconnectReason.bannedTimetamp:
+									case DisconnectReason.bannedTimetamp:
 										//
 										logger?.info(`- SessionName: ${SessionName}`);
 										logger?.info(`- User banned timestamp`.red);
@@ -834,7 +758,7 @@ module.exports = class Instace {
 										*/
 										//
 										break;
-									case resDisconnectReason.timedOut:
+									case DisconnectReason.timedOut:
 										//
 										logger?.info(`- SessionName: ${SessionName}`);
 										logger?.info('- Connection TimedOut'.yellow);
@@ -870,7 +794,7 @@ module.exports = class Instace {
 										}, 500);
 										//
 										break;
-									case resDisconnectReason.connectionLost:
+									case DisconnectReason.connectionLost:
 										//
 										logger?.info(`- SessionName: ${SessionName}`);
 										logger?.info(`- Connection Los`.red);
@@ -902,13 +826,13 @@ module.exports = class Instace {
 										*/
 										//
 										break;
-									case resDisconnectReason.multideviceMismatch:
+									case DisconnectReason.multideviceMismatch:
 										//
 										logger?.info(`- SessionName: ${SessionName}`);
 										logger?.info('- Connection multideviceMismatch'.blue);
 										//
 										break;
-									case resDisconnectReason.connectionClosed:
+									case DisconnectReason.connectionClosed:
 										//
 										logger?.info(`- SessionName: ${SessionName}`);
 										logger?.info(`- Connection connectionClosed`.red);
@@ -938,7 +862,7 @@ module.exports = class Instace {
 										}, 500);
 										//
 										break;
-									case resDisconnectReason.connectionReplaced:
+									case DisconnectReason.connectionReplaced:
 										//
 										// Connection Replaced, Another New Session Opened, Please Close Current Session First
 										logger?.info(`- SessionName: ${SessionName}`);
@@ -1003,7 +927,7 @@ module.exports = class Instace {
 										}, 500);
 										//
 										break;
-									case resDisconnectReason.badSession:
+									case DisconnectReason.badSession:
 										//
 										// Bad session file, delete and run again
 										logger?.info(`- SessionName: ${SessionName}`);
@@ -1052,10 +976,11 @@ module.exports = class Instace {
 										}, 500);
 										//
 										break;
-									case resDisconnectReason.restartRequired:
+									case DisconnectReason.restartRequired:
 										//
 										logger?.info(`- SessionName: ${SessionName}`);
 										logger?.info('- Connection restartRequired');
+										//
 										setTimeout(async function () {
 											return await startSock(SessionName).then(async (result) => {
 												//
@@ -1128,48 +1053,32 @@ module.exports = class Instace {
 				//
 				async function getMessage(key) {
 					if (store) {
-						const msg = await store.loadMessage(key?.remoteJid, key?.id)
-						return msg?.message || undefined
+						const msg = await store.loadMessage(key.remoteJid, key.id);
+						return msg?.message || undefined;
 					}
 					// only if store is present
-					return proto.Message.fromObject({})
+					return proto.Message.fromObject({});
 				}
 				//
-				async function patchMessageBeforeSending(message) {
+				function patchMessageBeforeSending(message) {
 					const requiresPatch = !!(
 						message.buttonsMessage ||
 						message.templateMessage ||
 						message.listMessage
 					);
-					/*
 					if (requiresPatch) {
 						message = {
 							viewOnceMessage: {
 								message: {
 									messageContextInfo: {
 										deviceListMetadataVersion: 2,
-										deviceListMetadata: {},
+										deviceListMetadata: {}
 									},
-									...message,
-								},
-							},
+									...message
+								}
+							}
 						};
 					}
-					*/
-					if (requiresPatch) {
-						message = {
-							viewOnceMessageV2: {
-								message: {
-									messageContextInfo: {
-										deviceListMetadataVersion: 2,
-										deviceListMetadata: {},
-									},
-									...message,
-								},
-							},
-						};
-					}
-					//
 					return message;
 				}
 			}
