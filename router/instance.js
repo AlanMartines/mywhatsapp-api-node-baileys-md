@@ -47,7 +47,7 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 			//
 		} else {
 			//
-			let Status = await instance?.Status(resSessionName);
+			var Status = await instance?.Status(resSessionName);
 			switch (Status?.status) {
 				case 'inChat':
 				case 'qrReadSuccess':
@@ -76,13 +76,17 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 					//
 					await engine?.Start(req, res, next);
 					//
-					/*
-					let Status = await instance?.Status(resSessionName);
+					var Status = {
+						statusCode: 201,
+						state: 'STARTING',
+						status: "notLogged",
+						message: 'Iniciando WhatsApp. Aguarde...',
+					};
+					//
 					res.setHeader('Content-Type', 'application/json');
 					return res.status(Status.statusCode).json({
 						"Status": Status
 					});
-					*/
 					//
 					break;
 				default:

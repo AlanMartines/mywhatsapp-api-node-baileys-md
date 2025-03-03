@@ -227,11 +227,6 @@ module.exports = class Instace {
 			await Sessions?.addInfoSession(SessionName, newSession);
 			await this.initSession(req, res, next);
 			//
-			let Status = await instance?.Status(resSessionName);
-			res.setHeader('Content-Type', 'application/json');
-			return res.status(Status.statusCode).json({
-				"Status": Status
-			});
 		}
 		//
 	}
