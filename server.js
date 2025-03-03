@@ -43,7 +43,7 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 	if (err && err.code === 'ENOENT') {
 		logger.error(`- Arquivo ".env" não encontrado, segue modelo de configuração:`);
 		var modelo = `
-		NODE_EN=production
+		NODE_EN = 'production'
 		#
 		# Defina o IPV4 aqui caso voce utilize uma VPS deve ser colocado o IP da VPS
 		# Exemplos:
@@ -51,7 +51,7 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 		# IPV4=10.0.0.10 => IP da VM, caso esteja usando virtualização
 		# IPV4=127.0.0.1 => caso esteja usando na sua proprima maquina local
 		# IPV4=0.0.0.0 => caso esteja usando em um cotainer
-		IPV4=127.0.0.1
+		IPV4 = 127.0.0.1
 		#
 		# Defina o IPV6 aqui caso voce utilize uma VPS deve ser colocado o IP da VPS
 		# CASO UTILIZE IPV6, DEVE PREENCHER A VARIAVEL IPV6
@@ -61,10 +61,10 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 		# IPV6=2001:0DB8:85A3:08D3:1319:8A2E:0370:7344 => IP da VM, caso esteja usando virtualização
 		# IPV6=0:0:0:0:0:0:0:1 => caso esteja usando na sua proprima maquina local
 		# IPV6=0:0:0:0:0:0:0:0 => caso esteja usando em um cotainer
-		IPV6=
+		IPV6 =
 		#
 		# Defina o numero da porta a ser usada pela API.
-		PORT=9009
+		PORT = 9009
 		#
 		# CASO UTILIZE CERTIFICADO SSL COM REDIRECIONAMENTO DE PORTA, DEVE PREENCHER A VARIAVEL DOMAIN_SSL
 		# CASO DE NÃO SER CONFIGURADO UM DOMÍNIO MATENHA A VARIAVEL DOMAIN_SSL VAZIA
@@ -74,16 +74,16 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 		DOMAIN_SSL=
 		#
 		# Define se o qrcode vai ser mostrado no terminal
-		VIEW_QRCODE_TERMINAL=0
+		VIEW_QRCODE_TERMINAL = false
 		#
 		# Define a pasta para os tokens
-		PATCH_TOKENS=/usr/local/tokens
+		PATCH_TOKENS = '/usr/local/tokens'
 		#
 		# Device name
-		DEVICE_NAME='My-Whatsapp'
+		DEVICE_NAME = 'My-Whatsapp'
 		#
 		# Host name
-		HOST_NAME='ApiBaileysMd'
+		HOST_NAME = 'ApiBaileysMd'
 		#
 		# Defina a versão do whatsapp a ser usada.
 		# CASO DE NÃO SER CONFIGURADO UM VERSÂO MATENHA A VARIAVEL WA_VERSION VAZIA
@@ -101,69 +101,44 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 		WA_URL=
 		#
 		# Auto close
-		AUTO_CLOSE=15
+		AUTO_CLOSE = 15
 		#
 		# Chave de segurança para validação
-		SECRET_KEY='kgashjgajbug$$jgbbjgkbkgk'
-		#
-		# Defina se vai ser usando um bando de dados ou não.
-		# CASO DE NÃO SER CONFIGURADO A VARIAVEL VALIDATE_MYSQL DEVE SER 0
-		VALIDATE_MYSQL=1
+		SECRET_KEY = 'kgashjgajbug$$jgbbjgkbkgk'
 		#
 		# Defina a quantidade de processo simultaneo na fila.
-		CONCURRENCY=5
+		CONCURRENCY= 5
 		#
 		# Time Zone
-		TZ='America/Sao_Paulo'
+		TZ = 'America/Sao_Paulo'
 		#
 		# Tag image
-		TAG=1.0.0
+		TAG = '1.0.0'
 		#
 		# browserWSEndpoint Ex.: ws://127.0.0.1:3000
-		BROWSER_WSENDPOINT=
+		BROWSER_WSENDPOINT =
 		#
 		# Caso queira que ao iniciar a API todas as sessões salvas sejam inicializadas automaticamente
-		START_ALL_SESSIONS=1
+		START_ALL_SESSIONS = 1
 		#
 		# Deleta os arquivos não usados do Baileys
-		DELETE_FILE_UNUSED=0
+		DELETE_FILE_UNUSED = 0
 		#
 		# Host do servidor do Graylog
-		GRAYLOGSERVER=127.0.0.1
+		GRAYLOGSERVER = '127.0.0.1'
 		#
 		# Porta do servidor do  Graylog
-		GRAYLOGPORT=12201
+		GRAYLOGPORT = '12201'
 		#
 		# Defina se vai ser usado em um container.
 		# CASO DE SER USADO CONFIGURE A VARIAVEL INDOCKER DEVE SER 1
 		# CASO DE NÃO SER CONFIGURADO A VARIAVEL INDOCKER DEVE SER 0
-		INDOCKER=0
+		INDOCKER = 0
 		#
 		`;
 		logger?.info(`- Modelo do arquivo de configuração:\n ${modelo}`);
 		process.exit(1);
 	} else {
-		//
-		// ------------------------------------------------------------------------------------------------//
-		//
-		/*
-		// Verifique se o arquivo swagger.yaml já existe e remova-o antes de criar um novo
-		fs.pathExists('./swagger.yaml').then(async (exists) => {
-			if (exists) {
-				return fs.remove('./swagger.yaml');
-			}
-		}).then(async () => {
-			const yamlSpec = yaml.dump(swaggerSpec);
-			return fs.writeFile('./swagger.yaml', yamlSpec, 'utf8');
-		}).then(async () => {
-			// Chame a função para gerar o código
-			logger.info(`- Arquivo swagger.yaml criado com sucesso`);
-			await generateSwaggerCode();
-			//
-		}).catch(async (err) => {
-			logger.error(`- Erro ao criar o arquivo swagger.yaml: ${err.message}`);
-		});
-		*/
 		//
 		// ------------------------------------------------------------------------------------------------//
 		//
@@ -248,7 +223,7 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 					port: config.PORT,
 					host: host,
 					host_ssl: config.DOMAIN_SSL,
-					validate_mysql: parseInt(config.VALIDATE_MYSQL),
+					validate_mysql: false,
 				});
 			});
 			//
@@ -268,7 +243,7 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 						port: config.PORT,
 						host: host,
 						host_ssl: config.DOMAIN_SSL,
-						validate_mysql: parseInt(config.VALIDATE_MYSQL),
+						validate_mysql: false,
 					});
 				});
 			}

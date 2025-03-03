@@ -82,9 +82,9 @@ if (!fs.existsSync(tokenPatch)) { // verifica se o diretório já existe
 //
 async function saudacao() {
 	//
-	let data = new Date();
-	let hr = data.getHours();
-	let saudacao;
+	var data = new Date();
+	var hr = data.getHours();
+	var saudacao = '';
 	//
 	if (hr >= 6 && hr < 12) {
 		saudacao = `- Bom dia`;
@@ -184,11 +184,11 @@ module.exports = class Instace {
 				if (err) {
 					logger?.error(`- Erro: ${err}`);
 				} else {
-					logger?.info('- Success startup config for user file');
+					logger?.info('- Configuração de inicialização bem-sucedida para o arquivo do usuário.');
 				}
 			});
 		} catch (error) {
-			logger?.error('- Error startup config for user file');
+			logger?.error('- Erro na configuração de inicialização para o arquivo do usuário.');
 		}
 		//
 		let data = await Sessions?.getSession(SessionName);
@@ -219,7 +219,8 @@ module.exports = class Instace {
 				wh_connect: req?.body?.wh_connect ? req?.body?.wh_connect : null,
 				wh_incomingcall: req?.body?.wh_incomingcall ? req?.body?.wh_incomingcall : null,
 				state: 'STARTING',
-				status: "notLogged"
+				status: "notLogged",
+				message: 'Iniciando WhatsApp. Aguarde...',
 			};
 
 			await Sessions?.checkAddUser(SessionName);
@@ -227,20 +228,20 @@ module.exports = class Instace {
 			await this.initSession(req, res, next);
 			//
 		}
+		//
 	}
 	//
 	static async initSession(req, res, next) {
 		//
-		let theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
-		let SessionName = removeWithspace(req?.body?.SessionName);
-		let setOnline = req?.body?.setOnline;
-		let dataSessions = await Sessions?.getSession(SessionName);
-		logger?.info(`- SessionName: ${SessionName}`);
-		let waqueue = new pQueue({ concurrency: parseInt(config.CONCURRENCY) });
+		const SessionName = removeWithspace(req?.body?.SessionName);
+		const setOnline = req?.body?.setOnline;
+		const dataSessions = await Sessions?.getSession(SessionName);
+		const waqueue = new pQueue({ concurrency: parseInt(config.CONCURRENCY) });
 		await Sessions?.addInfoSession(SessionName, {
 			waqueue: waqueue
 		});
 		//
+		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		/*
 			╔═╗┌─┐┌┬┐┬┌─┐┌┐┌┌─┐┬    ╔═╗┬─┐┌─┐┌─┐┌┬┐┌─┐  ╔═╗┌─┐┬─┐┌─┐┌┬┐┌─┐┌┬┐┌─┐┬─┐┌─┐
@@ -254,7 +255,7 @@ module.exports = class Instace {
 		loggerPino.level = 'silent';
 		//
 		const useStore = !process.argv.includes('--no-store');
-		const doReplies = !process.argv.includes('--no-reply');
+		const doReplies = process.argv.includes('--do-reply');
 		const usePairingCode = process.argv.includes('--use-pairing-code');
 		const useMobile = process.argv.includes('--mobile');
 		//
@@ -270,7 +271,7 @@ module.exports = class Instace {
 			store?.readFromFile(`${tokenPatch}/${SessionName}.store.json`);
 			//
 		} catch (error) {
-			logger?.error(`- Error read store file: ${error}`);
+			logger?.error(`- Erro ao ler o arquivo de armazenamento: ${error}`);
 		};
 		//
 		// save every 10s
@@ -301,7 +302,7 @@ module.exports = class Instace {
 				//
 				// fetch latest version of WA Web
 				const { version, isLatest } = await fetchLatestBaileysVersion();
-				const waVersion = config.WA_VERSION ? config.WA_VERSION : version;
+				const waVersion = config?.WA_VERSION ? config?.WA_VERSION : version;
 				logger?.info(`- Using WA v${version.join('.')}, isLatest: ${isLatest}`)
 				//
 				const AxiosRequestConfig = {};

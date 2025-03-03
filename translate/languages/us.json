@@ -10,7 +10,8 @@
 			"browserClose": "Browser closed",
 			"qrReadSuccess": "QR-Code verification successful",
 			"qrReadFail": "QR-Code verification failed",
-			"qrRead": "System awaiting QR-Code scan",
+			"qrRead": "System waiting QR-Code scan",
+			"getCode": "System waiting to read pairing code",
 			"autocloseCalled": "Browser automatically closed",
 			"deleteToken": "Session token removed",
 			"chatsAvailable": "System started and available for use",
@@ -36,6 +37,9 @@
 
 		},
 		"gateway": {
+
+		},
+		"console": {
 
 		}
 	}

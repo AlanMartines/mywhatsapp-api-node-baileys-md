@@ -368,6 +368,86 @@ router.post("/restartToken", upload.none(''), verifyToken.verify, async (req, re
 //
 // ------------------------------------------------------------------------------------------------//
 //
+router.post("/getCodePairing", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	//
+	const resSessionName = removeWithspace(req?.body?.SessionName);
+	const resNumber = removeWithspace(req?.body?.phonefull);
+	//
+	try {
+		if (!resSessionName && !resNumber) {
+			let resultRes = {
+				"statusCode": 400,
+				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			};
+			//
+			res.setHeader('Content-Type', 'application/json');
+			return res.status(resultRes.statusCode).json({
+				"Status": resultRes
+			});
+			//
+		} else {
+			//
+			var Status = await instance.Status(resSessionName);
+			switch (Status.status) {
+				case 'inChat':
+				case 'qrReadSuccess':
+				case 'isLogged':
+				case 'chatsAvailable':
+					//
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(Status.statusCode).json({
+						"Status": Status
+					});
+					//
+					break;
+				case 'notLogged':
+				case 'qrRead':
+				case 'getCode':
+				case 'qrReadFail':
+				case 'deviceNotConnected':
+				case 'desconnectedMobile':
+				case 'deleteToken':
+					//
+					var resultRes = await instance.getCodePairing(resSessionName, resNumber);
+					//
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(resultRes.statusCode).json({
+						"Status": resultRes
+					});
+					//
+					break;
+				default:
+					//
+					var resultRes = {
+						"statusCode": 500,
+						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+					};
+					//
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(resultRes.statusCode).json({
+						"Status": resultRes
+					});
+				//
+			}
+		}
+	} catch (error) {
+		logger?.error(`${error}`);
+		//
+		var resultRes = {
+			"statusCode": 500,
+			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
+		};
+		//
+		res.setHeader('Content-Type', 'application/json');
+		return res.status(resultRes.statusCode).json({
+			"Status": resultRes
+		});
+		//
+	}
+}); //getCode
+//
+// ------------------------------------------------------------------------------------------------//
+//
 // Gera o QR-Code
 router.post("/QRCode", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	logger?.info(`- getQRCode`);
@@ -565,57 +645,57 @@ router.post("/getAllSessions", upload.none(''), verifyToken.verify, async (req, 
 router.post("/getHardWare", upload.none(''), verifyToken.verify, async (req, res, next) => {
 	logger?.info(`- getHardWare`);
 	//
-// Funções de formatação
-const formatters = {
-	bytes: (bytes) => {
+	// Funções de formatação
+	const formatters = {
+		bytes: (bytes) => {
 			const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
 			if (bytes === 0) return "0 Bytes";
 			const i = Math.floor(Math.log2(bytes) / 10);
 			return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(2))} ${sizes[i]}`;
-	},
-	percentage: (value) => `${Math.round(value * 100)}%`,
-	uptime: (seconds) => {
+		},
+		percentage: (value) => `${Math.round(value * 100)}%`,
+		uptime: (seconds) => {
 			const days = Math.floor(seconds / 86400);
 			const hours = Math.floor((seconds % 86400) / 3600);
 			const minutes = Math.floor((seconds % 3600) / 60);
 			const remainingSeconds = seconds % 60;
 			return `${days}d ${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
-	}
-};
-//
+		}
+	};
+	//
 	try {
-    // Coletar dados
-    const uptime = os.uptime();
-    const totalMem = os.totalmem();
-    const freeMem = os.freemem();
-    const usedMem = totalMem - freeMem;
-    const freeMemPercentage = freeMem / totalMem;
-    const usedMemPercentage = 1 - freeMemPercentage;
-    const cpuUsage = process.cpuUsage();
-    const cpuUsagePercentage = cpuUsage.user / (cpuUsage.user + cpuUsage.system);
+		// Coletar dados
+		const uptime = os.uptime();
+		const totalMem = os.totalmem();
+		const freeMem = os.freemem();
+		const usedMem = totalMem - freeMem;
+		const freeMemPercentage = freeMem / totalMem;
+		const usedMemPercentage = 1 - freeMemPercentage;
+		const cpuUsage = process.cpuUsage();
+		const cpuUsagePercentage = cpuUsage.user / (cpuUsage.user + cpuUsage.system);
 
-    // Estruturar resposta
-    const resultRes = {
-        statusCode: 200,
-        noformat: {
-            uptime,
-            totalmem: totalMem,
-            memusage: usedMem,
-            freemem: freeMem,
-            freeusagemem: freeMemPercentage,
-            usagemem: usedMemPercentage,
-            cpuusage: cpuUsagePercentage
-        },
-        format: {
-            uptime: formatters.uptime(uptime).split('.')[0],
-            totalmem: formatters.bytes(totalMem),
-            memusage: formatters.bytes(usedMem),
-            freemem: formatters.bytes(freeMem),
-            freeusagemem: formatters.percentage(freeMemPercentage),
-            usagemem: formatters.percentage(usedMemPercentage),
-            cpuusage: formatters.percentage(cpuUsagePercentage)
-        }
-    };
+		// Estruturar resposta
+		const resultRes = {
+			statusCode: 200,
+			noformat: {
+				uptime,
+				totalmem: totalMem,
+				memusage: usedMem,
+				freemem: freeMem,
+				freeusagemem: freeMemPercentage,
+				usagemem: usedMemPercentage,
+				cpuusage: cpuUsagePercentage
+			},
+			format: {
+				uptime: formatters.uptime(uptime).split('.')[0],
+				totalmem: formatters.bytes(totalMem),
+				memusage: formatters.bytes(usedMem),
+				freemem: formatters.bytes(freeMem),
+				freeusagemem: formatters.percentage(freeMemPercentage),
+				usagemem: formatters.percentage(usedMemPercentage),
+				cpuusage: formatters.percentage(cpuUsagePercentage)
+			}
+		};
 		//
 		res.setHeader('Content-Type', 'application/json');
 		return res.status(resultRes.statusCode).json({

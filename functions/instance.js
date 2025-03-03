@@ -27,8 +27,27 @@ if (parseInt(config.INDOCKER)) {
 // ------------------------------------------------------------------------------------------------//
 //
 function removeWithspace(string) {
-	var string = string.replace(/\r?\n|\r|\s+/g, ""); /* replace all newlines and with a space */
-	return string;
+	try {
+		//logger.info(`- Removendo todas as quebras de linha e espaços`);
+		let result = string.replace(/\r?\n|\r|\s+/g, ""); /* replace all newlines and with a space */
+		return result;
+	} catch (error) {
+		//logger.error(`- Erro ao remover todas as quebras de linha e espaços: ${error?.message}`);
+		return string;
+	}
+}
+//
+// ------------------------------------------------------------------------------------------------//
+//
+function soNumeros(string) {
+	try {
+		logger.info(`- Removendo todos os caracteres que não são números`);
+		let result = string.replace(/[^0-9]/g, '');
+		return result;
+	} catch (error) {
+		logger.error(`- Erro ao remover todos os caracteres que não são números: ${error?.message}`);
+		return string;
+	}
 }
 //
 // ------------------------------------------------------------------------------------------------//
@@ -75,165 +94,216 @@ module.exports = class Instance {
 				//só adiciona se não existir
 				let getSession = await Sessions?.getSession(resSessionName);
 				switch (getSession.status) {
-						case 'isStarting':
-								return {
-										statusCode: 202,
-										state: "STARTING",
-										status: "isStarting",
-										message: i18n.__('instance.Status.isStarting')
-								};
-								break;
-						case 'isConnecting':
-								return {
-										statusCode: 202,
-										state: "CONNECTING",
-										status: "isConnecting",
-										message: i18n.__('instance.Status.isConnecting')
-								};
-								break;
-						case 'isBanned':
-								return {
-										statusCode: 403,
-										state: "BANNED",
-										status: "isBanned",
-										message: i18n.__('instance.Status.isBanned')
-								};
-								break;
-						case 'inChat':
-								return {
-										statusCode: 200,
-										state: "CONNECTED",
-										status: "inChat",
-										message: i18n.__('instance.Status.inChat')
-								};
-								break;
-						case 'isLogged':
-								return {
-										statusCode: 200,
-										state: "CONNECTED",
-										status: "isLogged",
-										message: i18n.__('instance.Status.isLogged')
-								};
-								break;
-						case 'notLogged':
-						case 'desconnectedMobile':
-						case 'deviceNotConnected':
-								return {
-										statusCode: 401,
-										state: "DISCONNECTED",
-										status: "notLogged",
-										message: i18n.__('instance.Status.notLogged')
-								};
-								break;
-						case 'browserClose':
-								return {
-										statusCode: 200,
-										state: "CLOSE",
-										status: "browserClose",
-										message: i18n.__('instance.Status.browserClose')
-								};
-								break;
-						case 'qrReadSuccess':
-								return {
-										statusCode: 200,
-										state: "CONNECTED",
-										status: "qrReadSuccess",
-										message: i18n.__('instance.Status.qrReadSuccess')
-								};
-								break;
-						case 'qrReadFail':
-								return {
-										statusCode: 400,
-										state: "DISCONNECTED",
-										status: "qrReadFail",
-										message: i18n.__('instance.Status.qrReadFail')
-								};
-								break;
-						case 'qrRead':
-								return {
-										statusCode: 202,
-										state: "QRCODE",
-										status: "qrRead",
-										message: i18n.__('instance.Status.qrRead')
-								};
-								break;
-						case 'autocloseCalled':
-								return {
-										statusCode: 200,
-										state: "CLOSE",
-										status: "autocloseCalled",
-										message: i18n.__('instance.Status.autocloseCalled')
-								};
-								break;
-						case 'deleteToken':
-								return {
-										statusCode: 200,
-										state: "DISCONNECTED",
-										status: "deleteToken",
-										message: i18n.__('instance.Status.deleteToken')
-								};
-								break;
-						case 'chatsAvailable':
-								return {
-										statusCode: 200,
-										state: "CONNECTED",
-										status: "chatsAvailable",
-										message: i18n.__('instance.Status.chatsAvailable')
-								};
-								break;
-						case 'serverWssNotConnected':
-								return {
-										statusCode: 404,
-										state: "DISCONNECTED",
-										status: "serverWssNotConnected",
-										message: i18n.__('instance.Status.serverWssNotConnected')
-								};
-								break;
-						case 'noOpenBrowser':
-								return {
-										statusCode: 400,
-										state: "DISCONNECTED",
-										status: "noOpenBrowser",
-										message: i18n.__('instance.Status.noOpenBrowser')
-								};
-								break;
-						case 'serverClose':
-								return {
-										statusCode: 401,
-										state: "DISCONNECTED",
-										status: "serverClose",
-										message: i18n.__('instance.Status.serverClose')
-								};
-								break;
-						case 'isError':
-								return {
-										statusCode: 500,
-										state: "ERROR",
-										status: "isError",
-										message: i18n.__('instance.Status.isError')
-								};
-								break;
-						default:
-								return {
-										statusCode: 404,
-										state: 'NOTFOUND',
-										status: 'notFound',
-										message: i18n.__('instance.Status.default')
-								};
+					case 'isStarting':
+						return {
+							statusCode: 202,
+							state: "STARTING",
+							status: "isStarting",
+							message: i18n.__('instance.Status.isStarting')
+						};
+						break;
+					case 'isConnecting':
+						return {
+							statusCode: 202,
+							state: "CONNECTING",
+							status: "isConnecting",
+							message: i18n.__('instance.Status.isConnecting')
+						};
+						break;
+					case 'isBanned':
+						return {
+							statusCode: 403,
+							state: "BANNED",
+							status: "isBanned",
+							message: i18n.__('instance.Status.isBanned')
+						};
+						break;
+					case 'inChat':
+						return {
+							statusCode: 200,
+							state: "CONNECTED",
+							status: "inChat",
+							message: i18n.__('instance.Status.inChat')
+						};
+						break;
+					case 'isLogged':
+						return {
+							statusCode: 200,
+							state: "CONNECTED",
+							status: "isLogged",
+							message: i18n.__('instance.Status.isLogged')
+						};
+						break;
+					case 'notLogged':
+					case 'desconnectedMobile':
+					case 'deviceNotConnected':
+						return {
+							statusCode: 401,
+							state: "DISCONNECTED",
+							status: "notLogged",
+							message: i18n.__('instance.Status.notLogged')
+						};
+						break;
+					case 'browserClose':
+						return {
+							statusCode: 200,
+							state: "CLOSE",
+							status: "browserClose",
+							message: i18n.__('instance.Status.browserClose')
+						};
+						break;
+					case 'qrReadSuccess':
+						return {
+							statusCode: 200,
+							state: "CONNECTED",
+							status: "qrReadSuccess",
+							message: i18n.__('instance.Status.qrReadSuccess')
+						};
+						break;
+					case 'qrReadFail':
+						return {
+							statusCode: 400,
+							state: "DISCONNECTED",
+							status: "qrReadFail",
+							message: i18n.__('instance.Status.qrReadFail')
+						};
+						break;
+					case 'qrRead':
+						return {
+							statusCode: 202,
+							state: "QRCODE",
+							status: "qrRead",
+							message: i18n.__('instance.Status.qrRead')
+						};
+						break;
+						case 'getCode':
+							return {
+								statusCode: 202,
+								state: "GETCODE",
+								status: "getCode",
+								message: i18n.__('instance.Status.getCode')
+							};
+							break;
+					case 'autocloseCalled':
+						return {
+							statusCode: 200,
+							state: "CLOSE",
+							status: "autocloseCalled",
+							message: i18n.__('instance.Status.autocloseCalled')
+						};
+						break;
+					case 'deleteToken':
+						return {
+							statusCode: 200,
+							state: "DISCONNECTED",
+							status: "deleteToken",
+							message: i18n.__('instance.Status.deleteToken')
+						};
+						break;
+					case 'chatsAvailable':
+						return {
+							statusCode: 200,
+							state: "CONNECTED",
+							status: "chatsAvailable",
+							message: i18n.__('instance.Status.chatsAvailable')
+						};
+						break;
+					case 'serverWssNotConnected':
+						return {
+							statusCode: 404,
+							state: "DISCONNECTED",
+							status: "serverWssNotConnected",
+							message: i18n.__('instance.Status.serverWssNotConnected')
+						};
+						break;
+					case 'noOpenBrowser':
+						return {
+							statusCode: 400,
+							state: "DISCONNECTED",
+							status: "noOpenBrowser",
+							message: i18n.__('instance.Status.noOpenBrowser')
+						};
+						break;
+					case 'serverClose':
+						return {
+							statusCode: 401,
+							state: "DISCONNECTED",
+							status: "serverClose",
+							message: i18n.__('instance.Status.serverClose')
+						};
+						break;
+					case 'isError':
+						return {
+							statusCode: 500,
+							state: "ERROR",
+							status: "isError",
+							message: i18n.__('instance.Status.isError')
+						};
+						break;
+					default:
+						return {
+							statusCode: 404,
+							state: 'NOTFOUND',
+							status: 'notFound',
+							message: i18n.__('instance.Status.default')
+						};
 				}
-				
+
 			} else {
 				return {
 					statusCode: 404,
 					state: 'NOTFOUND',
 					status: 'notFound',
 					message: i18n.__('instance.Status.default')
-			};
+				};
 			}
 		} catch (error) {
 			res.status(500).json({ error: error })
 		}
 	} //Status
+	//
+	// ------------------------------------------------------------------------------------------------------- //
+	//
+	static async getCodePairing(SessionName, resNumber) {
+		//
+		logger?.info("- Obtendo codigo de pareamento");
+		logger?.info(`- SessionName: ${SessionName}`);
+		//
+		var session = await Sessions?.getSession(SessionName);
+		try {
+			//
+			const code = await session.client.requestPairingCode(soNumeros(resNumber));
+			let addJson = {
+				state: "GETCODE",
+				status: "getCode",
+				message: 'Sistema aguardando leitura do código de pareamento',
+			};
+			//
+			await Sessions?.addInfoSession(SessionName, addJson);
+			//
+			webhooks?.wh_connect(SessionName);
+			//
+			let result = {
+				"statusCode": 200,
+				"pairingCode": code,
+				"message": "Código de pareamento gerado com sucesso"
+			};
+			//
+			return result;
+			//
+		} catch (error) {
+			logger?.error(`- Error ao gerar código de pareamento: ${error}`);
+			//
+			let result = {
+				"statusCode": 404,
+				"message": "Error ao gerar código de pareamento"
+			};
+			//
+			return result;
+			//
+		}
+		//
+	} //getCode
 	//
 	// ------------------------------------------------------------------------------------------------------- //
 	//
@@ -261,7 +331,6 @@ module.exports = class Instance {
 			await Sessions?.addInfoSession(SessionName, addJson);
 			//
 			webhooks?.wh_connect(SessionName);
-			await updateStateDb(addJson?.state, addJson?.status, SessionName);
 			//
 			session?.funcoesSocket?.stateChange(SessionName, {
 				SessionName: SessionName,
@@ -318,7 +387,6 @@ module.exports = class Instance {
 			await Sessions?.addInfoSession(SessionName, addJson);
 			//
 			webhooks?.wh_connect(SessionName);
-			await updateStateDb(addJson?.state, addJson?.status, SessionName);
 			//await Sessions?.deleteSession(SessionName);
 			//
 			let result = {
@@ -377,7 +445,6 @@ module.exports = class Instance {
 				await Sessions?.addInfoSession(SessionName, addJson);
 				//
 				webhooks?.wh_connect(SessionName);
-				await updateStateDb(addJson?.state, addJson?.status, SessionName);
 				//
 				session?.funcoesSocket?.stateChange(SessionName, {
 					SessionName: SessionName,
