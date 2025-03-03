@@ -14,4 +14,4 @@ README-secret.md
 *Dockerfile*
 *docker-compose*
 node_modules
-.env*
+.env-*
