@@ -77,6 +77,7 @@ module.exports = class Events {
 	static async statusMessage(SessionName, events) {
 		let dataSessions = await Sessions?.getSession(SessionName);
 		try {
+			
 			if (events['messages.update']) {
 				const messages = events['messages.update'];
 
