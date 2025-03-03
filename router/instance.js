@@ -47,17 +47,18 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 			//
 		} else {
 			//
-			let data = await instance?.Status(resSessionName);
-			switch (data?.status) {
+			let Status = await instance?.Status(resSessionName);
+			switch (Status?.status) {
 				case 'inChat':
 				case 'qrReadSuccess':
 				case 'isLogged':
 				case 'chatsAvailable':
 				case 'qrRead':
+				case 'getCode':
 					//
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(data.statusCode).json({
-						"Status": data
+					return res.status(Status.statusCode).json({
+						"Status": Status
 					});
 					//
 					break;
@@ -75,11 +76,13 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 					//
 					await engine?.Start(req, res, next);
 					//
-					var resStatus = await instance?.Status(resSessionName);
+					/*
+					let Status = await instance?.Status(resSessionName);
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(resStatus.statusCode).json({
-						"Status": resStatus
+					return res.status(Status.statusCode).json({
+						"Status": Status
 					});
+					*/
 					//
 					break;
 				default:
