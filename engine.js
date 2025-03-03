@@ -287,15 +287,6 @@ module.exports = class Instace {
 		//
 		const { state, saveCreds } = await useMultiFileAuthState(`${tokenPatch}/${SessionName}.data.json`);
 		//
-		/*
-		const redisInstace = await redisStore({
-			host: '127.0.0.1',
-			port: 6379,
-			password: '',
-		});
-		//
-		//const { state, saveCreds, clearState } = await makeCacheManagerAuthState(redisInstace, key)
-		*/
 		try {
 			//
 			const startSock = async (SessionName = null) => {
