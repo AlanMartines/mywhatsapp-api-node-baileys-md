@@ -24,7 +24,7 @@ const config = require('./config.global');
 // ------------------------------------------------------------------------------------------------------- //
 //
 const {
-	default: makeWASocket,
+	makeWASocket,
 	useSingleFileAuthState,
 	DisconnectReason,
 	AnyMessageContent,

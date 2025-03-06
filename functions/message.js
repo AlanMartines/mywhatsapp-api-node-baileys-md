@@ -802,13 +802,24 @@ module.exports = class Mensagens {
 	static async sendListMessage(
 		SessionName,
 		number,
-		listMessage
+		data
 	) {
 		logger?.info("- Enviando lista.");
 		logger?.info(`- SessionName: ${SessionName}`);
 		//
 		var session = await Sessions?.getSession(SessionName);
-		// Send basic text
+		// Send list
+		//
+    const listMessage = {
+        text: data.title,
+        title: data.title,
+        description: data.description,
+        buttonText: data.buttonText,
+        footerText: data.footerText,
+        sections: data.sections,
+        listType: 2,
+    };
+		//
 		return await session?.client?.sendMessage(
 			number,
 			listMessage
