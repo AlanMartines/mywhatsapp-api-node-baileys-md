@@ -1,10 +1,17 @@
 const { Boom } = require("@hapi/boom");
 const { DisconnectReason } = require('@whiskeysockets/baileys');
+const dotenv = require('dotenv')
+const https = require('https');
+const axios = require('axios');
+const agent = new https.Agent({
+	rejectUnauthorized: false
+});
+dotenv.config()
+const config = require('../../config/config')
 //
-exports.resDisconnectReason = (lastDisconnect) => {
-var addJson = {};
 //
-let resDisconnectReason = {
+const resDisconnectReason = {
+	loggedOpen: 0,
 	genericOut: 400,
 	loggedOut: 401, // Desconectado de outro dispositivo
 	bannedTimetamp: 402, // O código de status 402 possui um timestamp de banimento, conta temporariamente banida
@@ -26,179 +33,322 @@ let resDisconnectReason = {
 	restartRequired: 515,
 };
 //
-const statusCode = new Boom(lastDisconnect?.error)?.output?.statusCode;
-switch (statusCode) {
-	case DisconnectReason.loggedOut:
-		// Device Logged Out, Deleting Session
-		logger?.info(`- Connection loggedOut`);
-		//
-		addJson = {
-			state: "CLOSED",
-			status: "notLogged",
-			message: "Sistema desconectado"
-		};
-		//
-		break;
-	case DisconnectReason.bannedTemporary:
-		//
-		logger?.info(`- User banned temporary`);
-		//
-		addJson = {
-			state: "BANNED",
-			status: "notLogged",
-			message: "Sistema desconectado"
-		};
-		//
-		break;
-	case DisconnectReason.bannedTimetamp:
-		//
-		logger?.info(`- User banned timestamp`);
-		//
-		addJson = {
-			state: "BANNED",
-			status: "notLogged",
-			message: "Sistema desconectado"
-		};
-		//
-		break;
-	case DisconnectReason.timedOut:
-		//
-		logger?.info(`- Connection TimedOut`);
-		//
-		addJson = {
-			state: "CONNECTING",
-			status: "desconnectedMobile",
-			message: "Dispositivo conectando"
-		};
-		//
-		break;
-	case DisconnectReason.connectionLost:
-		//
-		logger?.info(`- Connection Los`);
-		//
-		addJson = {
-			message: "Dispositivo conectando",
-			state: "CONNECTING",
-			status: "desconnectedMobile"
-		};
-		//
-		break;
-	case DisconnectReason.multideviceMismatch:
-		//
-		logger?.info('- Connection multideviceMismatch');
-		//
-		break;
-	case DisconnectReason.connectionClosed:
-		//
-		logger?.info(`- Connection connectionClosed`);
-		//
-		addJson = {
-			message: "Sistema desconectado",
-			state: "CLOSED",
-			status: "notLogged"
-		};
-		//
-		break;
-	case DisconnectReason.connectionReplaced:
-		//
-		// Connection Replaced, Another New Session Opened, Please Close Current Session First
-		logger?.info(`- Connection connectionReplaced`);
-		//
-		addJson = {
-			state: "DISCONNECTED",
-			status: "notLogged",
-			message: "Dispositivo desconectado"
-		};
-		//
-		break;
-	case DisconnectReason.badSession:
-		//
-		// Bad session file, delete and run again
-		logger?.info(`- Connection badSession`.red);
-		//
-		addJson = {
-			state: "DISCONNECTED",
-			status: "notLogged",
-			message: "Dispositivo desconectado"
-		};
-		//
-		break;
-	case DisconnectReason.restartRequired:
-		//
-		logger?.info('- Connection restartRequired');
-		//
-		break;
-	case DisconnectReason.genericOut:
-		logger?.info('- Generic Error');
-		addJson = {
-			state: "ERROR",
-			status: "genericError",
-			message: "Erro genérico"
-		};
-		break;
-	case DisconnectReason.clientOutdated:
-		logger?.info('- Client Outdated');
-		addJson = {
-			state: "OUTDATED",
-			status: "updateRequired",
-			message: "Cliente desatualizado, atualização necessária"
-		};
-		break;
-	case DisconnectReason.unknownLogout:
-		logger?.info('- Unknown Logout Reason');
-		addJson = {
-			state: "CLOSED",
-			status: "notLogged",
-			message: "Logout desconhecido"
-		};
-		break;
-	case DisconnectReason.dadUserAgent:
-		logger?.info('- Bad User Agent');
-		addJson = {
-			state: "ERROR",
-			status: "invalidUserAgent",
-			message: "User Agent inválido"
-		};
-		break;
-	case DisconnectReason.CATExpired:
-		logger?.info('- Crypto Auth Token Expired');
-		addJson = {
-			state: "AUTH_FAILED",
-			status: "tokenExpired",
-			message: "Token de autenticação criptografada expirado"
-		};
-		break;
-	case DisconnectReason.CATInvalid:
-		logger?.info('- Invalid Crypto Auth Token');
-		addJson = {
-			state: "AUTH_FAILED",
-			status: "invalidToken",
-			message: "Token de autenticação criptografada inválido"
-		};
-		break;
-	case DisconnectReason.notFound:
-		logger?.info('- Resource Not Found');
-		addJson = {
-			state: "ERROR",
-			status: "resourceNotFound",
-			message: "Recurso não encontrado"
-		};
-		break;
-	case DisconnectReason.experimental:
-		logger?.info('- Experimental Feature Issue');
-		break;
-	case DisconnectReason.serviceUnavailable:
-		logger?.info('- Service Unavailable');
-		addJson = {
-			state: "ERROR",
-			status: "serviceUnavailable",
-			message: "Serviço indisponível"
-		};
-		break;
-	default:
-		// code block
-		logger?.info(`- lastDisconnect: ${lastDisconnect?.error}`);
-	//
-}
 //
+module.exports = class Disconnect {
+
+	static async lastDisconnect(key, lastDisconnect) {
+		//
+		const statusCode = new Boom(lastDisconnect?.error)?.output?.statusCode;
+		const statusCodeError = lastDisconnect?.error ? lastDisconnect.error?.output?.statusCode : 0;
+		//
+		var addJson = {};
+		//
+		switch (statusCodeError) {
+			case resDisconnectReason.loggedOpen:
+				// Device Logged Out, Deleting Session
+				console.log(`- Connection open`);
+				//
+				addJson = {
+					SessionName: key,
+					state: "CONNECTED",
+					status: "inChat",
+					message: "Sistema iniciado e disponivel para uso"
+				};
+				//
+				break;
+			case resDisconnectReason.loggedOut:
+				// Device Logged Out, Deleting Session
+				console.log(`- Connection loggedOut`);
+				//
+				addJson = {
+					SessionName: key,
+					state: "CLOSED",
+					status: "notLogged",
+					message: "Sistema desconectado"
+				};
+				//
+				break;
+			case resDisconnectReason.bannedTemporary:
+				//
+				console.log(`- User banned temporary`);
+				//
+				addJson = {
+					SessionName: key,
+					state: "BANNED",
+					status: "notLogged",
+					message: "Sistema desconectado"
+				};
+				//
+				break;
+			case resDisconnectReason.bannedTimetamp:
+				//
+				console.log(`- User banned timestamp`);
+				//
+				addJson = {
+					SessionName: key,
+					state: "BANNED",
+					status: "notLogged",
+					message: "Sistema desconectado"
+				};
+				//
+				break;
+			case resDisconnectReason.timedOut:
+				//
+				console.log(`- Connection TimedOut`);
+				//
+				addJson = {
+					SessionName: key,
+					state: "CONNECTING",
+					status: "desconnectedMobile",
+					message: "Dispositivo conectando"
+				};
+				//
+				break;
+			case resDisconnectReason.connectionLost:
+				//
+				console.log(`- Connection Los`);
+				//
+				addJson = {
+					SessionName: key,
+					message: "Dispositivo conectando",
+					state: "CONNECTING",
+					status: "desconnectedMobile"
+				};
+				//
+				break;
+			case resDisconnectReason.multideviceMismatch:
+				//
+				console.log('- Connection multideviceMismatch');
+				//
+				addJson = {
+					SessionName: key,
+					message: "Dispositivo conectando",
+					state: "CONNECTING",
+					status: "desconnectedMobile"
+				};
+				//
+				break;
+			case resDisconnectReason.connectionClosed:
+				//
+				console.log(`- Connection connectionClosed`);
+				//
+				addJson = {
+					SessionName: key,
+					message: "Sistema desconectado",
+					state: "CLOSED",
+					status: "notLogged"
+				};
+				//
+				break;
+			case resDisconnectReason.connectionReplaced:
+				//
+				// Connection Replaced, Another New Session Opened, Please Close Current Session First
+				console.log(`- Connection connectionReplaced`);
+				//
+				addJson = {
+					SessionName: key,
+					state: "DISCONNECTED",
+					status: "notLogged",
+					message: "Dispositivo desconectado"
+				};
+				//
+				break;
+			case resDisconnectReason.badSession:
+				//
+				// Bad session file, delete and run again
+				console.log(`- Connection badSession`.red);
+				//
+				addJson = {
+					SessionName: key,
+					state: "DISCONNECTED",
+					status: "notLogged",
+					message: "Dispositivo desconectado"
+				};
+				//
+				break;
+			case resDisconnectReason.restartRequired:
+				//
+				console.log('- Connection restartRequired');
+				//
+				addJson = {
+					SessionName: key,
+					message: "Sistema desconectado",
+					state: "CLOSED",
+					status: "notLogged"
+				};
+				//
+				break;
+			case resDisconnectReason.genericOut:
+				//
+				console.log('- Generic Error');
+				//
+				addJson = {
+					SessionName: key,
+					state: "ERROR",
+					status: "genericError",
+					message: "Erro genérico"
+				};
+				//
+				break;
+			case resDisconnectReason.clientOutdated:
+				//
+				console.log('- Client Outdated');
+				//
+				addJson = {
+					SessionName: key,
+					state: "OUTDATED",
+					status: "updateRequired",
+					message: "Cliente desatualizado, atualização necessária"
+				};
+				//
+				break;
+			case resDisconnectReason.unknownLogout:
+				//
+				console.log('- Unknown Logout Reason');
+				//
+				addJson = {
+					SessionName: key,
+					state: "CLOSED",
+					status: "notLogged",
+					message: "Logout desconhecido"
+				};
+				//
+				break;
+			case resDisconnectReason.dadUserAgent:
+				//
+				console.log('- Bad User Agent');
+				//
+				addJson = {
+					SessionName: key,
+					state: "ERROR",
+					status: "invalidUserAgent",
+					message: "User Agent inválido"
+				};
+				//
+				break;
+			case resDisconnectReason.CATExpired:
+				//
+				console.log('- Crypto Auth Token Expired');
+				//
+				addJson = {
+					SessionName: key,
+					state: "AUTH_FAILED",
+					status: "tokenExpired",
+					message: "Token de autenticação criptografada expirado"
+				};
+				//
+				break;
+			case resDisconnectReason.CATInvalid:
+				//
+				console.log('- Invalid Crypto Auth Token');
+				//
+				addJson = {
+					SessionName: key,
+					state: "AUTH_FAILED",
+					status: "invalidToken",
+					message: "Token de autenticação criptografada inválido"
+				};
+				//
+				break;
+			case resDisconnectReason.notFound:
+				//
+				console.log('- Resource Not Found');
+				//
+				addJson = {
+					SessionName: key,
+					state: "ERROR",
+					status: "resourceNotFound",
+					message: "Recurso não encontrado"
+				};
+				//
+				break;
+			case resDisconnectReason.experimental:
+				//
+				console.log('- Experimental Feature Issue');
+				//
+				addJson = {
+					SessionName: key,
+					state: "ERROR",
+					status: "experimental",
+					message: "Problema de Recurso Experimental"
+				};
+				//
+				break;
+			case resDisconnectReason.serviceUnavailable:
+				//
+				console.log('- Service Unavailable');
+				//
+				addJson = {
+					SessionName: key,
+					state: "ERROR",
+					status: "serviceUnavailable",
+					message: "Serviço Indisponível"
+				};
+				//
+				break;
+			default:
+			//
+			//console.log(`- lastDisconnect: ${lastDisconnect?.error}`);
+			//
+		}
+		//
+		if (Object.keys(addJson).length !== 0) {
+			//
+			if (config.reasonUrl) {
+				await axios({
+					method: 'POST',
+					maxBodyLength: Infinity,
+					url: `${config.reasonUrl}`,
+					httpsAgent: agent,
+					headers: {
+						'Content-Type': 'application/json;charset=utf-8',
+						'Accept': 'application/json'
+					},
+					data: addJson
+				}).then(async (response) => {
+					let responseData = response?.data;
+					let statusCode = response?.status;
+					let statusText = response?.statusText;
+					//
+					console.log(`- SessionName: ${key}`);
+					console.log(`- lastDisconnect: ${lastDisconnect?.error}`);
+					//
+					console.log('- Redirect Success');
+					//
+					console.log(`- Success: status ${statusText}`);
+					console.log(`- Success: statusCode ${statusCode}`);
+					//
+					console.log('=====================================================================================================');
+					//
+					//
+					//res.setHeader('Content-Type', 'application/json');
+					//return res.status(statusCode).json(responseData);
+					//
+				}).catch(async (error) => {
+					let responseError = error?.response?.data;
+					let statusCode = error?.response?.status || 401;
+					let statusText = error?.response?.statusText;
+					let errorMessage = error?.message;
+					//
+					console.log(`- SessionName: ${key}`);
+					console.log(`- lastDisconnect: ${lastDisconnect?.error}`);
+					//
+					console.log(`- Redirect Error`);
+					//
+					//
+					console.log(`- Error: status ${statusText}`);
+					console.log(`- Error: statusCode ${statusCode}`);
+					console.log(`- Error: errorMessage ${errorMessage}`);
+					//
+					console.log('=====================================================================================================');
+					//
+					//res.setHeader('Content-Type', 'application/json');
+					//return res.status(statusCode).json(responseError);
+					//
+				});
+				//
+			}
+		}
+		//
+	}
 }
