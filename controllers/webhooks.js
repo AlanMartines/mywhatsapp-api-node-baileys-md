@@ -24,7 +24,7 @@ module.exports = class Webhooks {
 				}).then(response => {
 					logger.info('- Webhooks message');
 				}).catch(error => {
-					logger?.error(`- Error message: ${error.message}`);
+					logger?.error(`- Error webhook message: ${error.message}`);
 				});
 			} else {
 				logger.info('- Webhook message no defined');
@@ -58,9 +58,9 @@ module.exports = class Webhooks {
             'Accept': 'application/json; charset=utf-8'
          }
 				}).then(response => {
-					logger.info('- Webhooks connect status');
+					logger.info('- Webhook connect status');
 				}).catch(error => {
-					logger?.error(`- Error connect status: ${error.message}`);
+					logger?.error(`- Error webhook connect status: ${error.message}`);
 				});
 			} else {
 				logger.info('- Webhook connect no defined');
@@ -86,13 +86,13 @@ module.exports = class Webhooks {
             'Accept': 'application/json; charset=utf-8'
          }
 				}).then(response => {
-					logger.info('- Webhooks status message')
+					logger.info('- Webhooks status')
 				}).catch(error => {
-					logger?.error(`- Error status message: ${error.message}`);
+					logger?.error(`- Error webhook status: ${error.message}`);
 				});
 
 			} else {
-				logger.info('- Webhook status message no defined');
+				logger.info('- Webhook status no defined');
 			}
 		} catch (error) {
 			logger?.error(`- Error: ${error.message}`);
@@ -122,13 +122,13 @@ module.exports = class Webhooks {
             'Accept': 'application/json; charset=utf-8'
          }
 				}).then(response => {
-					logger.info('- Webhooks qrcode send')
+					logger.info('- Webhooks qrcode')
 				}).catch(error => {
-					logger?.error(`- Error qrcode send: ${error.message}`);
+					logger?.error(`- Error webhook qrcode: ${error.message}`);
 				});
 
 			} else {
-				logger.info('- Webhook qrcode send no defined');
+				logger.info('- Webhook qrcode no defined');
 			}
 		} catch (error) {
 			logger?.error(`- Error: ${error.message}`);;
@@ -153,7 +153,7 @@ module.exports = class Webhooks {
 				}).then(response => {
 					logger.info('- Webhooks receive call')
 				}).catch(error => {
-					logger?.error(`- Error receive call: ${error.message}`);
+					logger?.error(`- Error webhook receive call: ${error.message}`);
 				});
 
 			} else {
