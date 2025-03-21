@@ -406,15 +406,12 @@ module.exports = class Instace {
 						if (events['connection.update']) {
 							const conn = events['connection.update'];
 							//
-							const {
-								connection,
-								lastDisconnect,
-								isNewLogin,
-								qr,
-								receivedPendingNotifications
-							} = conn;
+							const { connection, lastDisconnect, isNewLogin, qr, receivedPendingNotifications } = conn;
 							//
-							logger?.info(`- Connection update`.green);
+							const statusCode = new Boom(lastDisconnect?.error)?.output?.statusCode;
+							const statusCodeError = lastDisconnect?.error ? lastDisconnect.error?.output?.statusCode : 0;
+							//
+							logger?.info(`- Connection update`);
 							//
 							/*
 							logger?.info(`- Output: \n ${JSON.stringify(lastDisconnect?.error?.output, null, 2)}`);
@@ -426,10 +423,11 @@ module.exports = class Instace {
 							if (qr) {
 								//
 								logger?.info(`- SessionName: ${SessionName}`);
-								logger?.info('- Reading to WhatsApp'.blue);
-								logger?.info(`- Connection status: ${connection}`.blue);
+								logger?.info('- Reading to WhatsApp');
+								logger?.info(`- Connection status: ${connection}`);
+								logger.warn(`- lastDisconnect: ${lastDisconnect?.error}`);
 								//
-								logger?.info('- QR Generated'.green);
+								logger?.info('- QR Generated');
 								//
 								logger?.info(`- Número de tentativas de ler o qr-code: ${attempts}`);
 								//
@@ -521,8 +519,8 @@ module.exports = class Instace {
 							//
 							if (connection === 'connecting') {
 								//
-								logger?.info('- Connecting to WhatsApp'.yellow);
-								logger?.info(`- Connection status: ${connection}`.yellow);
+								logger?.info('- Connecting to WhatsApp');
+								logger?.info(`- Connection status: ${connection}`);
 								//
 								let addJson = {
 									state: "CONNECTING",
@@ -541,14 +539,14 @@ module.exports = class Instace {
 								//
 							} else if (connection === 'open') {
 								//
-								logger?.info('- Connected to WhatsApp'.green);
-								logger?.info(`- Connection status: ${connection}`.green);
+								logger?.info('- Connected to WhatsApp');
+								logger?.info(`- Connection status: ${connection}`);
 								//
 								let addJson = {};
 								//
 								// Wait 5 seg for linked qr process to whatsapp
 								await delay(5);
-								logger?.info(`- Started using WA v${version.join('.')}, isLatest: ${isLatest}`.green);
+								logger?.info(`- Started using WA v${version.join('.')}, isLatest: ${isLatest}`);
 								//
 								let phone = await client?.user?.id.split(":")[0];
 								//
@@ -614,7 +612,8 @@ module.exports = class Instace {
 								//
 								let addJson = {};
 								//
-								let resDisconnectReason = {
+								const resDisconnectReason = {
+									loggedOpen: 0,
 									genericOut: 400,
 									loggedOut: 401, // Desconectado de outro dispositivo
 									bannedTimetamp: 402, // O código de status 402 possui um timestamp de banimento, conta temporariamente banida
@@ -638,12 +637,12 @@ module.exports = class Instace {
 								//
 								// Banned status codes are 403 and 402 temporary
 								// The status code 402 has a banned timetamp
-								const statusCode = new Boom(lastDisconnect?.error)?.output?.statusCode;
 								switch (statusCode) {
 									case DisconnectReason.loggedOut:
 										// Device Logged Out, Deleting Session
-										logger?.info(`- SessionName: ${SessionName}`);
-										logger?.info(`- Connection loggedOut`.red);
+										logger?.error(`- SessionName: ${SessionName}`);
+										logger?.error(`- Close: ${statusCode}`);
+										logger?.error(`- Connection loggedOut`);
 										//
 										try {
 											// close WebSocket connection
@@ -686,8 +685,9 @@ module.exports = class Instace {
 										break;
 									case DisconnectReason.bannedTemporary:
 										//
-										logger?.info(`- SessionName: ${SessionName}`);
-										logger?.info(`- User banned temporary`.red);
+										logger?.warn(`- SessionName: ${SessionName}`);
+										logger?.warn(`- Close: ${statusCode}`);
+										logger?.warn(`- User banned temporary`);
 										//
 										addJson = {
 											client: false,
@@ -719,8 +719,8 @@ module.exports = class Instace {
 										break;
 									case DisconnectReason.bannedTimetamp:
 										//
-										logger?.info(`- SessionName: ${SessionName}`);
-										logger?.info(`- User banned timestamp`.red);
+										logger?.warn(`- SessionName: ${SessionName}`);
+										logger?.warn(`- User banned timestamp`);
 										//
 										addJson = {
 											client: false,
@@ -752,8 +752,8 @@ module.exports = class Instace {
 										break;
 									case DisconnectReason.timedOut:
 										//
-										logger?.info(`- SessionName: ${SessionName}`);
-										logger?.info('- Connection TimedOut'.yellow);
+										logger?.warn(`- SessionName: ${SessionName}`);
+										logger?.warn('- Connection TimedOut');
 										//
 										addJson = {
 											state: "CONNECTING",
@@ -789,7 +789,7 @@ module.exports = class Instace {
 									case DisconnectReason.connectionLost:
 										//
 										logger?.info(`- SessionName: ${SessionName}`);
-										logger?.info(`- Connection Los`.red);
+										logger?.info(`- Connection Los`);
 										//
 										/*
 										//
@@ -820,14 +820,14 @@ module.exports = class Instace {
 										break;
 									case DisconnectReason.multideviceMismatch:
 										//
-										logger?.info(`- SessionName: ${SessionName}`);
-										logger?.info('- Connection multideviceMismatch'.blue);
+										logger?.warn(`- SessionName: ${SessionName}`);
+										logger?.warn('- Connection multideviceMismatch');
 										//
 										break;
 									case DisconnectReason.connectionClosed:
 										//
-										logger?.info(`- SessionName: ${SessionName}`);
-										logger?.info(`- Connection connectionClosed`.red);
+										logger?.error(`- SessionName: ${SessionName}`);
+										logger?.error(`- Connection connectionClosed`);
 										//
 										addJson = {
 											client: false,
@@ -857,8 +857,8 @@ module.exports = class Instace {
 									case DisconnectReason.connectionReplaced:
 										//
 										// Connection Replaced, Another New Session Opened, Please Close Current Session First
-										logger?.info(`- SessionName: ${SessionName}`);
-										logger?.info(`- Connection connectionReplaced`.yellow);
+										logger?.warn(`- SessionName: ${SessionName}`);
+										logger?.warn(`- Connection connectionReplaced`);
 										//
 										try {
 											// close WebSocket connection
@@ -922,8 +922,8 @@ module.exports = class Instace {
 									case DisconnectReason.badSession:
 										//
 										// Bad session file, delete and run again
-										logger?.info(`- SessionName: ${SessionName}`);
-										logger?.info(`- Connection badSession`.red);
+										logger?.error(`- SessionName: ${SessionName}`);
+										logger?.error(`- Connection badSession`);
 										//
 										// close WebSocket connection
 										await client.ws.close();
@@ -1013,7 +1013,7 @@ module.exports = class Instace {
 							} else if (typeof connection === undefined) {
 								//
 								logger?.info(`- SessionName: ${SessionName}`);
-								logger?.error(`- Connection undefined`.yellow);
+								logger?.error(`- Connection undefined`);
 								//
 							}
 							//
