@@ -671,7 +671,6 @@ module.exports = class Events {
 									"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
 									"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 									"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
-									"content": msg?.message?.extendedTextMessage?.text,
 									"matchedText": msg?.message?.extendedTextMessage?.matchedText,
 									"canonicalUrl": msg?.message?.extendedTextMessage?.canonicalUrl,
 									"description": msg?.message?.extendedTextMessage?.description,
