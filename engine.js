@@ -613,7 +613,8 @@ module.exports = class Instace {
 								let addJson = {};
 								//
 								const resDisconnectReason = {
-									loggedOpen: 0,
+									loggedOpen: 'loggedOpen',
+									loggedQr: 'loggedQr',
 									genericOut: 400,
 									loggedOut: 401, // Desconectado de outro dispositivo
 									bannedTimetamp: 402, // O código de status 402 possui um timestamp de banimento, conta temporariamente banida
@@ -791,7 +792,6 @@ module.exports = class Instace {
 										logger?.info(`- SessionName: ${SessionName}`);
 										logger?.info(`- Connection Los`);
 										//
-										/*
 										//
 										addJson = {
 											message: "Dispositivo conectando",
@@ -815,7 +815,6 @@ module.exports = class Instace {
 												logger?.error(`- Error reconnecting connection: ${erro}`);
 											});
 										}, 500);
-										*/
 										//
 										break;
 									case DisconnectReason.multideviceMismatch:
