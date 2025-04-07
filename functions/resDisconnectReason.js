@@ -1,5 +1,3 @@
-const { Boom } = require("@hapi/boom");
-const { DisconnectReason } = require('@whiskeysockets/baileys');
 const dotenv = require('dotenv')
 const https = require('https');
 const axios = require('axios');
@@ -11,7 +9,8 @@ const config = require('../../config/config')
 //
 //
 const resDisconnectReason = {
-	loggedOpen: 0,
+	loggedOpen: 'loggedOpen',
+	loggedQr: 'loggedQr',
 	genericOut: 400,
 	loggedOut: 401, // Desconectado de outro dispositivo
 	bannedTimetamp: 402, // O código de status 402 possui um timestamp de banimento, conta temporariamente banida
@@ -38,15 +37,18 @@ module.exports = class Disconnect {
 
 	static async lastDisconnect(key, lastDisconnect) {
 		//
-		const statusCode = new Boom(lastDisconnect?.error)?.output?.statusCode;
-		const statusCodeError = lastDisconnect?.error ? lastDisconnect.error?.output?.statusCode : 0;
+		if (lastDisconnect == 'loggedOpen') {
+			var statusCode = 'loggedOpen';
+		} else {
+			var statusCode = lastDisconnect?.error ? lastDisconnect.error?.output?.statusCode : 0;
+		}
 		//
 		var addJson = {};
 		//
-		switch (statusCodeError) {
+		switch (statusCode) {
 			case resDisconnectReason.loggedOpen:
 				// Device Logged Out, Deleting Session
-				console.log(`- Connection open`);
+				console.log(`- Connection loggedOpen`);
 				//
 				addJson = {
 					SessionName: key,
@@ -56,6 +58,18 @@ module.exports = class Disconnect {
 				};
 				//
 				break;
+				case resDisconnectReason.loggedQr:
+					// Device Logged Out, Deleting Session
+					console.log(`- Connection loggedQr`);
+					//
+					addJson = {
+						SessionName: key,
+						state: "QRCODE",
+						status: "qrRead",
+						message: "Sistema aguardando leitura do QR-Code"
+					};
+					//
+					break;
 			case resDisconnectReason.loggedOut:
 				// Device Logged Out, Deleting Session
 				console.log(`- Connection loggedOut`);
@@ -287,8 +301,17 @@ module.exports = class Disconnect {
 				//
 				break;
 			default:
-			//
-			//console.log(`- lastDisconnect: ${lastDisconnect?.error}`);
+				//
+				//console.log(`- lastDisconnect: ${lastDisconnect?.error}`);
+				//
+				/*
+				addJson = {
+					SessionName: key,
+					state: "CLOSED",
+					status: "notLogged",
+					message: "Sistema desconectado"
+				};
+				*/
 			//
 		}
 		//
