@@ -37,7 +37,7 @@
   "dependencies": {
     "@adiwajshing/keyed-db": "^0.2.4",
     "@hapi/boom": "^10.0.1",
-    "@whiskeysockets/baileys": "^6.7.13",
+    "@whiskeysockets/baileys": "^6.7.16",
     "axios": "^1.8.1",
     "boxen": "^5.1.2",
     "cache-manager": "^6.4.0",
