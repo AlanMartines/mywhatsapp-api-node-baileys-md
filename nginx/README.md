@@ -4,178 +4,94 @@
 
 ```sh
 # Comando para criar o arquivo de configuração
-sudo vim /etc/nginx/conf.d/bailyes.conf
-```
-
-```
-#
-upstream serverbailyes {
-	ip_hash;
-	server 127.0.0.1:9001 max_fails=3 fail_timeout=30s;
-}
-#
-server {
-	listen 80;
-	listen [::]:80;
-	server_name bailyes.seudominio.com.br;
-	return 301 https://$host$request_uri;
-}
-#
-server {
-	listen 443 ssl;
-	listen [::]:443 ssl;
-	server_name bailyes.seudominio.com.br;
-	#
-	# Configuração do certificado gerado pelo letsencrypt (cerbot)
-	ssl_certificate /etc/letsencrypt/live/bailyes.seudominio.com.br/fullchain.pem;
-	ssl_certificate_key /etc/letsencrypt/live/bailyes.seudominio.com.br/privkey.pem;
-	#
-	ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
-	ssl_prefer_server_ciphers on;
-	ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
-	ssl_ecdh_curve secp384r1;
-	ssl_session_timeout 10m;
-	ssl_session_cache shared:SSL:10m;
-	ssl_session_tickets off;
-	ssl_stapling off;
-	ssl_stapling_verify off;
-	resolver 8.8.8.8 8.8.4.4 valid=300s;
-	resolver_timeout 5s;
-	# Disable strict transport security for now. You can uncomment the following
-	# line if you understand the implications.
-	#add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
-	add_header X-Content-Type-Options nosniff;
-	add_header X-XSS-Protection "1; mode=block";
-	#
-	access_log /var/log/nginx/bailyes.access.log;
-	#
-	location / {
-		proxy_pass http://serverbailyes;
-		proxy_set_header Host $host;
-		proxy_set_header X-Real-IP $remote_addr;
-		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-		proxy_set_header X-Forwarded-Proto $scheme;
-		proxy_buffering off;
-		#upgrade to WebSocket protocol when requested
-		proxy_set_header Upgrade $http_upgrade;
-		proxy_set_header Connection "Upgrade";
-		proxy_read_timeout 90;
-		proxy_redirect off;
-	}
-	#
-	location /socket.io/ {
-		proxy_pass http://serverbailyes;
-		proxy_redirect off;
-		proxy_http_version 1.1;
-		proxy_set_header Upgrade $http_upgrade;
-		proxy_set_header Connection "upgrade";
-		proxy_set_header Host $host;
-		proxy_set_header X-Real-IP $remote_addr;
-		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-	}
-	#
-}
-#
-```
-
-#### Protegendo a rota /Start
-
-```sh
-# Habilitando a autenticação
-sudo apt install apache2-utils -y
-sudo htpasswd -c /etc/nginx/.htpasswd <usuario>
+sudo vim /etc/nginx/conf.d/apiwa.conf
 ```
 
 ```sh
-# Comando para criar o arquivo de configuração
-sudo vim /etc/nginx/conf.d/authbailyes.conf
-```
+# Define um upstream chamado "aplication" que aponta para um servidor rodando no localhost na porta 9001.
+# Isso é útil para fazer balanceamento de carga ou proxy reverso para uma aplicação rodando nesse endereço e porta.
+upstream aplication {
+    server 127.0.0.1:9001;
+}
 
-```
-#
-upstream serverbailyes {
-	ip_hash;
-	server 127.0.0.1:9001 max_fails=3 fail_timeout=30s;
-}
-#
+# Bloco de servidor para lidar com solicitações HTTP (porta 80).
+# Redireciona todo o tráfego HTTP para HTTPS para garantir uma comunicação segura.
 server {
-	listen 80;
-	listen [::]:80;
-	server_name bailyes.seudominio.com.br;
-	return 301 https://$host$request_uri;
+    listen 80;
+    listen [::]:80;
+    charset utf-8;
+    client_max_body_size 256M;
+    server_name subdominio.seudominio.com.br;
+    return 301 https://$host$request_uri;
 }
-#
+
+# Bloco de servidor para lidar com solicitações HTTPS (porta 443).
 server {
-	listen 443 ssl;
-	listen [::]:443 ssl;
-	server_name bailyes.seudominio.com.br;
-	#
-	# Configuração do certificado gerado pelo letsencrypt (cerbot)
-	ssl_certificate /etc/letsencrypt/live/bailyes.seudominio.com.br/fullchain.pem;
-	ssl_certificate_key /etc/letsencrypt/live/bailyes.seudominio.com.br/privkey.pem;
-	#
-	ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
-	ssl_prefer_server_ciphers on;
-	ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
-	ssl_ecdh_curve secp384r1;
-	ssl_session_timeout 10m;
-	ssl_session_cache shared:SSL:10m;
-	ssl_session_tickets off;
-	ssl_stapling off;
-	ssl_stapling_verify off;
-	resolver 8.8.8.8 8.8.4.4 valid=300s;
-	resolver_timeout 5s;
-	# Disable strict transport security for now. You can uncomment the following
-	# line if you understand the implications.
-	#add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
-	add_header X-Content-Type-Options nosniff;
-	add_header X-XSS-Protection "1; mode=block";
-	#
-	access_log /var/log/nginx/bailyes.access.log;
-	#
-	location / {
-		proxy_pass http://serverbailyes;
-		proxy_set_header Host $host;
-		proxy_set_header X-Real-IP $remote_addr;
-		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-		proxy_set_header X-Forwarded-Proto $scheme;
-		proxy_buffering off;
-		#upgrade to WebSocket protocol when requested
-		proxy_set_header Upgrade $http_upgrade;
-		proxy_set_header Connection "Upgrade";
-		proxy_read_timeout 90;
-		proxy_redirect off;
-	}
-	#
-	location /Start {
-		auth_basic "Restricted Content";
-		auth_basic_user_file /etc/nginx/.htpasswd;
-		proxy_pass http://serverbailyes;
-		proxy_set_header Host $host;
-		proxy_set_header X-Real-IP $remote_addr;
-		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-		proxy_set_header X-Forwarded-Proto $scheme;
-		proxy_buffering off;
-		#upgrade to WebSocket protocol when requested
-		proxy_set_header Upgrade $http_upgrade;
-		proxy_set_header Connection "Upgrade";
-		proxy_read_timeout 90;
-		proxy_redirect off;
-	}
-	#
-	location /socket.io/ {
-		proxy_pass http://serverbailyes;
-		proxy_redirect off;
-		proxy_http_version 1.1;
-		proxy_set_header Upgrade $http_upgrade;
-		proxy_set_header Connection "upgrade";
-		proxy_set_header Host $host;
-		proxy_set_header X-Real-IP $remote_addr;
-		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-	}
-	#
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    charset utf-8;
+    client_max_body_size 256M;
+    server_name subdominio.seudominio.com.br;
+
+    # Caminhos para os certificados SSL gerados pelo Let's Encrypt (Certbot).
+    ssl_certificate /etc/letsencrypt/live/subdominio.seudominio.com.br/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/subdominio.seudominio.com.br/privkey.pem;
+
+    # Configurações de segurança SSL para usar protocolos e cifras fortes.
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    ssl_ecdh_curve secp384r1;
+    ssl_session_timeout 10m;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_tickets off;
+    ssl_stapling off;
+    ssl_stapling_verify off;
+    resolver 8.8.8.8 8.8.4.4 valid=300s;
+    resolver_timeout 5s;
+
+    # Cabeçalhos de segurança adicionais.
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection "1; mode=block";
+
+    # Configuração de log para este subdomínio.
+		access_log /var/log/nginx/subdominio.access.log;
+		error_log /var/log/nginx/subdominio.error.log warn;
+
+    # Tratamento específico para favicon.ico.
+    location = /favicon.ico {
+        return 204;
+        access_log off;
+        log_not_found off;
+    }
+
+    # Configuração de proxy reverso para a aplicação.
+    location / {
+        proxy_pass http://aplication;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_buffering off;
+        # Suporte para WebSocket.
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_read_timeout 90;
+        proxy_redirect off;
+    }
+
+    # Configuração específica para Socket.IO.
+    location /socket.io/ {
+        proxy_pass http://aplication;
+        proxy_redirect off;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
 }
-#
 ```
 
 #### Fix Limit File Upload Size in NGINX (client intended to send too large body)
@@ -229,5 +145,5 @@ location / {
    - **systemd**
 
 ```sh
-	sudo systemctl restart nginx
+	sudo systemctl restart nginx;
 ```
