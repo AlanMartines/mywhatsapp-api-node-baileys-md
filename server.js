@@ -306,7 +306,7 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 						const address = httpv6.address().address;
 						const port = httpv6.address().port;
 						let hostUrl = config.IPV6 == '0:0:0:0:0:0:0:0' ? '0:0:0:0:0:0:0:1' : `${config.IPV6}`;
-						let host = config.DOMAIN_SSL == '' ? `http://${hostUrl}:${config.PORT}` : `https://${config.DOMAIN_SSL}`;
+						let host = config.DOMAIN_SSL == null ? `http://${hostUrl}:${config.PORT}` : `https://${config.DOMAIN_SSL}`;
 						logger?.info(`- HTTP Server running on`);
 						logger?.info(`- To start: ${host}/Start`);
 						logger?.info(`- To docs: ${host}/api-docs`);
