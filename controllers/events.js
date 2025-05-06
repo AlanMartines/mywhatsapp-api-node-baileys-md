@@ -77,7 +77,7 @@ module.exports = class Events {
 	static async statusMessage(SessionName, events) {
 		let dataSessions = await Sessions?.getSession(SessionName);
 		try {
-			
+
 			if (events['messages.update']) {
 				const messages = events['messages.update'];
 
@@ -290,18 +290,22 @@ module.exports = class Events {
 							type = 'historySync';
 						} else if (msg?.message?.protocolMessage?.initialSecurityNotificationSettingSync) {
 							type = 'initialSecurity';
-						} else if (msg?.message?.reactionMessage) {
-							type = 'reactionMessage';
 						} else if (msg?.message?.interactiveMessage) {
 							type = 'interactiveMessage';
-						} else if (msg?.message?.pollCreationMessage) {
-							type = 'poll';
-						} else if (msg?.message?.pollCreationMessageV2) {
-							type = 'poll';
-						} else if (msg?.message?.pollCreationMessageV3) {
+						} else if (
+							msg?.message?.pollCreationMessage ||
+							msg?.message?.pollCreationMessageV2 ||
+							msg?.message?.pollCreationMessageV3
+						) {
 							type = 'poll';
 						} else if (msg?.message?.pollUpdateMessage) {
 							type = 'pollVote';
+						} else if (msg?.message?.reactionMessage) {
+							type = 'reactionMessage';
+						} else if ($msg?.message?.messageContextInfo) {
+							type = 'messageContextInfo';
+						} else if (msg?.message?.editedMessage) {
+							type = 'editedMessage';
 						} else {
 							//
 							type = undefined;
@@ -751,6 +755,7 @@ module.exports = class Events {
 								logger?.info('- Message type: poll');
 								//
 								response = {
+									"SessionName": `${SessionName}`,
 									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 									"type": 'poll',
@@ -767,6 +772,48 @@ module.exports = class Events {
 								break;
 							case 'pollVote':
 								logger?.info('- Message type: pollVote');
+								//
+								response = {
+									"SessionName": `${SessionName}`,
+									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
+									"type": 'pollVote',
+									"fromMe": msg?.key?.fromMe,
+									"id": msg?.key?.id,
+									"name": msg?.pushName || msg?.verifiedBizName || null,
+									"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+									"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
+									"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
+									// Específico de enquetes (poll vote)
+									"pollMessageId": msg?.message?.pollUpdateMessage?.pollCreationMessageKey?.id || null,
+									"pollCreationMessageKey": msg?.message?.pollUpdateMessage?.pollCreationMessageKey || null,
+									"senderTimestampMs": msg?.message?.pollUpdateMessage?.senderTimestampMs || null,
+									"voteEncrypted": true,
+									"vote": {
+										"encPayload": msg?.message?.pollUpdateMessage?.vote?.encPayload || null,
+										"encIv": msg?.message?.pollUpdateMessage?.vote?.encIv || null,
+									},
+									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
+								};
+								//
+								break;
+							case 'editedMessage':
+								//
+								response = {
+									"SessionName": `${SessionName}`,
+									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
+									"type": 'editedMessage',
+									"fromMe": msg?.key?.fromMe,
+									"id": msg?.key?.id,
+									"name": msg?.pushName || msg?.verifiedBizName || null,
+									"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+									"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
+									"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
+									"content": msg.message.editedMessage?.message?.protocolMessage?.editedMessage?.conversation || null,
+									"originalMessageId": msg.message.editedMessage?.message?.protocolMessage?.key?.id || null,
+									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
+								};
 								//
 								break;
 							default:
