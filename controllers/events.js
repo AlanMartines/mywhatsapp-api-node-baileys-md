@@ -306,6 +306,8 @@ module.exports = class Events {
 							type = 'messageContextInfo';
 						} else if (msg?.message?.editedMessage) {
 							type = 'editedMessage';
+						} else if (msg?.message?.ephemeralMessage) {
+							type = 'ephemeralMessage';
 						} else {
 							//
 							type = undefined;
@@ -815,6 +817,25 @@ module.exports = class Events {
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								};
 								//
+								break;
+							case 'text':
+								logger?.info('- Message type: ephemeralMessage');
+								//
+								response = {
+									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
+									"type": 'ephemeralMessage',
+									"fromMe": msg?.key?.fromMe,
+									"id": msg?.key?.id,
+									"name": msg?.pushName || msg?.verifiedBizName || null,
+									"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+									"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
+									"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
+									"content": msg?.message?.ephemeralMessage?.message?.extendedTextMessage?.text || null,
+									"expiration": moment(msg?.message?.ephemeralMessage?.message?.extendedTextMessage?.contextInfo?.expiration * 1000)?.format('YYYY-MM-DD HH:mm:ss'),
+									"ephemeralSetting": moment msg?.message?.ephemeralMessage?.message?.extendedTextMessage?.contextInfo?.ephemeralSettingTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss'),
+									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
+								}
 								break;
 							default:
 							//
