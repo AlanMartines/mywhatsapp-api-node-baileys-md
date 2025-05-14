@@ -298,7 +298,8 @@ module.exports = class Instace {
 				//
 				const AxiosRequestConfig = {};
 				//const browser = Browsers.appropriate('Desktop');
-				const SocketConfig = {
+				//
+				const client = makeWASocket({
 					/** URL do WS para conectar ao WhatsApp */
 					//waWebSocketUrl: config.WA_URL,
 					/** Falha a conexão se o socket expirar neste intervalo */
@@ -376,12 +377,6 @@ module.exports = class Instace {
 					getMessage,
 					// Para o botão de correção, mensagem de lista de modelos
 					patchMessageBeforeSending,
-				};
-				//
-				// ------------------------------------------------------------------------------------------------------- //
-				//
-				const client = makeWASocket({
-					...SocketConfig
 				});
 				//
 				store?.bind(client.ev);
