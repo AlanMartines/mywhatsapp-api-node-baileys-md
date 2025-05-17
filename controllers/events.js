@@ -833,7 +833,7 @@ module.exports = class Events {
 									"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 									"content": msg?.message?.ephemeralMessage?.message?.extendedTextMessage?.text || null,
 									"expiration": moment(msg?.message?.ephemeralMessage?.message?.extendedTextMessage?.contextInfo?.expiration * 1000)?.format('YYYY-MM-DD HH:mm:ss'),
-									"ephemeralSetting": moment msg?.message?.ephemeralMessage?.message?.extendedTextMessage?.contextInfo?.ephemeralSettingTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss'),
+									"ephemeralSetting": moment(msg?.message?.ephemeralMessage?.message?.extendedTextMessage?.contextInfo?.ephemeralSettingTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss'),
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								break;
