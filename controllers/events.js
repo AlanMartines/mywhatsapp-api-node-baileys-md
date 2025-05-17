@@ -302,7 +302,7 @@ module.exports = class Events {
 							type = 'pollVote';
 						} else if (msg?.message?.reactionMessage) {
 							type = 'reactionMessage';
-						} else if ($msg?.message?.messageContextInfo) {
+						} else if (msg?.message?.messageContextInfo) {
 							type = 'messageContextInfo';
 						} else if (msg?.message?.editedMessage) {
 							type = 'editedMessage';
