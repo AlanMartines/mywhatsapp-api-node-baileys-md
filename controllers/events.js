@@ -317,11 +317,13 @@ module.exports = class Events {
 							//
 						}
 						//
+						//
 						switch (type) {
 							case 'text':
 								logger?.info('- Message type: text');
 								//
 								response = {
+									"SessionName": `${SessionName}`,
 									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 									"type": 'text',
@@ -342,6 +344,7 @@ module.exports = class Events {
 								var string64 = buffer.toString('base64');
 								//
 								response = {
+									"SessionName": `${SessionName}`,
 									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 									"type": 'image',
@@ -368,6 +371,7 @@ module.exports = class Events {
 								var string64 = buffer.toString('base64');
 								//
 								response = {
+									"SessionName": `${SessionName}`,
 									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 									"type": 'image',
@@ -395,14 +399,13 @@ module.exports = class Events {
 								var string64 = buffer.toString('base64');
 								//
 								response = {
+									"SessionName": `${SessionName}`,
 									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 									"type": 'audio',
 									"fromMe": msg?.key?.fromMe,
 									"id": msg?.key?.id,
 									"name": msg?.pushName || msg?.verifiedBizName || null,
-									"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
-									"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 									"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
 									"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 									"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
@@ -422,6 +425,7 @@ module.exports = class Events {
 								var string64 = buffer.toString('base64');
 								//
 								response = {
+									"SessionName": `${SessionName}`,
 									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 									"type": 'video',
@@ -446,6 +450,7 @@ module.exports = class Events {
 								var string64 = buffer.toString('base64');
 								//
 								response = {
+									"SessionName": `${SessionName}`,
 									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 									"type": 'video',
@@ -467,6 +472,7 @@ module.exports = class Events {
 							case 'location':
 								logger?.info('- Message type: location');
 								response = {
+									"SessionName": `${SessionName}`,
 									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 									"type": 'location',
@@ -485,6 +491,7 @@ module.exports = class Events {
 							case 'liveLocation':
 								logger?.info('- Message type: liveLocation');
 								response = {
+									"SessionName": `${SessionName}`,
 									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 									"type": 'liveLocation',
@@ -508,6 +515,7 @@ module.exports = class Events {
 								var string64 = buffer.toString('base64');
 								//
 								response = {
+									"SessionName": `${SessionName}`,
 									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 									"type": 'document',
@@ -533,6 +541,7 @@ module.exports = class Events {
 								var string64 = buffer.toString('base64');
 								//
 								response = {
+									"SessionName": `${SessionName}`,
 									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 									"type": 'document',
@@ -554,6 +563,7 @@ module.exports = class Events {
 							case 'vcard':
 								logger?.info('- Message type: vcard');
 								response = {
+									"SessionName": `${SessionName}`,
 									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 									"type": 'vcard',
@@ -571,6 +581,7 @@ module.exports = class Events {
 							case 'button':
 								logger?.info('- Message type: button');
 								response = {
+									"SessionName": `${SessionName}`,
 									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 									"type": 'button',
@@ -587,6 +598,7 @@ module.exports = class Events {
 							case 'buttonsResponse':
 								logger?.info('- Message type: buttonsResponse');
 								response = {
+									"SessionName": `${SessionName}`,
 									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 									"type": 'buttonsResponse',
@@ -603,6 +615,7 @@ module.exports = class Events {
 							case 'templateMessage':
 								logger?.info('- Message type: templateMessage');
 								response = {
+									"SessionName": `${SessionName}`,
 									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 									"type": 'templateMessage',
@@ -619,6 +632,7 @@ module.exports = class Events {
 							case 'templateResponse':
 								logger?.info('- Message type: templateResponse');
 								response = {
+									"SessionName": `${SessionName}`,
 									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 									"type": 'templateResponse',
@@ -636,6 +650,7 @@ module.exports = class Events {
 							case 'listMessage':
 								logger?.info('- Message type: listMessage');
 								response = {
+									"SessionName": `${SessionName}`,
 									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 									"type": 'listMessage',
@@ -652,6 +667,7 @@ module.exports = class Events {
 							case 'listResponseMessage':
 								logger?.info('- Message type: listResponseMessage');
 								response = {
+									"SessionName": `${SessionName}`,
 									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 									"type": 'listResponseMessage',
@@ -668,6 +684,7 @@ module.exports = class Events {
 							case 'extended':
 								logger?.info('- Message type: extended');
 								response = {
+									"SessionName": `${SessionName}`,
 									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 									"type": 'extended',
@@ -690,6 +707,7 @@ module.exports = class Events {
 								logger?.info('- Message type: historySync');
 								//
 								response = {
+									"SessionName": `${SessionName}`,
 									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 									"type": 'historySync',
@@ -706,6 +724,7 @@ module.exports = class Events {
 								logger?.info('- Message type: initialSecurity');
 								//
 								response = {
+									"SessionName": `${SessionName}`,
 									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 									"type": 'initialSecurity',
@@ -722,6 +741,7 @@ module.exports = class Events {
 								logger?.info('- Message type: reactionMessage');
 								//
 								response = {
+									"SessionName": `${SessionName}`,
 									"wook": msg?.message?.reactionMessage?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 									"status": msg?.message?.reactionMessage?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 									"type": 'reactionMessage',
@@ -822,6 +842,7 @@ module.exports = class Events {
 								logger?.info('- Message type: ephemeralMessage');
 								//
 								response = {
+									"SessionName": `${SessionName}`,
 									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
 									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
 									"type": 'ephemeralMessage',
@@ -837,7 +858,6 @@ module.exports = class Events {
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								break;
-							default:
 							//
 
 							//
