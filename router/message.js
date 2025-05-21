@@ -58,7 +58,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		if (!resSessionName || !req?.body?.phonefull || !req?.body?.contact || !req?.body?.namecontact) {
 			var resultRes = {
 				"error": true,
-				"status": 400,
+				"statusCode": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
@@ -111,7 +111,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					//
 					var resultRes = {
 						"error": true,
-						"status": 400,
+						"statusCode": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
 					//
@@ -127,7 +127,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		logger?.error(`${error}`);
 		var resultRes = {
 			"error": true,
-			"status": 403,
+			"statusCode": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
 		//
@@ -152,7 +152,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		if (!resSessionName || !req?.body?.phonefull || !req.file) {
 			var validate = {
 				"error": true,
-				"status": 400,
+				"statusCode": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
@@ -172,7 +172,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var validate = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Arquivo selecionado não permitido, apenas arquivo de audio'
 				};
 				//
@@ -226,7 +226,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						//
 						var resultRes = {
 							"error": true,
-							"status": 400,
+							"statusCode": 400,
 							"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 						};
 						//
@@ -243,7 +243,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		logger?.error(`${error}`);
 		var resultRes = {
 			"error": true,
-			"status": 403,
+			"statusCode": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
 		//
@@ -267,7 +267,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		if (!resSessionName || !req?.body?.phonefull || !req?.body?.base64 || !req?.body?.originalname) {
 			var validate = {
 				"error": true,
-				"status": 400,
+				"statusCode": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
@@ -324,7 +324,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					//
 					var resultRes = {
 						"error": true,
-						"status": 400,
+						"statusCode": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
 					//
@@ -340,7 +340,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		logger?.error(`${error}`);
 		var resultRes = {
 			"error": true,
-			"status": 403,
+			"statusCode": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
 		//
@@ -363,7 +363,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		if (!resSessionName || !req?.body?.phonefull || !req?.body?.base64 || !req?.body?.mimetype || !req?.body?.originalname) {
 			var validate = {
 				"error": true,
-				"status": 400,
+				"statusCode": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
@@ -383,7 +383,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var validate = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Arquivo selecionado não permitido, apenas arquivo de audio'
 				};
 				//
@@ -437,7 +437,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						//
 						var resultRes = {
 							"error": true,
-							"status": 400,
+							"statusCode": 400,
 							"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 						};
 						//
@@ -454,7 +454,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		logger?.error(`${error}`);
 		var resultRes = {
 			"error": true,
-			"status": 403,
+			"statusCode": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
 		//
@@ -477,7 +477,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		if (!resSessionName || !req?.body?.phonefull || !req?.body?.msg) {
 			var validate = {
 				"error": true,
-				"status": 400,
+				"statusCode": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
@@ -530,7 +530,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					//
 					var resultRes = {
 						"error": true,
-						"status": 400,
+						"statusCode": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
 					//
@@ -546,7 +546,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		logger?.error(`${error}`);
 		var resultRes = {
 			"error": true,
-			"status": 403,
+			"statusCode": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
 		//
@@ -570,7 +570,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			//
 			var validate = {
 				"error": true,
-				"status": 400,
+				"statusCode": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
@@ -627,7 +627,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					//
 					var resultRes = {
 						"error": true,
-						"status": 400,
+						"statusCode": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
 					//
@@ -643,7 +643,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		logger?.error(`${error}`);
 		var resultRes = {
 			"error": true,
-			"status": 403,
+			"statusCode": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
 		//
@@ -667,7 +667,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			//
 			var validate = {
 				"error": true,
-				"status": 400,
+				"statusCode": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
@@ -690,7 +690,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						if (!await Sessions.isURL(req?.body?.link)) {
 							var validate = {
 								"error": true,
-								"status": 401,
+								"statusCode": 401,
 								"message": 'O link informado é invalido, verifique e tente novamente.'
 							};
 							//
@@ -735,7 +735,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					//
 					var resultRes = {
 						"error": true,
-						"status": 400,
+						"statusCode": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
 					//
@@ -750,7 +750,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		//
 		var resultRes = {
 			"error": true,
-			"status": 403,
+			"statusCode": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
 		//
@@ -773,7 +773,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		if (!resSessionName || !req?.body?.phonefull || !req.file) {
 			var validate = {
 				"error": true,
-				"status": 400,
+				"statusCode": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
@@ -793,7 +793,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var validate = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Arquivo selecionado não permitido, apenas arquivo do tipo imagem'
 				};
 				//
@@ -849,7 +849,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						//
 						var resultRes = {
 							"error": true,
-							"status": 400,
+							"statusCode": 400,
 							"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 						};
 						//
@@ -866,7 +866,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		logger?.error(`${error}`);
 		var resultRes = {
 			"error": true,
-			"status": 403,
+			"statusCode": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
 		//
@@ -889,7 +889,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.phonefull || !req?.body?.base64 || !req?.body?.originalname || !req?.body?.caption) {
 		var validate = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
@@ -910,7 +910,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			//
 			var validate = {
 				"error": true,
-				"status": 400,
+				"statusCode": 400,
 				"message": 'Arquivo selecionado não permitido, apenas arquivo do tipo imagem'
 			};
 			//
@@ -965,7 +965,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					//
 					var resultRes = {
 						"error": true,
-						"status": 400,
+						"statusCode": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
 					//
@@ -989,7 +989,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.phonefull || !req?.body?.base64 || !req?.body?.mimetype || !req?.body?.originalname || !req?.body?.caption) {
 		var validate = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
@@ -1010,7 +1010,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			//
 			var validate = {
 				"error": true,
-				"status": 400,
+				"statusCode": 400,
 				"message": 'Arquivo selecionado não permitido, apenas arquivo do tipo imagem'
 			};
 			//
@@ -1066,7 +1066,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					//
 					var resultRes = {
 						"error": true,
-						"status": 400,
+						"statusCode": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
 					//
@@ -1091,7 +1091,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.phonefull || !req?.body?.caption || !req.file) {
 		var validate = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
@@ -1146,7 +1146,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
@@ -1170,7 +1170,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.phonefull || !req?.body?.url || !req?.body?.caption) {
 		var validate = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
@@ -1225,7 +1225,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
@@ -1248,7 +1248,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.phonefull || !req?.body?.base64 || !req?.body?.originalname || !req?.body?.caption) {
 		var validate = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
@@ -1310,7 +1310,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
@@ -1333,7 +1333,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.phonefull || !req?.body?.base64 || !req?.body?.mimetype || !req?.body?.originalname || !req?.body?.caption) {
 		var validate = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
@@ -1389,7 +1389,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
@@ -1413,7 +1413,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.phonefull || !req?.body?.buttonMessage) {
 		var resultRes = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
@@ -1466,7 +1466,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
@@ -1489,7 +1489,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.phonefull || !req?.body?.templateMessage) {
 		var resultRes = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
@@ -1542,7 +1542,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
@@ -1565,7 +1565,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.phonefull || !req?.body?.listMessage) {
 		var resultRes = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
@@ -1618,7 +1618,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
@@ -1641,7 +1641,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.phonefull || !req?.body?.poll) {
 		var resultRes = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
@@ -1694,7 +1694,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
@@ -1714,7 +1714,7 @@ router.all('*', (req, res) => {
 	//
 	var resultRes = {
 		"error": true,
-		"status": 404,
+		"statusCode": 404,
 		"message": 'Não foi possivel executar a ação, verifique a url informada.'
 	};
 	//
