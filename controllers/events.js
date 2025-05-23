@@ -334,6 +334,7 @@ module.exports = class Events {
 									"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 									"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 									"content": msg?.message?.conversation,
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								break;
@@ -360,6 +361,7 @@ module.exports = class Events {
 									"base64": string64,
 									"height": msg?.message?.imageMessage?.height ? msg?.message?.imageMessage?.height : null,
 									"width": msg?.message?.imageMessage?.width ? msg?.message?.imageMessage?.width : null,
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								//
@@ -388,6 +390,7 @@ module.exports = class Events {
 									"base64": string64,
 									"height": msg?.message?.stickerMessage?.height ? msg?.message?.stickerMessage?.height : null,
 									"width": msg?.message?.stickerMessage?.width ? msg?.message?.stickerMessage?.width : null,
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								//
@@ -414,6 +417,7 @@ module.exports = class Events {
 									"time": convertHMS(msg?.message?.audioMessage?.seconds),
 									"base64": string64,
 									"ptt": msg?.message?.audioMessage?.ptt,
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								//
@@ -439,6 +443,7 @@ module.exports = class Events {
 									"mimetype": msg?.message?.videoMessage?.mimetype ? msg?.message?.videoMessage?.mimetype : null,
 									"fileLength": msg?.message?.videoMessage?.fileLength ? await convertBytes(msg?.message?.videoMessage?.fileLength) : null,
 									"base64": string64,
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								//
@@ -465,6 +470,7 @@ module.exports = class Events {
 									"fileLength": msg?.message?.viewOnceMessageV2?.message?.videoMessage?.fileLength ? await convertBytes(msg?.message?.viewOnceMessageV2?.message?.videoMessage?.fileLength) : null,
 									"seconds": msg?.message?.viewOnceMessageV2?.message?.videoMessage?.seconds ? msg?.message?.viewOnceMessageV2?.message?.videoMessage?.seconds : 0,
 									"base64": string64,
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								//
@@ -485,6 +491,7 @@ module.exports = class Events {
 									"lat": msg?.message?.locationMessage?.degreesLatitude,
 									"long": msg?.message?.locationMessage?.degreesLongitude,
 									"url": "https://maps.google.com/maps?q=" + msg?.message?.locationMessage?.degreesLatitude + "," + msg?.message?.locationMessage?.degreesLongitude,
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								break;
@@ -505,6 +512,7 @@ module.exports = class Events {
 									"long": msg?.message?.liveLocationMessage?.degreesLongitude,
 									"caption": msg?.message?.liveLocationMessage?.caption,
 									"url": "https://maps.google.com/maps?q=" + msg?.message?.liveLocationMessage?.degreesLatitude + "," + msg?.message?.liveLocationMessage?.degreesLongitude,
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								break;
@@ -530,6 +538,7 @@ module.exports = class Events {
 									"mimetype": msg?.message?.documentMessage?.mimetype ? msg?.message?.documentMessage?.mimetype : null,
 									"fileLength": msg?.message?.documentMessage?.fileLength ? await convertBytes(msg?.message?.documentMessage?.fileLength) : null,
 									"base64": string64,
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								//
@@ -556,6 +565,7 @@ module.exports = class Events {
 									"mimetype": msg?.message?.documentWithCaptionMessage?.message?.documentMessage?.mimetype ? msg?.message?.documentWithCaptionMessage?.message?.documentMessage?.mimetype : null,
 									"fileLength": msg?.message?.documentWithCaptionMessage?.message?.documentMessage?.fileLength ? await convertBytes(msg?.message?.documentWithCaptionMessage?.message?.documentMessage?.fileLength) : null,
 									"base64": string64,
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								//
@@ -575,6 +585,7 @@ module.exports = class Events {
 									"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 									"displayName": msg?.message?.contactMessage?.displayName,
 									"vcard": msg?.message?.contactMessage?.vcard,
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								break;
@@ -592,6 +603,7 @@ module.exports = class Events {
 									"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 									"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 									"buttonsMessage": msg?.message?.viewOnceMessage?.message?.buttonsMessage,
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								break;
@@ -609,6 +621,7 @@ module.exports = class Events {
 									"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 									"selectedButtonId": msg?.message?.buttonsResponseMessage.selectedButtonId,
 									"selectedDisplayText": msg?.message?.buttonsResponseMessage.selectedDisplayText,
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								break;
@@ -626,6 +639,7 @@ module.exports = class Events {
 									"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 									"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 									"templateMessage": msg?.message?.templateMessage?.hydratedTemplate?.hydratedButtons,
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								break;
@@ -644,6 +658,7 @@ module.exports = class Events {
 									"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 									"selectedId": msg?.message?.templateButtonReplyMessage?.selectedId,
 									"selectedDisplayText": msg?.message?.templateButtonReplyMessage?.selectedDisplayText,
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								break;
@@ -661,6 +676,7 @@ module.exports = class Events {
 									"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 									"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 									"listMessage": msg?.message?.viewOnceMessage?.message?.listMessage,
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								break;
@@ -678,6 +694,7 @@ module.exports = class Events {
 									"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 									"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 									"listResponseMessage": msg?.message?.listResponseMessage,
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								break;
@@ -700,6 +717,7 @@ module.exports = class Events {
 									"title": msg?.message?.extendedTextMessage?.title,
 									"content": msg?.message?.extendedTextMessage?.text,
 									"quotedMessage": msg?.message?.extendedTextMessage?.contextInfo?.quotedMessage?.conversation,
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								break;
@@ -716,6 +734,7 @@ module.exports = class Events {
 									"name": msg?.pushName || msg?.verifiedBizName || null,
 									"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
 									"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								//
@@ -733,6 +752,7 @@ module.exports = class Events {
 									"name": msg?.pushName || msg?.verifiedBizName || null,
 									"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
 									"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								//
@@ -751,6 +771,7 @@ module.exports = class Events {
 									"from": msg?.message?.reactionMessage?.key?.fromMe == true ? phone : msg?.message?.reactionMessage?.key?.remoteJid?.split('@')[0],
 									"to": msg?.message?.reactionMessage?.key?.fromMe == false ? phone : msg?.message?.reactionMessage?.key?.remoteJid?.split('@')[0],
 									"content": msg?.message?.reactionMessage?.text,
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
 									"datetime": moment(msg?.message?.reactionMessage?.senderTimestampMs * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								//
@@ -769,6 +790,7 @@ module.exports = class Events {
 									"from": msg?.message?.key?.remoteJid?.split('@')[0],
 									"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 									"content": msg?.message?.interactiveMessage?.nativeFlowMessage?.buttons,
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								//
@@ -788,6 +810,7 @@ module.exports = class Events {
 									"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
 									"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 									"poll": msg?.message?.pollCreationMessage,
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								//
@@ -815,6 +838,7 @@ module.exports = class Events {
 										"encPayload": msg?.message?.pollUpdateMessage?.vote?.encPayload || null,
 										"encIv": msg?.message?.pollUpdateMessage?.vote?.encIv || null,
 									},
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								};
 								//
@@ -834,11 +858,12 @@ module.exports = class Events {
 									"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
 									"content": msg.message.editedMessage?.message?.protocolMessage?.editedMessage?.conversation || null,
 									"originalMessageId": msg.message.editedMessage?.message?.protocolMessage?.key?.id || null,
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								};
 								//
 								break;
-							case 'text':
+							case 'ephemeralMessage':
 								logger?.info('- Message type: ephemeralMessage');
 								//
 								response = {
@@ -855,6 +880,7 @@ module.exports = class Events {
 									"content": msg?.message?.ephemeralMessage?.message?.extendedTextMessage?.text || null,
 									"expiration": moment(msg?.message?.ephemeralMessage?.message?.extendedTextMessage?.contextInfo?.expiration * 1000)?.format('YYYY-MM-DD HH:mm:ss'),
 									"ephemeralSetting": moment(msg?.message?.ephemeralMessage?.message?.extendedTextMessage?.contextInfo?.ephemeralSettingTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss'),
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								break;
