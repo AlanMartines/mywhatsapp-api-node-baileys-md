@@ -47,7 +47,6 @@ class AllSessions {
 						let result = JSON.parse(await fs.readFile(filePath, 'utf-8'));
 
 						const resBody = {
-							"AuthorizationToken": result?.AuthorizationToken,
 							"SessionName": result?.SessionName,
 							"setOnline": result?.setOnline ? result?.setOnline : true,
 							"wh_connect": result?.wh_connect ? result?.wh_connect : false,
@@ -62,7 +61,7 @@ class AllSessions {
 							rejectUnauthorized: false,
 							headers: {
 								'Content-Type': 'application/json',
-								'AuthorizationToken': result?.AuthorizationToken || config.SECRET_KEY
+								'AuthorizationToken': config.SECRET_KEY
 							},
 							json: true,
 							url: `${host}/instance/Start`,
