@@ -70,7 +70,7 @@ const {
 } = require('@whiskeysockets/baileys');
 const { makeInMemoryStore } = require('@rodrigogs/baileys-store');
 //
-const tokenPatch = parseInt(config.INDOCKER) ? path.join(config.PATCH_TOKENS, os.hostname()) : config.PATCH_TOKENS;
+const tokenPatch = config.INDOCKER ? path.join(config.PATCH_TOKENS, os.hostname()) : config.PATCH_TOKENS;
 //
 // ------------------------------------------------------------------------------------------------------- //
 //
@@ -173,11 +173,11 @@ module.exports = class Instace {
 				"AuthorizationToken": theTokenAuth,
 				"SessionName": SessionName,
 				"setOnline": req?.body?.setOnline ? req?.body?.setOnline : true,
-				"wh_status": req?.body?.wh_status ? req?.body?.wh_status : null,
-				"wh_message": req?.body?.wh_message ? req?.body?.wh_message : null,
-				"wh_qrcode": req?.body?.wh_qrcode ? req?.body?.wh_qrcode : null,
-				"wh_connect": req?.body?.wh_connect ? req?.body?.wh_connect : null,
-				"wh_incomingcall": req?.body?.wh_incomingcall ? req?.body?.wh_incomingcall : null
+				"wh_status": req?.body?.wh_status ? req?.body?.wh_status : false,
+				"wh_message": req?.body?.wh_message ? req?.body?.wh_message : false,
+				"wh_qrcode": req?.body?.wh_qrcode ? req?.body?.wh_qrcode : false,
+				"wh_connect": req?.body?.wh_connect ? req?.body?.wh_connect : false,
+				"wh_incomingcall": req?.body?.wh_incomingcall ? req?.body?.wh_incomingcall : false
 			};
 			//
 			fs.writeJson(`${tokenPatch}/${SessionName}.startup.json`, startupRes, (err) => {
@@ -596,7 +596,7 @@ module.exports = class Instace {
 								//
 								attempts = 1;
 								//
-								if (parseInt(config.DELETE_FILE_UNUSED)) {
+								if (config.DELETE_FILE_UNUSED) {
 									await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `app-*.json`);
 									await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `pre-*.json`);
 									await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `sender-*.json`);

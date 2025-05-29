@@ -338,7 +338,7 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 				await Sessions.logUpdateAvailable(version, repoVersion);
 			}
 			//
-			if (parseInt(config.START_ALL_SESSIONS) == true) {
+			if (config.START_ALL_SESSIONS == true) {
 				let result = await AllSessions.startAllSessions();
 			}
 			//
