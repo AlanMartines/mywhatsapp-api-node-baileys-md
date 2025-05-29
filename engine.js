@@ -1017,10 +1017,17 @@ module.exports = class Instace {
 						// credentials updated -- save them
 						if (events['creds.update']) {
 							//
-							await saveCreds();
-							logger?.info(`- SessionName: ${SessionName}`);
-							logger?.info(`- Creds update`);
-							//
+							try{
+								await saveCreds();
+								logger?.info(`- SessionName: ${SessionName}`);
+								logger?.info(`- Creds update`);
+								//
+							}catch(error){
+								logger?.error(`- SessionName: ${SessionName}`);
+								logger?.error(`- Creds update error`);
+								logger?.error(error);
+								//
+							}
 						}
 						//
 						eventsSend.statusConnection(SessionName, events);
