@@ -132,13 +132,12 @@ ffmpeg sox
 cd ~
 
 # Recuperar o script de instalação para sua versão de preferência
-curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -
+wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
 
 # Instalar o pacote Node.js
-sudo apt install -y git nodejs yarn gcc g++ make vim curl python3
-
-# Remover pacotes que não são mais necessários
-sudo apt autoremove -y
+source ~/.profile
+nvm ls-remote
+nvm install --lts
 ```
 
 #### Instale o NodeJs CentOS 7/8 64bits
@@ -150,13 +149,12 @@ sudo apt autoremove -y
 cd ~
 
 # Recuperar o script de instalação para sua versão de preferência
-curl -sL https://rpm.nodesource.com/setup_16.x | sudo -E bash -
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
 
 # Instalar o pacote Node.js
-sudo yum install -y git nodejs yarn gcc g++ tar make vim curl python3
-
-# Remover pacotes que não são mais necessários
-sudo yum autoremove -y
+source ~/.profile
+nvm ls-remote
+nvm install --lts
 ```
 
 #### Instale o NodeJs Alpine 64bits
@@ -169,57 +167,6 @@ cd ~
 
 # Instalar o pacote Node.js
 apk add --update nodejs nodejs-npm
-```
-
-#### Instale o MySQL Debian (e.g. Ubuntu)
-
-###### Instalar
-
-```bash
-#Atualize o índice de pacotes em seu servidor se ainda não tiver feito isso
-sudo apt update
-
-#Instale o pacote mysql-server
-sudo apt install mysql-server -y
-
-#Execute o script de segurança
-sudo mysql_secure_installation
-```
-
-#### Instale o MySQL CentOS
-
-###### Instalar
-
-```bash
-#Atualize o índice de pacotes em seu servidor se ainda não tiver feito isso
-sudo yum update
-
-#baixar os repositórios MySQL
-sudo wget https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm
-
-#Preparar o repositório
-sudo rpm -Uvh mysql80-community-release-el7-3.noarch.rpm
-
-#Instale o pacote mysql-server
-sudo yum install mysql-server -y
-
-#Execute o script de segurança
-sudo mysql_secure_installation
-```
-
-#### Instale o MySQL Alpaine Linux
-
-###### Instalar
-
-```bash
-#Atualize o índice de pacotes em seu servidor se ainda não tiver feito isso
-apk update
-
-#Instale o pacote mysql-server
-apk add mysql mysql-client
-
-#Execute o script de segurança
-mysql_secure_installation
 ```
 
 ## Rodando a aplicação
