@@ -50,11 +50,11 @@ class AllSessions {
 							"AuthorizationToken": result?.AuthorizationToken,
 							"SessionName": result?.SessionName,
 							"setOnline": result?.setOnline ? result?.setOnline : true,
-							"wh_connect": result?.wh_connect ? result?.wh_connect : null,
-							"wh_qrcode": result?.wh_qrcode ? result?.wh_qrcode : null,
-							"wh_status": result?.wh_status ? result?.wh_status : null,
-							"wh_message": result?.wh_message ? result?.wh_message : null,
-							"wh_incomingcall": result?.wh_incomingcall ? result?.wh_incomingcall : null
+							"wh_connect": result?.wh_connect ? result?.wh_connect : false,
+							"wh_qrcode": result?.wh_qrcode ? result?.wh_qrcode : false,
+							"wh_status": result?.wh_status ? result?.wh_status : false,
+							"wh_message": result?.wh_message ? result?.wh_message : false,
+							"wh_incomingcall": result?.wh_incomingcall ? result?.wh_incomingcall : false
 						};
 
 						const options = {
@@ -62,7 +62,7 @@ class AllSessions {
 							rejectUnauthorized: false,
 							headers: {
 								'Content-Type': 'application/json',
-								AuthorizationToken: parseInt(config.VALIDATE_MYSQL) ? result?.AuthorizationToken : config.SECRET_KEY
+								'AuthorizationToken': result?.AuthorizationToken || config.SECRET_KEY
 							},
 							json: true,
 							url: `${host}/instance/Start`,
