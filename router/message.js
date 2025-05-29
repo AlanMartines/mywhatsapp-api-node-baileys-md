@@ -1715,7 +1715,7 @@ router.all('*', (req, res) => {
 	var resultRes = {
 		"error": true,
 		"statusCode": 404,
-		"message": 'Não foi possivel executar a ação, verifique a url informada.'
+		"message": 'MESSAGE: Não foi possivel executar a ação, verifique a url informada.'
 	};
 	//
 	res.setHeader('Content-Type', 'application/json');

@@ -232,29 +232,11 @@ router.all('*', upload.none(''), async (req, res, next) => {
 	var resultRes = {
 		"error": true,
 		"status": 404,
-		"message": 'Não foi possivel executar a ação, verifique a url informada.'
+		"message": 'PROFILE: Não foi possivel executar a ação, verifique a url informada.'
 	};
 	//
 	res.setHeader('Content-Type', 'application/json');
 	return res.status(resultRes.status).json({
-		"Status": resultRes
-	});
-	//
-});
-//
-// ------------------------------------------------------------------------------------------------//
-//
-// rota url erro
-router.all('*', (req, res) => {
-	//
-	var resultRes = {
-		"error": true,
-		"status": 404,
-		"message": 'Não foi possivel executar a ação, verifique a url informada.'
-	};
-	//
-	res.setHeader('Content-Type', 'application/json');
-	res.status(resultRes.status).json({
 		"Status": resultRes
 	});
 	//
