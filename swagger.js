@@ -118,7 +118,7 @@ module.exports = {
 									"example": {
 										"Status": {
 											"error": false,
-											"status": 200,
+											"statusCode": 200,
 											"message": "Sistema iniciado e disponivel para uso"
 										}
 									}
@@ -136,7 +136,7 @@ module.exports = {
 									"example": {
 										"Status": {
 											"error": false,
-											"status": 201,
+											"statusCode": 201,
 											"message": "Sistema iniciando"
 										}
 									}
@@ -278,7 +278,7 @@ module.exports = {
 									"example": {
 										"Status": {
 											"error": false,
-											"status": 200,
+											"statusCode": 200,
 											"message": "Sistema iniciado e disponivel para uso"
 										}
 									}

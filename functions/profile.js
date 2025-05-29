@@ -27,7 +27,7 @@ module.exports = class Command {
 			//
 			let returnResult = {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"statusperfil": result,
 				"message": "Status do perfil obtido com sucesso."
 			};
@@ -63,7 +63,7 @@ module.exports = class Command {
 			//
 			return {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"message": "Profile status alterado com sucesso."
 			};
 			//
@@ -95,7 +95,7 @@ module.exports = class Command {
 			//
 			return {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"message": "Profile name alterado com sucesso."
 			};
 			//

@@ -30,7 +30,7 @@ module.exports = class Retrieving {
 			//
 			return {
 				"error": true,
-				"status": 200,
+				"statusCode": 200,
 				"number": number,
 				"message": "Status do número informado obtido com sucesso",
 				"result": result
@@ -109,7 +109,7 @@ module.exports = class Retrieving {
 			//
 			let returnResult = {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"getAllContacts": contactsList
 			};
 			//
@@ -180,7 +180,7 @@ module.exports = class Retrieving {
 			//
 			let returnResult = {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"getAllChats": allchat
 			};
 			//
@@ -250,7 +250,7 @@ module.exports = class Retrieving {
 			//
 			let returnResult = {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"getAllMessage": allmessages
 			};
 			//
@@ -300,7 +300,7 @@ module.exports = class Retrieving {
 			//
 			let returnResult = {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"getMessage": messages
 			};
 			//
@@ -378,7 +378,7 @@ module.exports = class Retrieving {
 			//
 			let returnResult = {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"message": "Lista de grupos obtida com sucesso.",
 				"getAllGroups": getAllGroups
 			};
@@ -418,7 +418,7 @@ module.exports = class Retrieving {
 				//
 				return {
 					"error": false,
-					"status": 200,
+					"statusCode": 200,
 					"number": result?.jid,
 					"message": "O número informado pode receber mensagens via whatsapp"
 				};
@@ -466,7 +466,7 @@ module.exports = class Retrieving {
 				//
 				return {
 					"error": false,
-					"status": 200,
+					"statusCode": 200,
 					"groipid": groipId + '@g.us',
 					"message": "O grupo informado existe"
 				};
@@ -511,7 +511,7 @@ module.exports = class Retrieving {
 			//
 			let returnResult = {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"profilepicture": result,
 				"message": "Foto do perfil obtido com sucesso."
 			};

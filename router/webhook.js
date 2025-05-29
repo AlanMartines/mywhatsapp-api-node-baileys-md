@@ -52,7 +52,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				let resultRes = {
 					"error": false,
-					"status": 200,
+					"statusCode": 200,
 					"webhook": {
 							"wh_status": dataSession?.wh_status ? dataSession?.wh_status : null,
 							"wh_message": dataSession?.wh_message ? dataSession?.wh_message : null,
@@ -158,7 +158,7 @@ router.post("/setConfig", upload.none(''), verifyToken.verify, async (req, res, 
 					//
 					var resultRes = {
 						"error": false,
-						"status": 200,
+						"statusCode": 200,
 						"webhook": {
 								"wh_status": req?.body?.wh_status ? req?.body?.wh_status : null,
 								"wh_message": req?.body?.wh_message ? req?.body?.wh_message : null,

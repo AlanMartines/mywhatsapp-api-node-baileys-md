@@ -31,7 +31,7 @@ module.exports = class Groups {
 			//
 			return {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"message": "Grupo deixado com sucesso"
 			};
 			//
@@ -66,7 +66,7 @@ module.exports = class Groups {
 			if (result?.id) {
 				return {
 					"error": false,
-					"status": 200,
+					"statusCode": 200,
 					"groupId": result?.id,
 					"contactlistValid": contactlistValid,
 					"contactlistInvalid": contactlistInvalid,
@@ -117,7 +117,7 @@ module.exports = class Groups {
 			//
 			return {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"message": "Titulo do grupo atualizado com sucesso"
 			};
 			//
@@ -150,7 +150,7 @@ module.exports = class Groups {
 			//
 			return {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"message": "Descrição do grupo atualizado com sucesso"
 			};
 			//
@@ -193,7 +193,7 @@ module.exports = class Groups {
 			//
 			var resultRes = {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"groupId": groupId,
 				"groupMembers": groupMembers,
 				"message": 'Membros do grupo obtido com sucesso'
@@ -230,7 +230,7 @@ module.exports = class Groups {
 			//
 			return {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"inviteCode": result,
 				"inviteUrl": 'https://chat.whatsapp.com/' + result,
 				"message": "Link de convite obtido com sucesso"
@@ -266,7 +266,7 @@ module.exports = class Groups {
 			//
 			return {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"inviteCode": result,
 				"inviteUrl": 'https://chat.whatsapp.com/' + result,
 				"message": "Link de convite obtido com sucesso"
@@ -309,7 +309,7 @@ module.exports = class Groups {
 			if (result?.status == 200) {
 				return {
 					"error": false,
-					"status": 200,
+					"statusCode": 200,
 					"contactlistValid": contactlistValid,
 					"contactlistInvalid": contactlistInvalid,
 					"message": "Participante(s) da lista valida removido(s) com sucesso"
@@ -363,7 +363,7 @@ module.exports = class Groups {
 			if (result?.status == 200) {
 				return {
 					"error": false,
-					"status": 200,
+					"statusCode": 200,
 					"contactlistValid": contactlistValid,
 					"contactlistInvalid": contactlistInvalid,
 					"message": "Participante(s) da lista valida adicionado(s) com sucesso"
@@ -417,7 +417,7 @@ module.exports = class Groups {
 			if (result?.status == 200) {
 				return {
 					"error": false,
-					"status": 200,
+					"statusCode": 200,
 					"contactlistValid": contactlistValid,
 					"contactlistInvalid": contactlistInvalid,
 					"message": "Participante(s) da lista valida promovido(s) com sucesso"
@@ -472,7 +472,7 @@ module.exports = class Groups {
 			if (result?.status == 200) {
 				return {
 					"error": false,
-					"status": 200,
+					"statusCode": 200,
 					"contactlistValid": contactlistValid,
 					"contactlistInvalid": contactlistInvalid,
 					"message": "Participante(s) da lista valida depromote com sucesso"
@@ -519,7 +519,7 @@ module.exports = class Groups {
 			//
 			return {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"infoInvite": result,
 				"message": "Informação do link de convite"
 			};
@@ -550,7 +550,7 @@ module.exports = class Groups {
 			//logger?.info('Result: ', result); //return object success
 			return {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"message": "Join grupo com sucesso"
 			};
 			//
