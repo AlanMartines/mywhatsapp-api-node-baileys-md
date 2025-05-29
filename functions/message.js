@@ -46,7 +46,7 @@ module.exports = class Mensagens {
 			//
 			var result = {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"message": "Contato envido com sucesso."
 			};
 			//
@@ -57,7 +57,7 @@ module.exports = class Mensagens {
 			//
 			var result = {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao enviar contato"
 			};
 			//
@@ -94,7 +94,7 @@ module.exports = class Mensagens {
 				//
 				let returnResult = {
 					"error": false,
-					"status": 200,
+					"statusCode": 200,
 					"message": "Audio enviado com sucesso."
 				};
 				//
@@ -109,7 +109,7 @@ module.exports = class Mensagens {
 				//
 				let returnResult = {
 					"error": true,
-					"status": 404,
+					"statusCode": 404,
 					"message": "Erro ao enviar audio"
 				};
 				//
@@ -145,7 +145,7 @@ module.exports = class Mensagens {
 			//
 			let returnResult = {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"message": "Audio enviado com sucesso."
 			};
 			//
@@ -161,7 +161,7 @@ module.exports = class Mensagens {
 			//
 			let returnResult = {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao enviar audio"
 			};
 			//
@@ -192,7 +192,7 @@ module.exports = class Mensagens {
 			//
 			return {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"message": "Mensagem enviada com sucesso."
 			};
 			//
@@ -201,7 +201,7 @@ module.exports = class Mensagens {
 			//
 			return {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao enviar menssagem"
 			};
 			//
@@ -240,7 +240,7 @@ module.exports = class Mensagens {
 			//
 			let returnResult = {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"message": "Localização enviada com sucesso."
 			};
 			//
@@ -253,7 +253,7 @@ module.exports = class Mensagens {
 			//
 			let returnResult = {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao enviar localização."
 			};
 			//
@@ -288,7 +288,7 @@ module.exports = class Mensagens {
 			//
 			return {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"message": "Mensagem enviada com sucesso."
 			};
 			//
@@ -297,7 +297,7 @@ module.exports = class Mensagens {
 			//
 			return {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao enviar menssagem"
 			};
 			//
@@ -332,7 +332,7 @@ module.exports = class Mensagens {
 			//
 			let returnResult = {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"message": "Mensagem enviada com sucesso."
 			};
 			//
@@ -344,7 +344,7 @@ module.exports = class Mensagens {
 			//
 			let returnResult = {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao enviar menssagem"
 			};
 			//
@@ -386,7 +386,7 @@ module.exports = class Mensagens {
 					//
 					return {
 						"error": false,
-						"status": 200,
+						"statusCode": 200,
 						"message": "Arquivo enviado com sucesso."
 					};
 					//
@@ -396,7 +396,7 @@ module.exports = class Mensagens {
 					//
 					return {
 						"error": true,
-						"status": 404,
+						"statusCode": 404,
 						"message": "Erro ao enviar arquivo"
 					};
 					//
@@ -416,7 +416,7 @@ module.exports = class Mensagens {
 					//
 					return {
 						"error": false,
-						"status": 200,
+						"statusCode": 200,
 						"message": "Arquivo enviado com sucesso."
 					};
 					//
@@ -426,7 +426,7 @@ module.exports = class Mensagens {
 					//
 					return {
 						"error": true,
-						"status": 404,
+						"statusCode": 404,
 						"message": "Erro ao enviar arquivo"
 					};
 					//
@@ -450,7 +450,7 @@ module.exports = class Mensagens {
 							//
 							return {
 								"error": false,
-								"status": 200,
+								"statusCode": 200,
 								"message": "Arquivo enviado com sucesso."
 							};
 							//
@@ -460,7 +460,7 @@ module.exports = class Mensagens {
 							//
 							return {
 								"error": true,
-								"status": 404,
+								"statusCode": 404,
 								"message": "Erro ao enviar arquivo"
 							};
 							//
@@ -482,7 +482,7 @@ module.exports = class Mensagens {
 							//
 							return {
 								"error": false,
-								"status": 200,
+								"statusCode": 200,
 								"message": "Arquivo enviado com sucesso."
 							};
 							//
@@ -492,7 +492,7 @@ module.exports = class Mensagens {
 							//
 							return {
 								"error": true,
-								"status": 404,
+								"statusCode": 404,
 								"message": "Erro ao enviar arquivo"
 							};
 							//
@@ -515,7 +515,7 @@ module.exports = class Mensagens {
 							//
 							return {
 								"error": false,
-								"status": 200,
+								"statusCode": 200,
 								"message": "Arquivo enviado com sucesso."
 							};
 							//
@@ -525,7 +525,7 @@ module.exports = class Mensagens {
 							//
 							return {
 								"error": true,
-								"status": 404,
+								"statusCode": 404,
 								"message": "Erro ao enviar arquivo"
 							};
 							//
@@ -547,7 +547,7 @@ module.exports = class Mensagens {
 							//
 							return {
 								"error": false,
-								"status": 200,
+								"statusCode": 200,
 								"message": "Arquivo enviado com sucesso."
 							};
 							//
@@ -557,7 +557,7 @@ module.exports = class Mensagens {
 							//
 							return {
 								"error": true,
-								"status": 404,
+								"statusCode": 404,
 								"message": "Erro ao enviar arquivo"
 							};
 							//
@@ -579,7 +579,7 @@ module.exports = class Mensagens {
 							//
 							return {
 								"error": false,
-								"status": 200,
+								"statusCode": 200,
 								"message": "Arquivo enviado com sucesso."
 							};
 							//
@@ -589,7 +589,7 @@ module.exports = class Mensagens {
 							//
 							return {
 								"error": true,
-								"status": 404,
+								"statusCode": 404,
 								"message": "Erro ao enviar arquivo"
 							};
 							//
@@ -611,7 +611,7 @@ module.exports = class Mensagens {
 							//
 							return {
 								"error": false,
-								"status": 200,
+								"statusCode": 200,
 								"message": "Arquivo enviado com sucesso."
 							};
 							//
@@ -621,7 +621,7 @@ module.exports = class Mensagens {
 							//
 							return {
 								"error": true,
-								"status": 404,
+								"statusCode": 404,
 								"message": "Erro ao enviar arquivo"
 							};
 							//
@@ -641,7 +641,7 @@ module.exports = class Mensagens {
 							//
 							return {
 								"error": false,
-								"status": 200,
+								"statusCode": 200,
 								"message": "Arquivo enviado com sucesso."
 							};
 							//
@@ -651,7 +651,7 @@ module.exports = class Mensagens {
 							//
 							return {
 								"error": true,
-								"status": 404,
+								"statusCode": 404,
 								"message": "Erro ao enviar arquivo"
 							};
 							//
@@ -693,7 +693,7 @@ module.exports = class Mensagens {
 			//
 			return {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"message": "Arquivo envido com sucesso."
 			};
 			//
@@ -703,7 +703,7 @@ module.exports = class Mensagens {
 			//
 			return {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao enviar arquivo"
 			};
 			//
@@ -731,7 +731,7 @@ module.exports = class Mensagens {
 			//
 			let returnResult = {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"message": "Mensagem enviada com sucesso."
 			};
 			//
@@ -744,7 +744,7 @@ module.exports = class Mensagens {
 			//
 			let returnResult = {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao enviar menssagem"
 			};
 			//
@@ -774,7 +774,7 @@ module.exports = class Mensagens {
 			//
 			let returnResult = {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"message": "Mensagem enviada com sucesso."
 			};
 			//
@@ -787,7 +787,7 @@ module.exports = class Mensagens {
 			//
 			let returnResult = {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao enviar menssagem"
 			};
 			//
@@ -828,7 +828,7 @@ module.exports = class Mensagens {
 			//
 			var result = {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"message": "Mensagem enviada com sucesso."
 			};
 			//
@@ -841,7 +841,7 @@ module.exports = class Mensagens {
 			//
 			var result = {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao enviar menssagem"
 			};
 			//
@@ -871,7 +871,7 @@ module.exports = class Mensagens {
 			//
 			var result = {
 				"error": false,
-				"status": 200,
+				"statusCode": 200,
 				"message": "Mensagem enviada com sucesso."
 			};
 			//
@@ -884,7 +884,7 @@ module.exports = class Mensagens {
 			//
 			var result = {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao enviar menssagem"
 			};
 			//
