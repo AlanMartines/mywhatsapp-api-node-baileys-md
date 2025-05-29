@@ -483,6 +483,7 @@
 					}
 				}).then(async function (response) {
 					console.log(response.data);
+					let statusCode = response.status;
 					let Status = response.data.Status;
 					if (Status.state == 'CONNECTED') {
 						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-on.png');
@@ -517,28 +518,29 @@
 					}
 				}).catch(async function (error) {
 					console.log(error.response.data);
+					let statusCode = error.response.status;
 					let Status = error.response.data.Status;
-					if (Status.status == 422) {
+					if (statusCode == 422) {
 						$('#imageQrcode').attr("src", '/imagens/body/readqrcode.png');
 						$("#description").html(Status.message);
 
 						window.scrollTo(0, 0);
-					} else if (Status.status == 401) {
+					} else if (statusCode == 401) {
 						$('#imageQrcode').attr("src", '/imagens/body/impressao-digital.png');
 						$("#description").html(Status.message);
 
 						window.scrollTo(0, 0);
-					} else if (Status.status == 408) {
+					} else if (statusCode == 408) {
 						$('#imageQrcode').attr("src", '/imagens/body/impressao-digital.png');
 						$("#description").html(Status.message);
 
 						window.scrollTo(0, 0);
-					} else if (Status.status == 404) {
+					} else if (statusCode == 404) {
 						$('#imageQrcode').attr("src", '/imagens/body/not-found.png');
 						$("#description").html(Status.message);
 
 						window.scrollTo(0, 0);
-					} else if (Status.status == 400) {
+					} else if (statusCode == 400) {
 						$('#imageQrcode').attr("src", '/imagens/body/not-found.png');
 						$("#description").html(Status.message);
 
@@ -571,6 +573,7 @@
 					}
 				}).then(function (response) {
 					console.log(response.data);
+					let statusCode = response.status;
 					let Status = response.data.Status;
 					if (Status.state == 'DISCONNECTED') {
 						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-off.png');
@@ -600,28 +603,29 @@
 					}
 				}).catch(async function (error) {
 					console.log(error.response.data);
+					let statusCode = error.response.status;
 					let Status = error.response.data.Status;
-					if (Status.status == 422) {
+					if (statusCode == 422) {
 						$('#imageQrcode').attr("src", '/imagens/body/readqrcode.png');
 						$("#description").html(Status.message);
 
 						window.scrollTo(0, 0);
-					} else if (Status.status == 401) {
+					} else if (statusCode == 401) {
 						$('#imageQrcode').attr("src", '/imagens/body/impressao-digital.png');
 						$("#description").html(Status.message);
 
 						window.scrollTo(0, 0);
-					} else if (Status.status == 408) {
+					} else if (statusCode == 408) {
 						$('#imageQrcode').attr("src", '/imagens/body/impressao-digital.png');
 						$("#description").html(Status.message);
 
 						window.scrollTo(0, 0);
-					} else if (Status.status == 404) {
+					} else if (statusCode == 404) {
 						$('#imageQrcode').attr("src", '/imagens/body/not-found.png');
 						$("#description").html(Status.message);
 
 						window.scrollTo(0, 0);
-					} else if (Status.status == 400) {
+					} else if (statusCode == 400) {
 						$('#imageQrcode').attr("src", '/imagens/body/not-found.png');
 						$("#description").html(Status.message);
 
@@ -654,6 +658,7 @@
 					}
 				}).then(async function (response) {
 					console.log(response.data);
+					let statusCode = response.status;
 					let Status = response.data.Status;
 					if (Status.state == 'CONNECTED') {
 						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-on.png');
@@ -688,28 +693,29 @@
 					}
 				}).catch(async function (error) {
 					console.log(error.response);
+					let statusCode = error.response.status;
 					let Status = error.response.data.Status;
-					if (Status.status == 422) {
+					if (statusCode == 422) {
 						$('#imageQrcode').attr("src", '/imagens/body/readqrcode.png');
 						$("#description").html(Status.message);
 
 						window.scrollTo(0, 0);
-					} else if (Status.status == 401) {
+					} else if (statusCode == 401) {
 						$('#imageQrcode').attr("src", '/imagens/body/impressao-digital.png');
 						$("#description").html(Status.message);
 
 						window.scrollTo(0, 0);
-					} else if (Status.status == 408) {
+					} else if (statusCode == 408) {
 						$('#imageQrcode').attr("src", '/imagens/body/impressao-digital.png');
 						$("#description").html(Status.message);
 
 						window.scrollTo(0, 0);
-					} else if (Status.status == 404) {
+					} else if (statusCode == 404) {
 						$('#imageQrcode').attr("src", '/imagens/body/not-found.png');
 						$("#description").html(Status.message);
 
 						window.scrollTo(0, 0);
-					} else if (Status.status == 400) {
+					} else if (statusCode == 400) {
 						$('#imageQrcode').attr("src", '/imagens/body/not-found.png');
 						$("#description").html(Status.message);
 
