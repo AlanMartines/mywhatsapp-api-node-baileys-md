@@ -420,7 +420,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
+				//await session.waqueue.add(async () => {
 					var sendTextGrupo = await message?.sendText(
 						resSessionName,
 						req?.body?.groupId.trim() + '@g.us',
@@ -433,7 +433,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						"Status": sendTextGrupo
 					});
 					//
-				});
+				//});
 				break;
 			default:
 				//
