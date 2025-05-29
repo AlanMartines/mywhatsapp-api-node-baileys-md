@@ -29,7 +29,6 @@ const {
 	DisconnectReason,
 	AnyMessageContent,
 	delay,
-	makeInMemoryStore,
 	MessageType,
 	MessageOptions,
 	Mimetype,
@@ -69,6 +68,7 @@ const {
 	getHistoryMsg,
 	isJidNewsletter,
 } = require('@whiskeysockets/baileys');
+const { makeInMemoryStore } = require('@rodrigogs/baileys-store');
 //
 const tokenPatch = parseInt(config.INDOCKER) ? path.join(config.PATCH_TOKENS, os.hostname()) : config.PATCH_TOKENS;
 //
