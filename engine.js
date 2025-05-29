@@ -285,7 +285,7 @@ module.exports = class Instace {
 		//
 		//const { state, saveState } = await useSingleFileAuthState(`${tokenPatch}/${SessionName}.data.json`);
 		//
-		const { state, saveCreds } = await useMultiFileAuthState(`${tokenPatch}/${SessionName}.data.json`);
+		const { state, saveCreds } = await useMultiFileAuthState(`${tokenPatch}/${SessionName}`);
 		//
 		try {
 			//
@@ -597,10 +597,10 @@ module.exports = class Instace {
 								attempts = 1;
 								//
 								if (config.DELETE_FILE_UNUSED) {
-									await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `app-*.json`);
-									await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `pre-*.json`);
-									await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `sender-*.json`);
-									await deletaToken(`${tokenPatch}/${SessionName}.data.json`, `session-*.json`);
+									await deletaToken(`${tokenPatch}/${SessionName}`, `app-*.json`);
+									await deletaToken(`${tokenPatch}/${SessionName}`, `pre-*.json`);
+									await deletaToken(`${tokenPatch}/${SessionName}`, `sender-*.json`);
+									await deletaToken(`${tokenPatch}/${SessionName}`, `session-*.json`);
 								}
 								//
 							} else if (connection === 'close') {
@@ -924,8 +924,8 @@ module.exports = class Instace {
 										// remove all events
 										await client.ev.removeAllListeners();
 										//
-										await deletaPastaToken(`${tokenPatch}`, `${SessionName}.data.json`);
-										await deletaToken(`${tokenPatch}`, `${SessionName}.data.json`);
+										await deletaPastaToken(`${tokenPatch}`, `${SessionName}`);
+										await deletaToken(`${tokenPatch}`, `${SessionName}`);
 										await deletaToken(`${tokenPatch}`, `${SessionName}.store.json`);
 										//await deletaToken(`${tokenPatch}`, `${SessionName}.startup.json`);
 										await deletaToken(`${tokenPatch}`, `${SessionName}.contacts.json`);
