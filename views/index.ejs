@@ -377,13 +377,13 @@
 					let wh_connect = $('#wh_connect').val();
 					//
 					await axios.post(`${url}/instance/Start`, {
-									"SessionName": SessionName,
-									"setOnline": setOnline ? true : false,
-									"wh_status": wh_status ? wh_status : null,
-									"wh_message": wh_message ? wh_message : null,
-									"wh_qrcode": wh_qrcode ? wh_qrcode : null,
-									"wh_connect": wh_connect ? wh_connect : null
-								}, {
+						"SessionName": SessionName,
+						"setOnline": setOnline ? true : false,
+						"wh_status": wh_status ? wh_status : false,
+						"wh_message": wh_message ? wh_message : false,
+						"wh_qrcode": wh_qrcode ? wh_qrcode : false,
+						"wh_connect": wh_connect ? wh_connect : false
+					}, {
 						headers: {
 							// Overwrite Axios's automatically set Content-Type
 							'Content-Type': 'application/json',
@@ -472,8 +472,8 @@
 				let SessionName = $('#SessionName').val();
 				//
 				let jsonData = {
-								"SessionName": SessionName
-							};
+					"SessionName": SessionName
+				};
 				//
 				await axios.post(`${url}/instance/Status`, jsonData, {
 					headers: {
@@ -560,8 +560,8 @@
 				let SessionName = $('#SessionName').val();
 				//
 				let jsonData = {
-								"SessionName": SessionName
-							};
+					"SessionName": SessionName
+				};
 				//
 				await axios.post(`${url}/instance/Close`, jsonData, {
 					headers: {
@@ -643,8 +643,8 @@
 				let SessionName = $('#SessionName').val();
 				//
 				let jsonData = {
-								"SessionName": SessionName
-							};
+					"SessionName": SessionName
+				};
 				//
 				await axios.post(`${url}/instance/Logout`, jsonData, {
 					headers: {

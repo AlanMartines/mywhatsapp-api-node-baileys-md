@@ -13,7 +13,7 @@ $(document).ready(function() {
             alert("Digite o nome da sessão antes de continuar...");
             //
         } else {
-            axios.get('http://15.228.192.100:3333/status?sessionName=' + session)
+            axios.get('http://127.0.0.1:3333/status?sessionName=' + session)
                 .then(function(response) {
                     console.log(response.data);
                     if (response.data.result == 'STARTING') {
@@ -71,7 +71,7 @@ $(document).ready(function() {
             //
         } else {
 
-            axios.get('http://15.228.192.100:3333/start?sessionName=' + session)
+            axios.get('http://127.0.0.1:3333/start?sessionName=' + session)
                 .then(function(response) {
                     console.log(response.data);
                     if (response.data.message == 'STARTING' || response.data.message == 'QRCODE') {
@@ -104,7 +104,7 @@ $(document).ready(function() {
             //
         } else {
 
-            axios.get('http://15.228.192.100:3333/qrcode?sessionName=' + session)
+            axios.get('http://127.0.0.1:3333/qrcode?sessionName=' + session)
                 .then(function(response) {
                     //
                     document.getElementById('image').style.visibility = "visible";

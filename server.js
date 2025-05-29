@@ -247,6 +247,7 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 				});
 			}
 			//
+			/*
 			// rota url erro
 			app.all('*', (req, res) => {
 				//
@@ -262,6 +263,7 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 				});
 				//
 			});
+			*/
 			//
 			const sockets = {};
 			//socket
