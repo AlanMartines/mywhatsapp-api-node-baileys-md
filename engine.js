@@ -299,7 +299,7 @@ module.exports = class Instace {
 				const AxiosRequestConfig = {};
 				//const browser = Browsers.appropriate('Desktop');
 				//
-				const client = makeWASocket({
+				const configWA = {
 					/** URL do WS para conectar ao WhatsApp */
 					//waWebSocketUrl: config.WA_URL,
 					/** Falha a conexão se o socket expirar neste intervalo */
@@ -377,7 +377,9 @@ module.exports = class Instace {
 					getMessage,
 					// Para o botão de correção, mensagem de lista de modelos
 					patchMessageBeforeSending,
-				});
+				};
+				//
+				const client = makeWASocket(configWA);
 				//
 				store?.bind(client.ev);
 				//
@@ -796,13 +798,13 @@ module.exports = class Instace {
 										//
 										setTimeout(async function () {
 											return await startSock(SessionName).then(async (result) => {
-																//
-											let addJson = {
-												client: result
-											};
-											//
-											await Sessions?.addInfoSession(SessionName, addJson);
-											//
+												//
+												let addJson = {
+													client: result
+												};
+												//
+												await Sessions?.addInfoSession(SessionName, addJson);
+												//
 												return result;
 											}).catch(async (erro) => {
 												logger?.error(`- Error reconnecting connection: ${erro}`);
