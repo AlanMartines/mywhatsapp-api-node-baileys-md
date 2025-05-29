@@ -247,14 +247,13 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 				});
 			}
 			//
-			/*
 			// rota url erro
 			app.all('*', (req, res) => {
 				//
 				var resultRes = {
 					"error": true,
 					"status": 404,
-					"message": 'Não foi possivel executar a ação, verifique a url informada.'
+					"message": 'SERVER: Não foi possivel executar a ação, verifique a url informada.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
@@ -263,7 +262,6 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 				});
 				//
 			});
-			*/
 			//
 			const sockets = {};
 			//socket
