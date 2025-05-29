@@ -45,12 +45,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		if (!resSessionName || !req?.body?.groupId || !req?.body?.contact || !req?.body?.namecontact) {
 			var resultRes = {
 				"error": true,
-				"status": 400,
+				"statusCode": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			return res.status(result.status).json({
+			return res.status(result.statusCode).json({
 				"Status": result
 			});
 			//
@@ -73,7 +73,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(sendContactVcard.status).json({
+						return res.status(sendContactVcard.statusCode).json({
 							"Status": sendContactVcard
 						});
 						//
@@ -83,12 +83,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					//
 					var resultRes = {
 						"error": true,
-						"status": 400,
+						"statusCode": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(resultRes.status).json({
+					return res.status(resultRes.statusCode).json({
 						"Status": resultRes
 					});
 				//
@@ -99,12 +99,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		logger?.error(`${error}`);
 		var resultRes = {
 			"error": true,
-			"status": 403,
+			"statusCode": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -124,12 +124,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		if (!resSessionName || !req?.body?.groupId || !req.file) {
 			var validate = {
 				"error": true,
-				"status": 400,
+				"statusCode": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			return res.status(validate.status).json({
+			return res.status(validate.statusCode).json({
 				"Status": validate
 			});
 			//
@@ -144,12 +144,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var validate = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Arquivo selecionado não permitido, apenas arquivo de audio'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(validate.status).json({
+				return res.status(validate.statusCode).json({
 					"Status": validate
 				});
 				//
@@ -173,7 +173,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 							);
 							//
 							res.setHeader('Content-Type', 'application/json');
-							return res.status(sendPtt.status).json({
+							return res.status(sendPtt.statusCode).json({
 								"Status": sendPtt
 							});
 							//
@@ -183,12 +183,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						//
 						var resultRes = {
 							"error": true,
-							"status": 400,
+							"statusCode": 400,
 							"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 						};
 						//
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(resultRes.status).json({
+						return res.status(resultRes.statusCode).json({
 							"Status": resultRes
 						});
 					//
@@ -200,12 +200,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		logger?.error(`${error}`);
 		var resultRes = {
 			"error": true,
-			"status": 403,
+			"statusCode": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -224,12 +224,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		if (!resSessionName || !req?.body?.groupId || !req?.body?.base64 || !req?.body?.originalname) {
 			var validate = {
 				"error": true,
-				"status": 400,
+				"statusCode": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			return res.status(validate.status).json({
+			return res.status(validate.statusCode).json({
 				"Status": validate
 			});
 			//
@@ -255,7 +255,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(sendPtt.status).json({
+						return res.status(sendPtt.statusCode).json({
 							"Status": sendPtt
 						});
 						//
@@ -265,12 +265,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					//
 					var resultRes = {
 						"error": true,
-						"status": 400,
+						"statusCode": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(resultRes.status).json({
+					return res.status(resultRes.statusCode).json({
 						"Status": resultRes
 					});
 				//
@@ -281,12 +281,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		logger?.error(`${error}`);
 		var resultRes = {
 			"error": true,
-			"status": 403,
+			"statusCode": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -304,12 +304,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		if (!resSessionName || !req?.body?.groupId || !req?.body?.base64 || !req?.body?.mimetype || !req?.body?.originalname) {
 			var validate = {
 				"error": true,
-				"status": 400,
+				"statusCode": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			return res.status(validate.status).json({
+			return res.status(validate.statusCode).json({
 				"Status": validate
 			});
 			//
@@ -324,12 +324,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var validate = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Arquivo selecionado não permitido, apenas arquivo de audio'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(validate.status).json({
+				return res.status(validate.statusCode).json({
 					"Status": validate
 				});
 				//
@@ -352,7 +352,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 							);
 							//
 							res.setHeader('Content-Type', 'application/json');
-							return res.status(sendPtt.status).json({
+							return res.status(sendPtt.statusCode).json({
 								"Status": sendPtt
 							});
 							//
@@ -362,12 +362,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						//
 						var resultRes = {
 							"error": true,
-							"status": 400,
+							"statusCode": 400,
 							"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 						};
 						//
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(resultRes.status).json({
+						return res.status(resultRes.statusCode).json({
 							"Status": resultRes
 						});
 					//
@@ -379,12 +379,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		logger?.error(`${error}`);
 		var resultRes = {
 			"error": true,
-			"status": 403,
+			"statusCode": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -401,12 +401,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.groupId || !req?.body?.msg) {
 		var resultRes = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -420,7 +420,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				//await session.waqueue.add(async () => {
+				await session.waqueue.add(async () => {
 					var sendTextGrupo = await message?.sendText(
 						resSessionName,
 						req?.body?.groupId.trim() + '@g.us',
@@ -429,22 +429,22 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					//
 					//console?.log(result);
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(sendTextGrupo.status).json({
+					return res.status(sendTextGrupo.statusCode).json({
 						"Status": sendTextGrupo
 					});
 					//
-				//});
+				});
 				break;
 			default:
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 			//
@@ -463,12 +463,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		//
 		var resultRes = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -493,7 +493,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					//
 					//console?.log(result);
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(sendLocationGroup.status).json({
+					return res.status(sendLocationGroup.statusCode).json({
 						"Status": sendLocationGroup
 					});
 				});
@@ -502,12 +502,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 			//
@@ -527,12 +527,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			//
 			var validate = {
 				"error": true,
-				"status": 400,
+				"statusCode": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			return res.status(validate.status).json({
+			return res.status(validate.statusCode).json({
 				"Status": validate
 			});
 			//
@@ -550,12 +550,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						if (!await Sessions.isURL(req?.body?.link)) {
 							var validate = {
 								"error": true,
-								"status": 401,
+								"statusCode": 401,
 								"message": 'O link informado é invalido, verifique e tente novamente.'
 							};
 							//
 							res.setHeader('Content-Type', 'application/json');
-							return res.status(validate.status).json({
+							return res.status(validate.statusCode).json({
 								"Status": validate
 							});
 							//
@@ -569,7 +569,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(sendLink.status).json({
+						return res.status(sendLink.statusCode).json({
 							"Status": sendLink
 						});
 						//
@@ -579,12 +579,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					//
 					var resultRes = {
 						"error": true,
-						"status": 400,
+						"statusCode": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(resultRes.status).json({
+					return res.status(resultRes.statusCode).json({
 						"Status": resultRes
 					});
 				//
@@ -594,12 +594,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		//
 		var resultRes = {
 			"error": true,
-			"status": 403,
+			"statusCode": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -617,12 +617,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		if (!resSessionName || !req?.body?.groupId || !req.file) {
 			var validate = {
 				"error": true,
-				"status": 400,
+				"statusCode": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			return res.status(validate.status).json({
+			return res.status(validate.statusCode).json({
 				"Status": validate
 			});
 			//
@@ -637,12 +637,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var validate = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Arquivo selecionado não permitido, apenas arquivo do tipo imagem'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(validate.status).json({
+				return res.status(validate.statusCode).json({
 					"Status": validate
 				});
 				//
@@ -667,7 +667,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 							);
 							//
 							res.setHeader('Content-Type', 'application/json');
-							return res.status(sendPtt.status).json({
+							return res.status(sendPtt.statusCode).json({
 								"Status": sendPtt
 							});
 							//
@@ -677,12 +677,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						//
 						var resultRes = {
 							"error": true,
-							"status": 400,
+							"statusCode": 400,
 							"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 						};
 						//
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(resultRes.status).json({
+						return res.status(resultRes.statusCode).json({
 							"Status": resultRes
 						});
 					//
@@ -694,12 +694,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		logger?.error(`${error}`);
 		var resultRes = {
 			"error": true,
-			"status": 403,
+			"statusCode": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -717,12 +717,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.groupId || !req?.body?.base64 || !req?.body?.originalname || !req?.body?.caption) {
 		var validate = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(validate.status).json({
+		return res.status(validate.statusCode).json({
 			"Status": validate
 		});
 		//
@@ -738,12 +738,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			//
 			var validate = {
 				"error": true,
-				"status": 400,
+				"statusCode": 400,
 				"message": 'Arquivo selecionado não permitido, apenas arquivo do tipo imagem'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			return res.status(validate.status).json({
+			return res.status(validate.statusCode).json({
 				"Status": validate
 			});
 			//
@@ -768,7 +768,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(sendFileBase64.status).json({
+						return res.status(sendFileBase64.statusCode).json({
 							"Status": sendFileBase64
 						});
 						//
@@ -778,12 +778,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					//
 					var resultRes = {
 						"error": true,
-						"status": 400,
+						"statusCode": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(resultRes.status).json({
+					return res.status(resultRes.statusCode).json({
 						"Status": resultRes
 					});
 				//
@@ -802,12 +802,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.groupId || !req?.body?.base64 || !req?.body?.mimetype || !req?.body?.originalname || !req?.body?.caption) {
 		var validate = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(validate.status).json({
+		return res.status(validate.statusCode).json({
 			"Status": validate
 		});
 		//
@@ -823,12 +823,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			//
 			var validate = {
 				"error": true,
-				"status": 400,
+				"statusCode": 400,
 				"message": 'Arquivo selecionado não permitido, apenas arquivo do tipo imagem'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			return res.status(validate.status).json({
+			return res.status(validate.statusCode).json({
 				"Status": validate
 			});
 			//
@@ -853,7 +853,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(sendFileFromBase64.status).json({
+						return res.status(sendFileFromBase64.statusCode).json({
 							"Status": sendFileFromBase64
 						});
 						//
@@ -863,12 +863,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					//
 					var resultRes = {
 						"error": true,
-						"status": 400,
+						"statusCode": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(resultRes.status).json({
+					return res.status(resultRes.statusCode).json({
 						"Status": resultRes
 					});
 				//
@@ -888,12 +888,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.groupId || !req?.body?.caption || !req.file) {
 		var validate = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(validate.status).json({
+		return res.status(validate.statusCode).json({
 			"Status": validate
 		});
 		//
@@ -919,7 +919,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					//
 					//console?.log(result);
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(sendFile.status).json({
+					return res.status(sendFile.statusCode).json({
 						"Status": sendFile
 					});
 					//
@@ -929,12 +929,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 			//
@@ -953,12 +953,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.groupId || !req?.body?.url || !req?.body?.caption) {
 		var validate = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(validate.status).json({
+		return res.status(validate.statusCode).json({
 			"Status": validate
 		});
 		//
@@ -984,7 +984,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					//
 					//console?.log(result);
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(sendFile.status).json({
+					return res.status(sendFile.statusCode).json({
 						"Status": sendFile
 					});
 				});
@@ -994,12 +994,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 			//
@@ -1017,12 +1017,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.groupId || !req?.body?.base64 || !req?.body?.originalname || !req?.body?.caption) {
 		var validate = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(validate.status).json({
+		return res.status(validate.statusCode).json({
 			"Status": validate
 		});
 		//
@@ -1048,7 +1048,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(sendFileBase64.status).json({
+					return res.status(sendFileBase64.statusCode).json({
 						"Status": sendFileBase64
 					});
 				});
@@ -1058,12 +1058,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 			//
@@ -1081,12 +1081,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.groupId || !req?.body?.base64 || !req?.body?.mimetype || !req?.body?.originalname || !req?.body?.caption) {
 		var validate = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(validate.status).json({
+		return res.status(validate.statusCode).json({
 			"Status": validate
 		});
 		//
@@ -1111,7 +1111,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(sendFileFromBase64.status).json({
+					return res.status(sendFileFromBase64.statusCode).json({
 						"Status": sendFileFromBase64
 					});
 				});
@@ -1121,12 +1121,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 			//
@@ -1145,12 +1145,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.groupId || !req?.body?.buttonMessage) {
 		var resultRes = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -1172,7 +1172,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(sendButton.status).json({
+					return res.status(sendButton.statusCode).json({
 						"Status": sendButton
 					});
 				});
@@ -1182,12 +1182,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 			//
@@ -1205,12 +1205,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.groupId || !req?.body?.templateMessage) {
 		var resultRes = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -1232,7 +1232,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(sendTemplate.status).json({
+					return res.status(sendTemplate.statusCode).json({
 						"Status": sendTemplate
 					});
 				});
@@ -1242,12 +1242,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 			//
@@ -1265,12 +1265,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.groupId || !req?.body?.listMessage) {
 		var resultRes = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -1292,7 +1292,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(sendListMessage.status).json({
+					return res.status(sendListMessage.statusCode).json({
 						"Status": sendListMessage
 					});
 				});
@@ -1302,12 +1302,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 			//
@@ -1325,12 +1325,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.groupId) {
 		var resultRes = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -1350,7 +1350,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						req?.body?.groupId + '@g.us'
 					);
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(leaveGroup.status).json({
+					return res.status(leaveGroup.statusCode).json({
 						"Status": leaveGroup
 					});
 				});
@@ -1359,12 +1359,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 			//
@@ -1382,12 +1382,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.title || !req?.body?.participants) {
 		var resultRes = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -1396,12 +1396,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		if (req?.body?.title.length >= 25) {
 			var validate = {
 				"error": true,
-				"status": 400,
+				"statusCode": 400,
 				"message": 'O nome do grupo não pode exceder 25 caracter.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			return res.status(validate.status).json({
+			return res.status(validate.statusCode).json({
 				"Status": validate
 			});
 			//
@@ -1451,7 +1451,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(createGroup.status).json({
+					return res.status(createGroup.statusCode).json({
 						"Status": createGroup
 					});
 				});
@@ -1461,12 +1461,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 			//
@@ -1484,12 +1484,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.groupId || !req?.body?.title) {
 		var resultRes = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -1498,12 +1498,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		if (req?.body?.title.length >= 25) {
 			var validate = {
 				"error": true,
-				"status": 400,
+				"statusCode": 400,
 				"message": 'O nome do grupo não pode exceder 25 caracter.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			return res.status(validate.status).json({
+			return res.status(validate.statusCode).json({
 				"Status": validate
 			});
 			//
@@ -1525,7 +1525,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(updateGroupTitle.status).json({
+					return res.status(updateGroupTitle.statusCode).json({
 						"Status": updateGroupTitle
 					});
 				});
@@ -1535,12 +1535,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 			//
@@ -1558,12 +1558,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.groupId || !req?.body?.desc) {
 		var resultRes = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -1585,7 +1585,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(updateGroupDesc.status).json({
+					return res.status(updateGroupDesc.statusCode).json({
 						"Status": updateGroupDesc
 					});
 				});
@@ -1595,12 +1595,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 			//
@@ -1618,12 +1618,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.groupId) {
 		var resultRes = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -1644,7 +1644,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(getGroupMembers.status).json({
+					return res.status(getGroupMembers.statusCode).json({
 						"Status": getGroupMembers
 					});
 				});
@@ -1654,12 +1654,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 			//
@@ -1677,12 +1677,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.groupId) {
 		var resultRes = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -1702,7 +1702,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						req?.body?.groupId + '@g.us'
 					);
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(GroupInviteLink.status).json({
+					return res.status(GroupInviteLink.statusCode).json({
 						"Status": GroupInviteLink
 					});
 				});
@@ -1711,12 +1711,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 			//
@@ -1734,12 +1734,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.groupId) {
 		var resultRes = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -1759,7 +1759,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						req?.body?.groupId + '@g.us'
 					);
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(GroupInviteLink.status).json({
+					return res.status(GroupInviteLink.statusCode).json({
 						"Status": GroupInviteLink
 					});
 				});
@@ -1768,12 +1768,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 			//
@@ -1790,12 +1790,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.groupId || !req?.body?.participants) {
 		var resultRes = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -1845,7 +1845,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(removeParticipant.status).json({
+					return res.status(removeParticipant.statusCode).json({
 						"Status": removeParticipant
 					});
 				});
@@ -1855,12 +1855,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 			//
@@ -1879,12 +1879,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.groupId || !req?.body?.participants) {
 		var resultRes = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -1934,7 +1934,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(addParticipant.status).json({
+					return res.status(addParticipant.statusCode).json({
 						"Status": addParticipant
 					});
 				});
@@ -1944,12 +1944,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 			//
@@ -1968,12 +1968,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.groupId || !req?.body?.participants) {
 		var resultRes = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -2023,7 +2023,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(promoteParticipant.status).json({
+					return res.status(promoteParticipant.statusCode).json({
 						"Status": promoteParticipant
 					});
 				});
@@ -2033,12 +2033,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 			//
@@ -2057,12 +2057,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.groupId || !req?.body?.participants) {
 		var resultRes = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -2112,7 +2112,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(demoteParticipant.status).json({
+					return res.status(demoteParticipant.statusCode).json({
 						"Status": demoteParticipant
 					});
 				});
@@ -2122,12 +2122,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 			//
@@ -2146,12 +2146,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.inviteCode) {
 		var resultRes = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -2170,7 +2170,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						req?.body?.inviteCode
 					);
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(getGroupInfoFromInviteLink.status).json({
+					return res.status(getGroupInfoFromInviteLink.statusCode).json({
 						"Status": getGroupInfoFromInviteLink
 					});
 				});
@@ -2179,12 +2179,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 			//
@@ -2202,12 +2202,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 	if (!resSessionName || !req?.body?.inviteCode) {
 		var resultRes = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -2226,7 +2226,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 						req?.body?.inviteCode
 					);
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(getGroupInfoFromInviteLink.status).json({
+					return res.status(getGroupInfoFromInviteLink.statusCode).json({
 						"Status": getGroupInfoFromInviteLink
 					});
 				});
@@ -2235,12 +2235,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 			//
@@ -2255,12 +2255,12 @@ router.all('*', (req, res) => {
 	//
 	var resultRes = {
 		"error": true,
-		"status": 404,
+		"statusCode": 404,
 		"message": 'GROUP: Não foi possivel executar a ação, verifique a url informada.'
 	};
 	//
 	res.setHeader('Content-Type', 'application/json');
-	res.status(resultRes.status).json({
+	res.status(resultRes.statusCode).json({
 		"Status": resultRes
 	});
 	//

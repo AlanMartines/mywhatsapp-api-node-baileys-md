@@ -36,7 +36,7 @@ exports.verify = async (req, res, next) => {
 			return res.status(408).json({
 				"Status": {
 					"error": true,
-					"status": 404,
+					"statusCode": 404,
 					"message": "Token invalido, verifique e tente novamente"
 				}
 			});

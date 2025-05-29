@@ -39,7 +39,7 @@ module.exports = class Command {
 			//
 			return {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao obtendo a foto do perfil no servidor"
 			};
 			//
@@ -72,7 +72,7 @@ module.exports = class Command {
 			//return erro;
 			return {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao alterar profile status."
 			};
 			//
@@ -104,7 +104,7 @@ module.exports = class Command {
 			//return erro;
 			return {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao alterar profile name."
 			};
 			//

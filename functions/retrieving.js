@@ -42,7 +42,7 @@ module.exports = class Retrieving {
 			//
 			return {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"number": number,
 				"message": "Erro ao verificar status do número informado"
 			};
@@ -88,7 +88,7 @@ module.exports = class Retrieving {
 					//
 					let returnResult = {
 						"error": true,
-						"status": 400,
+						"statusCode": 400,
 						"message": "Nenhum contato recuperado"
 					};
 					//
@@ -99,7 +99,7 @@ module.exports = class Retrieving {
 				//
 				let returnResult = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": "Nenhum contato recuperado"
 				};
 				//
@@ -120,7 +120,7 @@ module.exports = class Retrieving {
 			//
 			let returnResult = {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao recuperar contatos"
 			};
 			//
@@ -170,7 +170,7 @@ module.exports = class Retrieving {
 				//
 				let returnResult = {
 					"error": true,
-					"status": 404,
+					"statusCode": 404,
 					"message": "Erro ao recuperar contatos"
 				};
 				//
@@ -191,7 +191,7 @@ module.exports = class Retrieving {
 			//
 			let returnResult = {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao recuperar chats"
 			};
 			//
@@ -240,7 +240,7 @@ module.exports = class Retrieving {
 				//
 				let returnResult = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": "Erro ao recuperar mensagens"
 				};
 				//
@@ -261,7 +261,7 @@ module.exports = class Retrieving {
 			//
 			let returnResult = {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao recuperar contatos"
 			};
 			//
@@ -311,7 +311,7 @@ module.exports = class Retrieving {
 			//
 			let returnResult = {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao recuperar contatos"
 			};
 			//
@@ -390,7 +390,7 @@ module.exports = class Retrieving {
 			//
 			let returnResult = {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao recuperar grupos"
 			};
 			//
@@ -427,7 +427,7 @@ module.exports = class Retrieving {
 				//
 				return {
 					"error": false,
-					"status": 400,
+					"statusCode": 400,
 					"number": number,
 					"message": "O número informado não pode receber mensagens via whatsapp"
 				};
@@ -439,7 +439,7 @@ module.exports = class Retrieving {
 			//
 			return {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"number": number,
 				"message": "Erro ao verificar número informado"
 			};
@@ -475,7 +475,7 @@ module.exports = class Retrieving {
 				//
 				return {
 					"error": false,
-					"status": 400,
+					"statusCode": 400,
 					"groipid": groipId + '@g.us',
 					"message": "O grupo informado não existe"
 				};
@@ -487,7 +487,7 @@ module.exports = class Retrieving {
 			//
 			return {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"groipid": groipId + '@g.us',
 				"message": "Erro ao verificar o grupo informado"
 			};
@@ -523,7 +523,7 @@ module.exports = class Retrieving {
 			//
 			return {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao obtendo a foto do perfil no servidor"
 			};
 			//

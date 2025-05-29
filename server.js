@@ -198,12 +198,12 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 					//console.error(err);
 					let validate = {
 						"error": true,
-						"status": 404,
+						"statusCode": 404,
 						"message": "Json gerado de forma incorreta, efetue a correção e tente novamente"
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(validate.status).json({
+					return res.status(validate.statusCode).json({
 						"Status": validate
 					});
 					//
@@ -252,12 +252,12 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 				//
 				var resultRes = {
 					"error": true,
-					"status": 404,
+					"statusCode": 404,
 					"message": 'SERVER: Não foi possivel executar a ação, verifique a url informada.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 				//

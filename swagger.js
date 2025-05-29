@@ -154,7 +154,7 @@ module.exports = {
 									"example": {
 										"Status": {
 											"error": true,
-											"status": 400,
+											"statusCode": 400,
 											"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 										}
 									}
@@ -172,7 +172,7 @@ module.exports = {
 									"example": {
 										"Status": {
 											"error": true,
-											"status": 402,
+											"statusCode": 402,
 											"message": 'Erro ao obter status, verifique e tente novamente.'
 										}
 									}
@@ -190,7 +190,7 @@ module.exports = {
 									"example": {
 										"Status": {
 											"error": true,
-											"status": 403,
+											"statusCode": 403,
 											"message": "Não foi possivel executar a ação, verifique e tente novamente"
 										}
 									}
@@ -208,7 +208,7 @@ module.exports = {
 									"example": {
 										"Status": {
 											"error": true,
-											"status": 404,
+											"statusCode": 404,
 											"message": "Token não encontrado, verifique e tente novamente"
 										}
 									}
@@ -296,7 +296,7 @@ module.exports = {
 									"example": {
 										"Status": {
 											"error": true,
-											"status": 400,
+											"statusCode": 400,
 											"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 										}
 									}
@@ -314,7 +314,7 @@ module.exports = {
 									"example": {
 										"Status": {
 											"error": true,
-											"status": 403,
+											"statusCode": 403,
 											"message": "Não foi possivel executar a ação, verifique e tente novamente"
 										}
 									}
@@ -332,7 +332,7 @@ module.exports = {
 									"example": {
 										"Status": {
 											"error": true,
-											"status": 404,
+											"statusCode": 404,
 											"message": "Token não encontrado, verifique e tente novamente"
 										}
 									}

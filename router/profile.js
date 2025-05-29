@@ -40,12 +40,12 @@ router.post("/getPerfilStatus", upload.none(''), verifyToken.verify, async (req,
 	if (!resSessionName || !req?.body?.phonefull) {
 		var resultRes = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -74,14 +74,14 @@ router.post("/getPerfilStatus", upload.none(''), verifyToken.verify, async (req,
 						);
 						//
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(getStatus.status).json({
+						return res.status(getStatus.statusCode).json({
 							"Status": getStatus
 						});
 						//
 					} else {
 						//
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(checkNumberStatus.status).json({
+						return res.status(checkNumberStatus.statusCode).json({
 							"Status": checkNumberStatus
 						});
 						//
@@ -93,12 +93,12 @@ router.post("/getPerfilStatus", upload.none(''), verifyToken.verify, async (req,
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 			//
@@ -117,12 +117,12 @@ router.post("/setProfileStatus", upload.none(''), verifyToken.verify, async (req
 	if (!resSessionName || !req?.body?.ProfileStatus) {
 		var validate = {
 			"error": true,
-			"status": 400,
+			"statusCode": 400,
 			"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(validate.status).json({
+		return res.status(validate.statusCode).json({
 			"Status": validate
 		});
 		//
@@ -143,7 +143,7 @@ router.post("/setProfileStatus", upload.none(''), verifyToken.verify, async (req
 					);
 					//
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(setProfileStatus.status).json({
+					return res.status(setProfileStatus.statusCode).json({
 						"Status": setProfileStatus
 					});
 				});
@@ -153,12 +153,12 @@ router.post("/setProfileStatus", upload.none(''), verifyToken.verify, async (req
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 			//
@@ -211,12 +211,12 @@ router.post("/setProfileName", upload.none(''), verifyToken.verify, async (req, 
 				//
 				var resultRes = {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 			//
@@ -231,12 +231,12 @@ router.all('*', upload.none(''), async (req, res, next) => {
 	//
 	var resultRes = {
 		"error": true,
-		"status": 404,
+		"statusCode": 404,
 		"message": 'PROFILE: Não foi possivel executar a ação, verifique a url informada.'
 	};
 	//
 	res.setHeader('Content-Type', 'application/json');
-	return res.status(resultRes.status).json({
+	return res.status(resultRes.statusCode).json({
 		"Status": resultRes
 	});
 	//

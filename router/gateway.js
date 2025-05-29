@@ -49,12 +49,12 @@ router.post("/mkauthPlaySms", upload.none(''), verifyToken.verify, async (req, r
 		if (!resSessionName || !req?.body?.to || !req?.body?.msg) {
 			var validate = {
 				"error": true,
-				"status": 400,
+				"statusCode": 400,
 				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			return res.status(validate.status).json({
+			return res.status(validate.statusCode).json({
 				"Status": validate
 			});
 			//
@@ -83,14 +83,14 @@ router.post("/mkauthPlaySms", upload.none(''), verifyToken.verify, async (req, r
 							);
 							//
 							res.setHeader('Content-Type', 'application/json');
-							return res.status(sendText.status).json({
+							return res.status(sendText.statusCode).json({
 								"Status": sendText
 							});
 							//
 						} else {
 							//
 							res.setHeader('Content-Type', 'application/json');
-							return res.status(checkNumberStatus.status).json({
+							return res.status(checkNumberStatus.statusCode).json({
 								"Status": checkNumberStatus
 							});
 							//
@@ -102,12 +102,12 @@ router.post("/mkauthPlaySms", upload.none(''), verifyToken.verify, async (req, r
 					//
 					var resultRes = {
 						"error": true,
-						"status": 400,
+						"statusCode": 400,
 						"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(resultRes.status).json({
+					return res.status(resultRes.statusCode).json({
 						"Status": resultRes
 					});
 				//
@@ -118,12 +118,12 @@ router.post("/mkauthPlaySms", upload.none(''), verifyToken.verify, async (req, r
 		logger?.error(`${error}`);
 		var resultRes = {
 			"error": true,
-			"status": 403,
+			"statusCode": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -138,12 +138,12 @@ router.all('*', (req, res) => {
 	//
 	var resultRes = {
 		"error": true,
-		"status": 404,
+		"statusCode": 404,
 		"message": 'GATEWAY: Não foi possivel executar a ação, verifique a url informada.'
 	};
 	//
 	res.setHeader('Content-Type', 'application/json');
-	res.status(resultRes.status).json({
+	res.status(resultRes.statusCode).json({
 		"Status": resultRes
 	});
 	//

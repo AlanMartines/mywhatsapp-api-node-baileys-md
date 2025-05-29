@@ -41,7 +41,7 @@ router.post("/Start", verifyToken.verify, async (req, res, next) => {
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(resultRes.status).json({
+			res.status(resultRes.statusCode).json({
 				"Status": resultRes
 			});
 			//

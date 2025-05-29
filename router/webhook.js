@@ -35,12 +35,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		if (!resSessionName) {
 			var resultRes = {
 				"error": true,
-				"status": 400,
+				"statusCode": 400,
 				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(resultRes.status).json({
+			res.status(resultRes.statusCode).json({
 				"Status": resultRes
 			});
 			//
@@ -64,7 +64,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 				//
@@ -72,12 +72,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				//
 				var resultRes = {
 					"error": true,
-					"status": 404,
+					"statusCode": 404,
 					"message": 'Não foi possivel obter configuração'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				return res.status(resultRes.status).json({
+				return res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 				//
@@ -88,12 +88,12 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		//
 		var resultRes = {
 			"error": true,
-			"status": 403,
+			"statusCode": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -111,12 +111,12 @@ router.post("/setConfig", upload.none(''), verifyToken.verify, async (req, res, 
 		if (!resSessionName) {
 			var resultRes = {
 				"error": true,
-				"status": 400,
+				"statusCode": 400,
 				"message": 'Todos os valores deverem ser preenchidos, corrija e tente novamente.'
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			res.status(resultRes.status).json({
+			res.status(resultRes.statusCode).json({
 				"Status": resultRes
 			});
 			//
@@ -170,7 +170,7 @@ router.post("/setConfig", upload.none(''), verifyToken.verify, async (req, res, 
 					};
 					//
 					res.setHeader('Content-Type', 'application/json');
-					return res.status(resultRes.status).json({
+					return res.status(resultRes.statusCode).json({
 						"Status": resultRes
 					});
 					//
@@ -182,12 +182,12 @@ router.post("/setConfig", upload.none(''), verifyToken.verify, async (req, res, 
 				//
 				var resultRes = {
 					"error": true,
-					"status": 404,
+					"statusCode": 404,
 					"message": 'Não foi possivel executar a ação, verifique e tente vovamente.'
 				};
 				//
 				res.setHeader('Content-Type', 'application/json');
-				res.status(resultRes.status).json({
+				res.status(resultRes.statusCode).json({
 					"Status": resultRes
 				});
 				//
@@ -198,12 +198,12 @@ router.post("/setConfig", upload.none(''), verifyToken.verify, async (req, res, 
 		//
 		var resultRes = {
 			"error": true,
-			"status": 403,
+			"statusCode": 403,
 			"message": 'Não foi possivel executar a ação, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(resultRes.status).json({
+		return res.status(resultRes.statusCode).json({
 			"Status": resultRes
 		});
 		//
@@ -217,12 +217,12 @@ router.all('*', (req, res) => {
 	//
 	var resultRes = {
 		"error": true,
-		"status": 404,
+		"statusCode": 404,
 		"message": 'WEBHOOK: Não foi possivel executar a ação, verifique a url informada.'
 	};
 	//
 	res.setHeader('Content-Type', 'application/json');
-	res.status(resultRes.status).json({
+	res.status(resultRes.statusCode).json({
 		"Status": resultRes
 	});
 	//

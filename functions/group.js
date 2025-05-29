@@ -40,7 +40,7 @@ module.exports = class Groups {
 			//
 			return {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao deixar o grupo"
 			};
 			//
@@ -76,7 +76,7 @@ module.exports = class Groups {
 				//
 				return {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"groupId": null,
 					"contactlistValid": contactlistValid,
 					"contactlistInvalid": contactlistInvalid,
@@ -90,7 +90,7 @@ module.exports = class Groups {
 			//
 			return {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"groupId": null,
 				"contactlistValid": contactlistValid,
 				"contactlistInvalid": contactlistInvalid,
@@ -126,7 +126,7 @@ module.exports = class Groups {
 			//
 			return {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao atualizar titulo do grupo"
 			};
 			//
@@ -159,7 +159,7 @@ module.exports = class Groups {
 			//
 			return {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao atualizar descrição do grupo"
 			};
 			//
@@ -206,7 +206,7 @@ module.exports = class Groups {
 			//
 			return {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"groupId": groupId,
 				"message": "Erro ao obter membros do grupo"
 			};
@@ -241,7 +241,7 @@ module.exports = class Groups {
 			//
 			return {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"inviteCode": null,
 				"inviteUrl": null,
 				"message": "Erro ao obter link de convite"
@@ -277,7 +277,7 @@ module.exports = class Groups {
 			//
 			return {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"inviteCode": null,
 				"inviteUrl": null,
 				"message": "Erro ao obter link de convite"
@@ -318,7 +318,7 @@ module.exports = class Groups {
 				//
 				return {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"contactlistValid": contactlistValid,
 					"contactlistInvalid": contactlistInvalid,
 					"message": "Erro ao remover participante(s) da lista valida"
@@ -331,7 +331,7 @@ module.exports = class Groups {
 			//
 			return {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"contactlistValid": contactlistValid,
 				"contactlistInvalid": contactlistInvalid,
 				"message": "Erro ao remover participante(s)"
@@ -372,7 +372,7 @@ module.exports = class Groups {
 				//
 				return {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"contactlistValid": contactlistValid,
 					"contactlistInvalid": contactlistInvalid,
 					"message": "Erro ao adicionar participante(s) da lista valida"
@@ -385,7 +385,7 @@ module.exports = class Groups {
 			//
 			return {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"contactlistValid": contactlistValid,
 				"contactlistInvalid": contactlistInvalid,
 				"message": "Erro ao adicionar participante(s)"
@@ -426,7 +426,7 @@ module.exports = class Groups {
 				//
 				return {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"contactlistValid": contactlistValid,
 					"contactlistInvalid": contactlistInvalid,
 					"message": "Erro ao promover participante(s) da lista valida"
@@ -439,7 +439,7 @@ module.exports = class Groups {
 			//
 			return {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"contactlistValid": contactlistValid,
 				"contactlistInvalid": contactlistInvalid,
 				"message": "Erro ao promover particitante(s)"
@@ -481,7 +481,7 @@ module.exports = class Groups {
 				//
 				return {
 					"error": true,
-					"status": 400,
+					"statusCode": 400,
 					"contactlistValid": contactlistValid,
 					"contactlistInvalid": contactlistInvalid,
 					"message": "Erro ao depromote participante(s) da lista valida"
@@ -494,7 +494,7 @@ module.exports = class Groups {
 			//
 			return {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"contactlistValid": contactlistValid,
 				"contactlistInvalid": contactlistInvalid,
 				"message": "Erro ao depromote particitante(s)"
@@ -528,7 +528,7 @@ module.exports = class Groups {
 			logger?.error(`- Error when: ${erro}`);
 			return {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao obter informação do link de convite"
 			};
 			//
@@ -558,7 +558,7 @@ module.exports = class Groups {
 			logger?.error(`- Error when: ${erro}`);
 			return {
 				"error": true,
-				"status": 404,
+				"statusCode": 404,
 				"message": "Erro ao Join grupo"
 			};
 			//
