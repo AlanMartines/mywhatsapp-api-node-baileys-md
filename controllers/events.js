@@ -276,6 +276,8 @@ module.exports = class Events {
 							type = 'sticker';
 						} else if (msg?.message?.viewOnceMessage?.message?.buttonsMessage) {
 							type = 'button';
+						} else if (msg?.message?.buttonsMessage) {
+							type = 'buttonsMessage';
 						} else if (msg?.message?.buttonsResponseMessage) {
 							type = 'buttonsResponse';
 						} else if (msg?.message?.templateMessage) {
@@ -308,6 +310,12 @@ module.exports = class Events {
 							type = 'editedMessage';
 						} else if (msg?.message?.ephemeralMessage) {
 							type = 'ephemeralMessage';
+						} else if (msg?.message?.listMessage) {
+							type = 'listMessageDirect';
+						} else if (msg?.message?.interactiveMessage) {
+							type = 'interactiveMessageDirect';
+						} else if (msg?.message?.buttonsMessage) {
+							type = 'buttonsMessageDirect';
 						} else {
 							//
 							type = undefined;
@@ -607,6 +615,32 @@ module.exports = class Events {
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								break;
+							case 'buttonsMessage':
+								logger?.info('- Message type: buttonsMessage');
+								const buttons = msg?.message?.buttonsMessage?.buttons?.map(btn => ({
+									buttonId: btn?.buttonId || null,
+									displayText: btn?.buttonText?.displayText || null,
+									type: btn?.type || null
+								}));
+
+								response = {
+									"SessionName": `${SessionName}`,
+									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
+									"type": 'buttonsMessage',
+									"fromMe": msg?.key?.fromMe,
+									"id": msg?.key?.id,
+									"name": msg?.pushName || msg?.verifiedBizName || null,
+									"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+									"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
+									"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
+									"contentText": msg?.message?.buttonsMessage?.contentText || null,
+									"footerText": msg?.message?.buttonsMessage?.footerText || null,
+									"buttons": buttons,
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
+									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
+								};
+								break;
 							case 'buttonsResponse':
 								logger?.info('- Message type: buttonsResponse');
 								response = {
@@ -884,8 +918,77 @@ module.exports = class Events {
 									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
 								}
 								break;
-							//
+							case 'listMessageDirect':
+								//
+								logger?.info('- Message type: listMessage (direct)');
+								response = {
+									"SessionName": `${SessionName}`,
+									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
+									"type": 'listMessage',
+									"fromMe": msg?.key?.fromMe,
+									"id": msg?.key?.id,
+									"name": msg?.pushName || msg?.verifiedBizName || null,
+									"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+									"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
+									"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
+									"listMessage": msg?.message?.listMessage,
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
+									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
+								};
+								//
+								break;
+							case 'interactiveMessageDirect':
+								//
+								logger?.info('- Message type: interactiveMessage (direct)');
+								response = {
+									"SessionName": `${SessionName}`,
+									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
+									"type": 'interactiveMessage',
+									"fromMe": msg?.key?.fromMe,
+									"id": msg?.key?.id,
+									"name": msg?.pushName || msg?.verifiedBizName || null,
+									"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+									"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
+									"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
+									"interactiveMessage": msg?.message?.interactiveMessage,
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
+									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
+								};
+								//
+								break;
+							case 'buttonsMessageDirect':
+								//
+								logger?.info('- Message type: buttonsMessage (direct)');
+								const buttonsDirect = msg?.message?.buttonsMessage?.buttons?.map(btn => ({
+									buttonId: btn?.buttonId || null,
+									displayText: btn?.buttonText?.displayText || null,
+									type: btn?.type || null
+								}));
 
+								response = {
+									"SessionName": `${SessionName}`,
+									"wook": msg?.key?.fromMe == true ? 'SEND_MESSAGE' : 'RECEIVE_MESSAGE',
+									"status": msg?.key?.fromMe == true ? 'SEND' : 'RECEIVED',
+									"type": 'buttonsMessage',
+									"fromMe": msg?.key?.fromMe,
+									"id": msg?.key?.id,
+									"name": msg?.pushName || msg?.verifiedBizName || null,
+									"from": msg?.key?.fromMe == true ? phone : msg?.key?.remoteJid?.split('@')[0],
+									"to": msg?.key?.fromMe == false ? phone : msg?.key?.remoteJid?.split('@')[0],
+									"isGroup": msg?.key?.remoteJid?.split('@')[1] == 'g.us' ? true : false,
+									"contentText": msg?.message?.buttonsMessage?.contentText || null,
+									"footerText": msg?.message?.buttonsMessage?.footerText || null,
+									"buttons": buttonsDirect,
+									"participant": (msg?.key?.participant || '').split('@')[0] || null,
+									"datetime": moment(msg?.messageTimestamp * 1000)?.format('YYYY-MM-DD HH:mm:ss')
+								};
+								//
+								break;
+							default:
+								//
+								response = {};
 							//
 						}
 						//
