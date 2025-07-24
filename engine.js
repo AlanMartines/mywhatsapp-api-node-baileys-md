@@ -746,6 +746,27 @@ module.exports = class Instace {
 										*/
 										//
 										break;
+									case DisconnectReason.forbidden:
+										// Account Banned or Blocked
+										console.log(`- User forbidden/banned`);
+										//
+										addJson = {
+											SessionName: key,
+											state: "BANNED",
+											status: "notLogged",
+											message: "Conta banida ou bloqueada pelo WhatsApp"
+										};
+										//
+										await Sessions?.addInfoSession(SessionName, addJson);
+										//
+										dataSessions?.funcoesSocket?.stateChange(SessionName, {
+											SessionName: SessionName,
+											state: addJson?.state,
+											status: addJson?.status,
+											message: addJson?.message,
+										});
+										//
+										break;
 									case DisconnectReason.timedOut:
 										//
 										logger?.warn(`- SessionName: ${SessionName}`);
