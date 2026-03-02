@@ -63,11 +63,11 @@ module.exports = class Retrieving {
 			var session = await Sessions?.getSession(SessionName);
 			var contactsList = [];
 			//
-			if (fs.existsSync(`${session?.tokenPatch}/${SessionName}.contacts.json`)) {
-				//let result = JSON.parse(fs.readFileSync(`${session?.tokenPatch}/${SessionName}.contacts.json`, 'utf-8'));
-				let result = require(`${session?.tokenPatch}/${SessionName}.contacts.json`);
+			const contactsPath = `${session?.tokenPatch}/${SessionName}.contacts.json`;
+			if (await fs.pathExists(contactsPath)) {
+				let result = await fs.readJson(contactsPath);
 				//
-				const resContacts = Object.values(JSON.parse(result));
+				const resContacts = typeof result === 'string' ? Object.values(JSON.parse(result)) : Object.values(result);
 				//
 				for (var contact in resContacts) {
 					//
@@ -143,9 +143,9 @@ module.exports = class Retrieving {
 			var session = await Sessions?.getSession(SessionName);
 			var allchat = [];
 			//
-			if (fs.existsSync(`${session?.tokenPatch}/${SessionName}.store.json`)) {
-				//let result = require(`${session?.tokenPatch}/${SessionName}.store.json`);
-				let result = JSON.parse(fs.readFileSync(`${session?.tokenPatch}/${SessionName}.store.json`, 'utf-8'));
+			const storePath = `${session?.tokenPatch}/${SessionName}.store.json`;
+			if (await fs.pathExists(storePath)) {
+				let result = await fs.readJson(storePath);
 				//
 				//
 				const resChats = Object.values(result.chats);
@@ -214,9 +214,9 @@ module.exports = class Retrieving {
 			var session = await Sessions?.getSession(SessionName);
 			var allmessages = [];
 			//
-			if (fs.existsSync(`${session?.tokenPatch}/${SessionName}.store.json`)) {
-				//let result = require(`${session?.tokenPatch}/${SessionName}.store.json`);
-				let result = JSON.parse(fs.readFileSync(`${session?.tokenPatch}/${SessionName}.store.json`, 'utf-8'));
+			const storePath = `${session?.tokenPatch}/${SessionName}.store.json`;
+			if (await fs.pathExists(storePath)) {
+				let result = await fs.readJson(storePath);
 				//
 				const resMessages = Object.values(result.messages);
 				//
@@ -531,6 +531,6 @@ module.exports = class Retrieving {
 		//
 	} //getProfilePicFromServer
 	//
-	// ------------------------------------------------------------------------------------------------//
+	// ----------------------------------------------------------------------
 	//
 }

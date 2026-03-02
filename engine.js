@@ -12,7 +12,6 @@ moment?.locale('pt-br');
 const pino = require("pino");
 const rmfr = require('rmfr');
 const { default: pQueue } = require('p-queue');
-const { release } = require('os');
 const NodeCache = require('node-cache');
 const { logger } = require("./utils/logger");
 const Sessions = require('./controllers/sessions');
@@ -67,6 +66,7 @@ const {
 	encodeWAM,
 	getHistoryMsg,
 	isJidNewsletter,
+	Browsers,
 } = require('@whiskeysockets/baileys');
 const { makeInMemoryStore } = require('@rodrigogs/baileys-store');
 //
@@ -146,12 +146,8 @@ async function deletaToken(filePath, filename) {
 async function resContacts(SessionName, contacts) {
 	//
 	try {
-		fs.writeJson(`${tokenPatch}/${SessionName}.contacts.json`, `${JSON.stringify(contacts, null, 2)}`, (err) => {
-			if (err) {
-				logger?.error(`- Erro: ${err}`);
-			} else {
-				//logger?.info('- Success create contacts file');
-			}
+		await fs.writeJson(`${tokenPatch}/${SessionName}.contacts.json`, contacts, {
+			spaces: 2
 		});
 	} catch (error) {
 		logger?.error(`- Error create contacts file: ${error}`);
@@ -307,7 +303,7 @@ module.exports = class Instace {
 					/** Tempo limite padrão para consultas, undefined para nenhum tempo limite */
 					defaultQueryTimeoutMs: undefined,
 					/** Intervalo de ping-pong para conexão WS */
-					keepAliveIntervalMs: 5000,
+					keepAliveIntervalMs: 30000,
 					/** Agente de proxy */
 					agent: undefined,
 					/** Logger do tipo pino */
@@ -315,7 +311,7 @@ module.exports = class Instace {
 					/** Versão para conectar */
 					version: version,
 					/** Configuração do navegador */
-					browser: [`${config.DEVICE_NAME}`, 'Chrome', release()],
+					browser: Browsers.ubuntu('Chrome'),
 					/** Agente usado para solicitações de busca - carregamento/download de mídia */
 					fetchAgent: undefined,
 					/** Deve o QR ser impresso no terminal */
