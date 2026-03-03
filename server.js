@@ -215,7 +215,14 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 			});
 			//
 			app.get('/', (req, res, next) => {
-				res.sendFile(path.join(__dirname, './views/index.html'));
+				let host = config.IPV4 == '0.0.0.0' ? '127.0.0.1' : `${config.IPV4}`;
+				res.render('index', {
+					port: config.PORT,
+					host: host,
+					host_ssl: config.DOMAIN_SSL,
+					validate_mysql: false,
+					version: version
+				});
 			});
 			//
 			app.get('/Start', function (req, res, next) {
@@ -225,6 +232,7 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 					host: host,
 					host_ssl: config.DOMAIN_SSL,
 					validate_mysql: false,
+					version: version
 				});
 			});
 			//
@@ -245,6 +253,7 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 						host: host,
 						host_ssl: config.DOMAIN_SSL,
 						validate_mysql: false,
+						version: version
 					});
 				});
 			}
