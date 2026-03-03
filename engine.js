@@ -66,8 +66,8 @@ const {
 	getHistoryMsg,
 	isJidNewsletter,
 	Browsers,
+	makeInMemoryStore,
 } = require('@whiskeysockets/baileys');
-const { makeInMemoryStore } = require('@rodrigogs/baileys-store');
 //
 const tokenPatch = config.INDOCKER ? path.join(config.PATCH_TOKENS, os.hostname()) : config.PATCH_TOKENS;
 //
@@ -256,7 +256,7 @@ module.exports = class Instace {
 		//const MessageRetryMap = {};
 		const msgRetryCounterCache = new NodeCache();
 		//
-		const store = useStore ? makeInMemoryStore({ loggerPino }) : undefined;
+		const store = useStore ? makeInMemoryStore({ logger: loggerPino }) : undefined;
 		//
 		try {
 			//

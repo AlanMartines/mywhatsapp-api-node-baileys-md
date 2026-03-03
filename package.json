@@ -39,7 +39,6 @@
     "@hapi/boom": "^10.0.1",
     "@whiskeysockets/baileys": "v7.0.0-rc.9",
     "baileys": "npm:@whiskeysockets/baileys@v7.0.0-rc.9",
-    "@rodrigogs/baileys-store": "^2.0.0",
     "axios": "^1.8.1",
     "boxen": "^5.1.2",
     "cache-manager": "^7.2.8",

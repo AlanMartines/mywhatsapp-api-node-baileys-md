@@ -26,6 +26,6 @@
 <p>Se você estiver adicionando ou alterando funcionalidades, atualize a documentação de acordo.</p>
 
 <h3>Dúvidas?</h3>
-<p>Se você tiver alguma dúvida ou precisar de mais orientações, não hesite em <a href="https://github.com/AlanMartines/zabbix-docker-compose/issues">abrir uma issue</a>.</p>
+<p>Se você tiver alguma dúvida ou precisar de mais orientações, não hesite em <a href="https://github.com/AlanMartines/mywhatsapp-api-node-baileys-md/issues">abrir uma issue</a>.</p>
 
 <p>Obrigado por suas contribuições!</p>
