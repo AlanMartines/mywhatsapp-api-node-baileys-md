@@ -1,4 +1,4 @@
-FROM node:20.18-slim
+FROM node:22-bookworm
 
 LABEL version="1.0.0" description="ApiBaileysMd" maintainer="Alan Martines<alancpmartines@hotmail.com>"
 

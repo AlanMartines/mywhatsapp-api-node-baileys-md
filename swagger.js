@@ -41,6 +41,14 @@ module.exports = {
 		{
 			"name": "Phone connection verification",
 			"description": "✔️"
+		},
+		{
+			"name": "Gateway Functions",
+			"description": "✔️"
+		},
+		{
+			"name": "Webhook Settings",
+			"description": "✔️"
 		}
 	],
 	"servers": [
@@ -397,7 +405,7 @@ module.exports = {
 				}
 			}
 		},
-		"/sistema/Logout": {
+		"/instance/Logout": {
 			"post": {
 				"tags": [
 					"Getting started"

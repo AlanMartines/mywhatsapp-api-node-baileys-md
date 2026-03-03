@@ -1,4 +1,3 @@
-const urlExists = require("url-exists");
 const fs = require('fs-extra');
 const { fromBuffer } = require('file-type');
 const mimeTypes = require('mime-types');
@@ -9,7 +8,7 @@ const boxen = require('boxen');
 
 module.exports = class Sessions {
 
-  static session = new Array()
+  static session = new Map();
 
   static async isURL(str) {
     var pattern = new RegExp(
@@ -25,14 +24,15 @@ module.exports = class Sessions {
   }
 
   static async checkPath(path) {
-    urlExists(path, (error, exists) => {
-      if (exists) {
-        return true
+    try {
+      if (await this.isURL(path)) {
+        await axios.head(path);
+        return true;
       }
-      else {
-        return false
-      }
-    })
+      return fs.existsSync(path);
+    } catch {
+      return false;
+    }
   }
 
   static async sleep(ms) {
@@ -42,91 +42,60 @@ module.exports = class Sessions {
 
   // checar ou adiciona um usuario na sessão
   static async checkAddUser(name) {
-    var checkFilter = this.session?.filter(order => (order?.SessionName === name)), add = null
-    if (!checkFilter?.length) {
-      add = {
+    if (!this.session.has(name)) {
+      const add = {
         SessionName: name,
-      }
-      this.session?.push(add);
-      return true
+      };
+      this.session.set(name, add);
+      return true;
     }
-    return false
+    return false;
   }
 
   // checar se exite o usuario na sessão
   static async checkSession(name) {
-    var checkFilter = this.session?.filter(order => (order?.SessionName === name))
-    if (checkFilter?.length) {
-      return true
-    }
-    return false
-  }
-
-  // pegar index da sessão (chave)
-  static async getSessionKey(name) {
-    if (await this.checkSession(name)) {
-      for (var i in this.session) {
-        if (this.session[i]?.SessionName === name) {
-          return i
-        }
-      }
-    }
-    return false
+    return this.session.has(name);
   }
 
   // adicionar informações a sessão 
   static async addInfoSession(name, extend) {
-    if (await this.checkSession(name)) {
-      for (var i in this.session) {
-        if (this.session[i]?.SessionName === name) {
-          Object?.assign(this.session[i], extend);
-          return true
-        }
-      }
+    if (this.session.has(name)) {
+      const currentSession = this.session.get(name);
+      Object.assign(currentSession, extend);
+      return true;
     }
-    return false
+    return false;
   }
 
   // Remove object na sessão
   static async removeInfoObjects(name, key) {
-    if (await this.checkSession(name)) {
-      for (var i in this.session) {
-        if (this.session[i]?.SessionName === name) {
-          delete this.session[i][key]
-          return true
-        }
-      }
+    if (this.session.has(name)) {
+      const currentSession = this.session.get(name);
+      delete currentSession[key];
+      return true;
     }
-    return false
+    return false;
   }
 
   // deletar sessão
   static async deleteSession(name) {
-    if (await this.checkSession(name)) {
-      var key = await this.getSessionKey(name)
-      delete this.session[key]
-      return true
-    }
-    return false
+    return this.session.delete(name);
   }
 
   // retornar sessão
   static async getSession(name) {
-    if (await this.checkSession(name)) {
-      var key = await this.getSessionKey(name);
-      return this.session[key];
-    }
-    return false
+    return this.session.get(name) || false;
   }
 
   // retornar todas
   static async getAll() {
-    return this.session
+    return Array.from(this.session.values());
   }
 
   // checa o client
   static async checkClient(name) {
-    if (await this.getSession(name) && await this.getSession(name)?.client) {
+    const session = this.session.get(name);
+    if (session && session.client) {
       return true
     }
     return false

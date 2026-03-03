@@ -1,42 +1,37 @@
-const moment = require('moment');
-moment()?.format('YYYY-MM-DD HH:mm:ss');
-moment?.locale('pt-br');
 const config = require('../config.global');
 const { logger } = require("../utils/logger");
-//
-const todayDate = moment(new Date())?.format('YYYY-MM-DD');
 //
 // ------------------------------------------------------------------------------------------------//
 //
 function removeWithspace(string) {
-	var string = string?.replace(/\r?\n|\r|\s+/g, ""); /* replace all newlines and with a space */
-	return string;
+	if (!string) return "";
+	return string.replace(/\r?\n|\r|\s+/g, "");
 }
 //
 // ------------------------------------------------------------------------------------------------//
 //
-exports.verify = async (req, res, next) => {
+exports.verify = (req, res, next) => {
 	//
-	let theTokenAuth;
+	const tokenHeader = req.headers.authorizationtoken;
 	//
-	if (!req?.headers?.authorizationtoken) {
+	if (!tokenHeader) {
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(422).json({
+		return res.status(401).json({
 			"Status": {
 				"error": true,
-				"status": 422,
+				"status": 401,
 				"message": "Token não informado, verifique e tente novamente"
 			}
 		});
 	} else {
-		theTokenAuth = removeWithspace(req?.headers?.authorizationtoken);
+		const theTokenAuth = removeWithspace(tokenHeader);
 		//
-		if (config.SECRET_KEY != theTokenAuth) {
+		if (config.SECRET_KEY !== theTokenAuth) {
 			res.setHeader('Content-Type', 'application/json');
-			return res.status(408).json({
+			return res.status(403).json({
 				"Status": {
 					"error": true,
-					"statusCode": 404,
+					"statusCode": 403,
 					"message": "Token invalido, verifique e tente novamente"
 				}
 			});
