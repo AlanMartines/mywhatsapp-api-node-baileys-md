@@ -1,359 +1,414 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
-    <title>My Whatsapp</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png" sizes="32x32" href="/imagens/favicons/favicon-32x32.png">
-    <meta name="theme-color" content="#ffffff">
-    
-    <!-- CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" type="text/css" href="/page/css/style.css" />
-    <link rel="stylesheet" type="text/css" href="/lobibox/css/lobibox.min.css" />
-    <link rel="stylesheet" type="text/css" href="/sweetalert2/css/sweetalert2.min.css" />
-    
-<style>
-  html, body { height: 100%; }
+	<title>My Whatsapp</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" sizes="32x32" href="/imagens/favicons/favicon-32x32.png">
+	<meta name="theme-color" content="#ffffff">
 
-  body{
-    background-color:#f0f2f5;
-    font-family:'Segoe UI', sans-serif;
+	<!-- CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" type="text/css" href="/page/css/style.css" />
+	<link rel="stylesheet" type="text/css" href="/lobibox/css/lobibox.min.css" />
+	<link rel="stylesheet" type="text/css" href="/sweetalert2/css/sweetalert2.min.css" />
 
-    min-height: 100dvh;           /* melhor em mobile */
-    display: flex;
-    flex-direction: column;
-    margin: 0;
-  }
+	<style>
+		html,
+		body {
+			height: 100%;
+		}
 
-  /* Área principal cresce e empurra o footer */
-  main{
-    flex: 1 0 auto;
-  }
+		body {
+			background-color: #f0f2f5;
+			font-family: 'Segoe UI', sans-serif;
 
-  /* Footer não encolhe e fica “colado” no fundo quando faltar conteúdo */
-  footer{
-    flex-shrink: 0;
-  }
-.footer-distributed {
-    background-color: #111;   /* fundo escuro */
-    padding: 20px 0;
-    border-top: 1px solid #222;
-}
+			min-height: 100dvh;
+			/* melhor em mobile */
+			display: flex;
+			flex-direction: column;
+			margin: 0;
+		}
 
-.footer-distributed p,
-.footer-distributed span,
-.footer-distributed b {
-    color: #ffffff !important;
-}
+		/* Área principal cresce e empurra o footer */
+		main {
+			flex: 1 0 auto;
+		}
 
-.footer-distributed a {
-    color: #ffffff !important;
-}
+		/* Footer não encolhe e fica “colado” no fundo quando faltar conteúdo */
+		footer {
+			flex-shrink: 0;
+		}
 
-.footer-distributed a:hover {
-    color: #00a884 !important;  /* mantém identidade WhatsApp no hover */
-}
-  .navbar { background-color:#00a884; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
-  .card { border:none; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.05); }
-  .btn-primary { background-color:#00a884; border:none; }
-  .btn-primary:hover { background-color:#008f6f; }
-  .form-control:focus, .form-select:focus { border-color:#00a884; box-shadow:0 0 0 0.25rem rgba(0,168,132,.25); }
-  .footer-distributed { background-color:#fff; padding:20px 0; border-top:1px solid #e9ecef; }
-  .qr-container { min-height:280px; display:flex; align-items:center; justify-content:center; background:#f8f9fa; border-radius:8px; }
-</style>
+		.footer-distributed {
+			background-color: #111;
+			/* fundo escuro */
+			padding: 20px 0;
+			border-top: 1px solid #222;
+		}
+
+		.footer-distributed p,
+		.footer-distributed span,
+		.footer-distributed b {
+			color: #ffffff !important;
+		}
+
+		.footer-distributed a {
+			color: #ffffff !important;
+		}
+
+		.footer-distributed a:hover {
+			color: #00a884 !important;
+			/* mantém identidade WhatsApp no hover */
+		}
+
+		.navbar {
+			background-color: #00a884;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+		}
+
+		.card {
+			border: none;
+			border-radius: 12px;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+		}
+
+		.btn-primary {
+			background-color: #00a884;
+			border: none;
+		}
+
+		.btn-primary:hover {
+			background-color: #008f6f;
+		}
+
+		.form-control:focus,
+		.form-select:focus {
+			border-color: #00a884;
+			box-shadow: 0 0 0 0.25rem rgba(0, 168, 132, .25);
+		}
+
+		.footer-distributed {
+			background-color: #fff;
+			padding: 20px 0;
+			border-top: 1px solid #e9ecef;
+		}
+
+		.qr-container {
+			min-height: 280px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: #f8f9fa;
+			border-radius: 8px;
+		}
+	</style>
 </head>
+
 <body>
-    <nav class="navbar navbar-dark navbar-expand-lg mb-4">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="/Start">
-                <img src="/imagens/favicons/favicon-32x32.png" width="30" height="30" class="d-inline-block align-top me-2">
-                My Whatsapp API
-            </a>
-        </div>
-    </nav>
+	<nav class="navbar navbar-dark navbar-expand-lg mb-4">
+		<div class="container">
+			<a class="navbar-brand fw-bold" href="/Start">
+				<img src="/imagens/favicons/favicon-32x32.png" width="30" height="30" class="d-inline-block align-top me-2">
+				My Whatsapp API
+			</a>
+		</div>
+	</nav>
 
-<main>
-  <div class="container">
-        <div class="row g-4">
-            <!-- Left Column: Status & QR -->
-            <div class="col-lg-4">
-                <div class="card h-100">
-                    <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
-                        <h5 class="card-title text-secondary"><i class="fas fa-qrcode me-2"></i>Sessão</h5>
-                    </div>
-                    <div class="card-body text-center">
-                        <div class="qr-container mb-3">
-                            <img class="img-fluid" id="imageQrcode" src="/imagens/body/readqrcode.png" width="264" height="264" alt="QR Code">
-                        </div>
-                        <span id="description" class="badge bg-light text-dark border p-2">Sistema não iniciado</span>
-                    </div>
-                </div>
-            </div>
+	<main>
+		<div class="container">
+			<div class="row g-4">
+				<!-- Left Column: Status & QR -->
+				<div class="col-lg-4">
+					<div class="card h-100">
+						<div class="card-header bg-white border-bottom-0 pt-4 pb-0">
+							<h5 class="card-title text-secondary"><i class="fas fa-qrcode me-2"></i>Sessão</h5>
+						</div>
+						<div class="card-body text-center">
+							<div class="qr-container mb-3">
+								<img class="img-fluid" id="imageQrcode" src="/imagens/body/readqrcode.png" width="264" height="264"
+									alt="QR Code">
+							</div>
+							<span id="description" class="badge bg-light text-dark border p-2">Sistema não iniciado</span>
+						</div>
+					</div>
+				</div>
 
-            <!-- Right Column: Controls -->
-            <div class="col-lg-8">
-                <div class="card">
-                    <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
-                        <h5 class="card-title text-secondary"><i class="fas fa-sliders-h me-2"></i>Painel de Controle</h5>
-                    </div>
-                    <div class="card-body">
-                        <form id="start-form" method="post" action="javascript:void(0)">
-                            <div class="row g-3">
-                                <div class="col-md-6 form-group">
-                                    <label class="form-label small text-muted">Authorization Token <span class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-light"><i class="fas fa-shield-alt text-secondary"></i></span>
-                                        <input type="text" class="form-control" id="AuthorizationToken" name="AuthorizationToken" placeholder="Token">
-                                    </div>
-                                    <div class="help-block text-danger small"></div>
-                                </div>
+				<!-- Right Column: Controls -->
+				<div class="col-lg-8">
+					<div class="card">
+						<div class="card-header bg-white border-bottom-0 pt-4 pb-0">
+							<h5 class="card-title text-secondary"><i class="fas fa-sliders-h me-2"></i>Painel de Controle</h5>
+						</div>
+						<div class="card-body">
+							<form id="start-form" method="post" action="javascript:void(0)">
+								<div class="row g-3">
+									<div class="col-md-6 form-group">
+										<label class="form-label small text-muted">Authorization Token <span
+												class="text-danger">*</span></label>
+										<div class="input-group">
+											<span class="input-group-text bg-light"><i class="fas fa-shield-alt text-secondary"></i></span>
+											<input type="text" class="form-control" id="AuthorizationToken" name="AuthorizationToken"
+												placeholder="Token">
+										</div>
+										<div class="help-block text-danger small"></div>
+									</div>
 
-                                <div class="col-md-6 form-group">
-                                    <label class="form-label small text-muted">Session Name <span class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-light"><i class="fas fa-user-tie text-secondary"></i></span>
-                                        <input type="text" class="form-control" id="SessionName" name="SessionName" placeholder="Nome da Sessão">
-                                    </div>
-                                    <div class="help-block text-danger small"></div>
-                                </div>
+									<div class="col-md-6 form-group">
+										<label class="form-label small text-muted">Session Name <span class="text-danger">*</span></label>
+										<div class="input-group">
+											<span class="input-group-text bg-light"><i class="fas fa-user-tie text-secondary"></i></span>
+											<input type="text" class="form-control" id="SessionName" name="SessionName"
+												placeholder="Nome da Sessão">
+										</div>
+										<div class="help-block text-danger small"></div>
+									</div>
 
-                                <div class="col-md-12 form-group">
-                                    <label class="form-label small text-muted">Status On Connect <span class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-light"><i class="fas fa-toggle-on text-secondary"></i></span>
-                                        <select class="form-select" id="setOnline" name="setOnline">
-                                            <option selected value="">--- Escolha ---</option>
-                                            <option value="1">Online</option>
-                                            <option value="0">Off-line</option>
-                                        </select>
-                                    </div>
-                                    <div class="help-block text-danger small"></div>
-                                </div>
+									<div class="col-md-12 form-group">
+										<label class="form-label small text-muted">Status On Connect <span
+												class="text-danger">*</span></label>
+										<div class="input-group">
+											<span class="input-group-text bg-light"><i class="fas fa-toggle-on text-secondary"></i></span>
+											<select class="form-select" id="setOnline" name="setOnline">
+												<option selected value="">--- Escolha ---</option>
+												<option value="1">Online</option>
+												<option value="0">Off-line</option>
+											</select>
+										</div>
+										<div class="help-block text-danger small"></div>
+									</div>
 
-                                <div class="col-12"><hr class="text-muted opacity-25"></div>
-                                <h6 class="text-muted mb-0"><i class="fas fa-link me-2"></i>Webhooks</h6>
+									<div class="col-12">
+										<hr class="text-muted opacity-25">
+									</div>
+									<h6 class="text-muted mb-0"><i class="fas fa-link me-2"></i>Webhooks</h6>
 
-                                <div class="col-md-6 form-group">
-                                    <label class="form-label small text-muted">Status URL</label>
-                                    <input type="text" class="form-control" id="wh_status" name="wh_status" placeholder="http://...">
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <label class="form-label small text-muted">Message URL</label>
-                                    <input type="text" class="form-control" id="wh_message" name="wh_message" placeholder="http://...">
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <label class="form-label small text-muted">QR Code URL</label>
-                                    <input type="text" class="form-control" id="wh_qrcode" name="wh_qrcode" placeholder="http://...">
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <label class="form-label small text-muted">Connect URL</label>
-                                    <input type="text" class="form-control" id="wh_connect" name="wh_connect" placeholder="http://...">
-                                </div>
-                            </div>
+									<div class="col-md-6 form-group">
+										<label class="form-label small text-muted">Status URL</label>
+										<input type="text" class="form-control" id="wh_status" name="wh_status" placeholder="http://...">
+									</div>
+									<div class="col-md-6 form-group">
+										<label class="form-label small text-muted">Message URL</label>
+										<input type="text" class="form-control" id="wh_message" name="wh_message" placeholder="http://...">
+									</div>
+									<div class="col-md-6 form-group">
+										<label class="form-label small text-muted">QR Code URL</label>
+										<input type="text" class="form-control" id="wh_qrcode" name="wh_qrcode" placeholder="http://...">
+									</div>
+									<div class="col-md-6 form-group">
+										<label class="form-label small text-muted">Connect URL</label>
+										<input type="text" class="form-control" id="wh_connect" name="wh_connect" placeholder="http://...">
+									</div>
+								</div>
 
-                            <div class="mt-4 text-center">
-                                <div id="wa_status" class="btn btn-outline-success me-2"><i class="fas fa-check-circle me-1"></i>Status</div>
-                                <button type="submit" id="send_form" class="btn btn-primary me-2"><i class="fas fa-play me-1"></i>Iniciar</button>
-                                <div id="wa_close" class="btn btn-outline-warning me-2"><i class="fas fa-stop me-1"></i>Fechar</div>
-                                <div id="wa_logout" class="btn btn-outline-danger"><i class="fas fa-sign-out-alt me-1"></i>Logout</div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-  </div>
-</main>
+								<div class="mt-4 text-center">
+									<div id="wa_status" class="btn btn-outline-success me-2"><i
+											class="fas fa-check-circle me-1"></i>Status</div>
+									<button type="submit" id="send_form" class="btn btn-primary me-2"><i
+											class="fas fa-play me-1"></i>Iniciar</button>
+									<div id="wa_close" class="btn btn-outline-warning me-2"><i class="fas fa-stop me-1"></i>Fechar</div>
+									<div id="wa_logout" class="btn btn-outline-danger"><i class="fas fa-sign-out-alt me-1"></i>Logout
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
 
-    <footer class="footer-distributed">
-        <div class="container text-center">
-            <div class="row align-items-center">
-                <div class="col-md-6 text-md-start">
-                    <p class="mb-0">Copyright &copy; <span id="year"></span> EletroInfo - Desenvolvido por <b>Alan Martines</b></p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <a href="#" class="text-success fs-4 me-3"><i class="fab fa-whatsapp"></i></a>
-                    <a href="#" class="text-dark fs-4"><i class="fab fa-github"></i></a>
-                </div>
-            </div>
-        </div>
-    </footer>
+	<footer class="footer-distributed">
+		<div class="container text-center">
+			<div class="row align-items-center">
+				<div class="col-md-6 text-md-start">
+					<p class="mb-0">Copyright &copy; <span id="year"></span> EletroInfo - Desenvolvido por <b>Alan Martines</b>
+					</p>
+				</div>
+				<div class="col-md-6 text-md-end">
+					<a href="#" class="text-success fs-4 me-3"><i class="fab fa-whatsapp"></i></a>
+					<a href="#" class="text-dark fs-4"><i class="fab fa-github"></i></a>
+				</div>
+			</div>
+		</div>
+	</footer>
 
-    <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script type="text/javascript" src="/jquery/jquery.serializejson.min.js"></script>
-    <script type="text/javascript" src="/jquery/jquery.validate.min.js"></script>
-    <script type="text/javascript" src="/jquery/jquery.maskedinput.min.js"></script>
-    <script type="text/javascript" src="/jquery/additional-methods.min.js"></script>
-    <script type="text/javascript" src="/lobibox/js/lobibox.min.js"></script>
-    <script type="text/javascript" src="/sweetalert2/js/sweetalert2.min.js"></script>
-    <script type="text/javascript" src="/axios/axios.min.js"></script>
-    <script type="text/javascript" src="/socket/socket.io.js"></script>
-    <script type="text/javascript" src="/page/js/custom.js"></script>
-    <script type="text/javascript" src="/page/js/start.js"></script>
+	<!-- Scripts -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script type="text/javascript">
-        let url;
-        let host = '<%=host %>';
-        let host_ssl = '<%=host_ssl %>';
-        let port = '<%=port %>';
-        url = host_ssl == '' ? `http://${host}:${port}` : `https://${host_ssl}`;
-        let d = new Date();
-        let year = d.getFullYear();
-        $("#year").text(year);
+	<script type="text/javascript" src="/jquery/jquery.serializejson.min.js"></script>
+	<script type="text/javascript" src="/jquery/jquery.validate.min.js"></script>
+	<script type="text/javascript" src="/jquery/jquery.maskedinput.min.js"></script>
+	<script type="text/javascript" src="/jquery/additional-methods.min.js"></script>
+	<script type="text/javascript" src="/lobibox/js/lobibox.min.js"></script>
+	<script type="text/javascript" src="/sweetalert2/js/sweetalert2.min.js"></script>
+	<script type="text/javascript" src="/axios/axios.min.js"></script>
+	<script type="text/javascript" src="/socket/socket.io.js"></script>
+	<script type="text/javascript" src="/page/js/custom.js"></script>
+	<script type="text/javascript" src="/page/js/start.js"></script>
 
-        $('document').ready(function () {
-            const socket = io(`${url}/`, { transports: ['websocket'] });
-            $("#description").html("Sistema não iniciado");
+	<script type="text/javascript">
+		let url;
+		let host = '<%=host %>';
+		let host_ssl = '<%=host_ssl %>';
+		let port = '<%=port %>';
+		url = host_ssl == '' ? `http://${host}:${port}` : `https://${host_ssl}`;
+		let d = new Date();
+		let year = d.getFullYear();
+		$("#year").text(year);
 
-            socket.on('qrCode', (qrCode) => {
-                let SessionName = $('#SessionName').val();
-                if (SessionName === qrCode.SessionName) {
-                    $("#description").html("Por favor, efetue a leitura do qr code informado, tentativa " + qrCode.attempts);
-                    $('#imageQrcode').attr("src", qrCode.data);
-                }
-            });
+		$('document').ready(function () {
+			const socket = io(`${url}/`, { transports: ['websocket'] });
+			$("#description").html("Sistema não iniciado");
 
-            socket.on('stateChange', (update) => {
-                let SessionName = $('#SessionName').val();
-                if (SessionName == update.SessionName) {
-                    if (['isLogged', 'qrReadSuccess', 'chatsAvailable', 'inChat'].includes(update.status)) {
-                        $('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-on.png');
-                        $("#description").html("Sistema iniciado com sucesso.");
-                    } else if (update.status == 'qrReadError') {
-                        $('#imageQrcode').attr("src", '/imagens/body/error.png');
-                        $("#description").html("Erro ao efetuar leitura do qr code ou não lido.");
-                    } else if (['autocloseCalled', 'browserClose', 'notLogged'].includes(update.status)) {
-                        $('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-close.png');
-                        $("#description").html("Navegador fechado / Desconectado.");
-                    } else if (update.status == 'desconnectedMobile') {
-                        $('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-off.png');
-                        $("#description").html("Dispositivo desconectado.");
-                    }
-                }
-            });
+			socket.on('qrCode', (qrCode) => {
+				let SessionName = $('#SessionName').val();
+				if (SessionName === qrCode.SessionName) {
+					$("#description").html("Por favor, efetue a leitura do qr code informado, tentativa " + qrCode.attempts);
+					$('#imageQrcode').attr("src", qrCode.data);
+				}
+			});
 
-            jQuery.validator.addMethod("noSpace", function (value, element) {
-                return value.indexOf(" ") < 0 && value != "";
-            }, "Espaço não é permitido");
+			socket.on('stateChange', (update) => {
+				let SessionName = $('#SessionName').val();
+				if (SessionName == update.SessionName) {
+					if (['isLogged', 'qrReadSuccess', 'chatsAvailable', 'inChat'].includes(update.status)) {
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-on.png');
+						$("#description").html("Sistema iniciado com sucesso.");
+					} else if (update.status == 'qrReadError') {
+						$('#imageQrcode').attr("src", '/imagens/body/error.png');
+						$("#description").html("Erro ao efetuar leitura do qr code ou não lido.");
+					} else if (['autocloseCalled', 'browserClose', 'notLogged'].includes(update.status)) {
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-close.png');
+						$("#description").html("Navegador fechado / Desconectado.");
+					} else if (update.status == 'desconnectedMobile') {
+						$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-off.png');
+						$("#description").html("Dispositivo desconectado.");
+					}
+				}
+			});
 
-            $("#start-form").validate({
-                rules: {
-                    AuthorizationToken: { required: true },
-                    SessionName: { required: true, noSpace: true },
-                    setOnline: { required: true }
-                },
-                messages: {
-                    AuthorizationToken: { required: "Por favor, Informe seu token." },
-                    SessionName: { required: "Por favor, Informe o nome da sessão.", noSpace: "Espaço não é permitido" },
-                    setOnline: { required: "Por favor, Informe uma opção." }
-                },
-                errorPlacement: function (error, element) {
-                    $(element).closest('.form-group').find('.help-block').html(error.html());
-                },
-                highlight: function (element) {
-                    $(element).closest('.form-control, .form-select').removeClass('is-valid').addClass('is-invalid');
-                },
-                unhighlight: function (element) {
-                    $(element).closest('.form-group').find('.help-block').html('');
-                    $(element).closest('.form-control, .form-select').removeClass('is-invalid').addClass('is-valid');
-                },
-                submitHandler: async function () {
-                    event.preventDefault();
-                    let AuthorizationToken = $('#AuthorizationToken').val();
-                    let SessionName = $('#SessionName').val();
-                    let setOnline = $('#setOnline').val();
-                    let wh_status = $('#wh_status').val();
-                    let wh_message = $('#wh_message').val();
-                    let wh_qrcode = $('#wh_qrcode').val();
-                    let wh_connect = $('#wh_connect').val();
+			jQuery.validator.addMethod("noSpace", function (value, element) {
+				return value.indexOf(" ") < 0 && value != "";
+			}, "Espaço não é permitido");
 
-                    await axios.post(`${url}/instance/Start`, {
-                        "SessionName": SessionName,
-                        "setOnline": setOnline ? true : false,
-                        "wh_status": wh_status ? wh_status : null,
-                        "wh_message": wh_message ? wh_message : null,
-                        "wh_qrcode": wh_qrcode ? wh_qrcode : null,
-                        "wh_connect": wh_connect ? wh_connect : null
-                    }, {
-                        headers: { 'Content-Type': 'application/json', 'AuthorizationToken': AuthorizationToken }
-                    }).then(function (response) {
-                        let Status = response.data.Status;
-                        if (Status.erro == false && Status.status == 200) {
-                            $('#imageQrcode').attr("src", '/imagens/body/loading.gif');
-                            $("#description").html("Por favor aguarde, sistema iniciando.");
-                        } else {
-                            handleStatus(Status);
-                        }
-                    }).catch(function (error) {
-                        if(error.response) handleStatus(error.response.data.Status);
-                    });
-                }
-            });
+			$("#start-form").validate({
+				rules: {
+					AuthorizationToken: { required: true },
+					SessionName: { required: true, noSpace: true },
+					setOnline: { required: true }
+				},
+				messages: {
+					AuthorizationToken: { required: "Por favor, Informe seu token." },
+					SessionName: { required: "Por favor, Informe o nome da sessão.", noSpace: "Espaço não é permitido" },
+					setOnline: { required: "Por favor, Informe uma opção." }
+				},
+				errorPlacement: function (error, element) {
+					$(element).closest('.form-group').find('.help-block').html(error.html());
+				},
+				highlight: function (element) {
+					$(element).closest('.form-control, .form-select').removeClass('is-valid').addClass('is-invalid');
+				},
+				unhighlight: function (element) {
+					$(element).closest('.form-group').find('.help-block').html('');
+					$(element).closest('.form-control, .form-select').removeClass('is-invalid').addClass('is-valid');
+				},
+				submitHandler: async function () {
+					event.preventDefault();
+					let AuthorizationToken = $('#AuthorizationToken').val();
+					let SessionName = $('#SessionName').val();
+					let setOnline = $('#setOnline').val();
+					let wh_status = $('#wh_status').val();
+					let wh_message = $('#wh_message').val();
+					let wh_qrcode = $('#wh_qrcode').val();
+					let wh_connect = $('#wh_connect').val();
 
-            function handleStatus(Status) {
-                window.scrollTo(0, 0);
-                if (Status.state == 'DISCONNECTED') {
-                    $('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-off.png');
-                    $("#description").html("Sistema desconectado");
-                } else if (Status.state == 'STARTING') {
-                    $('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-start.png');
-                    $("#description").html("Por favor aguarde, sistema iniciando.");
-                } else if (Status.state == 'QRCODE') {
-                    $('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-qrcode.png');
-                    $("#description").html("Sistema aguardando leitura do QR-Code");
-                } else if (Status.state == 'CLOSE') {
-                    $('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-close.png');
-                    $("#description").html("Navegador interno fechado");
-                } else if (Status.state == 'NOTFOUND' || Status.status == 404 || Status.status == 400) {
-                    $('#imageQrcode').attr("src", '/imagens/body/not-found.png');
-                    $("#description").html(Status.message || "Sistema Off-line");
-                } else if (Status.state == 'CONNECTED') {
-                    $('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-on.png');
-                    $("#description").html("Sistema iniciado com sucesso.");
-                } else if (Status.status == 422 || Status.status == 401 || Status.status == 408) {
-                    $('#imageQrcode').attr("src", '/imagens/body/impressao-digital.png');
-                    $("#description").html(Status.message);
-                } else if (Status.status == 200 && Status.message) {
-                    $('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-close.png');
-                    $("#description").html(Status.message);
-                } else {
-                    $('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-travado.png');
-                    $("#description").html(Status.message || "Status desconhecido");
-                }
-            }
+					await axios.post(`${url}/instance/Start`, {
+						"SessionName": SessionName,
+						"setOnline": setOnline ? true : false,
+						"wh_status": wh_status ? wh_status : null,
+						"wh_message": wh_message ? wh_message : null,
+						"wh_qrcode": wh_qrcode ? wh_qrcode : null,
+						"wh_connect": wh_connect ? wh_connect : null
+					}, {
+						headers: { 'Content-Type': 'application/json', 'AuthorizationToken': AuthorizationToken }
+					}).then(function (response) {
+						let Status = response.data.Status;
+						if (Status.erro == false && Status.status == 200) {
+							$('#imageQrcode').attr("src", '/imagens/body/loading.gif');
+							$("#description").html("Por favor aguarde, sistema iniciando.");
+						} else {
+							handleStatus(Status);
+						}
+					}).catch(function (error) {
+						if (error.response) handleStatus(error.response.data.Status);
+					});
+				}
+			});
 
-            $("#wa_status").on("click", async function (e) {
-                e.preventDefault();
-                let AuthorizationToken = $('#AuthorizationToken').val();
-                let SessionName = $('#SessionName').val();
-                await axios.post(`${url}/instance/Status`, { "SessionName": SessionName }, {
-                    headers: { 'Content-Type': 'application/json', 'AuthorizationToken': AuthorizationToken }
-                }).then(res => handleStatus(res.data.Status)).catch(err => { if(err.response) handleStatus(err.response.data.Status); });
-            });
+			function handleStatus(Status) {
+				window.scrollTo(0, 0);
+				if (Status.state == 'DISCONNECTED') {
+					$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-off.png');
+					$("#description").html("Sistema desconectado");
+				} else if (Status.state == 'STARTING') {
+					$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-start.png');
+					$("#description").html("Por favor aguarde, sistema iniciando.");
+				} else if (Status.state == 'QRCODE') {
+					$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-qrcode.png');
+					$("#description").html("Sistema aguardando leitura do QR-Code");
+				} else if (Status.state == 'CLOSE') {
+					$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-close.png');
+					$("#description").html("Navegador interno fechado");
+				} else if (Status.state == 'NOTFOUND' || Status.status == 404 || Status.status == 400) {
+					$('#imageQrcode').attr("src", '/imagens/body/not-found.png');
+					$("#description").html(Status.message || "Sistema Off-line");
+				} else if (Status.state == 'CONNECTED') {
+					$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-on.png');
+					$("#description").html("Sistema iniciado com sucesso.");
+				} else if (Status.status == 422 || Status.status == 401 || Status.status == 408) {
+					$('#imageQrcode').attr("src", '/imagens/body/impressao-digital.png');
+					$("#description").html(Status.message);
+				} else if (Status.status == 200 && Status.message) {
+					$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-close.png');
+					$("#description").html(Status.message);
+				} else {
+					$('#imageQrcode').attr("src", '/imagens/body/whatsapp-logo-travado.png');
+					$("#description").html(Status.message || "Status desconhecido");
+				}
+			}
 
-            $("#wa_close").on("click", async function (e) {
-                e.preventDefault();
-                let AuthorizationToken = $('#AuthorizationToken').val();
-                let SessionName = $('#SessionName').val();
-                await axios.post(`${url}/instance/Close`, { "SessionName": SessionName }, {
-                    headers: { 'Content-Type': 'application/json', 'AuthorizationToken': AuthorizationToken }
-                }).then(res => handleStatus(res.data.Status)).catch(err => { if(err.response) handleStatus(err.response.data.Status); });
-            });
+			$("#wa_status").on("click", async function (e) {
+				e.preventDefault();
+				let AuthorizationToken = $('#AuthorizationToken').val();
+				let SessionName = $('#SessionName').val();
+				await axios.post(`${url}/instance/Status`, { "SessionName": SessionName }, {
+					headers: { 'Content-Type': 'application/json', 'AuthorizationToken': AuthorizationToken }
+				}).then(res => handleStatus(res.data.Status)).catch(err => { if (err.response) handleStatus(err.response.data.Status); });
+			});
 
-            $("#wa_logout").on("click", async function (e) {
-                e.preventDefault();
-                let AuthorizationToken = $('#AuthorizationToken').val();
-                let SessionName = $('#SessionName').val();
-                await axios.post(`${url}/instance/Logout`, { "SessionName": SessionName }, {
-                    headers: { 'Content-Type': 'application/json', 'AuthorizationToken': AuthorizationToken }
-                }).then(res => handleStatus(res.data.Status)).catch(err => { if(err.response) handleStatus(err.response.data.Status); });
-            });
-        });
-    </script>
+			$("#wa_close").on("click", async function (e) {
+				e.preventDefault();
+				let AuthorizationToken = $('#AuthorizationToken').val();
+				let SessionName = $('#SessionName').val();
+				await axios.post(`${url}/instance/Close`, { "SessionName": SessionName }, {
+					headers: { 'Content-Type': 'application/json', 'AuthorizationToken': AuthorizationToken }
+				}).then(res => handleStatus(res.data.Status)).catch(err => { if (err.response) handleStatus(err.response.data.Status); });
+			});
+
+			$("#wa_logout").on("click", async function (e) {
+				e.preventDefault();
+				let AuthorizationToken = $('#AuthorizationToken').val();
+				let SessionName = $('#SessionName').val();
+				await axios.post(`${url}/instance/Logout`, { "SessionName": SessionName }, {
+					headers: { 'Content-Type': 'application/json', 'AuthorizationToken': AuthorizationToken }
+				}).then(res => handleStatus(res.data.Status)).catch(err => { if (err.response) handleStatus(err.response.data.Status); });
+			});
+		});
+	</script>
 </body>
+
 </html>
