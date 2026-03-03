@@ -67,7 +67,7 @@ module.exports = class Retrieving {
 			if (await fs.pathExists(contactsPath)) {
 				let result = await fs.readJson(contactsPath);
 				//
-				const resContacts = typeof result === 'string' ? Object.values(JSON.parse(result)) : Object.values(result);
+				const resContacts = (typeof result === 'string') ? Object.values(JSON.parse(result)) : Object.values(result);
 				//
 				for (var contact in resContacts) {
 					//
@@ -147,8 +147,8 @@ module.exports = class Retrieving {
 			if (await fs.pathExists(storePath)) {
 				let result = await fs.readJson(storePath);
 				//
-				//
-				const resChats = Object.values(result.chats);
+				// Verifica se result.chats existe antes de acessar
+				const resChats = result.chats ? Object.values(result.chats) : [];
 				//
 				/*
 				for (let chat of resChats) {
@@ -164,7 +164,7 @@ module.exports = class Retrieving {
 				}
 				*/
 				//
-				allchat.push({ "chats": result.chats });
+				allchat.push({ "chats": result.chats || [] });
 				//
 			} else {
 				//
@@ -218,7 +218,7 @@ module.exports = class Retrieving {
 			if (await fs.pathExists(storePath)) {
 				let result = await fs.readJson(storePath);
 				//
-				const resMessages = Object.values(result.messages);
+				const resMessages = result.messages ? Object.values(result.messages) : [];
 				//
 				/*
 				for (let chat of resChats) {
@@ -234,7 +234,7 @@ module.exports = class Retrieving {
 				}
 				*/
 				//
-				allmessages.push({ "messages": result.messages });
+				allmessages.push({ "messages": result.messages || [] });
 				//
 			} else {
 				//

@@ -63,8 +63,8 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			return res.status(result.statusCode).json({
-				"Status": result
+			return res.status(resultRes.statusCode).json({
+				"Status": resultRes
 			});
 			//
 		} else {
@@ -77,35 +77,33 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				case 'isLogged':
 				case 'chatsAvailable':
 					//
-					await session.waqueue.add(async () => {
-						var checkNumber = await retrieving?.checkNumberStatus(
+					var checkNumber = await retrieving?.checkNumberStatus(
+						resSessionName,
+						soNumeros(req?.body?.phonefull)
+					);
+					//
+					if (checkNumber.status == 200 && checkNumber.error == false) {
+						//
+						var sendContactVcard = await message?.sendContactVcard(
 							resSessionName,
-							soNumeros(req?.body?.phonefull)
+							checkNumber.number,
+							soNumeros(req?.body?.contact),
+							req?.body?.namecontact
 						);
 						//
-						if (checkNumber.status == 200 && checkNumber.error == false) {
-							//
-							var sendContactVcard = await message?.sendContactVcard(
-								resSessionName,
-								checkNumber.number,
-								soNumeros(req?.body?.contact),
-								req?.body?.namecontact
-							);
-							//
-							res.setHeader('Content-Type', 'application/json');
-							return res.status(sendContactVcard.statusCode).json({
-								"Status": sendContactVcard
-							});
-							//
-						} else {
-							//
-							res.setHeader('Content-Type', 'application/json');
-							return res.status(sendContactVcard.statusCode).json({
-								"Status": sendContactVcard
-							});
-							//
-						}
-					});
+						res.setHeader('Content-Type', 'application/json');
+						return res.status(sendContactVcard.statusCode).json({
+							"Status": sendContactVcard
+						});
+						//
+					} else {
+						//
+						res.setHeader('Content-Type', 'application/json');
+						return res.status(sendContactVcard.statusCode).json({
+							"Status": sendContactVcard
+						});
+						//
+					}
 					break;
 				default:
 					//
@@ -191,36 +189,34 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					case 'isLogged':
 					case 'chatsAvailable':
 						//
-						await session.waqueue.add(async () => {
-							var checkNumber = await retrieving?.checkNumberStatus(
+						var checkNumber = await retrieving?.checkNumberStatus(
+							resSessionName,
+							soNumeros(req?.body?.phonefull)
+						);
+						//
+						if (checkNumber.status === 200 && checkNumber.error === false) {
+							//
+							var sendPtt = await message?.sendPtt(
 								resSessionName,
-								soNumeros(req?.body?.phonefull)
+								checkNumber.number,
+								req.file.buffer,
+								req.file.mimetype,
+								req?.body?.caption
 							);
 							//
-							if (checkNumber.status === 200 && checkNumber.error === false) {
-								//
-								var sendPtt = await message?.sendPtt(
-									resSessionName,
-									checkNumber.number,
-									req.file.buffer,
-									req.file.mimetype,
-									req?.body?.caption
-								);
-								//
-								res.setHeader('Content-Type', 'application/json');
-								return res.status(sendPtt.statusCode).json({
-									"Status": sendPtt
-								});
-								//
-							} else {
-								//
-								res.setHeader('Content-Type', 'application/json');
-								return res.status(checkNumber.statusCode).json({
-									"Status":  checkNumber
-								});
-								//
-							}
-						});
+							res.setHeader('Content-Type', 'application/json');
+							return res.status(sendPtt.statusCode).json({
+								"Status": sendPtt
+							});
+							//
+						} else {
+							//
+							res.setHeader('Content-Type', 'application/json');
+							return res.status(checkNumber.statusCode).json({
+								"Status":  checkNumber
+							});
+							//
+						}
 						break;
 					default:
 						//
@@ -286,39 +282,37 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				case 'isLogged':
 				case 'chatsAvailable':
 					//
-					await session.waqueue.add(async () => {
-						var checkNumber = await retrieving?.checkNumberStatus(
+					var checkNumber = await retrieving?.checkNumberStatus(
+						resSessionName,
+						soNumeros(req?.body?.phonefull)
+					);
+					//
+					if (checkNumber.status === 200 && checkNumber.error === false) {
+						//
+						var mimeType = mime.lookup(req?.body?.originalname);
+						//
+						var sendPtt = await message?.sendPtt(
 							resSessionName,
-							soNumeros(req?.body?.phonefull)
+							checkNumber.number,
+							Buffer.from(req?.body?.base64, 'base64'),
+							mimeType,
+							req?.body?.caption
 						);
 						//
-						if (checkNumber.status === 200 && checkNumber.error === false) {
-							//
-							var mimeType = mime.lookup(req?.body?.originalname);
-							//
-							var sendPtt = await message?.sendPtt(
-								resSessionName,
-								checkNumber.number,
-								Buffer.from(req?.body?.base64, 'base64'),
-								mimeType,
-								req?.body?.caption
-							);
-							//
-							res.setHeader('Content-Type', 'application/json');
-							return res.status(sendPtt.statusCode).json({
-								"Status": sendPtt
-							});
-							//
-						} else {
-							//
-							res.setHeader('Content-Type', 'application/json');
-							return res.status(checkNumber.statusCode).json({
-								"Status":  checkNumber
-							});
-							//
-						}
+						res.setHeader('Content-Type', 'application/json');
+						return res.status(sendPtt.statusCode).json({
+							"Status": sendPtt
+						});
 						//
-					});
+					} else {
+						//
+						res.setHeader('Content-Type', 'application/json');
+						return res.status(checkNumber.statusCode).json({
+							"Status":  checkNumber
+						});
+						//
+					}
+					//
 					break;
 				default:
 					//
@@ -402,36 +396,34 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					case 'isLogged':
 					case 'chatsAvailable':
 						//
-						await session.waqueue.add(async () => {
-							var checkNumber = await retrieving?.checkNumberStatus(
+						var checkNumber = await retrieving?.checkNumberStatus(
+							resSessionName,
+							soNumeros(req?.body?.phonefull)
+						);
+						//
+						if (checkNumber.status === 200 && checkNumber.error === false) {
+							//
+							var sendPtt = await message?.sendPtt(
 								resSessionName,
-								soNumeros(req?.body?.phonefull)
+								checkNumber.number,
+								Buffer.from(req?.body?.base64, 'base64'),
+								req?.body?.mimetype
 							);
 							//
-							if (checkNumber.status === 200 && checkNumber.error === false) {
-								//
-								var sendPtt = await message?.sendPtt(
-									resSessionName,
-									checkNumber.number,
-									Buffer.from(req?.body?.base64, 'base64'),
-									req?.body?.mimetype
-								);
-								//
-								res.setHeader('Content-Type', 'application/json');
-								return res.status(sendPtt.statusCode).json({
-									"Status": sendPtt
-								});
-								//
-							} else {
-								//
-								res.setHeader('Content-Type', 'application/json');
-								return res.status(checkNumber.statusCode).json({
-									"Status":  checkNumber
-								});
-								//
-							}
+							res.setHeader('Content-Type', 'application/json');
+							return res.status(sendPtt.statusCode).json({
+								"Status": sendPtt
+							});
 							//
-						});
+						} else {
+							//
+							res.setHeader('Content-Type', 'application/json');
+							return res.status(checkNumber.statusCode).json({
+								"Status":  checkNumber
+							});
+							//
+						}
+						//
 						break;
 					default:
 						//
@@ -496,35 +488,33 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				case 'isLogged':
 				case 'chatsAvailable':
 					//
-					await session.waqueue.add(async () => {
-						var checkNumber = await retrieving?.checkNumberStatus(
+					var checkNumber = await retrieving?.checkNumberStatus(
+						resSessionName,
+						soNumeros(req?.body?.phonefull)
+					);
+					//
+					if (checkNumber.status === 200 && checkNumber.error === false) {
+						//
+						var sendText = await message?.sendText(
 							resSessionName,
-							soNumeros(req?.body?.phonefull)
+							checkNumber.number,
+							req?.body?.msg
 						);
 						//
-						if (checkNumber.status === 200 && checkNumber.error === false) {
-							//
-							var sendText = await message?.sendText(
-								resSessionName,
-								checkNumber.number,
-								req?.body?.msg
-							);
-							//
-							res.setHeader('Content-Type', 'application/json');
-							return res.status(sendText.statusCode).json({
-								"Status": sendText
-							});
-							//
-						} else {
-							//
-							res.setHeader('Content-Type', 'application/json');
-							return res.status(checkNumber.statusCode).json({
-								"Status":  checkNumber
-							});
-							//
-						}
+						res.setHeader('Content-Type', 'application/json');
+						return res.status(sendText.statusCode).json({
+							"Status": sendText
+						});
 						//
-					});
+					} else {
+						//
+						res.setHeader('Content-Type', 'application/json');
+						return res.status(checkNumber.statusCode).json({
+							"Status":  checkNumber
+						});
+						//
+					}
+					//
 					break;
 				default:
 					//
@@ -589,39 +579,37 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				case 'isLogged':
 				case 'chatsAvailable':
 					//
-					await session.waqueue.add(async () => {
-						var checkNumber = await retrieving?.checkNumberStatus(
+					var checkNumber = await retrieving?.checkNumberStatus(
+						resSessionName,
+						soNumeros(req?.body?.phonefull)
+					);
+					//
+					if (checkNumber.status === 200 && checkNumber.error === false) {
+						//
+						var sendLocation = await message?.sendLocation(
 							resSessionName,
-							soNumeros(req?.body?.phonefull)
+							checkNumber.number,
+							req?.body?.lat,
+							req?.body?.long,
+							req?.body?.local
 						);
 						//
-						if (checkNumber.status === 200 && checkNumber.error === false) {
-							//
-							var sendLocation = await message?.sendLocation(
-								resSessionName,
-								checkNumber.number,
-								req?.body?.lat,
-								req?.body?.long,
-								req?.body?.local
-							);
-							//
-							//console?.log(result);
-							res.setHeader('Content-Type', 'application/json');
-							return res.status(sendLocation.statusCode).json({
-								"Status": sendLocation
-							});
-							//
-						} else {
-							//
-							//console?.log(result);
-							res.setHeader('Content-Type', 'application/json');
-							return res.status(checkNumber.statusCode).json({
-								"Status":  checkNumber
-							});
-							//
-						}
+						//console?.log(result);
+						res.setHeader('Content-Type', 'application/json');
+						return res.status(sendLocation.statusCode).json({
+							"Status": sendLocation
+						});
 						//
-					});
+					} else {
+						//
+						//console?.log(result);
+						res.setHeader('Content-Type', 'application/json');
+						return res.status(checkNumber.statusCode).json({
+							"Status":  checkNumber
+						});
+						//
+					}
+					//
 					break;
 				default:
 					//
@@ -686,50 +674,48 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				case 'isLogged':
 				case 'chatsAvailable':
 					//
-					await session.waqueue.add(async () => {
-						if (!await Sessions.isURL(req?.body?.link)) {
-							var validate = {
-								"error": true,
-								"statusCode": 401,
-								"message": 'O link informado é invalido, verifique e tente novamente.'
-							};
-							//
-							res.setHeader('Content-Type', 'application/json');
-							return res.status(validate.statusCode).json({
-								"Status": validate
-							});
-							//
-						}
+					if (!await Sessions.isURL(req?.body?.link)) {
+						var validate = {
+							"error": true,
+							"statusCode": 401,
+							"message": 'O link informado é invalido, verifique e tente novamente.'
+						};
 						//
-						var checkNumber = await retrieving?.checkNumberStatus(
+						res.setHeader('Content-Type', 'application/json');
+						return res.status(validate.statusCode).json({
+							"Status": validate
+						});
+						//
+					}
+					//
+					var checkNumber = await retrieving?.checkNumberStatus(
+						resSessionName,
+						soNumeros(req?.body?.phonefull)
+					);
+					//
+					if (checkNumber.status === 200 && checkNumber.error === false) {
+						//
+						var sendLink = await message?.sendLink(
 							resSessionName,
-							soNumeros(req?.body?.phonefull)
+							checkNumber.number,
+							req?.body?.link,
+							req?.body?.descricao
 						);
 						//
-						if (checkNumber.status === 200 && checkNumber.error === false) {
-							//
-							var sendLink = await message?.sendLink(
-								resSessionName,
-								checkNumber.number,
-								req?.body?.link,
-								req?.body?.descricao
-							);
-							//
-							res.setHeader('Content-Type', 'application/json');
-							return res.status(sendLink.statusCode).json({
-								"Status": sendLink
-							});
-							//
-						} else {
-							//
-							res.setHeader('Content-Type', 'application/json');
-							return res.status(checkNumber.statusCode).json({
-								"Status":  checkNumber
-							});
-							//
-						}
+						res.setHeader('Content-Type', 'application/json');
+						return res.status(sendLink.statusCode).json({
+							"Status": sendLink
+						});
 						//
-					});
+					} else {
+						//
+						res.setHeader('Content-Type', 'application/json');
+						return res.status(checkNumber.statusCode).json({
+							"Status":  checkNumber
+						});
+						//
+					}
+					//
 					break;
 				default:
 					//
@@ -812,38 +798,36 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					case 'isLogged':
 					case 'chatsAvailable':
 						//
-						await session.waqueue.add(async () => {
-							var checkNumber = await retrieving?.checkNumberStatus(
+						var checkNumber = await retrieving?.checkNumberStatus(
+							resSessionName,
+							soNumeros(req?.body?.phonefull)
+						);
+						//
+						if (checkNumber.status === 200 && checkNumber.error === false) {
+							//
+							var sendPtt = await message?.sendImage(
 								resSessionName,
-								soNumeros(req?.body?.phonefull)
+								checkNumber.number,
+								req.file.buffer,
+								req.file.mimetype,
+								req.file.originalname,
+								req?.body?.caption
 							);
 							//
-							if (checkNumber.status === 200 && checkNumber.error === false) {
-								//
-								var sendPtt = await message?.sendImage(
-									resSessionName,
-									checkNumber.number,
-									req.file.buffer,
-									req.file.mimetype,
-									req.file.originalname,
-									req?.body?.caption
-								);
-								//
-								res.setHeader('Content-Type', 'application/json');
-								return res.status(sendPtt.statusCode).json({
-									"Status": sendPtt
-								});
-								//
-							} else {
-								//
-								res.setHeader('Content-Type', 'application/json');
-								return res.status(checkNumber.statusCode).json({
-									"Status":  checkNumber
-								});
-								//
-							}
+							res.setHeader('Content-Type', 'application/json');
+							return res.status(sendPtt.statusCode).json({
+								"Status": sendPtt
+							});
 							//
-						});
+						} else {
+							//
+							res.setHeader('Content-Type', 'application/json');
+							return res.status(checkNumber.statusCode).json({
+								"Status":  checkNumber
+							});
+							//
+						}
+						//
 						break;
 					default:
 						//
@@ -929,37 +913,35 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				case 'isLogged':
 				case 'chatsAvailable':
 					//
-					await session.waqueue.add(async () => {
-						var checkNumber = await retrieving?.checkNumberStatus(
+					var checkNumber = await retrieving?.checkNumberStatus(
+						resSessionName,
+						soNumeros(req?.body?.phonefull)
+					);
+					//
+					if (checkNumber.status === 200 && checkNumber.error === false) {
+						//
+						var sendFileBase64 = await message?.sendImage(
 							resSessionName,
-							soNumeros(req?.body?.phonefull)
+							checkNumber.number,
+							Buffer.from(req?.body?.base64, 'base64'),
+							req?.body?.originalname,
+							mimeType,
+							req?.body?.caption
 						);
 						//
-						if (checkNumber.status === 200 && checkNumber.error === false) {
-							//
-							var sendFileBase64 = await message?.sendImage(
-								resSessionName,
-								checkNumber.number,
-								Buffer.from(req?.body?.base64, 'base64'),
-								req?.body?.originalname,
-								mimeType,
-								req?.body?.caption
-							);
-							//
-							res.setHeader('Content-Type', 'application/json');
-							return res.status(sendFileBase64.statusCode).json({
-								"Status": sendFileBase64
-							});
-							//
-						} else {
-							//
-							res.setHeader('Content-Type', 'application/json');
-							return res.status(checkNumber.statusCode).json({
-								"Status":  checkNumber
-							});
-						}
+						res.setHeader('Content-Type', 'application/json');
+						return res.status(sendFileBase64.statusCode).json({
+							"Status": sendFileBase64
+						});
 						//
-					});
+					} else {
+						//
+						res.setHeader('Content-Type', 'application/json');
+						return res.status(checkNumber.statusCode).json({
+							"Status":  checkNumber
+						});
+					}
+					//
 					break;
 				default:
 					//
@@ -1029,38 +1011,36 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				case 'isLogged':
 				case 'chatsAvailable':
 					//
-					await session.waqueue.add(async () => {
-						var checkNumber = await retrieving?.checkNumberStatus(
+					var checkNumber = await retrieving?.checkNumberStatus(
+						resSessionName,
+						soNumeros(req?.body?.phonefull)
+					);
+					//
+					if (checkNumber.status === 200 && checkNumber.error === false) {
+						//
+						var sendFileFromBase64 = await message?.sendImage(
 							resSessionName,
-							soNumeros(req?.body?.phonefull)
+							checkNumber.number,
+							Buffer.from(req?.body?.base64, 'base64'),
+							req?.body?.originalname,
+							req?.body?.mimetype,
+							req?.body?.caption
 						);
 						//
-						if (checkNumber.status === 200 && checkNumber.error === false) {
-							//
-							var sendFileFromBase64 = await message?.sendImage(
-								resSessionName,
-								checkNumber.number,
-								Buffer.from(req?.body?.base64, 'base64'),
-								req?.body?.originalname,
-								req?.body?.mimetype,
-								req?.body?.caption
-							);
-							//
-							res.setHeader('Content-Type', 'application/json');
-							return res.status(sendFileFromBase64.statusCode).json({
-								"Status": sendFileFromBase64
-							});
-							//
-						} else {
-							//
-							res.setHeader('Content-Type', 'application/json');
-							return res.status(checkNumber.statusCode).json({
-								"Status":  checkNumber
-							});
-							//
-						}
+						res.setHeader('Content-Type', 'application/json');
+						return res.status(sendFileFromBase64.statusCode).json({
+							"Status": sendFileFromBase64
+						});
 						//
-					});
+					} else {
+						//
+						res.setHeader('Content-Type', 'application/json');
+						return res.status(checkNumber.statusCode).json({
+							"Status":  checkNumber
+						});
+						//
+					}
+					//
 					break;
 				default:
 					//
@@ -1110,37 +1090,35 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var checkNumber = await retrieving?.checkNumberStatus(
+				var checkNumber = await retrieving?.checkNumberStatus(
+					resSessionName,
+					soNumeros(req?.body?.phonefull)
+				);
+				//
+				if (checkNumber.status === 200 && checkNumber.error === false) {
+					//
+					var sendFile = await message?.sendFile(
 						resSessionName,
-						soNumeros(req?.body?.phonefull)
+						checkNumber.number,
+						req.file.buffer,
+						req.file.originalname,
+						req.file.mimetype,
+						req?.body?.caption
 					);
 					//
-					if (checkNumber.status === 200 && checkNumber.error === false) {
-						//
-						var sendFile = await message?.sendFile(
-							resSessionName,
-							checkNumber.number,
-							req.file.buffer,
-							req.file.originalname,
-							req.file.mimetype,
-							req?.body?.caption
-						);
-						//
-						//console?.log(result);
-						res.setHeader('Content-Type', 'application/json');
-						return res.status(sendFile.statusCode).json({
-							"Status": sendFile
-						});
-					} else {
-						//console?.log(result);
-						res.setHeader('Content-Type', 'application/json');
-						return res.status(checkNumber.statusCode).json({
-							"Status":  checkNumber
-						});
-					}
-					//
-				});
+					//console?.log(result);
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(sendFile.statusCode).json({
+						"Status": sendFile
+					});
+				} else {
+					//console?.log(result);
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(checkNumber.statusCode).json({
+						"Status":  checkNumber
+					});
+				}
+				//
 				break;
 			default:
 				//
@@ -1189,37 +1167,35 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var checkNumber = await retrieving?.checkNumberStatus(
+				var checkNumber = await retrieving?.checkNumberStatus(
+					resSessionName,
+					soNumeros(req?.body?.phonefull)
+				);
+				//
+				if (checkNumber.status === 200 && checkNumber.error === false) {
+					//
+					var sendFile = await message?.sendFileUrl(
 						resSessionName,
-						soNumeros(req?.body?.phonefull)
+						checkNumber.number,
+						req?.body?.url,
+						req?.body?.url.split('/').slice(-1)[0],
+						mime.lookup(req?.body?.url.split('.').slice(-1)[0]),
+						req?.body?.caption
 					);
 					//
-					if (checkNumber.status === 200 && checkNumber.error === false) {
-						//
-						var sendFile = await message?.sendFileUrl(
-							resSessionName,
-							checkNumber.number,
-							req?.body?.url,
-							req?.body?.url.split('/').slice(-1)[0],
-							mime.lookup(req?.body?.url.split('.').slice(-1)[0]),
-							req?.body?.caption
-						);
-						//
-						//console?.log(result);
-						res.setHeader('Content-Type', 'application/json');
-						return res.status(sendFile.statusCode).json({
-							"Status": sendFile
-						});
-					} else {
-						//console?.log(result);
-						res.setHeader('Content-Type', 'application/json');
-						return res.status(checkNumber.statusCode).json({
-							"Status":  checkNumber
-						});
-					}
-					//
-				});
+					//console?.log(result);
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(sendFile.statusCode).json({
+						"Status": sendFile
+					});
+				} else {
+					//console?.log(result);
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(checkNumber.statusCode).json({
+						"Status":  checkNumber
+					});
+				}
+				//
 				break;
 			default:
 				//
@@ -1267,44 +1243,42 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					//var folderName = fs.mkdtempSync(path.join(os.tmpdir(), 'BLS-' + resSessionName + '-'));
-					//var filePath = path.join(folderName, req?.body?.originalname);
-					//var base64Data = req?.body?.base64.replace(/^data:([A-Za-z-+/]+);base64,/,'');
-					var mimeType = mime.lookup(req?.body?.originalname);
-					//fs.writeFileSync(filePath, base64Data,  {encoding: 'base64'});
-					//logger?.info(`- File ${filePath}`);
+				//var folderName = fs.mkdtempSync(path.join(os.tmpdir(), 'BLS-' + resSessionName + '-'));
+				//var filePath = path.join(folderName, req?.body?.originalname);
+				//var base64Data = req?.body?.base64.replace(/^data:([A-Za-z-+/]+);base64,/,'');
+				var mimeType = mime.lookup(req?.body?.originalname);
+				//fs.writeFileSync(filePath, base64Data,  {encoding: 'base64'});
+				//logger?.info(`- File ${filePath}`);
+				//
+				var checkNumber = await retrieving?.checkNumberStatus(
+					resSessionName,
+					soNumeros(req?.body?.phonefull)
+				);
+				//
+				if (checkNumber.status === 200 && checkNumber.error === false) {
 					//
-					var checkNumber = await retrieving?.checkNumberStatus(
+					var sendFileBase64 = await message?.sendFile(
 						resSessionName,
-						soNumeros(req?.body?.phonefull)
+						checkNumber.number,
+						Buffer.from(req?.body?.base64, 'base64'),
+						req?.body?.originalname,
+						mimeType,
+						req?.body?.caption
 					);
 					//
-					if (checkNumber.status === 200 && checkNumber.error === false) {
-						//
-						var sendFileBase64 = await message?.sendFile(
-							resSessionName,
-							checkNumber.number,
-							Buffer.from(req?.body?.base64, 'base64'),
-							req?.body?.originalname,
-							mimeType,
-							req?.body?.caption
-						);
-						//
-						res.setHeader('Content-Type', 'application/json');
-						return res.status(sendFileBase64.statusCode).json({
-							"Status": sendFileBase64
-						});
-						//
-					} else {
-						//
-						res.setHeader('Content-Type', 'application/json');
-						return res.status(checkNumber.statusCode).json({
-							"Status":  checkNumber
-						});
-					}
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(sendFileBase64.statusCode).json({
+						"Status": sendFileBase64
+					});
 					//
-				});
+				} else {
+					//
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(checkNumber.statusCode).json({
+						"Status":  checkNumber
+					});
+				}
+				//
 				break;
 			default:
 				//
@@ -1352,38 +1326,36 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var checkNumber = await retrieving?.checkNumberStatus(
+				var checkNumber = await retrieving?.checkNumberStatus(
+					resSessionName,
+					soNumeros(req?.body?.phonefull)
+				);
+				//
+				if (checkNumber.status === 200 && checkNumber.error === false) {
+					//
+					var sendFileFromBase64 = await message?.sendFile(
 						resSessionName,
-						soNumeros(req?.body?.phonefull)
+						checkNumber.number,
+						Buffer.from(req?.body?.base64, 'base64'),
+						req?.body?.originalname,
+						req?.body?.mimetype,
+						req?.body?.caption
 					);
 					//
-					if (checkNumber.status === 200 && checkNumber.error === false) {
-						//
-						var sendFileFromBase64 = await message?.sendFile(
-							resSessionName,
-							checkNumber.number,
-							Buffer.from(req?.body?.base64, 'base64'),
-							req?.body?.originalname,
-							req?.body?.mimetype,
-							req?.body?.caption
-						);
-						//
-						res.setHeader('Content-Type', 'application/json');
-						return res.status(sendFileFromBase64.statusCode).json({
-							"Status": sendFileFromBase64
-						});
-						//
-					} else {
-						//
-						res.setHeader('Content-Type', 'application/json');
-						return res.status(checkNumber.statusCode).json({
-							"Status":  checkNumber
-						});
-						//
-					}
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(sendFileFromBase64.statusCode).json({
+						"Status": sendFileFromBase64
+					});
 					//
-				});
+				} else {
+					//
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(checkNumber.statusCode).json({
+						"Status":  checkNumber
+					});
+					//
+				}
+				//
 				break;
 			default:
 				//
@@ -1432,35 +1404,33 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var checkNumber = await retrieving?.checkNumberStatus(
+				var checkNumber = await retrieving?.checkNumberStatus(
+					resSessionName,
+					soNumeros(req?.body?.phonefull)
+				);
+				//
+				if (checkNumber.status === 200 && checkNumber.error === false) {
+					//
+					var sendButton = await message?.sendButton(
 						resSessionName,
-						soNumeros(req?.body?.phonefull)
+						checkNumber.number,
+						req?.body?.buttonMessage,
 					);
 					//
-					if (checkNumber.status === 200 && checkNumber.error === false) {
-						//
-						var sendButton = await message?.sendButton(
-							resSessionName,
-							checkNumber.number,
-							req?.body?.buttonMessage,
-						);
-						//
-						res.setHeader('Content-Type', 'application/json');
-						return res.status(sendButton.statusCode).json({
-							"Status": sendButton
-						});
-						//
-					} else {
-						//
-						res.setHeader('Content-Type', 'application/json');
-						return res.status(checkNumber.statusCode).json({
-							"Status":  checkNumber
-						});
-						//
-					}
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(sendButton.statusCode).json({
+						"Status": sendButton
+					});
 					//
-				});
+				} else {
+					//
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(checkNumber.statusCode).json({
+						"Status":  checkNumber
+					});
+					//
+				}
+				//
 				break;
 			default:
 				//
@@ -1508,35 +1478,33 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var checkNumber = await retrieving?.checkNumberStatus(
+				var checkNumber = await retrieving?.checkNumberStatus(
+					resSessionName,
+					soNumeros(req?.body?.phonefull)
+				);
+				//
+				if (checkNumber.status === 200 && checkNumber.error === false) {
+					//
+					var sendTemplate = await message?.sendTemplate(
 						resSessionName,
-						soNumeros(req?.body?.phonefull)
+						checkNumber.number,
+						req?.body?.templateMessage,
 					);
 					//
-					if (checkNumber.status === 200 && checkNumber.error === false) {
-						//
-						var sendTemplate = await message?.sendTemplate(
-							resSessionName,
-							checkNumber.number,
-							req?.body?.templateMessage,
-						);
-						//
-						res.setHeader('Content-Type', 'application/json');
-						return res.status(sendTemplate.statusCode).json({
-							"Status": sendTemplate
-						});
-						//
-					} else {
-						//
-						res.setHeader('Content-Type', 'application/json');
-						return res.status(checkNumber.statusCode).json({
-							"Status":  checkNumber
-						});
-						//
-					}
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(sendTemplate.statusCode).json({
+						"Status": sendTemplate
+					});
 					//
-				});
+				} else {
+					//
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(checkNumber.statusCode).json({
+						"Status":  checkNumber
+					});
+					//
+				}
+				//
 				break;
 			default:
 				//
@@ -1584,35 +1552,33 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var checkNumber = await retrieving?.checkNumberStatus(
+				var checkNumber = await retrieving?.checkNumberStatus(
+					resSessionName,
+					soNumeros(req?.body?.phonefull)
+				);
+				//
+				if (checkNumber.status === 200 && checkNumber.error === false) {
+					//
+					var sendListMessage = await message?.sendListMessage(
 						resSessionName,
-						soNumeros(req?.body?.phonefull)
+						checkNumber.number,
+						req?.body?.listMessage,
 					);
 					//
-					if (checkNumber.status === 200 && checkNumber.error === false) {
-						//
-						var sendListMessage = await message?.sendListMessage(
-							resSessionName,
-							checkNumber.number,
-							req?.body?.listMessage,
-						);
-						//
-						res.setHeader('Content-Type', 'application/json');
-						return res.status(sendListMessage.statusCode).json({
-							"Status": sendListMessage
-						});
-						//
-					} else {
-						//
-						res.setHeader('Content-Type', 'application/json');
-						return res.status(checkNumber.statusCode).json({
-							"Status":  checkNumber
-						});
-						//
-					}
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(sendListMessage.statusCode).json({
+						"Status": sendListMessage
+					});
 					//
-				});
+				} else {
+					//
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(checkNumber.statusCode).json({
+						"Status":  checkNumber
+					});
+					//
+				}
+				//
 				break;
 			default:
 				//
@@ -1660,35 +1626,33 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var checkNumber = await retrieving?.checkNumberStatus(
+				var checkNumber = await retrieving?.checkNumberStatus(
+					resSessionName,
+					soNumeros(req?.body?.phonefull)
+				);
+				//
+				if (checkNumber.status === 200 && checkNumber.error === false) {
+					//
+					var sendPoll = await message?.sendPoll(
 						resSessionName,
-						soNumeros(req?.body?.phonefull)
+						checkNumber.number,
+						req?.body?.poll,
 					);
 					//
-					if (checkNumber.status === 200 && checkNumber.error === false) {
-						//
-						var sendPoll = await message?.sendPoll(
-							resSessionName,
-							checkNumber.number,
-							req?.body?.poll,
-						);
-						//
-						res.setHeader('Content-Type', 'application/json');
-						return res.status(sendPoll.statusCode).json({
-							"Status": sendPoll
-						});
-						//
-					} else {
-						//
-						res.setHeader('Content-Type', 'application/json');
-						return res.status(checkNumber.statusCode).json({
-							"Status":  checkNumber
-						});
-						//
-					}
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(sendPoll.statusCode).json({
+						"Status": sendPoll
+					});
 					//
-				});
+				} else {
+					//
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(checkNumber.statusCode).json({
+						"Status":  checkNumber
+					});
+					//
+				}
+				//
 				break;
 			default:
 				//

@@ -60,33 +60,31 @@ router.post("/getPerfilStatus", upload.none(''), verifyToken.verify, async (req,
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var checkNumberStatus = await retrieving?.checkNumberStatus(
+				var checkNumberStatus = await retrieving?.checkNumberStatus(
+					resSessionName,
+					soNumeros(req?.body?.phonefull).trim()
+				);
+				//
+				if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
+					//
+					var getStatus = await profile?.getPerfilStatus(
 						resSessionName,
-						soNumeros(req?.body?.phonefull).trim()
+						checkNumberStatus.number
 					);
 					//
-					if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-						//
-						var getStatus = await profile?.getPerfilStatus(
-							resSessionName,
-							checkNumberStatus.number
-						);
-						//
-						res.setHeader('Content-Type', 'application/json');
-						return res.status(getStatus.statusCode).json({
-							"Status": getStatus
-						});
-						//
-					} else {
-						//
-						res.setHeader('Content-Type', 'application/json');
-						return res.status(checkNumberStatus.statusCode).json({
-							"Status": checkNumberStatus
-						});
-						//
-					}
-				});
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(getStatus.statusCode).json({
+						"Status": getStatus
+					});
+					//
+				} else {
+					//
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(checkNumberStatus.statusCode).json({
+						"Status": checkNumberStatus
+					});
+					//
+				}
 				//
 				break;
 			default:
@@ -136,16 +134,14 @@ router.post("/setProfileStatus", upload.none(''), verifyToken.verify, async (req
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var setProfileStatus = await profile?.setProfileStatus(
-						resSessionName,
-						req?.body?.ProfileStatus
-					);
-					//
-					res.setHeader('Content-Type', 'application/json');
-					return res.status(setProfileStatus.statusCode).json({
-						"Status": setProfileStatus
-					});
+				var setProfileStatus = await profile?.setProfileStatus(
+					resSessionName,
+					req?.body?.ProfileStatus
+				);
+				//
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(setProfileStatus.statusCode).json({
+					"Status": setProfileStatus
 				});
 				//
 				break;
@@ -175,14 +171,13 @@ router.post("/setProfileName", upload.none(''), verifyToken.verify, async (req, 
 	//
 	if (!resSessionName || !req?.body?.ProfileName) {
 		var validate = {
-			result: "info",
-			state: 'FAILURE',
-			status: 'notProvided',
+			"error": true,
+			"statusCode": 400,
 			message: 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
 		};
 		//
 		res.setHeader('Content-Type', 'application/json');
-		return res.status(400).json({
+		return res.status(validate.statusCode).json({
 			"Status": validate
 		});
 		//
@@ -196,15 +191,13 @@ router.post("/setProfileName", upload.none(''), verifyToken.verify, async (req, 
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var setProfileName = await profile?.setProfileName(
-						resSessionName,
-						req?.body?.ProfileName
-					);
-					res.setHeader('Content-Type', 'application/json');
-					return res.status(200).json({
-						"Status": setProfileName
-					});
+				var setProfileName = await profile?.setProfileName(
+					resSessionName,
+					req?.body?.ProfileName
+				);
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(200).json({
+					"Status": setProfileName
 				});
 				break;
 			default:

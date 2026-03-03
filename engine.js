@@ -11,7 +11,6 @@ moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
 const pino = require("pino");
 const rmfr = require('rmfr');
-const { default: pQueue } = require('p-queue');
 const NodeCache = require('node-cache');
 const { logger } = require("./utils/logger");
 const Sessions = require('./controllers/sessions');
@@ -232,10 +231,7 @@ module.exports = class Instace {
 		const SessionName = removeWithspace(req?.body?.SessionName);
 		const setOnline = req?.body?.setOnline;
 		const dataSessions = await Sessions?.getSession(SessionName);
-		const waqueue = new pQueue({ concurrency: parseInt(config.CONCURRENCY) });
-		await Sessions?.addInfoSession(SessionName, {
-			waqueue: waqueue
-		});
+		
 		//
 		logger?.info(`- SessionName: ${SessionName}`);
 		//
@@ -289,8 +285,8 @@ module.exports = class Instace {
 				//
 				// fetch latest version of WA Web
 				const { version, isLatest } = await fetchLatestBaileysVersion();
-				const waVersion = config?.WA_VERSION ? config?.WA_VERSION : version;
-				logger?.info(`- Using WA v${version.join('.')}, isLatest: ${isLatest}`)
+				const waVersion = config?.WA_VERSION ? config.WA_VERSION.split('.').map(Number) : version;
+				logger?.info(`- Using WA v${waVersion.join('.')}, isLatest: ${isLatest}`)
 				//
 				const AxiosRequestConfig = {};
 				//const browser = Browsers.appropriate('Desktop');
@@ -309,7 +305,7 @@ module.exports = class Instace {
 					/** Logger do tipo pino */
 					logger: loggerPino,
 					/** Versão para conectar */
-					version: version,
+					version: waVersion,
 					/** Configuração do navegador */
 					browser: Browsers.ubuntu('Chrome'),
 					/** Agente usado para solicitações de busca - carregamento/download de mídia */
@@ -537,7 +533,7 @@ module.exports = class Instace {
 								//
 								// Wait 5 seg for linked qr process to whatsapp
 								await delay(5);
-								logger?.info(`- Started using WA v${version.join('.')}, isLatest: ${isLatest}`);
+								logger?.info(`- Started using WA v${waVersion.join('.')}, isLatest: ${isLatest}`);
 								//
 								let phone = await client?.user?.id.split(":")[0];
 								//

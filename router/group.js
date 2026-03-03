@@ -30,6 +30,45 @@ function soNumeros(string) {
 //
 // ------------------------------------------------------------------------------------------------//
 //
+// Função auxiliar para processar ações de grupo e reduzir repetição de código
+async function processGroupAction(req, res, requiredFields, actionCallback) {
+	const resSessionName = removeWithspace(req?.body?.SessionName);
+	// Verifica campos obrigatórios no body e se arquivo é necessário
+	const missingField = requiredFields.find(field => field !== 'file' && !req.body[field]);
+	const missingFile = requiredFields.includes('file') && !req.file;
+
+	if (!resSessionName || missingField || missingFile) {
+		return res.status(400).json({
+			"Status": {
+				"error": true,
+				"statusCode": 400,
+				"message": 'Todos os valores deverem ser preenchidos, verifique e tente novamente.'
+			}
+		});
+	}
+
+	try {
+		const Status = await instance?.Status(resSessionName);
+		const session = await Sessions?.getSession(resSessionName);
+		const allowedStatus = ['inChat', 'qrReadSuccess', 'isLogged', 'chatsAvailable'];
+
+		if (allowedStatus.includes(Status.status)) {
+			const result = await actionCallback(resSessionName, session);
+			res.setHeader('Content-Type', 'application/json');
+			return res.status(result.statusCode).json({ "Status": result });
+		} else {
+			throw new Error('Sessão não está conectada ou válida');
+		}
+	} catch (error) {
+		logger?.error(`Error: ${error.message}`);
+		return res.status(403).json({
+			"Status": { "error": true, "statusCode": 403, "message": 'Não foi possivel executar a ação, verifique e tente novamente.' }
+		});
+	}
+}
+//
+// ------------------------------------------------------------------------------------------------//
+//
 /*
 ╔═╗┬─┐┌─┐┬ ┬┌─┐  ╔═╗┬ ┬┌┐┌┌─┐┌┬┐┬┌─┐┌┐┌┌─┐               
 ║ ╦├┬┘│ ││ │├─┘  ╠╣ │ │││││   │ ││ ││││└─┐               
@@ -50,8 +89,8 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			};
 			//
 			res.setHeader('Content-Type', 'application/json');
-			return res.status(result.statusCode).json({
-				"Status": result
+			return res.status(resultRes.statusCode).json({
+				"Status": resultRes
 			});
 			//
 		} else {
@@ -64,20 +103,18 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				case 'isLogged':
 				case 'chatsAvailable':
 					//
-					await session.waqueue.add(async () => {
-						var sendContactVcard = await message?.sendContactVcard(
-							resSessionName,
-							req?.body?.groupId.trim() + '@g.us',
-							soNumeros(req?.body?.contact),
-							req?.body?.namecontact
-						);
-						//
-						res.setHeader('Content-Type', 'application/json');
-						return res.status(sendContactVcard.statusCode).json({
-							"Status": sendContactVcard
-						});
-						//
+					var sendContactVcard = await message?.sendContactVcard(
+						resSessionName,
+						req?.body?.groupId.trim() + '@g.us',
+						soNumeros(req?.body?.contact),
+						req?.body?.namecontact
+					);
+					//
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(sendContactVcard.statusCode).json({
+						"Status": sendContactVcard
 					});
+					//
 					break;
 				default:
 					//
@@ -163,21 +200,19 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					case 'isLogged':
 					case 'chatsAvailable':
 						//
-						await session.waqueue.add(async () => {
-							var sendPtt = await message?.sendPtt(
-								resSessionName,
-								req?.body?.groupId.trim() + '@g.us',
-								req.file.buffer,
-								req.file.mimetype,
-								req?.body?.caption
-							);
-							//
-							res.setHeader('Content-Type', 'application/json');
-							return res.status(sendPtt.statusCode).json({
-								"Status": sendPtt
-							});
-							//
+						var sendPtt = await message?.sendPtt(
+							resSessionName,
+							req?.body?.groupId.trim() + '@g.us',
+							req.file.buffer,
+							req.file.mimetype,
+							req?.body?.caption
+						);
+						//
+						res.setHeader('Content-Type', 'application/json');
+						return res.status(sendPtt.statusCode).json({
+							"Status": sendPtt
 						});
+						//
 						break;
 					default:
 						//
@@ -243,23 +278,21 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				case 'isLogged':
 				case 'chatsAvailable':
 					//
-					await session.waqueue.add(async () => {
-						var mimeType = mime.lookup(req?.body?.originalname);
-						//
-						var sendPtt = await message?.sendPtt(
-							resSessionName,
-							req?.body?.groupId.trim() + '@g.us',
-							Buffer.from(req?.body?.base64, 'base64'),
-							mimeType,
-							req?.body?.caption
-						);
-						//
-						res.setHeader('Content-Type', 'application/json');
-						return res.status(sendPtt.statusCode).json({
-							"Status": sendPtt
-						});
-						//
+					var mimeType = mime.lookup(req?.body?.originalname);
+					//
+					var sendPtt = await message?.sendPtt(
+						resSessionName,
+						req?.body?.groupId.trim() + '@g.us',
+						Buffer.from(req?.body?.base64, 'base64'),
+						mimeType,
+						req?.body?.caption
+					);
+					//
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(sendPtt.statusCode).json({
+						"Status": sendPtt
 					});
+					//
 					break;
 				default:
 					//
@@ -343,20 +376,18 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 					case 'isLogged':
 					case 'chatsAvailable':
 						//
-						await session.waqueue.add(async () => {
-							var sendPtt = await message?.sendPtt(
-								resSessionName,
-								req?.body?.groupId.trim() + '@g.us',
-								Buffer.from(req?.body?.base64, 'base64'),
-								req?.body?.mimetype
-							);
-							//
-							res.setHeader('Content-Type', 'application/json');
-							return res.status(sendPtt.statusCode).json({
-								"Status": sendPtt
-							});
-							//
+						var sendPtt = await message?.sendPtt(
+							resSessionName,
+							req?.body?.groupId.trim() + '@g.us',
+							Buffer.from(req?.body?.base64, 'base64'),
+							req?.body?.mimetype
+						);
+						//
+						res.setHeader('Content-Type', 'application/json');
+						return res.status(sendPtt.statusCode).json({
+							"Status": sendPtt
 						});
+						//
 						break;
 					default:
 						//
@@ -420,20 +451,18 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var sendTextGrupo = await message?.sendText(
-						resSessionName,
-						req?.body?.groupId.trim() + '@g.us',
-						req?.body?.msg
-					);
-					//
-					//console?.log(result);
-					res.setHeader('Content-Type', 'application/json');
-					return res.status(sendTextGrupo.statusCode).json({
-						"Status": sendTextGrupo
-					});
-					//
+				var sendTextGrupo = await message?.sendText(
+					resSessionName,
+					req?.body?.groupId.trim() + '@g.us',
+					req?.body?.msg
+				);
+				//
+				//console?.log(result);
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(sendTextGrupo.statusCode).json({
+					"Status": sendTextGrupo
 				});
+				//
 				break;
 			default:
 				//
@@ -482,20 +511,18 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var sendLocationGroup = await message?.sendLocation(
-						resSessionName,
-						req?.body?.groupId.trim() + '@g.us',
-						req?.body?.lat,
-						req?.body?.long,
-						req?.body?.local
-					);
-					//
-					//console?.log(result);
-					res.setHeader('Content-Type', 'application/json');
-					return res.status(sendLocationGroup.statusCode).json({
-						"Status": sendLocationGroup
-					});
+				var sendLocationGroup = await message?.sendLocation(
+					resSessionName,
+					req?.body?.groupId.trim() + '@g.us',
+					req?.body?.lat,
+					req?.body?.long,
+					req?.body?.local
+				);
+				//
+				//console?.log(result);
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(sendLocationGroup.statusCode).json({
+					"Status": sendLocationGroup
 				});
 				break;
 			default:
@@ -546,34 +573,32 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 				case 'isLogged':
 				case 'chatsAvailable':
 					//
-					await session.waqueue.add(async () => {
-						if (!await Sessions.isURL(req?.body?.link)) {
-							var validate = {
-								"error": true,
-								"statusCode": 401,
-								"message": 'O link informado é invalido, verifique e tente novamente.'
-							};
-							//
-							res.setHeader('Content-Type', 'application/json');
-							return res.status(validate.statusCode).json({
-								"Status": validate
-							});
-							//
-						}
-						//
-						var sendLink = await message?.sendLink(
-							resSessionName,
-							req?.body?.groupId.trim() + '@g.us',
-							req?.body?.link,
-							req?.body?.descricao
-						);
+					if (!await Sessions.isURL(req?.body?.link)) {
+						var validate = {
+							"error": true,
+							"statusCode": 401,
+							"message": 'O link informado é invalido, verifique e tente novamente.'
+						};
 						//
 						res.setHeader('Content-Type', 'application/json');
-						return res.status(sendLink.statusCode).json({
-							"Status": sendLink
+						return res.status(validate.statusCode).json({
+							"Status": validate
 						});
 						//
+					}
+					//
+					var sendLink = await message?.sendLink(
+						resSessionName,
+						req?.body?.groupId.trim() + '@g.us',
+						req?.body?.link,
+						req?.body?.descricao
+					);
+					//
+					res.setHeader('Content-Type', 'application/json');
+					return res.status(sendLink.statusCode).json({
+						"Status": sendLink
 					});
+					//
 					break;
 				default:
 					//
@@ -704,6 +729,26 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 		});
 		//
 	}
+	
+	// Nova implementação usando o helper
+	await processGroupAction(req, res, ['groupId', 'file'], async (SessionName, session) => {
+		let acceptedTypes = req.file.mimetype.split('/')[0];
+		if (acceptedTypes !== "image") {
+			return {
+				"error": true,
+				"statusCode": 400,
+				"message": 'Arquivo selecionado não permitido, apenas arquivo do tipo imagem'
+			};
+		}
+		return await message?.sendImage(
+			SessionName,
+			req?.body?.groupId.trim() + '@g.us',
+			req.file.buffer,
+			req.file.mimetype,
+			req.file.originalname,
+			req?.body?.caption
+		);
+	});
 	//
 }); //sendImageGroup
 //
@@ -907,23 +952,21 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var sendFile = await message?.sendFile(
-						resSessionName,
-						req?.body?.groupId.trim() + '@g.us',
-						req.file.buffer,
-						req.file.originalname,
-						req.file.mimetype,
-						req?.body?.caption
-					);
-					//
-					//console?.log(result);
-					res.setHeader('Content-Type', 'application/json');
-					return res.status(sendFile.statusCode).json({
-						"Status": sendFile
-					});
-					//
+				var sendFile = await message?.sendFile(
+					resSessionName,
+					req?.body?.groupId.trim() + '@g.us',
+					req.file.buffer,
+					req.file.originalname,
+					req.file.mimetype,
+					req?.body?.caption
+				);
+				//
+				//console?.log(result);
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(sendFile.statusCode).json({
+					"Status": sendFile
 				});
+				//
 				break;
 			default:
 				//
@@ -972,21 +1015,19 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var sendFile = await message?.sendFileUrl(
-						resSessionName,
-						req?.body?.groupId.trim() + '@g.us',
-						req?.body?.url,
-						req?.body?.url.split('/').slice(-1)[0],
-						mime.lookup(req?.body?.url.split('.').slice(-1)[0]),
-						req?.body?.caption
-					);
-					//
-					//console?.log(result);
-					res.setHeader('Content-Type', 'application/json');
-					return res.status(sendFile.statusCode).json({
-						"Status": sendFile
-					});
+				var sendFile = await message?.sendFileUrl(
+					resSessionName,
+					req?.body?.groupId.trim() + '@g.us',
+					req?.body?.url,
+					req?.body?.url.split('/').slice(-1)[0],
+					mime.lookup(req?.body?.url.split('.').slice(-1)[0]),
+					req?.body?.caption
+				);
+				//
+				//console?.log(result);
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(sendFile.statusCode).json({
+					"Status": sendFile
 				});
 				//
 				break;
@@ -1036,21 +1077,19 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var mimeType = mime.lookup(req?.body?.originalname);
-					var sendFileBase64 = await message?.sendFile(
-						resSessionName,
-						req?.body?.groupId.trim() + '@g.us',
-						Buffer.from(req?.body?.base64, 'base64'),
-						req?.body?.originalname,
-						mimeType,
-						req?.body?.caption
-					);
-					//
-					res.setHeader('Content-Type', 'application/json');
-					return res.status(sendFileBase64.statusCode).json({
-						"Status": sendFileBase64
-					});
+				var mimeType = mime.lookup(req?.body?.originalname);
+				var sendFileBase64 = await message?.sendFile(
+					resSessionName,
+					req?.body?.groupId.trim() + '@g.us',
+					Buffer.from(req?.body?.base64, 'base64'),
+					req?.body?.originalname,
+					mimeType,
+					req?.body?.caption
+				);
+				//
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(sendFileBase64.statusCode).json({
+					"Status": sendFileBase64
 				});
 				//
 				break;
@@ -1100,20 +1139,18 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var sendFileFromBase64 = await message?.sendFile(
-						resSessionName,
-						req?.body?.groupId.trim() + '@g.us',
-						Buffer.from(req?.body?.base64, 'base64'),
-						req?.body?.originalname,
-						req?.body?.mimetype,
-						req?.body?.caption
-					);
-					//
-					res.setHeader('Content-Type', 'application/json');
-					return res.status(sendFileFromBase64.statusCode).json({
-						"Status": sendFileFromBase64
-					});
+				var sendFileFromBase64 = await message?.sendImage(
+					resSessionName,
+					req?.body?.groupId.trim() + '@g.us',
+					Buffer.from(req?.body?.base64, 'base64'),
+					req?.body?.originalname,
+					req?.body?.mimetype,
+					req?.body?.caption
+				);
+				//
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(sendFileFromBase64.statusCode).json({
+					"Status": sendFileFromBase64
 				});
 				//
 				break;
@@ -1164,17 +1201,15 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var sendButton = await message?.sendButton(
-						resSessionName,
-						req?.body?.groupId.trim() + '@g.us',
-						req?.body?.buttonMessage,
-					);
-					//
-					res.setHeader('Content-Type', 'application/json');
-					return res.status(sendButton.statusCode).json({
-						"Status": sendButton
-					});
+				var sendButton = await message?.sendButton(
+					resSessionName,
+					req?.body?.groupId.trim() + '@g.us',
+					req?.body?.buttonMessage,
+				);
+				//
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(sendButton.statusCode).json({
+					"Status": sendButton
 				});
 				//
 				break;
@@ -1199,6 +1234,7 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 //
 //Enviar template
 router.post("/sendTemplateGrupo", upload.none(''), verifyToken.verify, async (req, res, next) => {
+	/*
 	//
 const resSessionName = removeWithspace(req?.body?.SessionName);
 	//
@@ -1253,6 +1289,15 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			//
 		}
 	}
+	*/
+	// Nova implementação simplificada
+	await processGroupAction(req, res, ['groupId', 'msg'], async (SessionName, session) => {
+		return await message?.sendText(
+			SessionName,
+			req?.body?.groupId.trim() + '@g.us',
+			req?.body?.msg
+		);
+	});
 }); //sendTemplateGrupo
 //
 // ------------------------------------------------------------------------------------------------//
@@ -1284,17 +1329,15 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var sendListMessage = await message?.sendListMessage(
-						resSessionName,
-						req?.body?.groupId.trim() + '@g.us',
-						req?.body?.listMessage,
-					);
-					//
-					res.setHeader('Content-Type', 'application/json');
-					return res.status(sendListMessage.statusCode).json({
-						"Status": sendListMessage
-					});
+				var sendListMessage = await message?.sendListMessage(
+					resSessionName,
+					req?.body?.groupId.trim() + '@g.us',
+					req?.body?.listMessage,
+				);
+				//
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(sendListMessage.statusCode).json({
+					"Status": sendListMessage
 				});
 				//
 				break;
@@ -1344,15 +1387,13 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var leaveGroup = await group?.leaveGroup(
-						resSessionName,
-						req?.body?.groupId + '@g.us'
-					);
-					res.setHeader('Content-Type', 'application/json');
-					return res.status(leaveGroup.statusCode).json({
-						"Status": leaveGroup
-					});
+				var leaveGroup = await group?.leaveGroup(
+					resSessionName,
+					req?.body?.groupId + '@g.us'
+				);
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(leaveGroup.statusCode).json({
+					"Status": leaveGroup
 				});
 				break;
 			default:
@@ -1415,45 +1456,43 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var contactlistValid = [];
-					var contactlistInvalid = [];
+				var contactlistValid = [];
+				var contactlistInvalid = [];
+				//
+				var arrayNumbers = req?.body?.participants;
+				//
+				for (var i in arrayNumbers) {
+					//console?.log(arrayNumbers[i]);
+					var numero = soNumeros(arrayNumbers[i]);
 					//
-					var arrayNumbers = req?.body?.participants;
-					//
-					for (var i in arrayNumbers) {
-						//console?.log(arrayNumbers[i]);
-						var numero = soNumeros(arrayNumbers[i]);
+					if (numero.length !== 0) {
 						//
-						if (numero.length !== 0) {
+						var checkNumberStatus = await retrieving.checkNumberStatus(
+							resSessionName,
+							soNumeros(numero)
+						);
+						//
+						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 							//
-							var checkNumberStatus = await retrieving.checkNumberStatus(
-								resSessionName,
-								soNumeros(numero)
-							);
-							//
-							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-								//
-								contactlistValid.push(checkNumberStatus.number);
-							} else {
-								contactlistInvalid.push(numero);
-							}
-							//
+							contactlistValid.push(checkNumberStatus.number);
+						} else {
+							contactlistInvalid.push(numero);
 						}
 						//
 					}
 					//
-					var createGroup = await group?.createGroup(
-						resSessionName,
-						req?.body?.title,
-						contactlistValid,
-						contactlistInvalid
-					);
-					//
-					res.setHeader('Content-Type', 'application/json');
-					return res.status(createGroup.statusCode).json({
-						"Status": createGroup
-					});
+				}
+				//
+				var createGroup = await group?.createGroup(
+					resSessionName,
+					req?.body?.title,
+					contactlistValid,
+					contactlistInvalid
+				);
+				//
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(createGroup.statusCode).json({
+					"Status": createGroup
 				});
 				//
 				break;
@@ -1517,17 +1556,15 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var updateGroupTitle = await group?.updateGroupTitle(
-						resSessionName,
-						req?.body?.groupId + '@g.us',
-						req?.body?.title,
-					);
-					//
-					res.setHeader('Content-Type', 'application/json');
-					return res.status(updateGroupTitle.statusCode).json({
-						"Status": updateGroupTitle
-					});
+				var updateGroupTitle = await group?.updateGroupTitle(
+					resSessionName,
+					req?.body?.groupId + '@g.us',
+					req?.body?.title,
+				);
+				//
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(updateGroupTitle.statusCode).json({
+					"Status": updateGroupTitle
 				});
 				//
 				break;
@@ -1577,17 +1614,15 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var updateGroupDesc = await group?.updateGroupDesc(
-						resSessionName,
-						req?.body?.groupId + '@g.us',
-						req?.body?.desc,
-					);
-					//
-					res.setHeader('Content-Type', 'application/json');
-					return res.status(updateGroupDesc.statusCode).json({
-						"Status": updateGroupDesc
-					});
+				var updateGroupDesc = await group?.updateGroupDesc(
+					resSessionName,
+					req?.body?.groupId + '@g.us',
+					req?.body?.desc,
+				);
+				//
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(updateGroupDesc.statusCode).json({
+					"Status": updateGroupDesc
 				});
 				//
 				break;
@@ -1637,16 +1672,14 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var getGroupMembers = await group?.getGroupMembers(
-						resSessionName,
-						req?.body?.groupId + '@g.us'
-					);
-					//
-					res.setHeader('Content-Type', 'application/json');
-					return res.status(getGroupMembers.statusCode).json({
-						"Status": getGroupMembers
-					});
+				var getGroupMembers = await group?.getGroupMembers(
+					resSessionName,
+					req?.body?.groupId + '@g.us'
+				);
+				//
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(getGroupMembers.statusCode).json({
+					"Status": getGroupMembers
 				});
 				//
 				break;
@@ -1696,15 +1729,13 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var GroupInviteLink = await group?.getGroupInviteLink(
-						resSessionName,
-						req?.body?.groupId + '@g.us'
-					);
-					res.setHeader('Content-Type', 'application/json');
-					return res.status(GroupInviteLink.statusCode).json({
-						"Status": GroupInviteLink
-					});
+				var GroupInviteLink = await group?.getGroupInviteLink(
+					resSessionName,
+					req?.body?.groupId + '@g.us'
+				);
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(GroupInviteLink.statusCode).json({
+					"Status": GroupInviteLink
 				});
 				break;
 			default:
@@ -1753,15 +1784,13 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var GroupInviteLink = await group?.getGroupRevokeInviteLink(
-						resSessionName,
-						req?.body?.groupId + '@g.us'
-					);
-					res.setHeader('Content-Type', 'application/json');
-					return res.status(GroupInviteLink.statusCode).json({
-						"Status": GroupInviteLink
-					});
+				var GroupInviteLink = await group?.getGroupRevokeInviteLink(
+					resSessionName,
+					req?.body?.groupId + '@g.us'
+				);
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(GroupInviteLink.statusCode).json({
+					"Status": GroupInviteLink
 				});
 				break;
 			default:
@@ -1809,45 +1838,43 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var contactlistValid = [];
-					var contactlistInvalid = [];
+				var contactlistValid = [];
+				var contactlistInvalid = [];
+				//
+				var arrayNumbers = req?.body?.participants;
+				//
+				for (var i in arrayNumbers) {
+					//console?.log(arrayNumbers[i]);
+					var numero = soNumeros(arrayNumbers[i]);
 					//
-					var arrayNumbers = req?.body?.participants;
-					//
-					for (var i in arrayNumbers) {
-						//console?.log(arrayNumbers[i]);
-						var numero = soNumeros(arrayNumbers[i]);
+					if (numero.length !== 0) {
 						//
-						if (numero.length !== 0) {
+						var checkNumberStatus = await retrieving.checkNumberStatus(
+							resSessionName,
+							soNumeros(numero)
+						);
+						//
+						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 							//
-							var checkNumberStatus = await retrieving.checkNumberStatus(
-								resSessionName,
-								soNumeros(numero)
-							);
-							//
-							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-								//
-								contactlistValid.push(checkNumberStatus.number);
-							} else {
-								contactlistInvalid.push(numero);
-							}
-							//
+							contactlistValid.push(checkNumberStatus.number);
+						} else {
+							contactlistInvalid.push(numero);
 						}
 						//
 					}
 					//
-					var removeParticipant = await group?.removeParticipant(
-						resSessionName,
-						req?.body?.groupId + '@g.us',
-						contactlistValid,
-						contactlistInvalid
-					);
-					//
-					res.setHeader('Content-Type', 'application/json');
-					return res.status(removeParticipant.statusCode).json({
-						"Status": removeParticipant
-					});
+				}
+				//
+				var removeParticipant = await group?.removeParticipant(
+					resSessionName,
+					req?.body?.groupId + '@g.us',
+					contactlistValid,
+					contactlistInvalid
+				);
+				//
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(removeParticipant.statusCode).json({
+					"Status": removeParticipant
 				});
 				//
 				break;
@@ -1898,45 +1925,43 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var contactlistValid = [];
-					var contactlistInvalid = [];
+				var contactlistValid = [];
+				var contactlistInvalid = [];
+				//
+				var arrayNumbers = req?.body?.participants;
+				//
+				for (var i in arrayNumbers) {
+					//console?.log(arrayNumbers[i]);
+					var numero = soNumeros(arrayNumbers[i]);
 					//
-					var arrayNumbers = req?.body?.participants;
-					//
-					for (var i in arrayNumbers) {
-						//console?.log(arrayNumbers[i]);
-						var numero = soNumeros(arrayNumbers[i]);
+					if (numero.length !== 0) {
 						//
-						if (numero.length !== 0) {
+						var checkNumberStatus = await retrieving?.checkNumberStatus(
+							resSessionName,
+							soNumeros(numero)
+						);
+						//
+						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 							//
-							var checkNumberStatus = await retrieving?.checkNumberStatus(
-								resSessionName,
-								soNumeros(numero)
-							);
-							//
-							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-								//
-								contactlistValid.push(checkNumberStatus.number);
-							} else {
-								contactlistInvalid.push(numero);
-							}
-							//
+							contactlistValid.push(checkNumberStatus.number);
+						} else {
+							contactlistInvalid.push(numero);
 						}
 						//
 					}
 					//
-					var addParticipant = await group?.addParticipant(
-						resSessionName,
-						req?.body?.groupId + '@g.us',
-						contactlistValid,
-						contactlistInvalid
-					);
-					//
-					res.setHeader('Content-Type', 'application/json');
-					return res.status(addParticipant.statusCode).json({
-						"Status": addParticipant
-					});
+				}
+				//
+				var addParticipant = await group?.addParticipant(
+					resSessionName,
+					req?.body?.groupId + '@g.us',
+					contactlistValid,
+					contactlistInvalid
+				);
+				//
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(addParticipant.statusCode).json({
+					"Status": addParticipant
 				});
 				//
 				break;
@@ -1987,45 +2012,43 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var contactlistValid = [];
-					var contactlistInvalid = [];
+				var contactlistValid = [];
+				var contactlistInvalid = [];
+				//
+				var arrayNumbers = req?.body?.participants;
+				//
+				for (var i in arrayNumbers) {
+					//console?.log(arrayNumbers[i]);
+					var numero = soNumeros(arrayNumbers[i]);
 					//
-					var arrayNumbers = req?.body?.participants;
-					//
-					for (var i in arrayNumbers) {
-						//console?.log(arrayNumbers[i]);
-						var numero = soNumeros(arrayNumbers[i]);
+					if (numero.length !== 0) {
 						//
-						if (numero.length !== 0) {
+						var checkNumberStatus = await retrieving?.checkNumberStatus(
+							resSessionName,
+							soNumeros(numero)
+						);
+						//
+						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 							//
-							var checkNumberStatus = await retrieving?.checkNumberStatus(
-								resSessionName,
-								soNumeros(numero)
-							);
-							//
-							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-								//
-								contactlistValid.push(checkNumberStatus.number);
-							} else {
-								contactlistInvalid.push(numero);
-							}
-							//
+							contactlistValid.push(checkNumberStatus.number);
+						} else {
+							contactlistInvalid.push(numero);
 						}
 						//
 					}
 					//
-					var promoteParticipant = await group?.promoteParticipant(
-						resSessionName,
-						req?.body?.groupId + '@g.us',
-						contactlistValid,
-						contactlistInvalid
-					);
-					//
-					res.setHeader('Content-Type', 'application/json');
-					return res.status(promoteParticipant.statusCode).json({
-						"Status": promoteParticipant
-					});
+				}
+				//
+				var promoteParticipant = await group?.promoteParticipant(
+					resSessionName,
+					req?.body?.groupId + '@g.us',
+					contactlistValid,
+					contactlistInvalid
+				);
+				//
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(promoteParticipant.statusCode).json({
+					"Status": promoteParticipant
 				});
 				//
 				break;
@@ -2076,45 +2099,43 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var contactlistValid = [];
-					var contactlistInvalid = [];
+				var contactlistValid = [];
+				var contactlistInvalid = [];
+				//
+				var arrayNumbers = req?.body?.participants;
+				//
+				for (var i in arrayNumbers) {
+					//console?.log(arrayNumbers[i]);
+					var numero = soNumeros(arrayNumbers[i]);
 					//
-					var arrayNumbers = req?.body?.participants;
-					//
-					for (var i in arrayNumbers) {
-						//console?.log(arrayNumbers[i]);
-						var numero = soNumeros(arrayNumbers[i]);
+					if (numero.length !== 0) {
 						//
-						if (numero.length !== 0) {
+						var checkNumberStatus = await retrieving?.checkNumberStatus(
+							resSessionName,
+							soNumeros(numero)
+						);
+						//
+						if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
 							//
-							var checkNumberStatus = await retrieving?.checkNumberStatus(
-								resSessionName,
-								soNumeros(numero)
-							);
-							//
-							if (checkNumberStatus.status === 200 && checkNumberStatus.erro === false) {
-								//
-								contactlistValid.push(checkNumberStatus.number);
-							} else {
-								contactlistInvalid.push(numero);
-							}
-							//
+							contactlistValid.push(checkNumberStatus.number);
+						} else {
+							contactlistInvalid.push(numero);
 						}
 						//
 					}
 					//
-					var demoteParticipant = await group?.demoteParticipant(
-						resSessionName,
-						req?.body?.groupId + '@g.us',
-						contactlistValid,
-						contactlistInvalid
-					);
-					//
-					res.setHeader('Content-Type', 'application/json');
-					return res.status(demoteParticipant.statusCode).json({
-						"Status": demoteParticipant
-					});
+				}
+				//
+				var demoteParticipant = await group?.demoteParticipant(
+					resSessionName,
+					req?.body?.groupId + '@g.us',
+					contactlistValid,
+					contactlistInvalid
+				);
+				//
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(demoteParticipant.statusCode).json({
+					"Status": demoteParticipant
 				});
 				//
 				break;
@@ -2164,15 +2185,13 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var getGroupInfoFromInviteLink = await group?.getGroupInfoFromInviteLink(
-						resSessionName,
-						req?.body?.inviteCode
-					);
-					res.setHeader('Content-Type', 'application/json');
-					return res.status(getGroupInfoFromInviteLink.statusCode).json({
-						"Status": getGroupInfoFromInviteLink
-					});
+				var getGroupInfoFromInviteLink = await group?.getGroupInfoFromInviteLink(
+					resSessionName,
+					req?.body?.inviteCode
+				);
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(getGroupInfoFromInviteLink.statusCode).json({
+					"Status": getGroupInfoFromInviteLink
 				});
 				break;
 			default:
@@ -2220,15 +2239,13 @@ const resSessionName = removeWithspace(req?.body?.SessionName);
 			case 'isLogged':
 			case 'chatsAvailable':
 				//
-				await session.waqueue.add(async () => {
-					var getGroupInfoFromInviteLink = await group?.joinGroup(
-						resSessionName,
-						req?.body?.inviteCode
-					);
-					res.setHeader('Content-Type', 'application/json');
-					return res.status(getGroupInfoFromInviteLink.statusCode).json({
-						"Status": getGroupInfoFromInviteLink
-					});
+				var getGroupInfoFromInviteLink = await group?.joinGroup(
+					resSessionName,
+					req?.body?.inviteCode
+				);
+				res.setHeader('Content-Type', 'application/json');
+				return res.status(getGroupInfoFromInviteLink.statusCode).json({
+					"Status": getGroupInfoFromInviteLink
 				});
 				break;
 			default:

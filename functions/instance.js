@@ -96,6 +96,7 @@ module.exports = class Instance {
 				switch (getSession.status) {
 					case 'isStarting':
 						return {
+							error: false,
 							statusCode: 202,
 							state: "STARTING",
 							status: "isStarting",
@@ -104,6 +105,7 @@ module.exports = class Instance {
 						break;
 					case 'isConnecting':
 						return {
+							error: false,
 							statusCode: 202,
 							state: "CONNECTING",
 							status: "isConnecting",
@@ -112,6 +114,7 @@ module.exports = class Instance {
 						break;
 					case 'isBanned':
 						return {
+							error: true,
 							statusCode: 403,
 							state: "BANNED",
 							status: "isBanned",
@@ -120,6 +123,7 @@ module.exports = class Instance {
 						break;
 					case 'inChat':
 						return {
+							error: false,
 							statusCode: 200,
 							state: "CONNECTED",
 							status: "inChat",
@@ -128,6 +132,7 @@ module.exports = class Instance {
 						break;
 					case 'isLogged':
 						return {
+							error: false,
 							statusCode: 200,
 							state: "CONNECTED",
 							status: "isLogged",
@@ -138,6 +143,7 @@ module.exports = class Instance {
 					case 'desconnectedMobile':
 					case 'deviceNotConnected':
 						return {
+							error: true,
 							statusCode: 401,
 							state: "DISCONNECTED",
 							status: "notLogged",
@@ -146,6 +152,7 @@ module.exports = class Instance {
 						break;
 					case 'browserClose':
 						return {
+							error: true,
 							statusCode: 200,
 							state: "CLOSE",
 							status: "browserClose",
@@ -154,6 +161,7 @@ module.exports = class Instance {
 						break;
 					case 'qrReadSuccess':
 						return {
+							error: false,
 							statusCode: 200,
 							state: "CONNECTED",
 							status: "qrReadSuccess",
@@ -162,6 +170,7 @@ module.exports = class Instance {
 						break;
 					case 'qrReadFail':
 						return {
+							error: true,
 							statusCode: 400,
 							state: "DISCONNECTED",
 							status: "qrReadFail",
@@ -170,6 +179,7 @@ module.exports = class Instance {
 						break;
 					case 'qrRead':
 						return {
+							error: false,
 							statusCode: 202,
 							state: "QRCODE",
 							status: "qrRead",
@@ -178,6 +188,7 @@ module.exports = class Instance {
 						break;
 						case 'getCode':
 							return {
+								error: false,
 								statusCode: 202,
 								state: "GETCODE",
 								status: "getCode",
@@ -186,6 +197,7 @@ module.exports = class Instance {
 							break;
 					case 'autocloseCalled':
 						return {
+							error: true,
 							statusCode: 200,
 							state: "CLOSE",
 							status: "autocloseCalled",
@@ -194,6 +206,7 @@ module.exports = class Instance {
 						break;
 					case 'deleteToken':
 						return {
+							error: true,
 							statusCode: 200,
 							state: "DISCONNECTED",
 							status: "deleteToken",
@@ -202,6 +215,7 @@ module.exports = class Instance {
 						break;
 					case 'chatsAvailable':
 						return {
+							error: false,
 							statusCode: 200,
 							state: "CONNECTED",
 							status: "chatsAvailable",
@@ -210,6 +224,7 @@ module.exports = class Instance {
 						break;
 					case 'serverWssNotConnected':
 						return {
+							error: true,
 							statusCode: 404,
 							state: "DISCONNECTED",
 							status: "serverWssNotConnected",
@@ -218,6 +233,7 @@ module.exports = class Instance {
 						break;
 					case 'noOpenBrowser':
 						return {
+							error: true,
 							statusCode: 400,
 							state: "DISCONNECTED",
 							status: "noOpenBrowser",
@@ -226,6 +242,7 @@ module.exports = class Instance {
 						break;
 					case 'serverClose':
 						return {
+							error: true,
 							statusCode: 401,
 							state: "DISCONNECTED",
 							status: "serverClose",
@@ -234,6 +251,7 @@ module.exports = class Instance {
 						break;
 					case 'isError':
 						return {
+							error: true,
 							statusCode: 500,
 							state: "ERROR",
 							status: "isError",
@@ -242,6 +260,7 @@ module.exports = class Instance {
 						break;
 					default:
 						return {
+							error: true,
 							statusCode: 404,
 							state: 'NOTFOUND',
 							status: 'notFound',
@@ -251,6 +270,7 @@ module.exports = class Instance {
 
 			} else {
 				return {
+					error: true,
 					statusCode: 404,
 					state: 'NOTFOUND',
 					status: 'notFound',
@@ -284,6 +304,7 @@ module.exports = class Instance {
 			webhooks?.wh_connect(SessionName);
 			//
 			let result = {
+				"error": false,
 				"statusCode": 200,
 				"pairingCode": code,
 				"message": "Código de pareamento gerado com sucesso"
@@ -295,6 +316,7 @@ module.exports = class Instance {
 			logger?.error(`- Error ao gerar código de pareamento: ${error}`);
 			//
 			let result = {
+				"error": true,
 				"statusCode": 404,
 				"message": "Error ao gerar código de pareamento"
 			};
@@ -340,6 +362,7 @@ module.exports = class Instance {
 			});
 			//
 			let result = {
+				"error": false,
 				"statusCode": 200,
 				"message": "Sessão fechada com sucesso"
 			};
@@ -351,6 +374,7 @@ module.exports = class Instance {
 			logger?.error(`- Erro ao fechar navegador ${error}`);
 			//
 			let result = {
+				"error": true,
 				"statusCode": 404,
 				"message": "Erro ao fechar navegador"
 			};
@@ -390,6 +414,7 @@ module.exports = class Instance {
 			//await Sessions?.deleteSession(SessionName);
 			//
 			let result = {
+				"error": false,
 				"statusCode": 200,
 				"message": "Sessão desconetada com sucesso"
 			};
@@ -400,6 +425,7 @@ module.exports = class Instance {
 			logger?.error(`- Error ao desconetar sessão: ${error}`);
 			//
 			let result = {
+				"error": true,
 				"statusCode": 404,
 				"message": "Erro ao desconetar sessão"
 			};
@@ -456,6 +482,7 @@ module.exports = class Instance {
 				engine?.Start(req, res, next);
 				//
 				return {
+					"error": false,
 					"statusCode": 200,
 					"message": "Sistema reiniciado com sucesso"
 				};
@@ -466,6 +493,7 @@ module.exports = class Instance {
 				session.client = false;
 				//
 				return {
+					"error": true,
 					"statusCode": 404,
 					"message": 'Sistema Off-line'
 				};
@@ -474,6 +502,7 @@ module.exports = class Instance {
 			//
 		} else {
 			return {
+				"error": true,
 				"statusCode": 404,
 				"message": 'Sistema Off-line'
 			};
@@ -491,9 +520,9 @@ module.exports = class Instance {
 				delete dataSessions?.funcoesSocket;
 				delete dataSessions?.store;
 				delete dataSessions?.client;
-				delete dataSessions?.waqueue;
 				//
 				return {
+					"error": false,
 					"statusCode": 200,
 					"message": "Sessão carregada com sucesso",
 					"session": dataSessions
@@ -502,6 +531,7 @@ module.exports = class Instance {
 			} else {
 				//
 				return {
+					"error": true,
 					"statusCode": 200,
 					"message": "Sessão não encontrada"
 				};
@@ -511,6 +541,7 @@ module.exports = class Instance {
 			logger?.error(`- Error when: ${error}`);
 			//
 			return {
+				"error": true,
 				"statusCode": 404,
 				"message": 'Erro ao carregar sessão'
 			};
@@ -532,12 +563,12 @@ module.exports = class Instance {
 					delete data?.funcoesSocket;
 					delete data?.store;
 					delete data?.client;
-					delete data?.waqueue;
 					//
 					return data;
 				});
 				//
 				return {
+					"error": false,
 					"statusCode": 200,
 					"message": "Sessões carregadas com sucesso",
 					"session": novoJson
@@ -546,6 +577,7 @@ module.exports = class Instance {
 			} else {
 				//
 				return {
+					"error": true,
 					"statusCode": 200,
 					"message": "Sessões não encontradas"
 				};
@@ -555,6 +587,7 @@ module.exports = class Instance {
 			logger?.error(`- Error when: ${error}`);
 			//
 			return {
+				"error": true,
 				"statusCode": 404,
 				"message": 'Erro ao carregar sessões'
 			};

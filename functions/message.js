@@ -47,6 +47,7 @@ module.exports = class Mensagens {
 			var result = {
 				"error": false,
 				"statusCode": 200,
+				"msgID": result?.key?.id,
 				"message": "Contato envido com sucesso."
 			};
 			//
@@ -95,6 +96,7 @@ module.exports = class Mensagens {
 				let returnResult = {
 					"error": false,
 					"statusCode": 200,
+					"msgID": result?.key?.id,
 					"message": "Audio enviado com sucesso."
 				};
 				//
@@ -146,6 +148,7 @@ module.exports = class Mensagens {
 			let returnResult = {
 				"error": false,
 				"statusCode": 200,
+				"msgID": result?.key?.id,
 				"message": "Audio enviado com sucesso."
 			};
 			//
@@ -193,6 +196,7 @@ module.exports = class Mensagens {
 			return {
 				"error": false,
 				"statusCode": 200,
+				"msgID": result?.key?.id,
 				"message": "Mensagem enviada com sucesso."
 			};
 			//
@@ -241,6 +245,7 @@ module.exports = class Mensagens {
 			let returnResult = {
 				"error": false,
 				"statusCode": 200,
+				"msgID": result?.key?.id,
 				"message": "Localização enviada com sucesso."
 			};
 			//
@@ -289,6 +294,7 @@ module.exports = class Mensagens {
 			return {
 				"error": false,
 				"statusCode": 200,
+				"msgID": result?.key?.id,
 				"message": "Mensagem enviada com sucesso."
 			};
 			//
@@ -333,6 +339,7 @@ module.exports = class Mensagens {
 			let returnResult = {
 				"error": false,
 				"statusCode": 200,
+				"msgID": result?.key?.id,
 				"message": "Mensagem enviada com sucesso."
 			};
 			//
@@ -387,6 +394,7 @@ module.exports = class Mensagens {
 					return {
 						"error": false,
 						"statusCode": 200,
+						"msgID": result?.key?.id,
 						"message": "Arquivo enviado com sucesso."
 					};
 					//
@@ -417,6 +425,7 @@ module.exports = class Mensagens {
 					return {
 						"error": false,
 						"statusCode": 200,
+						"msgID": result?.key?.id,
 						"message": "Arquivo enviado com sucesso."
 					};
 					//
@@ -451,6 +460,7 @@ module.exports = class Mensagens {
 							return {
 								"error": false,
 								"statusCode": 200,
+								"msgID": result?.key?.id,
 								"message": "Arquivo enviado com sucesso."
 							};
 							//
@@ -483,6 +493,7 @@ module.exports = class Mensagens {
 							return {
 								"error": false,
 								"statusCode": 200,
+								"msgID": result?.key?.id,
 								"message": "Arquivo enviado com sucesso."
 							};
 							//
@@ -516,6 +527,7 @@ module.exports = class Mensagens {
 							return {
 								"error": false,
 								"statusCode": 200,
+								"msgID": result?.key?.id,
 								"message": "Arquivo enviado com sucesso."
 							};
 							//
@@ -548,6 +560,7 @@ module.exports = class Mensagens {
 							return {
 								"error": false,
 								"statusCode": 200,
+								"msgID": result?.key?.id,
 								"message": "Arquivo enviado com sucesso."
 							};
 							//
@@ -580,6 +593,7 @@ module.exports = class Mensagens {
 							return {
 								"error": false,
 								"statusCode": 200,
+								"msgID": result?.key?.id,
 								"message": "Arquivo enviado com sucesso."
 							};
 							//
@@ -612,6 +626,7 @@ module.exports = class Mensagens {
 							return {
 								"error": false,
 								"statusCode": 200,
+								"msgID": result?.key?.id,
 								"message": "Arquivo enviado com sucesso."
 							};
 							//
@@ -642,6 +657,7 @@ module.exports = class Mensagens {
 							return {
 								"error": false,
 								"statusCode": 200,
+								"msgID": result?.key?.id,
 								"message": "Arquivo enviado com sucesso."
 							};
 							//
@@ -694,6 +710,7 @@ module.exports = class Mensagens {
 			return {
 				"error": false,
 				"statusCode": 200,
+				"msgID": result?.key?.id,
 				"message": "Arquivo envido com sucesso."
 			};
 			//
@@ -732,6 +749,7 @@ module.exports = class Mensagens {
 			let returnResult = {
 				"error": false,
 				"statusCode": 200,
+				"msgID": result?.key?.id,
 				"message": "Mensagem enviada com sucesso."
 			};
 			//
@@ -775,6 +793,7 @@ module.exports = class Mensagens {
 			let returnResult = {
 				"error": false,
 				"statusCode": 200,
+				"msgID": result?.key?.id,
 				"message": "Mensagem enviada com sucesso."
 			};
 			//
@@ -829,6 +848,7 @@ module.exports = class Mensagens {
 			var result = {
 				"error": false,
 				"statusCode": 200,
+				"msgID": result?.key?.id,
 				"message": "Mensagem enviada com sucesso."
 			};
 			//
@@ -872,6 +892,7 @@ module.exports = class Mensagens {
 			var result = {
 				"error": false,
 				"statusCode": 200,
+				"msgID": result?.key?.id,
 				"message": "Mensagem enviada com sucesso."
 			};
 			//

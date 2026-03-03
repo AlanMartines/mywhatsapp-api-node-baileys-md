@@ -20,6 +20,8 @@ const yamlSpec = yaml.dump(swaggerSpec);
 const i18n = require('./translate/i18n');
 const http = require('http').Server(app);
 const httpv6 = require('http').Server(app);
+const cron = require('node-cron');
+const { fetchCurrentAlphaVersion } = require('./utils/fetchCurrentAlphaVersion.js');
 //
 const io = require('socket.io')(http, {
 	cors: {
@@ -353,6 +355,10 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 	}
 });
 //
+cron.schedule('0 * * * *', async () => {
+    const version = await fetchCurrentAlphaVersion();
+    logger.info(`- Versão atual do WhatsApp: ${version}`);
+});
 // Emitido logo antes da saída de um processo do Node
 process.on('beforeExit', code => {
 	setTimeout(() => {
