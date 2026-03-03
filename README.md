@@ -288,10 +288,6 @@ AUTO_CLOSE=15
 # Chave de segurança para validação
 SECRET_KEY='kgashjgajbug$$jgbbjgkbkgk'
 #
-# Defina se vai ser usando um bando de dados ou não.
-# CASO DE NÃO SER CONFIGURADO A VARIAVEL VALIDATE_MYSQL DEVE SER 0
-VALIDATE_MYSQL=1
-#
 # Defina a quantidade de processo simultaneo na fila.
 CONCURRENCY=5
 #

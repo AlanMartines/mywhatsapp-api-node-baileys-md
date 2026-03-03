@@ -224,7 +224,6 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 					port: config.PORT,
 					host: host,
 					host_ssl: config.DOMAIN_SSL,
-					validate_mysql: false,
 					version: version
 				});
 			});
@@ -235,7 +234,6 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 					port: config.PORT,
 					host: host,
 					host_ssl: config.DOMAIN_SSL,
-					validate_mysql: false,
 					version: version
 				});
 			});
@@ -256,7 +254,6 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 						port: config.PORT,
 						host: host,
 						host_ssl: config.DOMAIN_SSL,
-						validate_mysql: false,
 						version: version
 					});
 				});

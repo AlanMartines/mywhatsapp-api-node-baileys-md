@@ -40,8 +40,6 @@
     "@whiskeysockets/baileys": "v7.0.0-rc.9",
     "axios": "^1.8.1",
     "boxen": "^5.1.2",
-    "cache-manager": "^7.2.8",
-    "cache-manager-redis-store": "^3.0.1",
     "circular-json": "^0.5.9",
     "colors": "^1.4.0",
     "cors": "^2.8.5",
