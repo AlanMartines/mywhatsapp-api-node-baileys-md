@@ -68,6 +68,7 @@
     "multer": "2.1.0",
     "node-cache": "^5.1.2",
     "node-cron": "^4.2.1",
+    "node-fetch": "^3.3.2",
     "os-utils": "^0.0.14",
     "p-iteration": "^1.1.8",
     "pino": "^10.3.1",
