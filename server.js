@@ -20,7 +20,13 @@ const i18n = require('./translate/i18n');
 const http = require('http').Server(app);
 const httpv6 = require('http').Server(app);
 const cron = require('node-cron');
-const { fetchCurrentAlphaVersion } = require('./utils/fetchCurrentAlphaVersion.js');
+let fetchCurrentAlphaVersion;
+try {
+	({ fetchCurrentAlphaVersion } = require('./utils/fetchCurrentAlphaVersion.js'));
+} catch (error) {
+	logger?.warn(`- Não foi possível carregar o módulo fetchCurrentAlphaVersion: ${error.message}`);
+	fetchCurrentAlphaVersion = async () => 'Indisponível';
+}
 //
 const io = require('socket.io')(http, {
 	cors: {
