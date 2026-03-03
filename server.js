@@ -264,7 +264,7 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 			}
 			//
 			// rota url erro
-			app.all('*', (req, res) => {
+			app.all(/(.*)/, (req, res) => {
 				//
 				var resultRes = {
 					"error": true,
