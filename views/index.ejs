@@ -263,7 +263,6 @@
 		let host_ssl = '<%=host_ssl %>';
 		let port = '<%=port %>';
 		url = host_ssl == '' ? `http://${host}:${port}` : `https://${host_ssl}`;
-		let validate_mysql = '<%=validate_mysql %>';
 		let d = new Date();
 		let year = d.getFullYear();
 		$("#year").text(year);

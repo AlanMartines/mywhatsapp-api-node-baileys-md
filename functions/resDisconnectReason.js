@@ -6,30 +6,7 @@ const agent = new https.Agent({
 });
 dotenv.config()
 const config = require('../../config/config');
-//
-const DisconnectReason = {
-	loggedOpen: 'loggedOpen',	// Indica que a conexão com o servidor do WhatsApp foi feita com sucesso.
-	loggedQr: 'loggedQr',			// Indica que a conexão com o servidor do WhatsApp esta na leitura do qrcode.
-	genericOut: 400,
-	connectionClosed: 428, 		// Indica que a conexão com o servidor do WhatsApp foi fechada.
-	connectionLost: 408, 			// Significa que a conexão com o servidor foi perdida. Isso é frequentemente causado por instabilidade na rede, como perda de sinal de internet.
-	connectionReplaced: 440, 	// Ocorre quando uma nova sessão do WhatsApp Web é aberta em outro lugar (por exemplo, em outro navegador ou dispositivo), substituindo a sessão atual.
-	timedOut: 408, 						// Indica que a conexão expirou, geralmente devido à falta de atividade ou a um tempo limite de resposta do servidor.
-	loggedOut: 401, 					// A sessão foi desconectada porque o usuário fez logout do WhatsApp Web em outro dispositivo ou diretamente no aplicativo móvel.
-	bannedTimetamp: 402, 			// Possui um timestamp de banimento, conta temporariamente banida
-	badSession: 500, 					// Sugere que o arquivo de sessão (autenticação) está corrompido ou inválido.
-	restartRequired: 515, 		// Indica que um reinício da aplicação ou da conexão é necessário para que a Baileys funcione corretamente.
-	multideviceMismatch: 411, // Acontece quando há uma incompatibilidade com o modo multi-dispositivo do WhatsApp.
-	forbidden: 403,						// Geralmente indica que a conta foi banida ou bloqueada pelo WhatsApp.
-	clientOutdated: 405, 			// Cliente desatualizado.
-	unavailableService: 503,	// Significa que o serviço do WhatsApp está temporariamente indisponível ou sobrecarregado.
-	unknownLogout: 406, 			// Agora chamado de BANNED no código do WhatsApp Web, desconectado por motivo desconhecido.
-	dadUserAgent: 409, 				// O agente do usuário do cliente foi rejeitado.
-	CATExpired: 413, 					// O token de autenticação criptográfica do Messenger expirou.
-	CATInvalid: 414, 					// O token de autenticação criptográfica do Messenger é inválido
-	notFound: 415,
-	experimental: 501,
-}
+const { DisconnectReason } = require('@whiskeysockets/baileys');
 //
 // Códigos de desconexão oficiais da Baileys
 const resDisconnectReason = {
@@ -38,15 +15,15 @@ const resDisconnectReason = {
 	loggedQr: 'loggedQr',				// Indica que a conexão com o servidor do WhatsApp está na leitura do qrcode.
 	
 	// Códigos oficiais da Baileys (enum DisconnectReason)
-	connectionClosed: 428, 			// Indica que a conexão com o servidor do WhatsApp foi fechada.
-	connectionLost: 408, 				// Significa que a conexão com o servidor foi perdida. Isso é frequentemente causado por instabilidade na rede.
-	connectionReplaced: 440, 		// Ocorre quando uma nova sessão do WhatsApp Web é aberta em outro lugar, substituindo a sessão atual.
-	timedOut: 408, 							// Indica que a conexão expirou, geralmente devido à falta de atividade ou tempo limite de resposta.
-	loggedOut: 401, 						// A sessão foi desconectada porque o usuário fez logout do WhatsApp Web em outro dispositivo.
-	badSession: 500, 						// Sugere que o arquivo de sessão (autenticação) está corrompido ou inválido.
-	restartRequired: 515, 			// Indica que um reinício da aplicação ou da conexão é necessário.
-	multideviceMismatch: 411, 	// Acontece quando há uma incompatibilidade com o modo multi-dispositivo do WhatsApp.
-	forbidden: 403,							// Geralmente indica que a conta foi banida ou bloqueada pelo WhatsApp.
+	connectionClosed: DisconnectReason.connectionClosed, 			// Indica que a conexão com o servidor do WhatsApp foi fechada.
+	connectionLost: DisconnectReason.connectionLost, 				// Significa que a conexão com o servidor foi perdida. Isso é frequentemente causado por instabilidade na rede.
+	connectionReplaced: DisconnectReason.connectionReplaced, 		// Ocorre quando uma nova sessão do WhatsApp Web é aberta em outro lugar, substituindo a sessão atual.
+	timedOut: DisconnectReason.timedOut, 							// Indica que a conexão expirou, geralmente devido à falta de atividade ou tempo limite de resposta.
+	loggedOut: DisconnectReason.loggedOut, 						// A sessão foi desconectada porque o usuário fez logout do WhatsApp Web em outro dispositivo.
+	badSession: DisconnectReason.badSession, 						// Sugere que o arquivo de sessão (autenticação) está corrompido ou inválido.
+	restartRequired: DisconnectReason.restartRequired, 			// Indica que um reinício da aplicação ou da conexão é necessário.
+	multideviceMismatch: DisconnectReason.multideviceMismatch, 	// Acontece quando há uma incompatibilidade com o modo multi-dispositivo do WhatsApp.
+	forbidden: DisconnectReason.forbidden,							// Geralmente indica que a conta foi banida ou bloqueada pelo WhatsApp.
 	unavailableService: 503,		// Significa que o serviço do WhatsApp está temporariamente indisponível ou sobrecarregado.
 }
 

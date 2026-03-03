@@ -1,7 +1,6 @@
 //
 const fs = require('fs-extra');
 const express = require('express');
-const bodyParser = require('body-parser');
 const app = express();
 const cors = require('cors');
 const path = require('path');
@@ -46,102 +45,9 @@ yo('My-WhatsApp', {
 //
 fs.access(".env", fs.constants.F_OK, async (err) => {
 	if (err && err.code === 'ENOENT') {
-		logger.error(`- Arquivo ".env" não encontrado, segue modelo de configuração:`);
-		var modelo = `
-		NODE_EN = 'production'
-		#
-		# Defina o IPV4 aqui caso voce utilize uma VPS deve ser colocado o IP da VPS
-		# Exemplos:
-		# IPV4=204.202.54.2 => IP da VPS, caso esteja usando virtualização via hospedagem
-		# IPV4=10.0.0.10 => IP da VM, caso esteja usando virtualização
-		# IPV4=127.0.0.1 => caso esteja usando na sua proprima maquina local
-		# IPV4=0.0.0.0 => caso esteja usando em um cotainer
-		IPV4 = 127.0.0.1
-		#
-		# Defina o IPV6 aqui caso voce utilize uma VPS deve ser colocado o IP da VPS
-		# CASO UTILIZE IPV6, DEVE PREENCHER A VARIAVEL IPV6
-		# CASO DE NÃO SER CONFIGURADO IPV6 MATENHA A VARIAVEL IPV6 VAZIA
-		# Exemplos:
-		# IPV6=FEDC:2D9D:DC28:7654:3210:FC57:D4C8:1FFF => IP da VPS, caso esteja usando virtualização via hospedagem
-		# IPV6=2001:0DB8:85A3:08D3:1319:8A2E:0370:7344 => IP da VM, caso esteja usando virtualização
-		# IPV6=0:0:0:0:0:0:0:1 => caso esteja usando na sua proprima maquina local
-		# IPV6=0:0:0:0:0:0:0:0 => caso esteja usando em um cotainer
-		IPV6 =
-		#
-		# Defina o numero da porta a ser usada pela API.
-		PORT = 9009
-		#
-		# CASO UTILIZE CERTIFICADO SSL COM REDIRECIONAMENTO DE PORTA, DEVE PREENCHER A VARIAVEL DOMAIN_SSL
-		# CASO DE NÃO SER CONFIGURADO UM DOMÍNIO MATENHA A VARIAVEL DOMAIN_SSL VAZIA
-		# Exemplos:
-		# DOMAIN_SSL=api.meudomai.com.br ou meudomai.com.br
-		# DOMAIN_SSL=
-		DOMAIN_SSL=
-		#
-		# Define se o qrcode vai ser mostrado no terminal
-		VIEW_QRCODE_TERMINAL = false
-		#
-		# Define a pasta para os tokens
-		PATCH_TOKENS = '/usr/local/tokens'
-		#
-		# Device name
-		DEVICE_NAME = 'My-Whatsapp'
-		#
-		# Host name
-		HOST_NAME = 'ApiBaileysMd'
-		#
-		# Defina a versão do whatsapp a ser usada.
-		# CASO DE NÃO SER CONFIGURADO UM VERSÂO MATENHA A VARIAVEL WA_VERSION VAZIA
-		# Exemplos:
-		# WA_VERSION='2.2204.13'
-		# WA_VERSION=
-		#
-		WA_VERSION=
-		#
-		# Defina a url do whatsapp a ser usada.
-		# CASO DE NÃO SER CONFIGURADO UM LINK MATENHA A VARIAVEL WA_URL VAZIA
-		# Exemplos:
-		# WA_URL='web.whatsapp.com'
-		# WA_URL=
-		WA_URL=
-		#
-		# Auto close
-		AUTO_CLOSE = 15
-		#
-		# Chave de segurança para validação
-		SECRET_KEY = 'kgashjgajbug$$jgbbjgkbkgk'
-		#
-		# Defina a quantidade de processo simultaneo na fila.
-		CONCURRENCY= 5
-		#
-		# Time Zone
-		TZ = 'America/Sao_Paulo'
-		#
-		# Tag image
-		TAG = '1.0.0'
-		#
-		# browserWSEndpoint Ex.: ws://127.0.0.1:3000
-		BROWSER_WSENDPOINT =
-		#
-		# Caso queira que ao iniciar a API todas as sessões salvas sejam inicializadas automaticamente
-		START_ALL_SESSIONS = 1
-		#
-		# Deleta os arquivos não usados do Baileys
-		DELETE_FILE_UNUSED = 0
-		#
-		# Host do servidor do Graylog
-		GRAYLOGSERVER = '127.0.0.1'
-		#
-		# Porta do servidor do  Graylog
-		GRAYLOGPORT = '12201'
-		#
-		# Defina se vai ser usado em um container.
-		# CASO DE SER USADO CONFIGURE A VARIAVEL INDOCKER DEVE SER 1
-		# CASO DE NÃO SER CONFIGURADO A VARIAVEL INDOCKER DEVE SER 0
-		INDOCKER = 0
-		#
-		`;
-		logger?.info(`- Modelo do arquivo de configuração:\n ${modelo}`);
+		logger.error(`- Arquivo ".env" não encontrado.`);
+		logger.info(`- Por favor, copie o arquivo ".env-example" para ".env" e configure as variáveis de ambiente.`);
+		logger.info(`- Exemplo: cp .env-example .env`);
 		process.exit(1);
 	} else {
 		//
@@ -159,15 +65,6 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 			//
 			// Body Parser
 			app.use(cors());
-			app.use(bodyParser.json({
-				limit: '50mb',
-				type: 'application/json'
-			}));
-			//
-			app.use(bodyParser.urlencoded({
-				extended: true
-			}));
-			//
 			// Express Parser
 			app.use(express.json({
 				limit: '50mb',
@@ -224,7 +121,6 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 					port: config.PORT,
 					host: host,
 					host_ssl: config.DOMAIN_SSL,
-					validate_mysql: false,
 					version: version
 				});
 			});
@@ -235,7 +131,6 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 					port: config.PORT,
 					host: host,
 					host_ssl: config.DOMAIN_SSL,
-					validate_mysql: false,
 					version: version
 				});
 			});
@@ -256,7 +151,6 @@ fs.access(".env", fs.constants.F_OK, async (err) => {
 						port: config.PORT,
 						host: host,
 						host_ssl: config.DOMAIN_SSL,
-						validate_mysql: false,
 						version: version
 					});
 				});

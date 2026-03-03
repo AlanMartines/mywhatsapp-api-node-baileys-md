@@ -2,10 +2,10 @@
   "name": "mywhatsapp-api-node-baileys-md",
   "version": "1.0.7",
   "description": "Este projeto usa como base o @whiskeysockets/baileys, um navegador virtual sem interface gráfica que abre o whatsapp web e executa todos os comandos via código possibilitando assim a automação de todas as funções.",
-  "main": "index.js",
+  "main": "server.js",
   "private": false,
   "scripts": {
-    "start": "node index.js",
+    "start": "node server.js",
     "test": "echo \"Erro: nenhum teste especificado\" && exit 1"
   },
   "repository": {
@@ -72,7 +72,6 @@
     "qrcode-terminal": "^0.12.0",
     "readline": "^1.3.0",
     "request-promise": "^4.2.6",
-    "rmfr": "^2.0.0",
     "socket.io": "^4.8.3",
     "superagent": "^10.3.0",
     "swagger-autogen": "^2.23.7",

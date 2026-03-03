@@ -10,7 +10,6 @@ const moment = require('moment');
 moment()?.format('YYYY-MM-DD HH:mm:ss');
 moment?.locale('pt-br');
 const pino = require("pino");
-const rmfr = require('rmfr');
 const NodeCache = require('node-cache');
 const { logger } = require("./utils/logger");
 const Sessions = require('./controllers/sessions');
@@ -112,7 +111,7 @@ function removeWithspace(string) {
 //
 async function deletaPastaToken(filePath, filename) {
 	//
-	await rmfr(`${filePath}/${filename}`).then(async (result) => {
+	await fs.remove(`${filePath}/${filename}`).then(async (result) => {
 		//
 		logger?.info(`- Pasta "${filePath}/${filename}" removida com sucesso`);
 		//
@@ -128,7 +127,7 @@ async function deletaPastaToken(filePath, filename) {
 //
 async function deletaToken(filePath, filename) {
 	//
-	await rmfr(`${filePath}/${filename}`, { glob: true }).then(async (result) => {
+	await fs.remove(`${filePath}/${filename}`).then(async (result) => {
 		//
 		logger?.info(`- Arquivo "${filename}" removido com sucesso`);
 		//
